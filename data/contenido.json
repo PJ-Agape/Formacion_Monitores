@@ -1,0 +1,782 @@
+{
+  "version": 1,
+  "updatedAt": "2026-09-28",
+  "roles": [
+    {
+      "key": "asesores",
+      "tag": "Acompañamiento Espiritual",
+      "title": "Asesores",
+      "subtitle": "Custodios del Sentido y la Identidad",
+      "duration": "Período de hasta 4 años",
+      "badge": "Puente con la Parroquia",
+      "responsibility": "Custodios del sentido y la identidad. Son el puente con la Parroquia, aseguran la coherencia espiritual y aconsejan en el orden de la vida comunitaria.",
+      "functions": [
+        "Acompañar y aconsejar con cariño a la dupla de coordinadores.",
+        "Mantener la unión viva con el Párroco y la comunidad parroquial.",
+        "Participar en la Reunión Mensual para cuidar el rumbo y los objetivos de la pastoral.",
+        "Ayudar a discernir y escuchar en momentos de duda o dificultad comunitaria."
+      ]
+    },
+    {
+      "key": "coordinadores",
+      "tag": "Gestión y Organización",
+      "title": "Coordinadores (Dupla)",
+      "subtitle": "Liderazgo Ejecutivo y Coordinación",
+      "duration": "Hasta 2 años (renovables por 2)",
+      "badge": "Requisito: Dirigente ≥ 1 período",
+      "responsibility": "Dupla encargada de ejecutar las líneas pastorales, gestionar el cronograma y facilitar las reuniones de programación y evaluación.",
+      "functions": [
+        "Organizar el calendario anual y preparar el cronograma de temas y actividades.",
+        "Facilitar la Reunión Quincenal con los animadores y dirigentes.",
+        "Evaluar cómo va caminando el grupo y cuidar el buen ambiente entre todos.",
+        "Participar en la Reunión Mensual con los asesores para revisar los avances."
+      ]
+    },
+    {
+      "key": "animadores",
+      "tag": "Animación y Cercanía",
+      "title": "Animadores",
+      "subtitle": "Rostro Visible y Motor de la Comunidad",
+      "duration": "Hasta 2 años (renovables por 2)",
+      "badge": "Requisito: Dirigente ≥ 1 período + Liderazgo",
+      "responsibility": "Rostro visible y motor de la comunidad. Responsables de guiar los encuentros y asegurar el vínculo con los jóvenes.",
+      "functions": [
+        "Guiar con alegría, claridad y entusiasmo las reuniones semanales.",
+        "Hacer que cada joven se sienta bienvenido, escuchado y cómodo en el grupo.",
+        "Apoyar a los dirigentes en la preparación de las dinámicas y los temas.",
+        "Asistir a la Reunión Quincenal para evaluar y programar los encuentros."
+      ]
+    },
+    {
+      "key": "dirigentes",
+      "tag": "Base y Servicio Directo",
+      "title": "Dirigentes",
+      "subtitle": "Base Operativa del Equipo",
+      "duration": "Etapa formativa inicial y continua",
+      "badge": "Puerta de entrada de todo servidor",
+      "responsibility": "Base operativa del equipo. Trabajan directamente con los jóvenes, elaboran materiales y ejecutan las funciones técnicas (tesorería, redes, logística).",
+      "functions": [
+        "Acompañar a los jóvenes en los grupos pequeños durante las dinámicas.",
+        "Preparar los materiales, carteles y elementos para cada sesión.",
+        "Ayudar en tareas prácticas: ambientación, redes sociales, asistencia y tesorería.",
+        "Participar con constancia en el Itinerario de 20 Encuentros y en las reuniones."
+      ]
+    }
+  ],
+  "materials": {
+    "title": "Caja de Recursos para el Equipo",
+    "desc": "Guías prácticas, esquemas sencillos y pautas de ayuda para las reuniones semanales de toda la comunidad.",
+    "cards": [
+      {
+        "tag": "Esquema Básico",
+        "title": "Cómo Organizar una Reunión de 60 Minutos",
+        "type": "list",
+        "items": [
+          "<strong>00-10 min:</strong> Acogida con cariño y saber cómo llega cada uno.",
+          "<strong>10-25 min:</strong> Juego o dinámica en equipo para romper el hielo.",
+          "<strong>25-45 min:</strong> Conversar sobre lo vivido y leer un texto del Evangelio.",
+          "<strong>45-55 min:</strong> Preguntarnos qué nos pide Dios para la semana.",
+          "<strong>55-60 min:</strong> Oración final comunitaria y despedida."
+        ]
+      },
+      {
+        "tag": "Guía de Ayuda",
+        "title": "Cómo Actuar Cuando un Joven Pasa por un Mal Momento",
+        "type": "crisis",
+        "items": [
+          "<strong>Situaciones cotidianas:</strong> Dudas normales, tristeza de unos días o pequeños conflictos. Acompañar con escucha y oración.",
+          "<strong>Alerta en el equipo:</strong> Aislamiento continuo, mucha angustia o cambios bruscos. Avisar a los coordinadores.",
+          "<strong>Ayuda profesional urgente:</strong> Pensamientos de hacerse daño, depresión severa o abuso. Avisar a la familia y derivar a especialistas."
+        ]
+      },
+      {
+        "tag": "Claves del Encuentro",
+        "title": "Actitudes Básicas para Acompañar",
+        "type": "text",
+        "text": "<strong>Ofrecer un lugar seguro:</strong> Que el grupo sea un espacio donde nadie se burle y todos puedan hablar con libertad.<br><br><strong>Compasión de Jesús:</strong> Mirar con el corazón a quien sufre y ponerse en su lugar antes de dar consejos.<br><br><strong>Ayudar a nombrar lo que pasa:</strong> Enseñar a reconocer emociones sanamente."
+      },
+      {
+        "tag": "Materiales y Fichas",
+        "title": "Fichas Imprimibles y Dinámicas",
+        "type": "action",
+        "text": "Accede a las plantillas imprimibles con las dinámicas listas para llevar directamente al salón de la comunidad.",
+        "btnText": "Abrir Carpeta de Fichas Imprimibles",
+        "url": ""
+      }
+    ]
+  },
+  "devotional": {
+    "title": "Devocionario y Oraciones del Dirigente",
+    "desc": "Oraciones sencillas para alimentar el corazón antes y después de cada encuentro.",
+    "cards": [
+      {
+        "tag": "Oración Principal",
+        "title": "Oración del Dirigente Ágape",
+        "type": "text",
+        "text": "«Señor Jesús, Buen Pastor que conoces a cada joven por su nombre:\n\nDanos ojos para mirarlos como Tú los miras, con cariño y sin juzgarlos.\nDanos un corazón atento para escuchar sus dudas, alegrías y penas.\nHaznos amigos de verdad y personas de confianza en sus momentos difíciles.\nQue nunca nos cansemos de servir con alegría, sabiendo que Tú eres el verdadero Maestro. Amén.»"
+      },
+      {
+        "tag": "Orar con la Biblia",
+        "title": "Cómo Orar con la Palabra en 4 Pasos",
+        "type": "list",
+        "items": [
+          "<strong>1. Leer:</strong> ¿Qué dice la historia? Leer despacio lo que Jesús hace y dice.",
+          "<strong>2. Meditar:</strong> ¿Qué me dice a mí hoy? Pensar en mi propia vida, mi familia y mis amigos.",
+          "<strong>3. Hablar con Dios:</strong> Decirle con sinceridad lo que siento y lo que necesito.",
+          "<strong>4. Actuar:</strong> ¿A qué gesto concreto de ayuda y bondad me comprometo esta semana?"
+        ]
+      },
+      {
+        "tag": "Al Final del Día",
+        "title": "Revisión Sencilla al Terminar la Reunión",
+        "type": "list",
+        "items": [
+          "<strong>1. Dar gracias:</strong> Por las sonrisas, las conversaciones y la presencia de los jóvenes hoy.",
+          "<strong>2. Pensar:</strong> ¿En qué momentos sentí alegría y paz? ¿En qué momento me sentí impaciente?",
+          "<strong>3. Pedir perdón:</strong> Si me distraje, si faltó paciencia o si no escuché bien a alguien.",
+          "<strong>4. Confiar a Dios:</strong> Poner en sus manos la vida de cada persona con la que estuve hoy."
+        ]
+      },
+      {
+        "tag": "Bendición del Equipo",
+        "title": "Bendición de Nuestra Comunidad",
+        "type": "text",
+        "text": "«Bendice, Señor, a este grupo de amigos y servidores. Cuida nuestra amistad, danos paciencia y haz que los jóvenes encuentren siempre entre nosotros una casa abierta y un corazón dispuesto. Virgen María, cuídanos siempre. Amén.»"
+      }
+    ]
+  },
+  "courses": [
+    {
+      "id": "arte-de-encontrarnos",
+      "title": "El Arte de Encontrarnos",
+      "theme": "amanecer",
+      "description": "Programa formativo de 5 Fases y 20 encuentros con autoevaluaciones de discernimiento para consolidar la vocación y el corazón servicial de los dirigentes juveniles.",
+      "phases": [
+        {
+          "phaseNum": 0,
+          "title": "Fundamentos, Mirada de Fe y el Mundo del Joven",
+          "desc": "4 Encuentros • El dirigente como puente y persona de confianza",
+          "sessions": [
+            {
+              "id": "0.1",
+              "title": "El Dirigente como Puente y Amigo Cercano",
+              "time": "60 min",
+              "objective": "Comprender que ser dirigente es ser una persona de confianza que refleja el amor de Jesús con su ejemplo y cercanía cotidiana.",
+              "bible": "Lucas 24, 13–35 (Los discípulos de Emaús): Jesús se acerca en silencio al camino de dos jóvenes frustrados, camina a su paso, los escucha con paciencia y les ayuda a redescubrir la esperanza antes de partir el pan.",
+              "dynamic": "El verdadero guía no impone verdades desde un estrado; se incardina en la realidad del otro, validando sus cansancios y desilusiones cotidianas.",
+              "questions": [
+                "¿Quiénes fueron las personas que a mí me ayudaron a acercarme a Dios con su cariño y buen trato?",
+                "¿Qué puedo hacer para que los jóvenes me vean como alguien cercano y de confianza?"
+              ],
+              "prayer": "«Señor Jesús, camina a nuestro lado. Haznos personas comprensivas y acogedoras para que ningún joven se sienta rechazado. Amén.»"
+            },
+            {
+              "id": "0.2",
+              "title": "Mirar al Joven con los Ojos de Jesús",
+              "time": "60 min",
+              "objective": "Aprender a mirar a cada muchacho con respeto y cariño, comprendiendo que la juventud es una etapa de grandes cambios y búsquedas.",
+              "bible": "Salmo 139, 1–4.13–14 («Señor, tú me conoces... Me tejiste en el seno de mi madre»): La certeza de que cada persona es una obra querida, pensada y sostenida por Dios.",
+              "dynamic": "La mirada de Dios sobre la juventud no busca juzgar deficiencias, sino contemplar potencialidades sagradas e inexploradas. Dios no etiqueta por errores generacionales.",
+              "questions": [
+                "¿Qué prejuicios o ideas preconcebidas tengo a veces con los jóvenes más inquietos?",
+                "¿Cómo cambiaría mi trato si recordara siempre que cada joven es profundamente amado por Dios?"
+              ],
+              "prayer": "«Señor, limpia nuestra mirada. Que cuando miremos a un joven no veamos un problema, sino a un hermano valioso. Amén.»"
+            },
+            {
+              "id": "0.3",
+              "title": "El Arte de Escuchar y Sostener con Paciencia",
+              "time": "60 min",
+              "objective": "Aprender a escuchar con calma cuando un joven está triste, enojado o confundido, sin desesperarnos por dar consejos apresurados.",
+              "bible": "Lucas 15, 4–7 (La oveja perdida): El pastor no regaña ni azota a la oveja cansada; la carga con ternura sobre sus hombros de regreso al redil.",
+              "dynamic": "La contención y la acogida preceden siempre a cualquier corrección doctrinal o moral. Escuchar con serenidad calma los ánimos y sana heridas.",
+              "questions": [
+                "¿Sé escuchar con paciencia o tiendo a interrumpir y juzgar rápido?",
+                "¿Cómo puedo ofrecer un espacio seguro donde el joven pueda desahogarse sin ser juzgado?"
+              ],
+              "prayer": "«Dame, Señor, un corazón paciente para escuchar el dolor ajeno sin juzgar. Amén.»"
+            },
+            {
+              "id": "0.4",
+              "title": "Cuidar al Equipo: Amigos que Sirven Juntos",
+              "time": "60 min",
+              "objective": "Comprender la importancia de la fraternidad y el cuidado mutuo entre dirigentes para no cansarnos ni trabajar solos.",
+              "bible": "Hechos 2, 42–47: La primera comunidad compartía el pan y la oración con alegría y sencillez de corazón.",
+              "dynamic": "El servicio cristiano nace de la comunión fraterna. Quien intenta trabajar en solitario se cansa rápido; en equipo nos sostenemos.",
+              "questions": [
+                "¿Me preocupo por el bienestar de mis compañeros de servicio?",
+                "¿Pido ayuda a tiempo cuando una situación me sobrepasa?"
+              ],
+              "prayer": "«Señor, bendice a nuestro equipo de servidores. Que nuestro testimonio sea la unidad y el cariño sincero. Amén.»"
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Fase 0 • Fundamentos y Mirada",
+            "title": "Discernimiento del Dirigente Servidor",
+            "questions": [
+              {
+                "q": "1. Durante una reunión, un joven nuevo se sienta apartado y mira constantemente su teléfono. ¿Cuál es la mejor actitud del dirigente?",
+                "options": [
+                  "Llamarle la atención públicamente y pedirle que guarde el teléfono.",
+                  "Acercarse con amabilidad, sentarse a su lado, preguntarle cómo se llama y hacerlo sentir bienvenido sin presionarlo.",
+                  "Ignorarlo para no incomodarlo y dejar que participe solo cuando él quiera."
+                ],
+                "correct": 1,
+                "feedback": "Muy bien. Como Jesús en Emaús, nos acercamos primero con delicadeza para generar confianza antes de exigir nada."
+              },
+              {
+                "q": "2. Si un joven del grupo llega molesto o con ganas de discutir, ¿qué actitud refleja mejor el espíritu de Ágape?",
+                "options": [
+                  "Discutir con él para demostrarle que en la iglesia se debe tener buena actitud.",
+                  "Escuchar con calma sin interrumpir, comprendiendo que a veces traen problemas de su casa o colegio.",
+                  "Mandarlo a reflexionar afuera del salón hasta que se le pase el enojo."
+                ],
+                "correct": 1,
+                "feedback": "Exacto. El Buen Pastor carga la oveja con paciencia. Escuchar con serenidad calma los ánimos y sana heridas."
+              },
+              {
+                "q": "3. ¿Por qué es fundamental que los dirigentes se reúnan y se apoyen entre ellos?",
+                "options": [
+                  "Para que el servicio sea una experiencia de amistad y fe compartida, evitando que nadie se canse solo.",
+                  "Solo para repartir tareas y saber a quién culpar si algo sale mal.",
+                  "Para competir y ver quién organiza los mejores juegos del mes."
+                ],
+                "correct": 0,
+                "feedback": "Correcto. El equipo de dirigentes debe ser el primer testimonio de cariño y fraternidad para los jóvenes."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 1,
+          "title": "Un Hogar Acogedor y Fraterno",
+          "desc": "4 Encuentros • Acogida, confianza y participación de todos",
+          "sessions": [
+            {
+              "id": "1.1",
+              "title": "El Grupo como Espacio de Confianza",
+              "time": "60 min",
+              "objective": "Crear un ambiente de respeto donde nadie tema la burla y todos puedan expresarse libremente.",
+              "bible": "Mateo 18, 20: «Donde dos o tres se reúnen en mi nombre, allí estoy yo en medio de ellos».",
+              "dynamic": "Un ambiente seguro se construye cuando desterramos el sarcasmo hiriente y celebramos la originalidad de cada muchacho.",
+              "questions": [
+                "¿Contribuyo a que el grupo sea un lugar donde nadie tema ser juzgado?",
+                "¿Cómo reacciono cuando alguien comparte algo personal?"
+              ],
+              "prayer": "«Haz de nuestro grupo una casa acogedora donde cada joven encuentre paz y aceptación. Amén.»"
+            },
+            {
+              "id": "1.2",
+              "title": "Los Primeros 10 Minutos: La Acogida",
+              "time": "60 min",
+              "objective": "Reconocer la importancia transformadora de recibir a cada joven con una sonrisa y llamarlo por su nombre.",
+              "bible": "Lucas 15, 20 (El Padre Bueno): «Cuando todavía estaba lejos, su padre lo vio y se conmovió; corrió, se echó a su cuello y lo besó».",
+              "dynamic": "Los primeros minutos deciden si el joven se siente esperado y querido o si se siente un número más.",
+              "questions": [
+                "¿Hago el esfuerzo consciente de aprenderme los nombres de los jóvenes nuevos?",
+                "¿Qué gestos de bienvenida podemos mejorar en las reuniones?"
+              ],
+              "prayer": "«Señor, que mi saludo transmita tu ternura y que nadie se sienta invisible en el grupo. Amén.»"
+            },
+            {
+              "id": "1.3",
+              "title": "Servir con Amor: Todos Tienen una Tarea",
+              "time": "60 min",
+              "objective": "Dar tareas sencillas y rotativas a los jóvenes para que se sientan parte viva y activa del grupo.",
+              "bible": "Juan 13, 1–15: Jesús lava los pies a sus discípulos y nos enseña la grandeza del servicio humilde.",
+              "dynamic": "Pertenecer es sentirse útil. Quien solo asiste como espectador se aburre; quien sirve, crece y se compromete.",
+              "questions": [
+                "¿Delego tareas con confianza o intento hacerlo todo yo solo?",
+                "¿En qué funciones sencillas puedo integrar a los muchachos nuevos?"
+              ],
+              "prayer": "«Maestro, enséñanos a lavar los pies con alegría, sin buscar protagonismos. Amén.»"
+            },
+            {
+              "id": "1.4",
+              "title": "Incluir a Todos: La Mirada de Jesús a Zaqueo",
+              "time": "60 min",
+              "objective": "Aprender a acercarse al joven que está solo, tímido o apartado para integrarlo con cariño.",
+              "bible": "Lucas 19, 1–10: «Zaqueo, baja pronto, porque hoy es necesario que me hospede en tu casa».",
+              "dynamic": "Jesús no espera a que los pecadores o tímidos cambien solos; su cercanía afectuosa es lo que los transforma.",
+              "questions": [
+                "¿A quién noto que le cuesta integrarse en el grupo?",
+                "¿Qué paso concreto daré para acercarme a él esta semana?"
+              ],
+              "prayer": "«Señor, danos ojos para buscar a quien se siente al margen. Amén.»"
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Fase 1 • Hogar y Confianza",
+            "title": "Crear un Espacio de Confianza",
+            "questions": [
+              {
+                "q": "1. Si durante una dinámica un joven comparte algo personal y otro se ríe en voz baja, ¿qué debe hacer el dirigente?",
+                "options": [
+                  "Reírse también para que no se sienta tenso el ambiente.",
+                  "Recordar con serenidad y firmeza el acuerdo de respeto mutuo, cuidando que el joven que habló se sienta protegido.",
+                  "Suspender la reunión de inmediato y castigar a todo el grupo."
+                ],
+                "correct": 1,
+                "feedback": "Excelente. Cuidar la confianza del grupo requiere poner límites claros con cariño para que nadie tema la burla."
+              },
+              {
+                "q": "2. ¿Cómo logramos que los jóvenes se sientan verdaderamente parte del grupo?",
+                "options": [
+                  "Haciendo todo nosotros para que salga perfecto.",
+                  "Dándoles tareas sencillas y rotativas (música, bienvenida, oración) para que aporten activamente.",
+                  "Pidiéndoles solo que se sienten a escuchar las charlas."
+                ],
+                "correct": 1,
+                "feedback": "Así es. Como Jesús que lavó los pies, educamos en la alegría de servir y tener un lugar propio en la comunidad."
+              },
+              {
+                "q": "3. Al inicio de cada encuentro, ¿qué detalle nunca debe faltar?",
+                "options": [
+                  "Saludar a cada joven mirándolo a los ojos y llamándolo por su nombre.",
+                  "Empezar de inmediato con la charla sin perder tiempo en saludos.",
+                  "Revisar si todos trajeron sus cuadernos de apuntes."
+                ],
+                "correct": 0,
+                "feedback": "Correcto. El Padre Bueno sale al encuentro y abraza. Llamar a cada uno por su nombre hace que se sienta esperado y querido."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 2,
+          "title": "El Arte de Mirar, Sentir y Escuchar",
+          "desc": "4 Encuentros • Empatía, expresar emociones y acompañar con ternura",
+          "sessions": [
+            {
+              "id": "2.1",
+              "title": "La Compasión de Jesús y los Gestos Sencillos",
+              "time": "60 min",
+              "objective": "Aprender a notar los gestos, miradas y silencios de los jóvenes para responder con afecto sincero.",
+              "bible": "Marcos 1, 40–45: Jesús, compadecido, extendió la mano, tocó al enfermo y le dijo: «Quiero, queda limpio».",
+              "dynamic": "La compasión pastoral es conmoverse en el corazón y traducirlo en un gesto concreto de cercanía.",
+              "questions": [
+                "¿Estoy atento a las señales no verbales de tristeza en los jóvenes?",
+                "¿Qué gestos sencillos de bondad puedo ofrecer en cada encuentro?"
+              ],
+              "prayer": "«Jesús compasivo, toca nuestro corazón para que aprendamos a conmovernos ante el dolor del otro. Amén.»"
+            },
+            {
+              "id": "2.2",
+              "title": "Poner Palabras a lo que Sentimos",
+              "time": "60 min",
+              "objective": "Ayudar a los jóvenes a salir del simple 'estoy bien' y aprender a expresar sus emociones sanamente.",
+              "bible": "Marcos 10, 46–52: Jesús le preguntó a Bartimeo: «¿Qué quieres que haga por ti?».",
+              "dynamic": "Sanamos cuando logramos nombrar lo que sentimos. La pregunta respetuosa abre la puerta del alma.",
+              "questions": [
+                "¿Sé nombrar mis propias emociones ante Dios y mi equipo?",
+                "¿Hago preguntas que invitan a la profundidad o me quedo en lo superficial?"
+              ],
+              "prayer": "«Señor, ayúdanos a ser honestos con lo que sentimos y a acoger con respeto las emociones ajenas. Amén.»"
+            },
+            {
+              "id": "2.3",
+              "title": "El Poder de los Símbolos y Gestos Sencillos",
+              "time": "60 min",
+              "objective": "Usar signos visibles (velas, piedras, cartas) para ayudar a orar, expresar la fe y soltar cargas.",
+              "bible": "Juan 9, 1–7: Jesús hizo barro con saliva, untó los ojos del ciego y le mandó lavarse en Siloé.",
+              "dynamic": "Los seres humanos somos seres encarnados; los signos simbólicos conectan lo visible con lo invisible en la oración.",
+              "questions": [
+                "¿Qué símbolos me ayudan personalmente a orar mejor?",
+                "¿Cómo podemos enriquecer la ambientación de nuestras oraciones comunitarias?"
+              ],
+              "prayer": "«Señor, que a través de los signos sencillos descubramos tu presencia viva. Amén.»"
+            },
+            {
+              "id": "2.4",
+              "title": "Acompañar en la Pena con Cariño",
+              "time": "60 min",
+              "objective": "Estar presentes en el dolor y la tristeza sin dar respuestas hechas o apresuradas.",
+              "bible": "Juan 11, 33–36: «Jesús lloró. Los judíos dijeron: Miren cómo lo amaba».",
+              "dynamic": "Ante el sufrimiento, el silencio respetuoso y la presencia afectuosa consuelan más que cualquier discurso.",
+              "questions": [
+                "¿Sé acompañar el dolor en silencio o me pongo nervioso y hablo de más?",
+                "¿A qué joven que está sufriendo puedo acompañar con cariño esta semana?"
+              ],
+              "prayer": "«Jesús, que lloraste con Marta y María, enséñanos a consolar con respeto y delicadeza. Amén.»"
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Fase 2 • Escucha y Acompañamiento",
+            "title": "El Arte de Escuchar con el Corazón",
+            "questions": [
+              {
+                "q": "1. Cuando un joven te dice con lágrimas en los ojos que sus padres se están separando, ¿cuál es la respuesta más adecuada?",
+                "options": [
+                  "Decirle: 'No llores, todo pasa rápido y hay personas que están peor'.",
+                  "Acompañarlo en silencio o con palabras sencillas de cariño: 'Estoy contigo, no estás solo, aquí tienes un amigo'.",
+                  "Cambiarle de tema con un chiste para que no piense en cosas tristes."
+                ],
+                "correct": 1,
+                "feedback": "Muy bien. Como Jesús ante la tumba de Lázaro, validamos la pena y ofrecemos compañía sincera sin frases hechas."
+              },
+              {
+                "q": "2. Si un joven responde siempre con monosílabos ('bien', 'mal'), ¿cómo podemos ayudarlo?",
+                "options": [
+                  "Hacerle preguntas abiertas y amables: '¿Qué fue lo más bonito de tu semana?' o usar tarjetas de emociones.",
+                  "Obligarlo a hablar frente a todos hasta que hable.",
+                  "No volver a preguntarle nada para no molestarlo."
+                ],
+                "correct": 0,
+                "feedback": "Excelente. Guiar las preguntas con paciencia ayuda a los jóvenes a poner en palabras lo que llevan dentro."
+              },
+              {
+                "q": "3. ¿Por qué usamos gestos sencillos como una vela o una piedra en la oración?",
+                "options": [
+                  "Porque a los seres humanos los símbolos y acciones concretas nos ayudan a conectar mejor con Dios.",
+                  "Solo para que la foto de la reunión se vea bonita en redes sociales.",
+                  "Porque es una obligación estricta del reglamento parroquial."
+                ],
+                "correct": 0,
+                "feedback": "Así es. Jesús usaba el pan, el barro y el agua para que la experiencia de la gracia se pudiera ver y sentir."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 3,
+          "title": "Aprender Jugando y Viviendo",
+          "desc": "4 Encuentros • Dinámicas, trabajo en equipo y aprender de la vida",
+          "sessions": [
+            {
+              "id": "3.1",
+              "title": "La Alegría de Jugar y Compartir",
+              "time": "60 min",
+              "objective": "Reconocer el valor del juego, la risa sana y el humor para unir al grupo y abrir el corazón.",
+              "bible": "Lucas 15, 22–24: «Comamos y celebremos una fiesta, porque este hijo mío estaba muerto y ha vuelto a la vida».",
+              "dynamic": "Un dirigente alegre abre puertas; la risa compartida rompe defensas y predispone al encuentro con Dios.",
+              "questions": [
+                "¿Transmito la alegría del Evangelio en las reuniones?",
+                "¿Cómo podemos hacer que las dinámicas sean más participativas?"
+              ],
+              "prayer": "«Señor, llena nuestra comunidad de tu alegría contagiosa. Amén.»"
+            },
+            {
+              "id": "3.2",
+              "title": "Ayudarnos entre Todos: Nadie se Queda Atrás",
+              "time": "60 min",
+              "objective": "Vivir dinámicas cooperativas donde ganamos solo si nos ayudamos mutuamente.",
+              "bible": "Juan 6, 1–13: La multiplicación de los panes gracias al muchacho que compartió lo que tenía.",
+              "dynamic": "El Reino de Dios no premia el individualismo; premia la solidaridad donde todos aportan y se cuidan.",
+              "questions": [
+                "¿Promovemos la cooperación antes que la rivalidad en el grupo?",
+                "¿Cómo cuidamos a los chicos a quienes les cuestan más los juegos físicos?"
+              ],
+              "prayer": "«Señor, multiplica nuestros talentos para ponerlos al servicio de todos. Amén.»"
+            },
+            {
+              "id": "3.3",
+              "title": "Aprender de la Vida y de la Palabra",
+              "time": "60 min",
+              "objective": "Aplicar el método formativo de 4 pasos: Vivir la dinámica, Conversar, Iluminar con el Evangelio y Actuar.",
+              "bible": "Lucas 24, 25–27: Jesús les explica las Escrituras partiendo de lo que los caminantes venían viviendo.",
+              "dynamic": "El Evangelio cobra vida cuando dialoga directamente con la experiencia real de los jóvenes.",
+              "questions": [
+                "¿Conectamos los temas con la vida real de los muchachos?",
+                "¿Aterrizamos las reflexiones en compromisos concretos para la semana?"
+              ],
+              "prayer": "«Lámpara es tu palabra para nuestros pasos, Señor. Amén.»"
+            },
+            {
+              "id": "3.4",
+              "title": "Descubrir a Dios en lo que Vivimos",
+              "time": "60 min",
+              "objective": "Cerrar cada reunión con 3 preguntas simples: ¿Qué pasó? ¿Qué sentí? ¿Qué me pide Dios?",
+              "bible": "Lucas 10, 17–21: Los discípulos regresan llenos de gozo y Jesús los ayuda a discernir lo vivido.",
+              "dynamic": "El discernimiento pastoral es el hábito de descubrir las huellas de Dios en nuestras acciones cotidianas.",
+              "questions": [
+                "¿Hacemos una pausa para cosechar lo vivido al final de cada sesión?",
+                "¿Qué aprendí de Dios en el encuentro de hoy?"
+              ],
+              "prayer": "«Te damos gracias, Padre, porque te revelas en lo sencillo. Amén.»"
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Fase 3 • Acción y Juego",
+            "title": "Aprender Jugando y Viviendo",
+            "questions": [
+              {
+                "q": "1. ¿Cuál es el propósito principal de hacer juegos y dinámicas en la pastoral?",
+                "options": [
+                  "Solo pasar el rato cuando sobra tiempo en la reunión.",
+                  "Romper el hielo, generar risa sana y crear una vivencia de la cual aprender una enseñanza de fe.",
+                  "Descubrir quiénes son los jóvenes más hábiles para ponerlos de líderes."
+                ],
+                "correct": 1,
+                "feedback": "Exacto. El juego abre el corazón y prepara el terreno para reflexionar en comunidad sobre la vida."
+              },
+              {
+                "q": "2. Si en un juego cooperativo el equipo pierde porque un chico tropezó, ¿qué enseñamos?",
+                "options": [
+                  "Aprender a levantarnos juntos, sin reproches, recordando que el verdadero triunfo es no dejar a nadie atrás.",
+                  "Sacar del juego al muchacho que tropezó para asegurar la victoria del grupo.",
+                  "Terminar la reunión enfadados con el equipo."
+                ],
+                "correct": 0,
+                "feedback": "Muy bien. La multiplicación de los panes nos enseña que el Reino de Dios se construye compartiendo y cuidándonos."
+              },
+              {
+                "q": "3. Al terminar una actividad, ¿cuáles son las 3 preguntas clave para cosechar la experiencia?",
+                "options": [
+                  "¿Quién ganó? ¿Quién perdió? ¿Quién fue el culpable?",
+                  "¿Qué hicimos? ¿Qué sentí o aprendí por dentro? ¿Qué me pide Dios que haga esta semana?",
+                  "¿Cuánto tiempo nos tomó? ¿A qué hora nos vamos? ¿Qué comida hay?"
+                ],
+                "correct": 1,
+                "feedback": "Correcto. Esas 3 preguntas sencillas permiten que el juego dialogue directamente con el Evangelio."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 4,
+          "title": "Cuidado Personal y Trabajo en Equipo",
+          "desc": "4 Encuentros • Descanso, apoyo mutuo, pedir ayuda a tiempo y compromiso",
+          "sessions": [
+            {
+              "id": "4.1",
+              "title": "El Descanso en el Señor",
+              "time": "60 min",
+              "objective": "Reconocer la importancia de cuidar la salud física y espiritual, el sueño y el reposo.",
+              "bible": "Marcos 6, 30–32: «Vengan ustedes solos a un lugar desierto y descansen un poco».",
+              "dynamic": "El activismo desmedido apaga el fervor. Quien no descansa en Dios termina amargado y sin paciencia con los jóvenes.",
+              "questions": [
+                "¿Respeto mis espacios de descanso personal y sueño?",
+                "¿Sé poner límites sanos a las responsabilidades para no sobrecargarme?"
+              ],
+              "prayer": "«En paz me acuesto y en seguida me duermo, porque solo tú, Señor, me haces vivir confiado. Amén.»"
+            },
+            {
+              "id": "4.2",
+              "title": "Sostenernos entre Hermanos",
+              "time": "60 min",
+              "objective": "Aprender a conversar en equipo y pedir apoyo cuando una situación con un joven nos resulte difícil.",
+              "bible": "Éxodo 17, 8–13: Cuando a Moisés se le cansaban los brazos, Aarón y Jur le sostenían las manos en alto.",
+              "dynamic": "Reconocer la propia vulnerabilidad es signo de madurez pastoral. En comunidad las cargas se hacen livianas.",
+              "questions": [
+                "¿Comparto con mis coordinadores cuando me siento agotado o sin ideas?",
+                "¿Estoy disponible para sostener los brazos de mis hermanos dirigentes?"
+              ],
+              "prayer": "«Señor, quita nuestra autosuficiencia y enséñanos a dejarnos ayudar. Amén.»"
+            },
+            {
+              "id": "4.3",
+              "title": "Saber Cuándo Pedir Ayuda Profesional",
+              "time": "60 min",
+              "objective": "Reconocer los límites del rol de dirigente y saber orientar responsablemente a especialistas de la salud.",
+              "bible": "1 Reyes 19, 4–8: El profeta Elías, deprimido bajo el árbol, es alimentado por el ángel y se le pide descansar antes de continuar.",
+              "dynamic": "Somos hermanos mayores y guías de fe, no psicólogos. El mayor acto de amor es avisar a la familia y derivar a profesionales.",
+              "questions": [
+                "¿Tengo claros los límites éticos de mi servicio?",
+                "¿Sé a qué instancias parroquiales y profesionales acudir ante una emergencia?"
+              ],
+              "prayer": "«Dame prudencia y sabiduría, Señor, para cuidar la vida de los jóvenes con responsabilidad. Amén.»"
+            },
+            {
+              "id": "4.4",
+              "title": "Renovación del Compromiso y Envío",
+              "time": "60 min",
+              "objective": "Celebrar con gratitud el camino recorrido y renovar la vocación de servicio con alegría y entrega.",
+              "bible": "Juan 20, 19–23: «La paz esté con ustedes. Como el Padre me envió, así los envío yo. Reciban el Espíritu Santo».",
+              "dynamic": "El final del itinerario formativo es el envío a dar testimonio vivo de amor, acogida y amistad en Cristo.",
+              "questions": [
+                "¿Cómo ha transformado este itinerario mi vocación de servicio?",
+                "¿A qué compromiso concreto me siento enviado por Jesús hoy?"
+              ],
+              "prayer": "«Aquí estoy, Señor, envíame. Haz de mi vida un testimonio humilde de tu amor. Amén.»"
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación General de Envío Pastoral",
+            "title": "Aptitud y Discernimiento para el Dirigente Ágape",
+            "questions": [
+              {
+                "q": "1. Un joven del grupo te confiesa en privado que tiene pensamientos de hacerse daño o que está viviendo una situación de maltrato grave. ¿Cuál es tu deber ético inmediato?",
+                "options": [
+                  "Intentar hacerle terapia psicológica tú mismo y prometerle que nunca le dirás a nadie.",
+                  "Escucharlo con cariño y avisar con urgencia y prudencia a los coordinadores y a su familia para buscar ayuda profesional.",
+                  "Decirle que con rezar un rosario se le va a pasar todo y no hacer nada más."
+                ],
+                "correct": 1,
+                "feedback": "Fundamental. Somos guías de fe y amigos, no psicólogos. El mayor acto de amor y responsabilidad es derivar oportunamente a profesionales de la salud."
+              },
+              {
+                "q": "2. Si notas que tú mismo estás durmiendo mal, irritable con los jóvenes y cansado de las reuniones, ¿qué debes hacer?",
+                "options": [
+                  "Seguir acumulando más tareas para demostrar que eres fuerte.",
+                  "Conversar con sinceridad con tu equipo, pedir ayuda, descansar y tener un tiempo de oración a solas con Dios.",
+                  "Abandonar el grupo sin avisar a nadie."
+                ],
+                "correct": 1,
+                "feedback": "Exacto. Jesús nos enseñó a retirarnos a descansar. Quien no cuida su propia salud y su vida de oración no puede acompañar bien a otros."
+              },
+              {
+                "q": "3. ¿Qué significa ser dirigente en la Pastoral Juvenil Ágape?",
+                "options": [
+                  "Tener un cargo de poder para mandar a los demás muchachos.",
+                  "Ser un hermano mayor que sirve con humildad, escucha con paciencia y refleja el amor cercano de Jesús.",
+                  "Ser el animador que mejor habla y más aplausos recibe."
+                ],
+                "correct": 1,
+                "feedback": "Excelente. El liderazgo cristiano es servicio humilde que hace crecer a los demás."
+              },
+              {
+                "q": "4. ¿Cómo debemos reaccionar cuando un joven tiene dudas de fe o cuestiona lo que enseñamos?",
+                "options": [
+                  "Enojarnos y decirle que tener dudas es pecado.",
+                  "Acoger sus preguntas con paciencia, conversar con naturalidad y acompañar su búsqueda sin juzgarlo.",
+                  "Ignorar sus preguntas para no confundir a los demás."
+                ],
+                "correct": 1,
+                "feedback": "Muy bien. Jesús acogió las dudas de Tomás con paciencia y amor. Las dudas sinceras son puertas para madurar en la fe."
+              },
+              {
+                "q": "5. ¿Cuál es el compromiso central con el que culminas este itinerario formativo?",
+                "options": [
+                  "Hacer de mi vida un testimonio de alegría, acogida y servicio desinteresado para los jóvenes de nuestra comunidad.",
+                  "Asistir solo cuando no tenga otros planes personales.",
+                  "Buscar únicamente mi propio reconocimiento en la parroquia."
+                ],
+                "correct": 0,
+                "feedback": "Felicitaciones. Has culminado con madurez y corazón pastoral el itinerario formativo de Ágape."
+              }
+            ]
+          }
+        }
+      ]
+    },
+    {
+      "id": "discernimiento-espiritual",
+      "title": "Camino de Discernimiento y Oración",
+      "theme": "cenaculo",
+      "description": "Itinerario para cultivar el silencio interior, aprender a orar con la Palabra y descubrir la voluntad de Dios en lo cotidiano.",
+      "phases": [
+        {
+          "phaseNum": 0,
+          "title": "El Silencio y el Encuentro Interior",
+          "desc": "Aprender a escuchar la voz de Dios en lo secreto",
+          "sessions": [
+            {
+              "id": "0.1",
+              "title": "Entrar en tu Habitación Secreta",
+              "time": "15 min",
+              "objective": "Descubrir el valor del silencio frente al ruido y la prisa diaria.",
+              "bible": "Mateo 6, 6: «Tú, cuando ores, entra en tu habitación, cierra la puerta y ora a tu Padre que está en lo secreto».",
+              "dynamic": "El silencio no es ausencia; es la presencia viva de Dios que susurra al corazón sereno.",
+              "questions": [
+                "¿Cuánto tiempo de silencio real me regalo al día?"
+              ],
+              "prayer": "«Señor, calma mis pensamientos y enséñame a escucharte en lo secreto. Amén.»"
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación • Silencio Interior",
+            "title": "Discernimiento de la Oración",
+            "questions": [
+              {
+                "q": "1. ¿Por qué es necesario el silencio para discernir?",
+                "options": [
+                  "Porque Dios solo habla cuando no hay nadie alrededor.",
+                  "Porque serena el corazón para distinguir la voz de Dios del ruido del mundo.",
+                  "Es solo una costumbre antigua."
+                ],
+                "correct": 1,
+                "feedback": "En la calma interior el Espíritu Santo guía nuestras decisiones."
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ],
+  "about": {
+    "intro": "Esta guía establece los pilares para el funcionamiento, la organización y el servicio comunitario de nuestro grupo pastoral, asegurando un camino de crecimiento espiritual y humano coherente con nuestra misión.",
+    "identity": [
+      {
+        "tag": "Entrega gratuita",
+        "title": "Servicio desinteresado",
+        "text": "Nuestra comunidad se fundamenta en el servicio desinteresado y la formación integral, buscando el bien de cada persona."
+      },
+      {
+        "tag": "Vivir el Evangelio",
+        "title": "Profundidad antes que números",
+        "text": "El propósito de este grupo no es el crecimiento numérico, sino la vivencia profunda del Evangelio y el servicio al prójimo."
+      },
+      {
+        "tag": "Caminar con la Iglesia",
+        "title": "Caminar con el año litúrgico",
+        "text": "Toda nuestra planificación, temas y dinámicas van de la mano con el calendario de la Iglesia y los lemas del periodo."
+      }
+    ],
+    "methods": [
+      {
+        "tag": "Acogida y comunidad",
+        "icon": "🏡",
+        "title": "El método familiar y comunitario",
+        "text": "Nos organizamos en pequeños grupos donde puedes sentirte aceptado, valorado tal como eres y conectado con los demás. Aquí nadie es un espectador; importas tú, tu historia y lo que aportas al equipo."
+      },
+      {
+        "tag": "Empatía y escucha",
+        "icon": "👁️",
+        "title": "El método intuitivo",
+        "text": "Porque sabemos que no todo se dice con palabras. Nos entrenamos para ser sensibles a lo que pasa a nuestro alrededor, a leer los gestos, los silencios y las miradas, desarrollando la empatía y la intuición para conectar de verdad con el otro."
+      },
+      {
+        "tag": "Juego y acción",
+        "icon": "⚡",
+        "title": "El método activo",
+        "text": "Aquí nadie viene a calentar un asiento. Queremos que seas el protagonista absoluto. A través de dinámicas, retos y, sobre todo, siendo protagonista de tu propia formación, experimentamos, nos divertimos y construimos comunidad desde la acción."
+      }
+    ],
+    "cargos": [
+      {
+        "tag": "Inicio",
+        "title": "Dirigentes",
+        "text": "Base del equipo; todos los miembros actúan como tales en su etapa inicial de servicio.",
+        "note": "Etapa de aprendizaje y servicio directo."
+      },
+      {
+        "tag": "Hasta 2 + 2 años",
+        "title": "Animadores",
+        "text": "Período de hasta 2 años, renovables por otros 2 años.",
+        "note": "Requisito: dirigente ≥ 1 período + liderazgo."
+      },
+      {
+        "tag": "Hasta 2 + 2 años",
+        "title": "Coordinadores",
+        "text": "Período de hasta 2 años, renovables por otros 2 años.",
+        "note": "Requisito: haber sido dirigente por al menos 1 período."
+      },
+      {
+        "tag": "Hasta 4 años",
+        "title": "Asesores",
+        "text": "Custodios del sentido y nexo con la Parroquia.",
+        "note": "Período de acompañamiento de hasta 4 años."
+      }
+    ],
+    "meetings": [
+      {
+        "freq": "Mensual",
+        "title": "Reunión mensual",
+        "text": "Revisión de lineamientos, calendario litúrgico y objetivos estratégicos del mes.",
+        "who": "Asesores + Coordinadores"
+      },
+      {
+        "freq": "Quincenal",
+        "title": "Reunión quincenal",
+        "text": "Programación detallada de los encuentros y evaluación del caminar pastoral.",
+        "who": "Coordinadores + Animadores + Dirigentes"
+      },
+      {
+        "freq": "Semanal",
+        "title": "Encuentros semanales",
+        "text": "Sesiones preparadas con anticipación, enfocadas en el lema y la vivencia comunitaria.",
+        "who": "Dirigentes + Jóvenes"
+      }
+    ]
+  }
+}
