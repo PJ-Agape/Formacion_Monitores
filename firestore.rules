@@ -67,5 +67,64 @@ service cloud.firestore {
       allow update: if false;
       allow delete: if isAdmin();
     }
+
+    // Muro de la comunidad. Lo visible lo lee cualquiera; escriben los usuarios invitados;
+    // los administradores publican anuncios y temas, fijan, cierran, ocultan y borran.
+    function changed() { return request.resource.data.diff(resource.data).affectedKeys(); }
+    function onlyMyKey(field) {
+      return request.resource.data[field] is map
+        && request.resource.data[field].diff(resource.data[field]).affectedKeys().hasOnly([request.auth.uid]);
+    }
+    function markUpdate() {
+      return (changed().hasOnly(['likes']) && onlyMyKey('likes'))
+        || (changed().hasOnly(['reports']) && onlyMyKey('reports'));
+    }
+    function asAuthor(d) {
+      return d.authorUid == request.auth.uid && d.authorRole == me().role
+        && d.authorName is string && d.authorName.size() > 0 && d.authorName.size() <= 60
+        && d.hidden == false && d.likes.size() == 0 && d.reports.size() == 0 && d.createdAt == request.time;
+    }
+    function validText(t, max) { return t is string && t.size() > 0 && t.size() <= max; }
+
+    match /wall/{postId} {
+      allow read: if resource.data.hidden == false || isAdmin();
+      allow create: if isMember() && asAuthor(request.resource.data)
+        && validText(request.resource.data.title, 140) && request.resource.data.body is string && request.resource.data.body.size() <= 4000
+        && request.resource.data.type in ['anuncio', 'tema', 'pregunta']
+        && (isAdmin() || (request.resource.data.type == 'pregunta' && request.resource.data.pinned == false))
+        && request.resource.data.closed == false && request.resource.data.replyCount == 0
+        && request.resource.data.lastActivity == request.time;
+      allow update: if isAdmin()
+        || (isMember() && resource.data.hidden == false && (
+          markUpdate()
+          // al responder o borrar una respuesta se actualiza el contador
+          || (changed().hasOnly(['replyCount', 'lastActivity'])
+              && (request.resource.data.replyCount - resource.data.replyCount) in [1, -1]
+              && (request.resource.data.lastActivity == resource.data.lastActivity || request.resource.data.lastActivity == request.time))
+          || (resource.data.authorUid == request.auth.uid && changed().hasOnly(['title', 'body', 'editedAt'])
+              && validText(request.resource.data.title, 140) && request.resource.data.body.size() <= 4000)
+        ));
+      allow delete: if isAdmin() || (isMember() && resource.data.authorUid == request.auth.uid);
+
+      match /replies/{replyId} {
+        function post() { return get(/databases/$(database)/documents/wall/$(postId)).data; }
+        allow read: if (resource.data.hidden == false && post().hidden == false) || isAdmin();
+        allow create: if isMember() && asAuthor(request.resource.data) && validText(request.resource.data.body, 2000)
+          && post().hidden == false && post().closed == false && post().type != 'anuncio';
+        allow update: if isAdmin()
+          || (isMember() && resource.data.hidden == false && (
+            markUpdate()
+            || (resource.data.authorUid == request.auth.uid && changed().hasOnly(['body', 'editedAt'])
+                && validText(request.resource.data.body, 2000))
+          ));
+        // la borra su autor, un administrador o el autor del tema (al borrar su tema completo)
+        allow delete: if isAdmin() || (isMember() && (resource.data.authorUid == request.auth.uid || post().authorUid == request.auth.uid));
+      }
+    }
+
+    // Moderación: los administradores revisan todas las respuestas del muro.
+    match /{path=**}/replies/{replyId} {
+      allow read: if isAdmin();
+    }
   }
 }

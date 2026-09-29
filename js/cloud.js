@@ -272,3 +272,85 @@ export async function updateMyProfile(data) {
   dirty.progress = true; queuePush();
 }
 export function userProgressDetail(p) { return p && p.json ? safeJSON(p.json, {}) : {}; }
+
+// ---------------------------------------------------------------------------
+// Muro de la comunidad: anuncios, temas y preguntas con respuestas.
+// Todos pueden leer; escriben los usuarios invitados; los administradores moderan.
+// ---------------------------------------------------------------------------
+// En el muro se muestra solo el nombre y la inicial del apellido ("Camila S.").
+export function shortName(name) {
+  const p = String(name || "").trim().split(/\s+/).filter(Boolean);
+  if (!p.length) return "Dirigente";
+  return p.length > 1 ? `${p[0]} ${p[p.length - 1][0].toUpperCase()}.` : p[0];
+}
+const snapRows = (qs) => qs.docs.map((d) => ({ id: d.id, ...d.data({ serverTimestamps: "estimate" }) }));
+const wallCol = () => fb.collection(db, "wall");
+const repliesCol = (pid) => fb.collection(db, "wall", pid, "replies");
+// Los administradores ven también lo oculto; el resto, solo lo visible.
+const visibleQuery = (col) => (state().isAdmin ? col : fb.query(col, fb.where("hidden", "==", false)));
+
+export function watchWall(cb, onErr) {
+  if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
+  return fb.onSnapshot(visibleQuery(wallCol()), (qs) => cb(snapRows(qs)), (e) => { console.warn("Muro:", e); onErr && onErr(e); });
+}
+export function watchPost(pid, cb, onErr) {
+  if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
+  return fb.onSnapshot(fb.doc(db, "wall", pid),
+    (s) => cb(s.exists() ? { id: s.id, ...s.data({ serverTimestamps: "estimate" }) } : null),
+    (e) => { console.warn("Tema:", e); onErr && onErr(e); });
+}
+export function watchReplies(pid, cb, onErr) {
+  if (!enabled || !db) return () => {};
+  return fb.onSnapshot(visibleQuery(repliesCol(pid)), (qs) => cb(snapRows(qs)), (e) => { console.warn("Respuestas:", e); onErr && onErr(e); });
+}
+export async function latestWall() {
+  if (!enabled || !db) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(visibleQuery(wallCol())), 6000)); } catch { return []; }
+}
+function author() {
+  return { authorUid: user.uid, authorName: shortName(account.name), authorRole: account.role };
+}
+export async function createPost({ type, title, body, pinned }) {
+  const ref = fb.doc(wallCol());
+  await fb.setDoc(ref, {
+    type, title, body, ...author(), pinned: !!pinned, closed: false, hidden: false,
+    likes: {}, reports: {}, replyCount: 0, createdAt: fb.serverTimestamp(), lastActivity: fb.serverTimestamp(),
+  });
+  return ref.id;
+}
+export const updatePost = (pid, data) => fb.updateDoc(fb.doc(db, "wall", pid), data);
+// Al borrar una publicación se borran también sus respuestas.
+export async function deletePost(pid) {
+  const rs = await fb.getDocs(visibleQuery(repliesCol(pid)));
+  const b = fb.writeBatch(db);
+  rs.docs.forEach((d) => b.delete(d.ref));
+  b.delete(fb.doc(db, "wall", pid));
+  await b.commit();
+}
+// Moderación: respuestas reportadas u ocultas en todo el muro (solo administradores).
+export async function flaggedReplies() {
+  try {
+    const rows = (await withTimeout(fb.getDocs(fb.collectionGroup(db, "replies")))).docs
+      .map((d) => ({ id: d.id, pid: d.ref.parent.parent.id, ...d.data({ serverTimestamps: "estimate" }) }));
+    return rows.filter((r) => r.hidden || Object.keys(r.reports || {}).length);
+  } catch (e) { console.warn("Moderación:", e); return []; }
+}
+export async function createReply(pid, body) {
+  const b = fb.writeBatch(db);
+  b.set(fb.doc(repliesCol(pid)), { body, ...author(), hidden: false, likes: {}, reports: {}, createdAt: fb.serverTimestamp() });
+  b.update(fb.doc(db, "wall", pid), { replyCount: fb.increment(1), lastActivity: fb.serverTimestamp() });
+  await b.commit();
+}
+export const updateReply = (pid, rid, data) => fb.updateDoc(fb.doc(db, "wall", pid, "replies", rid), data);
+export async function deleteReply(pid, rid) {
+  const b = fb.writeBatch(db);
+  b.delete(fb.doc(db, "wall", pid, "replies", rid));
+  b.update(fb.doc(db, "wall", pid), { replyCount: fb.increment(-1) });
+  await b.commit();
+}
+// Marca o desmarca "me gusta" / "reportar" solo con la clave propia.
+export function toggleMark(path, field, on) {
+  const ref = fb.doc(db, ...path);
+  return fb.updateDoc(ref, { [`${field}.${user.uid}`]: on ? true : fb.deleteField() });
+}
+export const myUid = () => (user ? user.uid : "");

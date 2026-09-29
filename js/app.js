@@ -6,6 +6,7 @@ import * as cloud from "./cloud.js";
 import { esc, rich, plain, icon, toast, initials } from "./util.js";
 import qrcode from "./qrcode.mjs";
 import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
+import * as wall from "./muro.js";
 
 qrcode.stringToBytes = utf8Bytes;
 
@@ -31,6 +32,8 @@ document.addEventListener("click", (e) => {
 // ---------------------------------------------------------------------------
 const routes = [
   [/^\/$/, viewHome, "inicio"],
+  [/^\/muro$/, () => wall.viewWall(), "muro"],
+  [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
   [/^\/comunidad$/, viewCommunity, "comunidad"],
   [/^\/itinerario$/, viewItinerary, "itinerario"],
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
@@ -51,6 +54,7 @@ export async function render() {
     const m = path.match(re);
     if (m) { match = m; fn = f; section = sec; break; }
   }
+  leaveHooks.splice(0).forEach((f) => { try { f(); } catch {} });
   if (!cloud.enabled && section !== "admin" && section !== "perfil" && section !== "verificar" && !S.hasProfile()) {
     location.replace("#/perfil"); return;
   }
@@ -71,6 +75,9 @@ export async function render() {
 }
 const afterRender = [];
 export const onAfterRender = (f) => afterRender.push(f);
+// Tareas al salir de una vista (p. ej. dejar de escuchar el muro en tiempo real).
+const leaveHooks = [];
+const onLeave = (f) => leaveHooks.push(f);
 window.addEventListener("hashchange", render);
 
 function applyTheme() {
@@ -85,6 +92,7 @@ function applyTheme() {
 // ---------------------------------------------------------------------------
 const NAV = [
   ["inicio", "#/", "Inicio", "home"],
+  ["muro", "#/muro", "Muro", "chat"],
   ["comunidad", "#/comunidad", "Comunidad", "users"],
   ["itinerario", "#/itinerario", "Curso", "route"],
   ["materiales", "#/materiales", "Materiales", "book"],
@@ -132,6 +140,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
+  onAfterRender(() => wall.homeHighlight());
   const c = S.content();
   const course = S.activeCourse();
   const st = S.courseState(course);
@@ -169,6 +178,7 @@ function viewHome() {
     <span class="spacer"></span>${icon("right")}
   </a>` : ""}
 
+  <div id="wallSlot"></div>
   <div id="installSlot"></div>
   `;
 }
@@ -1091,6 +1101,8 @@ actions.install = async () => {
 // ---------------------------------------------------------------------------
 // Arranque
 // ---------------------------------------------------------------------------
+wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+
 async function boot() {
   try {
     if (cloud.enabled) { await cloud.init(); cloud.onChange(render); }
