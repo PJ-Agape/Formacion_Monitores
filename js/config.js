@@ -20,10 +20,18 @@ export const CONFIG = {
 
   // ---- Cuentas y seguimiento (Firebase) ----
   // Mientras sea null, la app funciona en modo local (sin cuentas).
-  // Pega aquí la configuración web de tu proyecto Firebase (ver CONFIGURAR-FIREBASE.md).
-  firebase: null,
+  // Configuración web del proyecto Firebase "pastoral-agape" (ver CONFIGURAR-FIREBASE.md).
+  // No es secreta: la seguridad la dan las reglas de firestore.rules.
+  firebase: {
+    apiKey: "AIzaSyBMJBH1HTZYgDDHd0z0jtR528j2ODJKAxQ",
+    authDomain: "pastoral-agape.firebaseapp.com",
+    projectId: "pastoral-agape",
+    storageBucket: "pastoral-agape.firebasestorage.app",
+    messagingSenderId: "1060050673929",
+    appId: "1:1060050673929:web:04504eae425c6114e833d8",
+  },
 
   // Correos que se convierten en administradores la primera vez que entran,
   // aunque nadie los haya invitado. Deben coincidir con la lista de firestore.rules.
-  bootstrapAdmins: [],
+  bootstrapAdmins: ["iperezconus84@gmail.com"],
 };
