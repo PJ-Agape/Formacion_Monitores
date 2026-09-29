@@ -645,3 +645,21 @@ body.is-admin { --bottom-h: 0px; }
 
 .toast-box { bottom: auto; top: 18px; }
 .btn-block { white-space: normal; text-align: center; }
+.google-btn { background: var(--surface) !important; color: var(--ink) !important; border: 1px solid var(--line-2) !important; box-shadow: var(--shadow-1) !important; }
+
+/* ---------- Seguimiento de dirigentes ---------- */
+.people-table { padding: 0; overflow-x: auto; }
+.people-table table { width: 100%; border-collapse: collapse; font-size: .9rem; min-width: 640px; }
+.people-table th { text-align: left; font-size: .72rem; letter-spacing: .06em; text-transform: uppercase; color: var(--ink-3); font-weight: 700; padding: 12px 16px; border-bottom: 1px solid var(--line); }
+.people-table td { padding: 12px 16px; border-bottom: 1px solid var(--line); vertical-align: middle; }
+.people-table tr:last-child td { border-bottom: 0; }
+.people-table td a { color: var(--ink); text-decoration: none; }
+.people-table td a.chip { color: var(--ok); }
+.people-table .sub { display: block; font-size: .78rem; color: var(--ink-3); margin-top: 2px; }
+.people-table tr.paused td { opacity: .55; }
+.cell-bar { display: flex; align-items: center; gap: 10px; min-width: 150px; }
+.cell-bar .mini-bar { flex: 1; margin: 0; }
+.cell-bar span { font-variant-numeric: tabular-nums; font-size: .82rem; color: var(--ink-2); }
+.unit-dots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
+.unit-dots span { font-size: .72rem; font-weight: 700; padding: 4px 8px; border-radius: 8px; background: var(--surface-2); color: var(--ink-3); }
+.unit-dots span.on { background: var(--ok-soft); color: var(--ok); }

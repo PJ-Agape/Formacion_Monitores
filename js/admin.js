@@ -8,19 +8,30 @@ const $ = (s, r = document) => r.querySelector(s);
 let api;          // { actions, render, onAfterRender }
 let undo = null;  // copia del borrador antes de la última eliminación
 
+let cloudOn = false;
 const THEMES = [["amanecer", "Amanecer · luz y calidez"], ["cenaculo", "Cenáculo · oración"], ["esperanza", "Esperanza · vida"]];
 
 // ---------------------------------------------------------------------------
 export async function renderAdmin(sub, _api) {
   api = _api;
   bindActions();
-  if (!S.isAdmin()) return loginView();
+  cloudOn = !!(api.cloud && api.cloud.enabled);
+  if (cloudOn) {
+    const st = api.cloud.state();
+    if (!st.ready) return cloudGate(st);
+    if (!st.isAdmin) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
+      <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
+      <h1 class="display" style="font-size:1.6rem">Solo para administradores</h1>
+      <p class="muted" style="margin-top:8px">Tu cuenta es de dirigente. Si necesitas acceso a Gestión, pídelo al equipo coordinador.</p>
+      <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
+  } else if (!S.isAdmin()) return loginView();
   const draft = S.ensureDraft();
   const parts = sub.split("/").filter(Boolean);
   const page = parts[0] || "resumen";
   let body = "";
   switch (page) {
-    case "resumen": body = summaryView(draft); break;
+    case "resumen": body = await summaryView(draft); break;
+    case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
     case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
@@ -40,12 +51,13 @@ function shell(page, body) {
   <div class="admin-shell">
     <nav class="admin-side" aria-label="Gestión">
       ${link("resumen", "#/admin", "Resumen", "grid")}
+      ${cloudOn ? link("dirigentes", "#/admin/dirigentes", "Dirigentes", "users") : ""}
       ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
       ${link("materiales", "#/admin/materiales", "Materiales", "book")}
       ${link("oracion", "#/admin/oracion", "Oración", "flame")}
-      ${link("comunidad", "#/admin/comunidad", "Comunidad", "users")}
+      ${link("comunidad", "#/admin/comunidad", "Comunidad", "grid")}
       ${link("publicar", "#/admin/publicar", "Publicar", "send", dirty ? '<span class="count">!</span>' : "")}
-      ${link("ajustes", "#/admin/ajustes", "Ajustes", "gear")}
+      ${cloudOn ? "" : link("ajustes", "#/admin/ajustes", "Ajustes", "gear")}
       <div class="side-extra">
         <a href="#" data-action="aPreview">${icon("eye")} Vista previa</a>
         <a href="#" data-action="aLogout">${icon("out")} Salir de Gestión</a>
@@ -99,7 +111,7 @@ async function doLogin(pass) {
 // ---------------------------------------------------------------------------
 // Resumen
 // ---------------------------------------------------------------------------
-function summaryView(d) {
+async function summaryView(d) {
   const phases = d.courses.reduce((a, c) => a + c.phases.length, 0);
   const sessions = d.courses.reduce((a, c) => a + c.phases.reduce((b, p) => b + p.sessions.length, 0), 0);
   const questions = d.courses.reduce((a, c) => a + c.phases.reduce((b, p) => b + (p.quiz?.questions?.length || 0), 0), 0);
@@ -108,6 +120,7 @@ function summaryView(d) {
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Resumen</h1>
     <p>Todo lo que edites queda en un borrador en este dispositivo. Cuando esté listo, lo publicas y todos los dirigentes lo verán.</p></header>
+  ${cloudOn ? await followSummary() : ""}
   ${legacy ? `<div class="card" style="border-color:var(--gold)">
     <h3>Encontramos contenido editado con la versión anterior</h3>
     <p class="muted small" style="margin-top:6px">Este navegador guarda cambios hechos con el panel antiguo (${legacy.join(", ")}). ¿Quieres traerlos al borrador para publicarlos?</p>
@@ -121,14 +134,14 @@ function summaryView(d) {
     <ol class="steps muted">
       <li><b>Edita</b> en Cursos, Materiales, Oración o Comunidad. Se guarda solo.</li>
       <li><b>Revisa</b> con «Vista previa»: ves la página tal como la verán los dirigentes.</li>
-      <li><b>Publica</b>: descargas <span class="kbd">contenido.json</span> y lo subes a la carpeta <span class="kbd">data</span> del repositorio.</li>
+      <li><b>Publica</b>: ${cloudOn ? "con un botón, desde «Publicar»" : `descargas <span class="kbd">contenido.json</span> y lo subes a la carpeta <span class="kbd">data</span> del repositorio`}.</li>
     </ol>
   </div>
-  <div class="card" style="background:var(--surface-2)">
-    <span class="chip">Próximamente</span>
-    <h3 style="margin-top:10px">Usuarios y seguimiento</h3>
-    <p class="muted small" style="margin-top:6px">Crear cuentas de dirigentes y ver el avance de todos requiere conectar una base de datos. La app ya está ordenada para sumarlo sin rehacer nada.</p>
-  </div>`;
+  ${cloudOn ? "" : `<div class="card" style="background:var(--surface-2)">
+    <span class="chip">Opcional</span>
+    <h3 style="margin-top:10px">Cuentas y seguimiento</h3>
+    <p class="muted small" style="margin-top:6px">Para invitar dirigentes con su cuenta de Google y ver el avance de todos, conecta Firebase siguiendo la guía <span class="kbd">CONFIGURAR-FIREBASE.md</span> del repositorio.</p>
+  </div>`}`;
 }
 function legacyDiff(d) {
   const l = S.legacyContent();
@@ -321,24 +334,193 @@ function publishView(d) {
   const repoUpload = "https://github.com/PJ-Agape/Formacion_Monitores/upload/main/data";
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Publicar cambios</h1>
-    <p>La página lee su contenido desde <span class="kbd">data/contenido.json</span>. Publicar es reemplazar ese archivo por tu borrador.</p></header>
-  <div class="card ${dirty ? "" : ""}">
+    <p>${cloudOn ? "Al publicar, todos los dirigentes ven los cambios la próxima vez que abran la app." : `La página lee su contenido desde <span class="kbd">data/contenido.json</span>. Publicar es reemplazar ese archivo por tu borrador.`}</p></header>
+  <div class="card">
     <div class="row-wrap"><span class="chip ${dirty ? "warn" : "ok"}">${dirty ? "Borrador con cambios" : "Sin cambios pendientes"}</span>
       <span class="xs muted">Versión publicada: ${esc(pub.version || 1)} · ${esc(pub.updatedAt || "")}</span></div>
     <ol class="steps" style="margin-top:16px">
       <li><button class="btn btn-sm btn-ghost" data-action="aPreview">${icon("eye")} Revisar en vista previa</button></li>
-      <li><button class="btn btn-sm btn-primary" data-action="aDownload">${icon("dl")} Descargar contenido.json</button></li>
-      <li>Abre <a href="${repoUpload}" target="_blank" rel="noopener">la carpeta data en GitHub</a>, arrastra el archivo y confirma con «Commit changes». En uno o dos minutos todos verán los cambios.</li>
+      ${cloudOn
+        ? `<li><button class="btn btn-sm btn-primary" data-action="aPublishCloud" ${dirty ? "" : "disabled"}>${icon("send")} Publicar para todos</button></li>`
+        : `<li><button class="btn btn-sm btn-primary" data-action="aDownload">${icon("dl")} Descargar contenido.json</button></li>
+      <li>Abre <a href="${repoUpload}" target="_blank" rel="noopener">la carpeta data en GitHub</a>, arrastra el archivo y confirma con «Commit changes». En uno o dos minutos todos verán los cambios.</li>`}
     </ol>
   </div>
   <div class="card">
     <h3>Otras acciones</h3>
     <div class="row-wrap" style="margin-top:12px">
+      ${cloudOn ? `<button class="btn btn-sm btn-ghost" data-action="aDownload">${icon("dl")} Descargar respaldo (.json)</button>` : ""}
       <label class="btn btn-sm btn-ghost">${icon("ul")} Importar un contenido.json<input type="file" accept="application/json,.json" id="importFile" hidden></label>
       <button class="btn btn-sm btn-danger" data-action="aDiscard" ${dirty ? "" : "disabled"}>${icon("undo")} Descartar borrador</button>
     </div>
     <p class="xs muted" style="margin-top:10px">Importar sirve para retomar un respaldo o seguir editando en otro computador.</p>
   </div>`;
+}
+
+// ---------------------------------------------------------------------------
+// Cuentas: acceso y seguimiento de dirigentes (con Firebase)
+// ---------------------------------------------------------------------------
+function cloudGate(st) {
+  return `<div class="card" style="max-width:440px;margin:6vh auto 0;text-align:center;padding:32px">
+    <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
+    <h1 class="display" style="font-size:1.6rem">Gestión de la pastoral</h1>
+    <p class="muted small" style="margin-top:8px">Ingresa con tu cuenta de Google de administrador.</p>
+    ${st.status === "loading" ? `<p class="muted" style="margin-top:16px">Conectando…</p>`
+      : st.status === "guest" || st.status === "error"
+        ? `<button class="btn btn-primary btn-block" style="margin-top:18px" data-action="signIn">Continuar con Google</button>`
+        : `<p class="muted" style="margin-top:14px">Tu cuenta aún no tiene acceso.</p><a class="btn btn-ghost" style="margin-top:12px" href="#/perfil">Ver mi cuenta</a>`}
+  </div>`;
+}
+
+let people = null;          // cache del panel
+let peopleCourse = null;    // curso seleccionado en el panel
+let peopleFilter = "";
+const tsDate = (t) => (t && typeof t.toDate === "function" ? t.toDate() : t ? new Date(t) : null);
+function ago(t) {
+  const d = tsDate(t); if (!d || isNaN(d)) return "—";
+  const days = Math.floor((Date.now() - d.getTime()) / 864e5);
+  if (days <= 0) return "hoy"; if (days === 1) return "ayer"; if (days < 30) return `hace ${days} días`;
+  return d.toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" });
+}
+let peopleAt = 0, peopleUid = "", keepPeople = false;
+async function loadPeople(force) {
+  const uid = api.cloud.state().account?.uid || "";
+  const reuse = keepPeople; keepPeople = false;
+  if (!people || force || peopleUid !== uid || !reuse) {
+    people = await api.cloud.adminData(); peopleAt = Date.now(); peopleUid = uid;
+  }
+  return people;
+}
+function courseTotals(course) {
+  return { units: course.phases.reduce((a, p) => a + p.sessions.length, 0), modules: course.phases.length };
+}
+function rowFor(u, course) {
+  const s = (u.progress && u.progress.summary && u.progress.summary[course.id]) || {};
+  return { units: s.units || 0, modules: s.modules || 0, complete: !!s.complete, cert: s.certCode || "", last: u.progress?.updatedAt || u.lastSeen };
+}
+
+async function followSummary() {
+  let data;
+  try { data = await loadPeople(); } catch { return `<div class="note warn">No se pudo cargar el seguimiento. Revisa la conexión.</div>`; }
+  const course = S.content().courses[0];
+  const t = courseTotals(course);
+  const dir = data.users.filter((u) => u.active !== false);
+  const rows = dir.map((u) => rowFor(u, course));
+  const started = rows.filter((r) => r.units > 0).length;
+  const done = rows.filter((r) => r.complete).length;
+  const week = dir.filter((u) => { const d = tsDate(u.progress?.updatedAt || u.lastSeen); return d && Date.now() - d.getTime() < 7 * 864e5; }).length;
+  const stat = (n, l) => `<div class="card stat"><b>${n}</b><span class="muted small">${l}</span></div>`;
+  return `<div class="grid grid-4">${stat(dir.length, "personas con cuenta")}${stat(started, "comenzaron el curso")}${stat(done, "completaron el curso")}${stat(week, "activas esta semana")}</div>
+    <a class="btn btn-soft" href="#/admin/dirigentes" style="align-self:flex-start">${icon("users")} Ver seguimiento de dirigentes · ${t.units} unidades por curso</a>`;
+}
+
+async function peopleView() {
+  let data;
+  try { data = await loadPeople(); }
+  catch (e) { return `<div class="note warn">No se pudo cargar el seguimiento (${esc(e.code || e.message)}). Revisa la conexión y las reglas de Firestore.</div>`; }
+  const courses = S.content().courses;
+  const course = courses.find((c) => c.id === peopleCourse) || courses[0];
+  const t = courseTotals(course);
+  const q = peopleFilter.toLowerCase();
+  const list = data.users
+    .filter((u) => !q || [u.name, u.email, u.parish].join(" ").toLowerCase().includes(q))
+    .map((u) => ({ u, r: rowFor(u, course) }))
+    .sort((a, b) => (a.u.active === false) - (b.u.active === false) || b.r.units - a.r.units || String(a.u.name).localeCompare(b.u.name));
+  return `
+  <header class="page-head row-wrap" style="align-items:flex-end">
+    <div><span class="eyebrow">Gestión</span><h1>Dirigentes</h1><p>Invita por correo a quienes harán el curso y sigue su avance. El cuaderno personal de cada uno es privado y no aparece aquí.</p></div>
+    <span class="spacer"></span>
+    <button class="btn btn-primary" data-action="aInvite">${icon("plus")} Invitar</button>
+  </header>
+
+  <div class="row-wrap">
+    ${courses.length > 1 ? `<select class="select" style="width:auto" id="peopleCourse">${courses.map((c) => `<option value="${esc(c.id)}" ${c.id === course.id ? "selected" : ""}>${esc(c.title)}</option>`).join("")}</select>` : ""}
+    <input class="input" id="peopleSearch" style="flex:1;min-width:200px" placeholder="Buscar por nombre, correo o parroquia" value="${esc(peopleFilter)}">
+    <button class="btn btn-sm btn-ghost" data-action="aPeopleRefresh">${icon("undo")} Actualizar</button>
+    <button class="btn btn-sm btn-ghost" data-action="aPeopleCsv">${icon("dl")} Exportar planilla</button>
+  </div>
+
+  <div class="card people-table">
+    <table>
+      <thead><tr><th>Dirigente</th><th>Avance en unidades</th><th>Módulos</th><th>Última actividad</th><th>Constancia</th></tr></thead>
+      <tbody>
+      ${list.length ? list.map(({ u, r }) => `<tr class="${u.active === false ? "paused" : ""}">
+        <td><a href="#/admin/dirigentes/${esc(u.uid)}"><b>${esc(u.name || u.email)}</b></a>
+          <span class="sub">${esc(u.parish || "")}${u.role === "admin" ? ` · <span class="chip warn">Admin</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
+        <td><div class="cell-bar"><div class="mini-bar"><i style="width:${t.units ? (r.units / t.units) * 100 : 0}%"></i></div><span>${r.units}/${t.units}</span></div></td>
+        <td>${r.modules}/${t.modules}</td>
+        <td>${ago(r.last)}</td>
+        <td>${r.complete ? `<a href="#/verificar/${encodeURIComponent(r.cert)}" class="chip ok">${icon("award")} ${esc(r.cert)}</a>` : `<span class="muted">—</span>`}</td>
+      </tr>`).join("") : `<tr><td colspan="5" class="muted" style="text-align:center;padding:24px">${data.users.length ? "Nadie coincide con la búsqueda." : "Aún no hay dirigentes con cuenta. Invita al primero."}</td></tr>`}
+      </tbody>
+    </table>
+  </div>
+
+  ${data.invites.length ? `<div class="card">
+    <h3>Invitaciones pendientes · ${data.invites.length}</h3>
+    <p class="muted small" style="margin-top:4px">Aún no han ingresado. Envíales el enlace de la app para que entren con ese correo de Google.</p>
+    <div class="stack" style="--gap:6px;margin-top:12px">${data.invites.map((i) => `
+      <div class="tree-item"><div class="t"><strong>${esc(i.name || i.id)}</strong><span>${esc(i.id)} · ${i.role === "admin" ? "Administrador" : "Dirigente"}${i.parish ? " · " + esc(i.parish) : ""}</span></div>
+        <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
+        ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
+  </div>` : ""}`;
+}
+
+async function personView(uid) {
+  const data = await loadPeople();
+  const u = data.users.find((x) => x.uid === uid);
+  if (!u) return `<div class="note warn">No se encontró a esta persona. <a href="#/admin/dirigentes">Volver</a></div>`;
+  const detail = api.cloud.userProgressDetail(u.progress);
+  const me = api.cloud.state().account;
+  return `
+  <nav class="crumbs"><a href="#/admin/dirigentes">Dirigentes</a>${icon("right")}<span>${esc(u.name)}</span></nav>
+  <div class="card row-wrap" style="align-items:flex-start">
+    <div style="flex:1;min-width:220px">
+      <h1 class="display" style="font-size:1.8rem">${esc(u.name)}</h1>
+      <p class="muted small" style="margin-top:4px">${esc(u.email)}${u.parish ? " · " + esc(u.parish) : ""}</p>
+      <div class="row-wrap" style="margin-top:10px"><span class="chip ${u.role === "admin" ? "warn" : "accent"}">${u.role === "admin" ? "Administrador" : "Dirigente"}</span>
+        ${u.active === false ? `<span class="chip">En pausa</span>` : `<span class="chip ok">Activa</span>`}
+        <span class="chip">Última actividad: ${ago(u.progress?.updatedAt || u.lastSeen)}</span></div>
+    </div>
+    ${u.uid !== me.uid ? `<div class="row-wrap">
+      <button class="btn btn-sm btn-ghost" data-action="aUserRole" data-uid="${esc(u.uid)}" data-role="${u.role === "admin" ? "dirigente" : "admin"}">${u.role === "admin" ? "Quitar rol de administrador" : "Hacer administrador"}</button>
+      <button class="btn btn-sm ${u.active === false ? "btn-soft" : "btn-danger"}" data-action="aUserActive" data-uid="${esc(u.uid)}" data-active="${u.active === false ? "1" : "0"}">${u.active === false ? "Reactivar cuenta" : "Poner en pausa"}</button>
+    </div>` : ""}
+  </div>
+  ${S.content().courses.map((course) => {
+    const p = detail[course.id] || { read: {}, phases: {}, scores: {} };
+    const any = Object.keys(p.read || {}).length || Object.keys(p.phases || {}).length;
+    if (!any && course !== S.content().courses[0]) return "";
+    return `<div class="card">
+      <div class="row-wrap"><h3>${esc(course.title)}</h3><span class="spacer"></span>
+        ${p.completedDate ? `<span class="chip ok">${icon("award")} Completado ${esc(new Date(p.completedDate).toLocaleDateString("es-CL"))}</span>` : ""}</div>
+      <div class="stack" style="--gap:14px;margin-top:14px">
+      ${course.phases.map((ph, i) => {
+        const read = ph.sessions.filter((se) => p.read?.[S.sessionKey(i, se)]).length;
+        const sc = p.scores?.[i];
+        return `<div>
+          <div class="row-wrap"><b class="small">Módulo ${esc(ph.phaseNum)} · ${esc(ph.title)}</b><span class="spacer"></span>
+            ${p.phases?.[i] ? `<span class="chip ok">Aprobado${sc ? ` · ${sc.right}/${sc.total}` : ""}</span>` : sc ? `<span class="chip warn">Evaluación ${sc.right}/${sc.total}</span>` : ""}
+            <span class="xs muted">${read}/${ph.sessions.length} unidades</span></div>
+          <div class="unit-dots">${ph.sessions.map((se) => `<span class="${p.read?.[S.sessionKey(i, se)] ? "on" : ""}" title="${esc(se.id + " · " + se.title)}">${esc(se.id)}</span>`).join("")}</div>
+        </div>`;
+      }).join("")}
+      </div></div>`;
+  }).join("")}`;
+}
+
+function peopleCsv() {
+  const courses = S.content().courses;
+  const course = courses.find((c) => c.id === peopleCourse) || courses[0];
+  const t = courseTotals(course);
+  const cell = (v) => `"${String(v ?? "").replace(/"/g, '""')}"`;
+  const lines = [["Nombre", "Correo", "Parroquia", "Rol", "Estado", "Unidades completadas", "Total unidades", "Módulos aprobados", "Última actividad", "Constancia"].map(cell).join(",")];
+  people.users.forEach((u) => {
+    const r = rowFor(u, course), d = tsDate(r.last);
+    lines.push([u.name, u.email, u.parish, u.role === "admin" ? "Administrador" : "Dirigente", u.active === false ? "En pausa" : "Activa",
+      r.units, t.units, r.modules, d && !isNaN(d) ? d.toISOString().slice(0, 10) : "", r.complete ? r.cert : ""].map(cell).join(","));
+  });
+  download(`seguimiento-${slug(course.title)}.csv`, "﻿" + lines.join("\n"), "text/csv;charset=utf-8");
 }
 
 // ---------------------------------------------------------------------------
@@ -385,6 +567,8 @@ const SPECS = {
     return f;
   },
   box: () => [["title", "Título de la sección", "text"], ["desc", "Descripción", "textarea"]],
+  invite: () => [["email", "Correo de Google", "text", null, "nombre@gmail.com"], ["name", "Nombre y apellido", "text"], ["parish", "Capilla o parroquia", "text"],
+    ["role", "Rol", "select", [["dirigente", "Dirigente (hace el curso)"], ["admin", "Administrador (gestión y seguimiento)"]]]],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
   identity: () => [["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
   methods: () => [["icon", "Emoji", "text", null, "🏡"], ["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
@@ -525,6 +709,67 @@ function bindActions() {
   });
 
   A.aLogout = () => { S.setAdmin(false); location.hash = "#/"; };
+
+  // Publicar en la nube
+  A.aPublishCloud = async (el) => {
+    if (!confirm("¿Publicar el borrador para todos los dirigentes?")) return;
+    el.disabled = true;
+    try {
+      const d = S.ensureDraft();
+      const pub = S.publishedContent();
+      d.version = (Number(pub.version) || 1) + 1;
+      d.updatedAt = new Date().toISOString().slice(0, 10);
+      await api.cloud.publishContent(d);
+      S.setPublished(d); S.discardDraft(); undo = null;
+      toast("Publicado. Los dirigentes ya ven los cambios.", "ok", 4000); api.render();
+    } catch (e) { el.disabled = false; toast("No se pudo publicar: " + (e.code || e.message), "", 5000); }
+  };
+
+  // Seguimiento de dirigentes
+  A.aPeopleRefresh = async () => { await loadPeople(true); api.render(); toast("Datos actualizados"); };
+  A.aPeopleCsv = () => peopleCsv();
+  A.aInvite = () => openEditor({
+    title: "Invitar a un dirigente", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente" },
+    onSave: (o) => {
+      const email = String(o.email || "").trim().toLowerCase();
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast("Escribe un correo válido", ""); return false; }
+      if (!String(o.name || "").trim()) { toast("Escribe el nombre", ""); return false; }
+      api.cloud.invite({ email, name: o.name.trim(), parish: (o.parish || "").trim(), role: o.role })
+        .then(async () => { await loadPeople(true); api.render(); toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim()); })
+        .catch((e) => toast("No se pudo invitar: " + (e.code || e.message), "", 5000));
+    },
+  });
+  const shareInvite = (email, name) => {
+    const url = location.origin + location.pathname;
+    const msg = `¡Hola${name ? " " + name.split(" ")[0] : ""}! Te invitamos al curso de formación de dirigentes de la Pastoral Juvenil Ágape. Entra aquí y elige «Continuar con Google» con tu correo ${email}: ${url}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
+  };
+  A.aInviteShare = (el) => shareInvite(el.dataset.email, el.dataset.name);
+  A.aInviteDelete = async (el) => {
+    if (!confirm(`¿Anular la invitación de ${el.dataset.email}?`)) return;
+    try { await api.cloud.deleteInvite(el.dataset.email); await loadPeople(true); api.render(); toast("Invitación anulada"); }
+    catch (e) { toast("No se pudo anular: " + (e.code || e.message), ""); }
+  };
+  A.aUserRole = async (el) => {
+    const toAdmin = el.dataset.role === "admin";
+    if (!confirm(toAdmin ? "¿Dar acceso de administrador a esta persona? Podrá editar el contenido y ver el avance de todos." : "¿Quitar el rol de administrador?")) return;
+    try { await api.cloud.updateUser(el.dataset.uid, { role: el.dataset.role }); await loadPeople(true); api.render(); toast("Rol actualizado"); }
+    catch (e) { toast("No se pudo cambiar: " + (e.code || e.message), ""); }
+  };
+  A.aUserActive = async (el) => {
+    const on = el.dataset.active === "1";
+    if (!on && !confirm("¿Poner en pausa esta cuenta? No podrá seguir registrando avance hasta que la reactives.")) return;
+    try { await api.cloud.updateUser(el.dataset.uid, { active: on }); await loadPeople(true); api.render(); toast(on ? "Cuenta reactivada" : "Cuenta en pausa"); }
+    catch (e) { toast("No se pudo cambiar: " + (e.code || e.message), ""); }
+  };
+  document.addEventListener("input", (e) => {
+    if (e.target.id !== "peopleSearch") return;
+    peopleFilter = e.target.value;
+    const pos = e.target.selectionStart;
+    clearTimeout(e.target._t);
+    e.target._t = setTimeout(async () => { keepPeople = true; await api.render(); const i = document.getElementById("peopleSearch"); if (i) { i.focus(); i.setSelectionRange(pos, pos); } }, 250);
+  });
+  document.addEventListener("change", (e) => { if (e.target.id === "peopleCourse") { peopleCourse = e.target.value; keepPeople = true; api.render(); } });
   A.aPreview = () => { S.ensureDraft(); S.setPreview(true); location.hash = "#/"; };
   A.aUndo = () => { if (!undo) return; S.saveDraft(undo); undo = null; toast("Cambio deshecho"); api.render(); };
   A.aDiscard = () => {

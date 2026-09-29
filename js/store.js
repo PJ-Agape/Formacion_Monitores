@@ -16,7 +16,13 @@ const K = {
   mode: "agape_color_mode",
   cache: "agape_content_cache",
   notes: "agape_notes_v1",
+  owner: "agape_local_owner",
 };
+
+// Aviso a la nube cuando cambia el avance o el cuaderno (lo registra cloud.js).
+let syncHandler = null;
+export const setSync = (f) => { syncHandler = f; };
+const synced = (kind) => { if (syncHandler) syncHandler(kind); };
 
 const read = (k, fallback = null) => {
   try { const v = localStorage.getItem(k); return v == null ? fallback : JSON.parse(v); }
@@ -28,7 +34,11 @@ const del = (k) => { try { localStorage.removeItem(k); } catch {} };
 // ---------------- Contenido ----------------
 let published = null;
 
-export async function loadContent() {
+export async function loadContent(fromCloud) {
+  if (fromCloud) {
+    const c = await fromCloud();
+    if (c && Array.isArray(c.courses)) { published = c; write(K.cache, c); return published; }
+  }
   try {
     const res = await fetch(CONFIG.contentUrl, { cache: "no-cache" });
     if (!res.ok) throw new Error(res.status);
@@ -52,6 +62,7 @@ export function content() {
   return isPreview() ? read(K.draft) : published;
 }
 export const publishedContent = () => published;
+export function setPublished(c) { published = c; write(K.cache, c); }
 
 // Borrador del administrador
 export const getDraft = () => read(K.draft);
@@ -132,8 +143,10 @@ export function progress(courseId) {
   return { phases: p.phases || {}, read: p.read || {}, scores: p.scores || {}, completedDate: p.completedDate || "", certCode: p.certCode || "" };
 }
 function saveProgress(courseId, prog) {
-  const all = allProgress(); all[courseId] = prog; write(K.progress, all);
+  const all = allProgress(); all[courseId] = prog; write(K.progress, all); synced("progress");
 }
+export const allProgressRaw = () => allProgress();
+export function setAllProgress(obj, silent) { write(K.progress, obj || {}); if (!silent) synced("progress"); }
 export function toggleRead(courseId, sessionKey) {
   const p = progress(courseId);
   if (p.read[sessionKey]) delete p.read[sessionKey]; else p.read[sessionKey] = true;
@@ -160,7 +173,7 @@ export function completeCourse(courseId) {
   return p;
 }
 export function resetProgress(courseId) {
-  const all = allProgress(); delete all[courseId]; write(K.progress, all);
+  const all = allProgress(); delete all[courseId]; write(K.progress, all); synced("progress");
 }
 
 // Estado derivado útil para las vistas
@@ -199,7 +212,16 @@ export function setNote(courseId, key, qi, text) {
   all[courseId] = all[courseId] || {};
   all[courseId][key] = all[courseId][key] || {};
   if (text && text.trim()) all[courseId][key][qi] = text; else delete all[courseId][key][qi];
-  write(K.notes, all);
+  write(K.notes, all); synced("notes");
+}
+export const allNotesRaw = () => read(K.notes) || {};
+export function setAllNotes(obj, silent) { write(K.notes, obj || {}); if (!silent) synced("notes"); }
+
+// Dueño de los datos locales (en modo con cuentas) y limpieza al cerrar sesión.
+export const localOwner = () => localStorage.getItem(K.owner) || "";
+export const setLocalOwner = (uid) => localStorage.setItem(K.owner, uid);
+export function clearUserLocal() {
+  [K.progress, K.notes, K.profile, K.owner, K.oldProgress].forEach(del);
 }
 
 // ---------------- Administración ----------------

@@ -17,4 +17,13 @@ export const CONFIG = {
   // Cámbiala desde Gestión → Ajustes. Mientras no haya servidor, el panel
   // protege contra ediciones accidentales, no contra alguien con conocimientos técnicos.
   defaultAdminHash: "759aa99668fbfe8167eb6c524004699da9ee172a7cf0c459f47cde3ca73f2d3d",
+
+  // ---- Cuentas y seguimiento (Firebase) ----
+  // Mientras sea null, la app funciona en modo local (sin cuentas).
+  // Pega aquí la configuración web de tu proyecto Firebase (ver CONFIGURAR-FIREBASE.md).
+  firebase: null,
+
+  // Correos que se convierten en administradores la primera vez que entran,
+  // aunque nadie los haya invitado. Deben coincidir con la lista de firestore.rules.
+  bootstrapAdmins: [],
 };

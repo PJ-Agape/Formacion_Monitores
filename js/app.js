@@ -2,6 +2,7 @@
 
 import { CONFIG } from "./config.js";
 import * as S from "./store.js";
+import * as cloud from "./cloud.js";
 import { esc, rich, plain, icon, toast, initials } from "./util.js";
 import qrcode from "./qrcode.mjs";
 import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
@@ -38,6 +39,7 @@ const routes = [
   [/^\/oracion$/, viewPrayer, "oracion"],
   [/^\/constancia$/, viewCertificate, "itinerario"],
   [/^\/perfil$/, viewProfile, "perfil"],
+  [/^\/verificar\/(.+)$/, viewVerify, "verificar"],
   [/^\/admin(?:\/(.*))?$/, viewAdmin, "admin"],
 ];
 
@@ -49,9 +51,11 @@ export async function render() {
     const m = path.match(re);
     if (m) { match = m; fn = f; section = sec; break; }
   }
-  if (section !== "admin" && section !== "perfil" && !S.hasProfile()) {
+  if (!cloud.enabled && section !== "admin" && section !== "perfil" && section !== "verificar" && !S.hasProfile()) {
     location.replace("#/perfil"); return;
   }
+  // Con cuentas: el curso pide iniciar sesión; el resto de la app queda abierto.
+  if (cloud.enabled && section === "itinerario" && !cloud.state().ready) fn = viewLogin;
   document.body.classList.toggle("is-admin", section === "admin");
   applyTheme();
   renderChrome(section);
@@ -92,10 +96,13 @@ function renderChrome(section) {
   $("#bottomNav").innerHTML = NAV.map(([k, h, l, ic]) =>
     `<a href="${h}" ${cur(k)}><span class="ico-wrap">${icon(ic)}</span>${l}</a>`).join("");
   const p = S.getProfile();
-  $("#profileChip").innerHTML = section === "admin" && S.isAdmin()
+  const inAdmin = section === "admin" && (cloud.enabled ? cloud.state().isAdmin : S.isAdmin());
+  const guest = cloud.enabled && !cloud.state().ready;
+  $("#profileChip").innerHTML = inAdmin
     ? `<span class="avatar">${icon("gear")}</span><span class="name">Gestión</span>`
+    : guest ? `<span class="avatar">${icon("users")}</span><span class="name">Ingresar</span>`
     : `<span class="avatar">${esc(initials(p.name))}</span><span class="name">${esc(p.name || "Mi perfil")}</span>`;
-  $("#profileChip").setAttribute("href", section === "admin" && S.isAdmin() ? "#/admin" : "#/perfil");
+  $("#profileChip").setAttribute("href", inAdmin ? "#/admin" : "#/perfil");
 }
 
 function previewBanner() {
@@ -129,13 +136,13 @@ function viewHome() {
   const course = S.activeCourse();
   const st = S.courseState(course);
   const p = S.getProfile();
-  const first = p.name.split(" ")[0];
+  const first = (p.name || "").split(" ")[0];
   const nx = nextLink(course, st);
 
   return `
   <section class="hero">
     <svg class="hero-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2v20M5 8h14"/></svg>
-    <span class="eyebrow">Hola, ${esc(first)} · Camino de formación</span>
+    <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Camino de formación</span>
     <h1>${heroTitle(course.title)}</h1>
     <p class="lead">${esc(course.description)}</p>
     <div class="actions">
@@ -645,6 +652,7 @@ function renderQuiz() {
       const done = S.completeCourse(Q.course.id);
       finished = true;
       if (!before) sendCompletion(Q.course, done);
+      cloud.registerCertificate(Q.course, done);
     }
     body.innerHTML = `${bar}
       <div style="text-align:center;padding:10px 0 4px">
@@ -715,7 +723,8 @@ function viewCertificate() {
   const date = new Date(st.p.completedDate || Date.now()).toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" });
   const sessions = st.totalSessions;
   const qr = qrcode(0, "M");
-  qr.addData(`PASTORAL JUVENIL ÁGAPE\nConstancia de Formación y Envío\nCurso: ${course.title}\nDirigente: ${p.name}\nComunidad: ${p.parish}\nCódigo: ${st.p.certCode}\nFecha: ${date}`);
+  if (cloud.enabled) { qr.addData(cloud.verifyUrl(st.p.certCode)); cloud.registerCertificate(course, st.p); }
+  else qr.addData(`PASTORAL JUVENIL ÁGAPE\nConstancia de Formación y Envío\nCurso: ${course.title}\nDirigente: ${p.name}\nComunidad: ${p.parish}\nCódigo: ${st.p.certCode}\nFecha: ${date}`);
   qr.make();
   const svg = qr.createSvgTag({ cellSize: 3, margin: 0, scalable: true });
 
@@ -790,6 +799,7 @@ function viewPrayer() {
 // PERFIL / BIENVENIDA
 // ---------------------------------------------------------------------------
 function viewProfile() {
+  if (cloud.enabled) return viewAccount();
   const p = S.getProfile();
   const isNew = !p.name;
   return `
@@ -829,12 +839,97 @@ function viewNotFound() {
     <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
 }
 
+
+// ---------------------------------------------------------------------------
+// CUENTAS (cuando Firebase está configurado)
+// ---------------------------------------------------------------------------
+function viewLogin() {
+  const st = cloud.state();
+  const msg = {
+    "not-invited": `<h2 class="display">Tu correo aún no está invitado</h2>
+      <p class="muted" style="margin-top:8px">Entraste como <b>${esc(st.user?.email || "")}</b>. Pide al equipo coordinador que te invite con ese correo y vuelve a intentarlo.</p>
+      <div class="row-wrap" style="justify-content:center;margin-top:18px"><button class="btn btn-ghost" data-action="signOut">Usar otra cuenta</button><button class="btn btn-primary" data-action="retryAccount">Ya me invitaron</button></div>`,
+    inactive: `<h2 class="display">Tu cuenta está en pausa</h2>
+      <p class="muted" style="margin-top:8px">Conversa con el equipo coordinador para reactivarla.</p>
+      <button class="btn btn-ghost" style="margin-top:18px" data-action="signOut">Cerrar sesión</button>`,
+    loading: `<h2 class="display">Conectando…</h2>`,
+    error: `<h2 class="display">No pudimos conectar tu cuenta</h2>
+      <p class="muted" style="margin-top:8px">Revisa tu conexión e inténtalo de nuevo.${st.error ? ` <span class="xs">(${esc(st.error)})</span>` : ""}</p>
+      <button class="btn btn-primary" style="margin-top:18px" data-action="signIn">${icon("users")} Reintentar</button>`,
+  }[st.status];
+  return `<div class="welcome">
+    <section class="hero" style="margin-bottom:18px">
+      <span class="eyebrow">Curso de formación de dirigentes</span>
+      <h1>Tu camino de <em>formación</em></h1>
+      <p class="lead">Ingresa con tu cuenta de Google para avanzar a tu ritmo, guardar tu cuaderno y recibir tu constancia. Tu avance te sigue en cualquier dispositivo.</p>
+    </section>
+    <div class="card" style="text-align:center;padding:28px">
+      ${msg || `<button class="btn btn-primary btn-block google-btn" data-action="signIn">${googleIcon()} Continuar con Google</button>
+        <p class="xs muted" style="margin-top:12px">Solo pueden ingresar dirigentes invitados por el equipo coordinador.</p>`}
+    </div>
+  </div>`;
+}
+const googleIcon = () => `<svg width="18" height="18" viewBox="0 0 48 48" aria-hidden="true"><path fill="#FFC107" d="M43.6 20.5H42V20H24v8h11.3C33.7 32.7 29.2 36 24 36c-6.6 0-12-5.4-12-12s5.4-12 12-12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 12.9 4 4 12.9 4 24s8.9 20 20 20 20-8.9 20-20c0-1.3-.1-2.4-.4-3.5z"/><path fill="#FF3D00" d="m6.3 14.7 6.6 4.8C14.7 15.1 19 12 24 12c3.1 0 5.8 1.2 7.9 3.1l5.7-5.7C34 6.1 29.3 4 24 4 16.3 4 9.7 8.3 6.3 14.7z"/><path fill="#4CAF50" d="M24 44c5.2 0 9.9-2 13.4-5.2l-6.2-5.2C29.2 35.1 26.7 36 24 36c-5.2 0-9.6-3.3-11.3-8l-6.5 5C9.5 39.6 16.2 44 24 44z"/><path fill="#1976D2" d="M43.6 20.5H42V20H24v8h11.3c-.8 2.2-2.2 4.2-4.1 5.6l6.2 5.2C37 39.2 44 34 44 24c0-1.3-.1-2.4-.4-3.5z"/></svg>`;
+actions.signIn = async () => { try { await cloud.signIn(); } catch { toast("No se pudo iniciar sesión", ""); } };
+actions.signOut = async () => {
+  if (cloud.state().ready && !confirm("¿Cerrar sesión en este dispositivo? Tu avance queda guardado en tu cuenta.")) return;
+  await cloud.signOutUser(); location.hash = "#/"; render();
+};
+actions.retryAccount = async () => { await cloud.signOutUser(); await cloud.signIn(); };
+
+function viewAccount() {
+  const st = cloud.state();
+  if (!st.ready) return viewLogin();
+  const a = st.account;
+  return `<div class="welcome">
+    <header class="page-head"><span class="eyebrow">Mi cuenta</span><h1>${esc(a.name)}</h1>
+      <p>${esc(a.email)} · <span class="chip ${a.role === "admin" ? "warn" : "accent"}">${a.role === "admin" ? "Administrador" : "Dirigente"}</span></p></header>
+    <form class="card stack" id="accountForm" style="--gap:14px">
+      <div class="field"><label for="acName">Nombre y apellido</label><input class="input big" id="acName" name="name" required value="${esc(a.name)}"></div>
+      <div class="field"><label for="acParish">Capilla o parroquia</label><input class="input big" id="acParish" name="parish" value="${esc(a.parish || "")}"></div>
+      <p class="xs muted">Tu nombre aparecerá en la constancia. Tu avance se guarda en tu cuenta; tu cuaderno es privado y solo tú puedes leerlo.</p>
+      <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
+    </form>
+    <div class="row-wrap" style="justify-content:center;margin-top:16px">
+      ${st.isAdmin ? `<a class="btn btn-soft" href="#/admin">${icon("gear")} Gestión</a>` : ""}
+      <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
+    </div>
+    <div id="installSlot" style="margin-top:14px"></div>
+  </div>`;
+}
+document.addEventListener("submit", async (e) => {
+  if (e.target.id !== "accountForm") return;
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const name = String(f.get("name") || "").trim();
+  if (!name) return;
+  try { await cloud.updateMyProfile({ name, parish: String(f.get("parish") || "").trim() }); toast("Perfil actualizado"); render(); }
+  catch { toast("No se pudo guardar. Revisa tu conexión.", ""); }
+});
+
+async function viewVerify(code) {
+  const c = cloud.enabled ? await cloud.getCertificate(code) : undefined;
+  const ok = c && c.name;
+  return `<div style="max-width:520px;margin:5vh auto 0">
+    <div class="card" style="text-align:center;padding:32px">
+      <div class="tile-ico" style="margin:0 auto 14px;background:${ok ? "var(--ok-soft)" : "var(--surface-2)"};color:${ok ? "var(--ok)" : "var(--ink-3)"}">${icon(ok ? "award" : "x")}</div>
+      ${ok ? `<span class="eyebrow">Constancia válida</span>
+        <h1 class="display" style="font-size:1.8rem;margin-top:8px">${esc(c.name)}</h1>
+        <p class="muted" style="margin-top:6px">${esc(c.parish || "")}</p>
+        <p style="margin-top:14px">Completó el curso de formación <b>«${esc(c.course)}»</b> de la Pastoral Juvenil Ágape${c.date ? ` el ${esc(new Date(c.date).toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" }))}` : ""}.</p>
+        <p class="xs muted" style="margin-top:14px">Código ${esc(code)}</p>`
+      : c === null ? `<h1 class="display" style="font-size:1.6rem">Código no encontrado</h1><p class="muted" style="margin-top:8px">No existe una constancia con el código ${esc(code)}. Revisa que esté bien escrito.</p>`
+      : `<h1 class="display" style="font-size:1.6rem">No pudimos verificar</h1><p class="muted" style="margin-top:8px">La verificación necesita conexión a internet. Inténtalo de nuevo.</p>`}
+      <a class="btn btn-ghost" style="margin-top:18px" href="#/">Ir a Pastoral Ágape</a>
+    </div></div>`;
+}
+
 // ---------------------------------------------------------------------------
 // GESTIÓN (carga diferida)
 // ---------------------------------------------------------------------------
 async function viewAdmin(sub = "") {
   const m = await import("./admin.js");
-  return m.renderAdmin(sub || "", { actions, render, onAfterRender });
+  return m.renderAdmin(sub || "", { actions, render, onAfterRender, cloud });
 }
 
 // ---------------------------------------------------------------------------
@@ -872,7 +967,8 @@ actions.install = async () => {
 // ---------------------------------------------------------------------------
 async function boot() {
   try {
-    await S.loadContent();
+    if (cloud.enabled) { await cloud.init(); cloud.onChange(render); }
+    await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
   } catch (e) {
     viewEl().innerHTML = `<div class="card" style="text-align:center;padding:40px"><h2 class="display">No se pudo cargar el contenido</h2>
       <p class="muted" style="margin-top:8px">Revisa tu conexión e inténtalo de nuevo.</p>

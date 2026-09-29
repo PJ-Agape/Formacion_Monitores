@@ -1,0 +1,72 @@
+rules_version = '2';
+
+// Reglas de seguridad de la Pastoral Juvenil Ágape.
+// Pégalas en Firebase → Firestore Database → Reglas → Publicar.
+// Reemplaza TU_CORREO@gmail.com por el correo de quien será el primer administrador
+// (el mismo que pongas en bootstrapAdmins de js/config.js).
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function signedIn() { return request.auth != null && request.auth.token.email_verified == true; }
+    function myEmail() { return request.auth.token.email.lower(); }
+    function bootstrapAdmin() { return signedIn() && myEmail() in ['tu_correo@gmail.com']; }
+    function me() { return get(/databases/$(database)/documents/users/$(request.auth.uid)).data; }
+    function isMember() {
+      return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && me().active == true;
+    }
+    function isAdmin() { return isMember() && me().role == 'admin'; }
+
+    // Contenido del curso publicado desde Gestión: lo lee cualquiera, lo escribe un administrador.
+    match /content/{docId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
+    // Invitaciones: el documento se llama como el correo invitado (en minúsculas).
+    match /invites/{email} {
+      allow get: if signedIn() && myEmail() == email;
+      allow read, write: if isAdmin();
+    }
+
+    // Cuentas. Cada persona crea la suya al entrar por primera vez, solo si fue invitada
+    // (con el rol de la invitación) o si es administrador inicial.
+    match /users/{uid} {
+      allow get: if signedIn() && request.auth.uid == uid;
+      allow read: if isAdmin();
+      allow create: if signedIn() && request.auth.uid == uid
+        && request.resource.data.email == myEmail()
+        && request.resource.data.active == true
+        && (
+          (exists(/databases/$(database)/documents/invites/$(myEmail()))
+            && request.resource.data.role == get(/databases/$(database)/documents/invites/$(myEmail())).data.role)
+          || (bootstrapAdmin() && request.resource.data.role == 'admin')
+        );
+      // Cada uno puede actualizar su nombre, parroquia y última conexión; nunca su rol ni su estado.
+      allow update: if (isMember() && request.auth.uid == uid
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'parish', 'lastSeen']))
+        || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // Avance en los cursos: lo escribe su dueño; lo leen su dueño y los administradores.
+    match /progress/{uid} {
+      allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();
+      allow write: if isMember() && request.auth.uid == uid;
+    }
+
+    // Cuaderno personal: privado, solo su dueño (ni siquiera los administradores lo leen).
+    match /notes/{uid} {
+      allow read, write: if isMember() && request.auth.uid == uid;
+    }
+
+    // Constancias: cualquiera puede verificar un código; solo el dueño la registra; un administrador puede anularla.
+    match /certificates/{code} {
+      allow get: if true;
+      allow list: if isAdmin();
+      allow create: if isMember() && request.resource.data.uid == request.auth.uid;
+      allow update: if false;
+      allow delete: if isAdmin();
+    }
+  }
+}
