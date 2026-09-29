@@ -86,7 +86,7 @@
         "items": [
           "<strong>Situaciones cotidianas:</strong> Dudas normales, tristeza de unos días o pequeños conflictos. Acompañar con escucha y oración.",
           "<strong>Alerta en el equipo:</strong> Aislamiento continuo, mucha angustia o cambios bruscos. Avisar a los coordinadores.",
-          "<strong>Ayuda profesional urgente:</strong> Pensamientos de hacerse daño, depresión severa o abuso. Avisar a la familia y derivar a especialistas."
+          "<strong>Ayuda profesional urgente:</strong> Situaciones de peligro para la vida o la integridad, o abuso. Avisar a la familia y derivar a especialistas."
         ]
       },
       {
@@ -532,7 +532,7 @@
                 },
                 {
                   "title": "Confidencialidad… con límites",
-                  "body": "Pedimos que lo compartido quede en el grupo, y los dirigentes debemos ser los primeros en cumplirlo: no comentar la vida de los jóvenes con otros, no publicar fotos sin permiso, no usar lo que sabemos para bromear.\n\nPero hay una excepción muy importante que debes conocer desde ya: si un joven cuenta algo que pone en riesgo su vida o su integridad, o la de otra persona (por ejemplo, ideas de hacerse daño o una situación de abuso), no podemos guardar el secreto. En esos casos se avisa a los coordinadores y asesores, y se sigue el protocolo de la parroquia. Por eso nunca prometas «no le voy a contar a nadie» antes de saber de qué se trata. Lo profundizarás en el módulo 5."
+                  "body": "Pedimos que lo compartido quede en el grupo, y los dirigentes debemos ser los primeros en cumplirlo: no comentar la vida de los jóvenes con otros, no publicar fotos sin permiso, no usar lo que sabemos para bromear.\n\nPero hay una excepción muy importante que debes conocer desde ya: si un joven cuenta algo que pone en riesgo su vida o su integridad, o la de otra persona (por ejemplo, una situación de abuso o de peligro), no podemos guardar el secreto. En esos casos se avisa a los coordinadores y asesores, y se sigue el protocolo de la parroquia. Por eso nunca prometas «no le voy a contar a nadie» antes de saber de qué se trata. Lo profundizarás en el módulo 5."
                 }
               ],
               "bible": {
@@ -901,7 +901,7 @@
                 },
                 {
                   "title": "Cuando aparece algo más profundo",
-                  "body": "A veces, al abrir espacio a las emociones, un joven expresa algo que va más allá de un mal día: tristeza que dura semanas, angustia intensa, desesperanza, ideas de no querer vivir. En esos casos no se trata de «resolverlo» en el grupo. Agradece su confianza, acompaña con calma y avisa a tus coordinadores y asesores para buscar ayuda adecuada.\n\nEn Chile existe la línea gratuita de prevención del suicidio <strong>*4141</strong>, disponible las 24 horas. Lo verás con más detalle en el módulo 5; por ahora es importante que sepas que existe."
+                  "body": "A veces, al abrir espacio a las emociones, un joven expresa algo que va más allá de un mal día: tristeza que dura semanas, angustia intensa o un sufrimiento que no logra manejar. En esos casos no se trata de «resolverlo» en el grupo. Agradece su confianza, acompaña con calma y avisa a tus coordinadores y asesores para buscar ayuda adecuada.\n\nEn el módulo 5 verás a quién acudir y qué redes de apoyo existen. Lo importante ahora es saber que no tienes que cargar solo con esas situaciones."
                 }
               ],
               "bible": {
@@ -938,11 +938,6 @@
                   "title": "Biblia en línea: Libro de los Salmos",
                   "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
                   "note": ""
-                },
-                {
-                  "title": "Línea de prevención del suicidio *4141 (Minsal)",
-                  "url": "https://www.minsal.cl/linea-de-atencion-4141-no-estas-solo-no-estas-sola/",
-                  "note": "Gratuita y disponible las 24 horas."
                 }
               ]
             },
@@ -1038,7 +1033,7 @@
                 },
                 {
                   "title": "Señales de alerta",
-                  "body": "La mayoría de los duelos siguen su curso con el apoyo de la familia y los amigos. Pero hay señales que indican que un joven puede necesitar ayuda profesional:\n\n- Tristeza intensa que no disminuye después de varias semanas.\n- Aislamiento total, abandono de estudios o actividades.\n- Cambios fuertes en el sueño o la alimentación.\n- Consumo de alcohol u otras sustancias para «no sentir».\n- Expresiones de desesperanza o de querer morir.\n\nAnte estas señales, conversa con tus coordinadores y asesores, y procuren que la familia esté informada. Si hay riesgo para la vida, no esperes: la línea <strong>*4141</strong> orienta las 24 horas, y en una emergencia se llama al <strong>131</strong> (SAMU)."
+                  "body": "La mayoría de los duelos siguen su curso con el apoyo de la familia y los amigos. Pero hay señales que indican que un joven puede necesitar ayuda profesional:\n\n- Tristeza intensa que no disminuye después de varias semanas.\n- Aislamiento total, abandono de estudios o actividades.\n- Cambios fuertes en el sueño o la alimentación.\n- Consumo de alcohol u otras sustancias para «no sentir».\n\nAnte estas señales, conversa con tus coordinadores y asesores, y procuren que la familia esté informada. Si la situación te parece grave o urgente, no esperes: pide ayuda de inmediato a tus coordinadores y a la familia, y ante una emergencia llama al <strong>131</strong> (SAMU)."
                 }
               ],
               "bible": {
@@ -1066,11 +1061,6 @@
               "activity": "Con tu equipo, preparen un pequeño «protocolo de cariño» para cuando alguien del grupo viva una pérdida: quién se comunica con la familia, qué gesto comunitario harán (oración, carta, visita), y cómo acompañarán las semanas siguientes. Anótenlo y compártanlo con los coordinadores.",
               "prayer": "Jesús, que lloraste con Marta y María: enséñame a estar presente ante el dolor sin huir ni dar respuestas fáciles. Que mi silencio acompañe, que mis palabras consuelen y que sepa pedir ayuda cuando el dolor me supere. Amén.",
               "resources": [
-                {
-                  "title": "Línea de prevención del suicidio *4141 (Minsal)",
-                  "url": "https://www.minsal.cl/linea-de-atencion-4141-no-estas-solo-no-estas-sola/",
-                  "note": "Orientación gratuita las 24 horas."
-                },
                 {
                   "title": "Salud Responde (Minsal)",
                   "url": "https://saludresponde.minsal.cl/",
@@ -1133,10 +1123,10 @@
                 "options": [
                   "Esperar, porque cada uno vive el duelo a su ritmo.",
                   "Decirle que rece más y que pronto se le pasará.",
-                  "Acompañarlo con cariño y avisar a tus coordinadores y asesores para que la familia busque ayuda profesional; si hay riesgo para su vida, pedir ayuda de inmediato (*4141 o 131)."
+                  "Acompañarlo con cariño y avisar a tus coordinadores y asesores para que la familia busque ayuda profesional; si la situación es urgente, pedir ayuda de inmediato."
                 ],
                 "correct": 2,
-                "feedback": "Son señales de alerta. El dirigente acompaña, pero no reemplaza la ayuda profesional; ante riesgo vital no se espera."
+                "feedback": "Son señales de alerta. El dirigente acompaña, pero no reemplaza la ayuda profesional; ante una urgencia no se espera."
               }
             ]
           }
@@ -1653,19 +1643,19 @@
               "title": "Saber cuándo pedir ayuda",
               "time": "50 min",
               "objective": "Reconocer los límites del rol de dirigente, identificar señales de alerta en salud mental y conocer las redes de apoyo y los pasos para derivar de manera responsable.",
-              "intro": "Somos hermanos mayores y acompañantes en la fe, no psicólogos ni médicos. Reconocer este límite no es desentenderse: es la forma más responsable de amar. En esta unidad aprenderás a distinguir situaciones cotidianas de situaciones de alerta, qué hacer en cada caso y a qué redes acudir en Chile.",
+              "intro": "Somos hermanos mayores y acompañantes en la fe, no psicólogos ni médicos. Reconocer este límite no es desentenderse: es la forma más responsable de amar. En esta unidad aprenderás a distinguir situaciones cotidianas de situaciones de alerta, qué hacer en cada caso y a qué redes acudir en Chile. Esta unidad entrega criterios generales; el acompañamiento en salud mental se abordará en una capacitación específica.",
               "sections": [
                 {
                   "title": "Elías bajo el arbusto",
-                  "body": "En 1 Reyes 19,4-8 el profeta Elías, agotado y perseguido, se sienta bajo un arbusto y le pide a Dios morir: «¡Basta ya, Señor!». Dios no lo reta ni le da un sermón. Le envía un ángel que lo toca, le ofrece pan y agua y lo deja dormir. Dos veces. Solo después lo invita a continuar el camino.\n\nEl relato muestra que incluso los grandes creyentes atraviesan momentos de oscuridad profunda. Y muestra el modo de Dios: primero cuidar lo básico, acompañar, dar tiempo. La fe no reemplaza el cuidado de la salud; lo incluye."
+                  "body": "En 1 Reyes 19,4-8 el profeta Elías, agotado y perseguido, se sienta bajo un arbusto, sin fuerzas, y le dice a Dios: «¡Basta ya, Señor!». Dios no lo reta ni le da un sermón. Le envía un ángel que lo toca, le ofrece pan y agua y lo deja dormir. Dos veces. Solo después lo invita a continuar el camino.\n\nEl relato muestra que incluso los grandes creyentes atraviesan momentos de oscuridad profunda. Y muestra el modo de Dios: primero cuidar lo básico, acompañar, dar tiempo. La fe no reemplaza el cuidado de la salud; lo incluye."
                 },
                 {
                   "title": "Un semáforo para orientarte",
-                  "body": "Para decidir qué hacer, puede ayudarte este semáforo:\n\n- <strong>Verde · situaciones cotidianas</strong>: tristeza por unos días, problemas con amigos, estrés por pruebas, dudas de fe. Acompaña con escucha, cercanía y oración.\n- <strong>Amarillo · señales de alerta</strong>: aislamiento persistente, cambios bruscos de conducta, tristeza o angustia que duran semanas, consumo de alcohol o drogas, bajo rendimiento repentino. Conversa con tus coordinadores y asesores; procuren que la familia esté al tanto y se busque ayuda profesional.\n- <strong>Rojo · riesgo</strong>: expresiones de querer morir o hacerse daño, autolesiones, sospecha o relato de abuso, violencia. Actúa de inmediato: no dejes sola a la persona, avisa a los responsables y a la familia, y usa las redes de emergencia."
+                  "body": "Para decidir qué hacer, puede ayudarte este semáforo:\n\n- <strong>Verde · situaciones cotidianas</strong>: tristeza por unos días, problemas con amigos, estrés por pruebas, dudas de fe. Acompaña con escucha, cercanía y oración.\n- <strong>Amarillo · señales de alerta</strong>: aislamiento persistente, cambios bruscos de conducta, tristeza o angustia que duran semanas, consumo de alcohol o drogas, bajo rendimiento repentino. Conversa con tus coordinadores y asesores; procuren que la familia esté al tanto y se busque ayuda profesional.\n- <strong>Rojo · riesgo</strong>: señales de que la vida o la integridad de alguien está en peligro, sospecha o relato de abuso, violencia. Actúa de inmediato: no dejes sola a la persona, avisa a los responsables y a la familia, y usa las redes de emergencia."
                 },
                 {
                   "title": "Redes de apoyo en Chile",
-                  "body": "Conviene que todo el equipo conozca estos contactos:\n\n- <strong>*4141</strong>: Línea de Prevención del Suicidio del Ministerio de Salud. Gratuita, las 24 horas.\n- <strong>600 360 7777</strong>: Salud Responde (Minsal), orientación en salud, incluida salud mental.\n- <strong>131</strong>: SAMU, emergencias médicas.\n- <strong>133</strong>: Carabineros, ante peligro inmediato.\n- Los <strong>centros de salud familiar (CESFAM)</strong> de tu comuna, puerta de entrada a la atención en salud mental.\n- El <strong>encargado de prevención</strong> de tu diócesis y los canales de denuncia de la Iglesia de Chile, para situaciones de abuso en contextos eclesiales.\n\nTen estos números anotados y acordados con tu equipo antes de necesitarlos."
+                  "body": "Conviene que todo el equipo conozca estos contactos:\n\n- <strong>*4141</strong>: línea de apoyo del Ministerio de Salud para crisis de salud mental. Gratuita, las 24 horas.\n- <strong>600 360 7777</strong>: Salud Responde (Minsal), orientación en salud, incluida salud mental.\n- <strong>131</strong>: SAMU, emergencias médicas.\n- <strong>133</strong>: Carabineros, ante peligro inmediato.\n- Los <strong>centros de salud familiar (CESFAM)</strong> de tu comuna, puerta de entrada a la atención en salud mental.\n- El <strong>encargado de prevención</strong> de tu diócesis y los canales de denuncia de la Iglesia de Chile, para situaciones de abuso en contextos eclesiales.\n\nTen estos números anotados y acordados con tu equipo antes de necesitarlos."
                 },
                 {
                   "title": "Cómo derivar con cariño",
@@ -1674,7 +1664,7 @@
               ],
               "bible": {
                 "ref": "1 Reyes 19,4-8 · Elías en el desierto",
-                "comment": "Dios responde a la desesperanza de Elías con pan, agua, descanso y un toque. Antes de pedirle que siga, lo cuida. Acompañar bien es cuidar lo básico y sumar otras manos cuando hace falta."
+                "comment": "Dios responde al agotamiento de Elías con pan, agua, descanso y un toque. Antes de pedirle que siga, lo cuida. Acompañar bien es cuidar lo básico y sumar otras manos cuando hace falta."
               },
               "church": [
                 {
@@ -1698,9 +1688,9 @@
               "prayer": "Señor, que cuidaste a Elías con pan, agua y descanso: dame sabiduría para reconocer cuándo algo me supera y humildad para pedir ayuda a tiempo. Que nunca deje solo a quien sufre y que sepa confiar en otras manos que tú también envías. Amén.",
               "resources": [
                 {
-                  "title": "Línea de Prevención del Suicidio *4141 (Minsal)",
+                  "title": "Línea de apoyo *4141 (Minsal)",
                   "url": "https://www.minsal.cl/linea-de-atencion-4141-no-estas-solo-no-estas-sola/",
-                  "note": "Gratuita y disponible las 24 horas."
+                  "note": "Línea de apoyo del Ministerio de Salud. Gratuita, las 24 horas."
                 },
                 {
                   "title": "Salud Responde 600 360 7777",
@@ -1786,10 +1776,10 @@
             "title": "Aptitud y discernimiento del dirigente Ágape",
             "questions": [
               {
-                "q": "1. Un joven te confiesa en privado que ha pensado en hacerse daño. ¿Qué debes hacer?",
+                "q": "1. Un joven te cuenta en privado algo que te hace pensar que su vida o su integridad están en peligro. ¿Qué debes hacer?",
                 "options": [
                   "Prometerle que no le contarás a nadie para no perder su confianza.",
-                  "Escucharlo con calma, no dejarlo solo, avisar de inmediato a los responsables y a su familia, y usar las redes de ayuda (*4141 o 131 si hay riesgo inmediato).",
+                  "Escucharlo con calma, no dejarlo solo, avisar de inmediato a los responsables y a su familia, y buscar ayuda profesional; ante una emergencia, llamar al 131.",
                   "Recomendarle rezar más y esperar a ver cómo evoluciona."
                 ],
                 "correct": 1,
@@ -2115,7 +2105,7 @@
     },
     {
       "category": "Salud mental y ayuda",
-      "title": "Línea de Prevención del Suicidio *4141 (Minsal)",
+      "title": "Línea de apoyo *4141 (Minsal)",
       "url": "https://www.minsal.cl/linea-de-atencion-4141-no-estas-solo-no-estas-sola/",
       "note": "Gratuita y disponible las 24 horas, con psicólogos que escuchan y orientan."
     },

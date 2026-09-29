@@ -834,7 +834,7 @@ const LIB_META = [
   ["ise.pdf", "Integridad en el Servicio Eclesial · PDF", "Texto completo para descargar."],
   ["folleto_base", "Ambientes sanos, seguros y de buen trato", "Folleto para responsables de grupos y comunidades."],
   ["recursos_int", "Recursos de prevención de la Iglesia de Chile", "Materiales de difusión y formación en prevención."],
-  ["4141", "Línea de prevención del suicidio *4141", "Ministerio de Salud. Gratuita, las 24 horas."],
+  ["4141", "Línea de apoyo *4141", "Ministerio de Salud. Gratuita, las 24 horas."],
   ["saludresponde", "Salud Responde · 600 360 7777", "Orientación en salud del Ministerio de Salud, incluida salud mental."],
 ];
 const libMeta = (url) => { const u = url.toLowerCase(); return LIB_META.find(([k]) => u.includes(k)); };
@@ -874,7 +874,7 @@ function libraryHTML(lib) {
     <p class="muted" style="max-width:62ch">Todos los documentos y recursos que se citan en los cursos, reunidos en un solo lugar para consultarlos cuando quieras. Se abren en su sitio oficial.</p>
     <label class="search" style="display:block;margin:16px 0 8px">
       ${icon("search")}<span class="sr-only">Buscar en la biblioteca</span>
-      <input id="libSearch" type="search" placeholder="Buscar: Christus vivit, Catecismo, prevención, *4141…" autocomplete="off">
+      <input id="libSearch" type="search" placeholder="Buscar: Christus vivit, Catecismo, Biblia, prevención…" autocomplete="off">
     </label>
     ${lib.groups.map((g) => `
       <div class="lib-group" data-lib-group>
