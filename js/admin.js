@@ -40,7 +40,7 @@ function shell(page, body) {
   <div class="admin-shell">
     <nav class="admin-side" aria-label="Gestión">
       ${link("resumen", "#/admin", "Resumen", "grid")}
-      ${link("itinerarios", "#/admin/itinerarios", "Itinerarios", "route")}
+      ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
       ${link("materiales", "#/admin/materiales", "Materiales", "book")}
       ${link("oracion", "#/admin/oracion", "Oración", "flame")}
       ${link("comunidad", "#/admin/comunidad", "Comunidad", "users")}
@@ -78,7 +78,7 @@ function loginView() {
     <form class="card stack" id="loginForm" style="--gap:14px;padding:28px">
       <div class="tile-ico" style="margin:0 auto">${icon("lock")}</div>
       <div style="text-align:center"><h1 class="display" style="font-size:1.7rem">Gestión de la pastoral</h1>
-        <p class="muted small" style="margin-top:6px">Espacio del equipo coordinador para editar itinerarios, evaluaciones, materiales y oraciones.</p></div>
+        <p class="muted small" style="margin-top:6px">Espacio del equipo coordinador para editar cursos, evaluaciones, materiales y oraciones.</p></div>
       <div class="field"><label for="adminPass">Contraseña</label>
         <input class="input big" type="password" id="adminPass" autocomplete="current-password" required></div>
       <button class="btn btn-primary btn-block" type="submit">Entrar</button>
@@ -114,12 +114,12 @@ function summaryView(d) {
     <div class="row-wrap" style="margin-top:12px"><button class="btn btn-sm btn-primary" data-action="aImportLegacy">Traer al borrador</button>
     <button class="btn btn-sm btn-ghost" data-action="aDropLegacy">Ignorar</button></div></div>` : ""}
   <div class="grid grid-4">
-    ${stat(d.courses.length, "itinerarios")}${stat(phases, "fases")}${stat(sessions, "encuentros")}${stat(questions, "preguntas de evaluación")}
+    ${stat(d.courses.length, "cursos")}${stat(phases, "módulos")}${stat(sessions, "unidades")}${stat(questions, "preguntas de evaluación")}
   </div>
   <div class="card">
     <h3>Cómo publicar cambios</h3>
     <ol class="steps muted">
-      <li><b>Edita</b> en Itinerarios, Materiales, Oración o Comunidad. Se guarda solo.</li>
+      <li><b>Edita</b> en Cursos, Materiales, Oración o Comunidad. Se guarda solo.</li>
       <li><b>Revisa</b> con «Vista previa»: ves la página tal como la verán los dirigentes.</li>
       <li><b>Publica</b>: descargas <span class="kbd">contenido.json</span> y lo subes a la carpeta <span class="kbd">data</span> del repositorio.</li>
     </ol>
@@ -135,7 +135,7 @@ function legacyDiff(d) {
   if (!l) return null;
   const pub = S.publishedContent();
   const out = [];
-  if (l.catalog && JSON.stringify(l.catalog) !== JSON.stringify(pub.courses)) out.push("itinerarios");
+  if (l.catalog && JSON.stringify(l.catalog) !== JSON.stringify(pub.courses)) out.push("cursos");
   if (l.materials && JSON.stringify(l.materials) !== JSON.stringify(pub.materials)) out.push("materiales");
   if (l.devotional && JSON.stringify(l.devotional) !== JSON.stringify(pub.devotional)) out.push("oraciones");
   if (!out.length) { S.clearLegacy(); return null; }
@@ -148,9 +148,9 @@ function legacyDiff(d) {
 function coursesView(d) {
   return `
   <header class="page-head row-wrap" style="align-items:flex-end">
-    <div><span class="eyebrow">Gestión</span><h1>Itinerarios</h1><p>Cada itinerario tiene fases, encuentros y una evaluación por fase.</p></div>
+    <div><span class="eyebrow">Gestión</span><h1>Cursos</h1><p>Cada curso tiene módulos, unidades de estudio y una evaluación por módulo.</p></div>
     <span class="spacer"></span>
-    <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo itinerario</button>
+    <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button>
   </header>
   <div class="stack" style="--gap:12px">
     ${d.courses.map((c, i) => {
@@ -159,7 +159,7 @@ function coursesView(d) {
         <span class="tile-ico" style="margin:0;background:var(--accent-soft);color:var(--accent-text)">${icon("route")}</span>
         <a href="#/admin/itinerarios/${i}" style="flex:1;min-width:0;text-decoration:none;color:inherit">
           <strong style="display:block">${esc(c.title)}</strong>
-          <span class="muted small">${c.phases.length} fases · ${n} encuentros · tema ${esc(c.theme)}</span></a>
+          <span class="muted small">${c.phases.length} módulos · ${n} unidades · tema ${esc(c.theme)}</span></a>
         <div class="row" style="gap:4px">
           ${iconBtn("up", "aMoveCourse", `data-i="${i}" data-d="-1"`, "Subir", i === 0)}
           ${iconBtn("down", "aMoveCourse", `data-i="${i}" data-d="1"`, "Bajar", i === d.courses.length - 1)}
@@ -178,7 +178,7 @@ function courseView(d, ci) {
   const c = d.courses[ci];
   if (!c) { location.hash = "#/admin/itinerarios"; return ""; }
   return `
-  <nav class="crumbs"><a href="#/admin/itinerarios">Itinerarios</a>${icon("right")}<span>${esc(c.title)}</span></nav>
+  <nav class="crumbs"><a href="#/admin/itinerarios">Cursos</a>${icon("right")}<span>${esc(c.title)}</span></nav>
   <div class="card">
     <div class="row-wrap" style="align-items:flex-start">
       <div style="flex:1;min-width:220px">
@@ -197,10 +197,10 @@ function courseView(d, ci) {
         <span class="badge">${esc(p.phaseNum)}</span>
         <div class="ttl"><strong>${esc(p.title)}</strong><span class="xs muted">${esc(p.desc)}</span></div>
         <div class="tools">
-          ${iconBtn("up", "aMovePhase", `data-ci="${ci}" data-pi="${pi}" data-d="-1"`, "Subir fase", pi === 0)}
-          ${iconBtn("down", "aMovePhase", `data-ci="${ci}" data-pi="${pi}" data-d="1"`, "Bajar fase", pi === c.phases.length - 1)}
-          ${iconBtn("edit", "aEditPhase", `data-ci="${ci}" data-pi="${pi}"`, "Editar fase")}
-          ${c.phases.length > 1 ? iconBtn("trash", "aDelPhase", `data-ci="${ci}" data-pi="${pi}"`, "Eliminar fase", false, "danger") : ""}
+          ${iconBtn("up", "aMovePhase", `data-ci="${ci}" data-pi="${pi}" data-d="-1"`, "Subir módulo", pi === 0)}
+          ${iconBtn("down", "aMovePhase", `data-ci="${ci}" data-pi="${pi}" data-d="1"`, "Bajar módulo", pi === c.phases.length - 1)}
+          ${iconBtn("edit", "aEditPhase", `data-ci="${ci}" data-pi="${pi}"`, "Editar módulo")}
+          ${c.phases.length > 1 ? iconBtn("trash", "aDelPhase", `data-ci="${ci}" data-pi="${pi}"`, "Eliminar módulo", false, "danger") : ""}
         </div>
       </div>
       <div class="tree-items">
@@ -218,15 +218,15 @@ function courseView(d, ci) {
         </div>`).join("")}
       </div>
       <div class="tree-add">
-        <button class="btn btn-sm btn-ghost" data-action="aAddSession" data-ci="${ci}" data-pi="${pi}">${icon("plus")} Encuentro</button>
+        <button class="btn btn-sm btn-ghost" data-action="aAddSession" data-ci="${ci}" data-pi="${pi}">${icon("plus")} Unidad</button>
         <button class="btn btn-sm btn-soft" data-action="aEditQuiz" data-ci="${ci}" data-pi="${pi}">${icon("check")} Evaluación · ${p.quiz?.questions?.length || 0} pregunta${(p.quiz?.questions?.length || 0) === 1 ? "" : "s"}</button>
       </div>
     </section>`).join("")}
   </div>
-  <button class="btn btn-ghost btn-block" data-action="aAddPhase" data-ci="${ci}">${icon("plus")} Agregar fase</button>`;
+  <button class="btn btn-ghost btn-block" data-action="aAddPhase" data-ci="${ci}">${icon("plus")} Agregar módulo</button>`;
 }
 
-// Mantiene la numeración coherente: fase N → encuentros N.1, N.2…
+// Mantiene la numeración coherente: módulo N → unidades N.1, N.2…
 function renumber(course) {
   const base = course.phases[0] && Number(course.phases[0].phaseNum) === 1 ? 1 : 0;
   course.phases.forEach((p, i) => {
@@ -234,9 +234,21 @@ function renumber(course) {
     p.sessions.forEach((s, j) => { s.id = `${p.phaseNum}.${j + 1}`; });
   });
 }
-const blankSession = () => ({ id: "", title: "Nuevo encuentro", time: "60 min", objective: "", bible: "", dynamic: "", questions: [""], prayer: "" });
+const blankSession = () => ({ id: "", title: "Nueva unidad", time: "45 min", objective: "", intro: "", sections: [{ title: "", body: "" }],
+  bible: { ref: "", comment: "" }, church: [], questions: [""], activity: "", prayer: "", resources: [] });
+// Adapta unidades con el formato anterior (encuentros) al formato de aula virtual.
+function normalizeUnit(u) {
+  const o = clone(u);
+  if (typeof o.bible === "string") o.bible = { ref: "", comment: o.bible };
+  o.bible = o.bible || { ref: "", comment: "" };
+  o.sections = o.sections || [];
+  if (o.dynamic) { o.sections.push({ title: "Clave para comprender a los jóvenes", body: o.dynamic }); delete o.dynamic; }
+  ["church", "resources"].forEach((k) => { o[k] = o[k] || []; });
+  ["intro", "activity"].forEach((k) => { o[k] = o[k] || ""; });
+  return o;
+}
 const blankQuestion = () => ({ q: "", options: ["", "", ""], correct: 0, feedback: "" });
-const blankPhase = (n) => ({ phaseNum: n, title: "Nueva fase", desc: "", sessions: [blankSession()], quiz: { badge: `Evaluación fase ${n}`, title: "Discernimiento", questions: [blankQuestion()] } });
+const blankPhase = (n) => ({ phaseNum: n, title: "Nuevo módulo", desc: "", intro: "", sessions: [blankSession()], quiz: { badge: `Evaluación módulo ${n}`, title: "Discernimiento", questions: [blankQuestion()] } });
 
 // ---------------------------------------------------------------------------
 // Materiales y Oración
@@ -349,13 +361,20 @@ function settingsView() {
 // Editor genérico (diálogo) con formularios descritos por "specs"
 // ---------------------------------------------------------------------------
 const SPECS = {
-  course: () => [["title", "Título del itinerario", "text"], ["theme", "Tema de color", "select", THEMES], ["description", "Descripción / propósito", "textarea"]],
-  phase: () => [["title", "Título de la fase", "text"], ["desc", "Descripción breve", "text", null, "Ej: 4 encuentros · Acogida y confianza"]],
+  course: () => [["title", "Título del curso", "text"], ["theme", "Tema de color", "select", THEMES], ["description", "Descripción / propósito", "textarea"]],
+  phase: () => [["title", "Título del módulo", "text"], ["desc", "Descripción breve", "text", null, "Ej: 4 unidades · Acogida y confianza"],
+    ["intro", "Presentación del módulo", "textarea"]],
   session: () => [
-    ["title", "Título del encuentro", "text"], ["time", "Duración", "text", null, "Ej: 60 min"],
-    ["objective", "Objetivo", "textarea"], ["bible", "Palabra de Dios y mensaje de fe", "textarea"],
-    ["dynamic", "Clave para comprender a los jóvenes", "textarea"], ["questions", "Preguntas para conversar", "list", null, "Pregunta"],
-    ["prayer", "Oración y compromiso final", "textarea"]],
+    ["title", "Título de la unidad", "text"], ["time", "Tiempo de estudio", "text", null, "Ej: 45 min"],
+    ["objective", "Objetivo de aprendizaje", "textarea"], ["intro", "Introducción", "textarea"],
+    ["sections", "Contenido de estudio (secciones)", "objlist", [["title", "Título de la sección", "text"], ["body", "Texto", "textarea"]], "Sección", "Separa párrafos con una línea en blanco. Una línea que empieza con «- » se muestra como lista. Usa &lt;strong&gt;…&lt;/strong&gt; para destacar."],
+    ["", "Palabra de Dios", "heading"],
+    ["bible.ref", "Cita bíblica", "text", null, "Ej: Lucas 24,13-35 · Los discípulos de Emaús"], ["bible.comment", "Comentario", "textarea"],
+    ["church", "La Iglesia nos dice", "objlist", [["source", "Documento y número", "text", "Ej: Christus vivit 206"], ["text", "Idea o cita breve", "textarea"], ["url", "Enlace a la fuente", "text", "https://www.vatican.va/…"]], "Referencia"],
+    ["questions", "Preguntas para la reflexión personal (cuaderno)", "list", null, "Pregunta"],
+    ["activity", "Llévalo a tu grupo (práctica)", "textarea"],
+    ["prayer", "Oración", "textarea"],
+    ["resources", "Para profundizar (recursos)", "objlist", [["title", "Título", "text"], ["url", "Enlace", "text", "https://…"], ["note", "Nota breve", "text"]], "Recurso"]],
   quiz: () => [["badge", "Etiqueta", "text"], ["title", "Título de la evaluación", "text"], ["questions", "Preguntas", "questions"]],
   card: (o, key) => {
     const types = key === "materials" ? Object.entries(TYPE_LABEL) : [["text", "Texto de oración"], ["list", "Pasos (uno por línea)"]];
@@ -382,6 +401,7 @@ function openEditor({ title, spec, specArg, obj, onSave, onDelete }) {
   d.querySelector("[data-e-title]").textContent = title;
   renderEditor();
   d.showModal();
+  autosize(d);
   setTimeout(() => d.querySelector(".sheet-body input, .sheet-body textarea")?.focus(), 50);
 }
 function renderEditor() {
@@ -398,9 +418,21 @@ function renderEditor() {
 function autosize(root) {
   root.querySelectorAll("textarea").forEach((t) => { t.style.height = "auto"; t.style.height = Math.max(t.scrollHeight + 2, 44) + "px"; });
 }
-function fieldHTML([key, label, type, opts, ph]) {
-  const v = E.obj[key];
-  const id = "f_" + key;
+function fieldHTML([key, label, type, opts, ph, hint]) {
+  const v = key ? getPath(E.obj, key) : null;
+  const id = "f_" + key.replace(/\./g, "_");
+  if (type === "heading") return `<h3 class="ed-heading">${label}</h3>`;
+  if (type === "objlist") {
+    const arr = Array.isArray(v) ? v : [];
+    return `<div class="stack" style="--gap:10px"><h3 class="ed-heading">${label}</h3>${hint ? `<span class="hint xs muted">${hint}</span>` : ""}
+      ${arr.map((item, i) => `<div class="qcard stack" style="--gap:8px">
+        <div class="row"><strong class="small">${esc(ph || "Elemento")} ${i + 1}</strong><span class="spacer"></span>${listTools(key, i, arr.length)}</div>
+        ${opts.map(([sk, sl, st, sph]) => st === "textarea"
+          ? `<div class="field"><label>${sl}</label><textarea class="textarea" rows="${sk === "body" ? 6 : 2}" data-f="${key}.${i}.${sk}">${esc(item[sk] ?? "")}</textarea></div>`
+          : `<div class="field"><label>${sl}</label><input class="input" data-f="${key}.${i}.${sk}" value="${esc(item[sk] ?? "")}" placeholder="${esc(sph || "")}"></div>`).join("")}
+      </div>`).join("")}
+      <button class="btn btn-sm btn-soft" data-action="eAdd" data-l="${key}" data-kind="obj" data-keys="${opts.map((o) => o[0]).join(",")}" style="justify-self:start">${icon("plus")} Agregar ${esc((ph || "elemento").toLowerCase())}</button></div>`;
+  }
   if (type === "text") return `<div class="field"><label for="${id}">${label}</label><input class="input" id="${id}" data-f="${key}" value="${esc(v ?? "")}" placeholder="${esc(ph || "")}"></div>`;
   if (type === "textarea") return `<div class="field"><label for="${id}">${label}</label><textarea class="textarea" id="${id}" data-f="${key}" rows="3">${esc(v ?? "")}</textarea></div>`;
   if (type === "select") return `<div class="field"><label for="${id}">${label}</label><select class="select" id="${id}" data-f="${key}" data-rerender="1">
@@ -519,52 +551,55 @@ function bindActions() {
 
   // Itinerarios
   A.aNewCourse = () => openEditor({
-    title: "Nuevo itinerario", spec: "course", obj: { title: "", theme: "amanecer", description: "" },
+    title: "Nuevo curso", spec: "course", obj: { title: "", theme: "amanecer", description: "" },
     onSave: (o) => commit((d) => {
-      const c = { id: slug(o.title) + "-" + Date.now().toString(36), title: o.title || "Itinerario sin título", theme: o.theme, description: o.description, phases: [blankPhase(0)] };
+      const c = { id: slug(o.title) + "-" + Date.now().toString(36), title: o.title || "Curso sin título", theme: o.theme, description: o.description, phases: [blankPhase(1)] };
       renumber(c); d.courses.push(c);
       setTimeout(() => (location.hash = `#/admin/itinerarios/${d.courses.length - 1}`));
-    }, { msg: "Itinerario creado" }),
+    }, { msg: "Curso creado" }),
   });
   A.aEditCourse = (el) => {
     const ci = +el.dataset.ci, c = S.ensureDraft().courses[ci];
-    openEditor({ title: "Datos del itinerario", spec: "course", obj: c, onSave: (o) => commit((d) => Object.assign(d.courses[ci], { title: o.title, theme: o.theme, description: o.description })) });
+    openEditor({ title: "Datos del curso", spec: "course", obj: c, onSave: (o) => commit((d) => Object.assign(d.courses[ci], { title: o.title, theme: o.theme, description: o.description })) });
   };
   A.aMoveCourse = (el) => commit((d) => move(d.courses, +el.dataset.i, +el.dataset.d));
   A.aDupCourse = (el) => commit((d) => {
     const c = clone(d.courses[+el.dataset.i]); c.id = slug(c.title) + "-" + Date.now().toString(36); c.title += " (copia)";
     d.courses.splice(+el.dataset.i + 1, 0, c);
-  }, { msg: "Itinerario duplicado" });
+  }, { msg: "Curso duplicado" });
   A.aDelCourse = (el) => {
     const c = S.ensureDraft().courses[+el.dataset.i];
-    if (confirm(`¿Eliminar el itinerario "${c.title}" con todas sus fases?`)) commit((d) => d.courses.splice(+el.dataset.i, 1), { snapshot: true, msg: "Itinerario eliminado" });
+    if (confirm(`¿Eliminar el curso "${c.title}" con todos sus módulos?`)) commit((d) => d.courses.splice(+el.dataset.i, 1), { snapshot: true, msg: "Curso eliminado" });
   };
 
-  // Fases
-  A.aAddPhase = (el) => commit((d) => { const c = d.courses[+el.dataset.ci]; c.phases.push(blankPhase(c.phases.length)); renumber(c); }, { msg: "Fase agregada" });
+  // Módulos
+  A.aAddPhase = (el) => commit((d) => { const c = d.courses[+el.dataset.ci]; c.phases.push(blankPhase(c.phases.length)); renumber(c); }, { msg: "Módulo agregado" });
   A.aEditPhase = (el) => {
     const ci = +el.dataset.ci, pi = +el.dataset.pi, p = S.ensureDraft().courses[ci].phases[pi];
-    openEditor({ title: `Fase ${p.phaseNum}`, spec: "phase", obj: p, onSave: (o) => commit((d) => Object.assign(d.courses[ci].phases[pi], { title: o.title, desc: o.desc })) });
+    openEditor({ title: `Módulo ${p.phaseNum}`, spec: "phase", obj: { title: p.title, desc: p.desc, intro: p.intro || "" }, onSave: (o) => commit((d) => Object.assign(d.courses[ci].phases[pi], { title: o.title, desc: o.desc, intro: o.intro })) });
   };
   A.aMovePhase = (el) => commit((d) => { const c = d.courses[+el.dataset.ci]; move(c.phases, +el.dataset.pi, +el.dataset.d); renumber(c); });
   A.aDelPhase = (el) => {
     const p = S.ensureDraft().courses[+el.dataset.ci].phases[+el.dataset.pi];
-    if (confirm(`¿Eliminar la fase "${p.title}" con sus ${p.sessions.length} encuentros y su evaluación?`))
-      commit((d) => { const c = d.courses[+el.dataset.ci]; c.phases.splice(+el.dataset.pi, 1); renumber(c); }, { snapshot: true, msg: "Fase eliminada" });
+    if (confirm(`¿Eliminar el módulo "${p.title}" con sus ${p.sessions.length} unidades y su evaluación?`))
+      commit((d) => { const c = d.courses[+el.dataset.ci]; c.phases.splice(+el.dataset.pi, 1); renumber(c); }, { snapshot: true, msg: "Módulo eliminado" });
   };
 
-  // Encuentros
+  // Unidades
   const sessionEditor = (ci, pi, si, isNew) => {
     const p = S.ensureDraft().courses[ci].phases[pi];
-    const s = isNew ? blankSession() : p.sessions[si];
+    const s = isNew ? blankSession() : normalizeUnit(p.sessions[si]);
     openEditor({
-      title: isNew ? "Nuevo encuentro" : `Encuentro ${s.id}`, spec: "session", obj: s,
+      title: isNew ? "Nueva unidad" : `Unidad ${s.id}`, spec: "session", obj: s,
       onSave: (o) => commit((d) => {
         const c = d.courses[ci]; o.questions = (o.questions || []).filter((x) => x.trim());
+        o.sections = (o.sections || []).filter((x) => x.title.trim() || x.body.trim());
+        o.church = (o.church || []).filter((x) => x.source.trim() || x.text.trim());
+        o.resources = (o.resources || []).filter((x) => x.title.trim() && x.url.trim());
         if (isNew) c.phases[pi].sessions.push(o); else c.phases[pi].sessions[si] = o;
         renumber(c);
-      }, { msg: isNew ? "Encuentro agregado" : "Encuentro guardado" }),
-      onDelete: !isNew && p.sessions.length > 1 ? () => commit((d) => { const c = d.courses[ci]; c.phases[pi].sessions.splice(si, 1); renumber(c); }, { snapshot: true, msg: "Encuentro eliminado" }) : null,
+      }, { msg: isNew ? "Unidad agregada" : "Unidad guardada" }),
+      onDelete: !isNew && p.sessions.length > 1 ? () => commit((d) => { const c = d.courses[ci]; c.phases[pi].sessions.splice(si, 1); renumber(c); }, { snapshot: true, msg: "Unidad eliminada" }) : null,
     });
   };
   A.aEditSession = (el) => sessionEditor(+el.dataset.ci, +el.dataset.pi, +el.dataset.si, false);
@@ -573,20 +608,20 @@ function bindActions() {
   A.aDupSession = (el) => commit((d) => {
     const c = d.courses[+el.dataset.ci], arr = c.phases[+el.dataset.pi].sessions, s = clone(arr[+el.dataset.si]);
     s.title += " (copia)"; arr.splice(+el.dataset.si + 1, 0, s); renumber(c);
-  }, { msg: "Encuentro duplicado" });
+  }, { msg: "Unidad duplicada" });
   A.aDelSession = (el) => {
     const s = S.ensureDraft().courses[+el.dataset.ci].phases[+el.dataset.pi].sessions[+el.dataset.si];
-    if (confirm(`¿Eliminar el encuentro "${s.title}"?`))
-      commit((d) => { const c = d.courses[+el.dataset.ci]; c.phases[+el.dataset.pi].sessions.splice(+el.dataset.si, 1); renumber(c); }, { snapshot: true, msg: "Encuentro eliminado" });
+    if (confirm(`¿Eliminar la unidad "${s.title}"?`))
+      commit((d) => { const c = d.courses[+el.dataset.ci]; c.phases[+el.dataset.pi].sessions.splice(+el.dataset.si, 1); renumber(c); }, { snapshot: true, msg: "Unidad eliminada" });
   };
 
   // Evaluación
   A.aEditQuiz = (el) => {
     const ci = +el.dataset.ci, pi = +el.dataset.pi, p = S.ensureDraft().courses[ci].phases[pi];
-    const quiz = p.quiz || { badge: `Evaluación fase ${p.phaseNum}`, title: "Discernimiento", questions: [] };
+    const quiz = p.quiz || { badge: `Evaluación módulo ${p.phaseNum}`, title: "Discernimiento", questions: [] };
     if (!quiz.questions.length) quiz.questions.push(blankQuestion());
     openEditor({
-      title: `Evaluación · Fase ${p.phaseNum}`, spec: "quiz", obj: quiz,
+      title: `Evaluación · Módulo ${p.phaseNum}`, spec: "quiz", obj: quiz,
       onSave: (o) => {
         const bad = o.questions.findIndex((q) => !q.q.trim() || q.options.some((x) => !x.trim()));
         if (bad >= 0) { toast(`Completa la pregunta ${bad + 1} y todas sus opciones`, ""); return false; }
@@ -657,10 +692,12 @@ function bindActions() {
   };
   A.eAdd = (el) => {
     const arr = getPath(E.obj, el.dataset.l) || (setPath(E.obj, el.dataset.l, []), getPath(E.obj, el.dataset.l));
-    arr.push(el.dataset.kind === "question" ? blankQuestion() : "");
+    arr.push(el.dataset.kind === "question" ? blankQuestion()
+      : el.dataset.kind === "obj" ? Object.fromEntries(el.dataset.keys.split(",").map((k) => [k, ""])) : "");
     renderEditor();
     const n = getPath(E.obj, el.dataset.l).length - 1;
-    const sel = el.dataset.kind === "question" ? `[data-f="${el.dataset.l}.${n}.q"]` : `[data-f="${el.dataset.l}.${n}"]`;
+    const sel = el.dataset.kind === "question" ? `[data-f="${el.dataset.l}.${n}.q"]`
+      : el.dataset.kind === "obj" ? `[data-f^="${el.dataset.l}.${n}."]` : `[data-f="${el.dataset.l}.${n}"]`;
     const f = $("#editDialog .sheet-body").querySelector(sel);
     f?.focus(); f?.scrollIntoView({ block: "center" });
   };

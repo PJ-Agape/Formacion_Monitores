@@ -379,7 +379,7 @@ main#view { flex: 1; width: 100%; max-width: 1080px; margin: 0 auto; padding: 24
 .crumbs a:hover { color: var(--accent-text); }
 .enc-head h1 { font-family: var(--font-display); font-weight: 600; font-size: clamp(1.9rem, 5vw, 3rem); letter-spacing: -0.025em; margin: 10px 0 12px; max-width: 22ch; }
 .enc-layout { display: grid; grid-template-columns: minmax(0, 1fr) 280px; gap: 28px; align-items: start; }
-@media (max-width: 900px) { .enc-layout { grid-template-columns: 1fr; } .enc-aside { order: -1; } }
+@media (max-width: 900px) { .enc-layout { grid-template-columns: 1fr; } .enc-aside { position: static; } }
 .enc-block { padding: 24px 0; border-top: 1px solid var(--line); }
 .enc-block:first-child { border-top: 0; padding-top: 4px; }
 .enc-block .eyebrow { display: flex; align-items: center; gap: 8px; }
@@ -408,6 +408,56 @@ main#view { flex: 1; width: 100%; max-width: 1080px; margin: 0 auto; padding: 24
 .enc-nav a { text-decoration: none; color: inherit; }
 .enc-nav .card { padding: 16px 18px; }
 .enc-nav .next { text-align: right; }
+
+/* ---------- Unidad (aula virtual) ---------- */
+.enc-head .eyebrow { display: block; }
+.unit .objective { font-size: .95rem; line-height: 1.55; }
+.unit .lead-text { font-size: 1.12rem; line-height: 1.7; margin-top: 22px; color: var(--ink); }
+.unit-sec { padding: 26px 0 4px; }
+.unit-sec h2 { font-family: var(--font-display); font-weight: 600; font-size: 1.45rem; letter-spacing: -0.015em; margin-bottom: 10px; }
+.unit-sec p { margin-top: 12px; font-size: 1.03rem; line-height: 1.75; }
+.unit-sec .eyebrow { display: flex; align-items: center; gap: 8px; }
+.unit-sec .eyebrow::before { content: ""; width: 18px; height: 2px; background: var(--accent-2); }
+.prose-list { margin: 12px 0 0; padding: 0; list-style: none; display: grid; gap: 8px; }
+.prose-list li { position: relative; padding: 10px 14px 10px 32px; background: var(--surface); border: 1px solid var(--line); border-radius: 12px; line-height: 1.6; }
+.prose-list li::before { content: ""; position: absolute; left: 14px; top: 1.05em; width: 7px; height: 7px; border-radius: 50%; background: var(--accent-2); }
+.scripture .ref { font-family: var(--font-body); font-style: normal; font-weight: 800; font-size: .78rem; letter-spacing: .08em; text-transform: uppercase; color: var(--accent-text); margin-bottom: 8px; }
+.church-card { background: var(--surface); border: 1px solid var(--line); border-left: 3px solid var(--accent); border-radius: 0 var(--r) var(--r) 0; padding: 14px 16px; }
+.church-card .src { font-weight: 800; font-size: .82rem; }
+.church-card .src a { text-decoration: none; display: inline-flex; gap: 6px; align-items: center; }
+.church-card p { margin-top: 6px !important; font-size: .96rem !important; line-height: 1.6 !important; color: var(--ink-2); }
+.reflect .q { font-weight: 600; line-height: 1.5; }
+.reflect .textarea { margin-top: 6px; background: color-mix(in srgb, var(--accent-soft) 35%, var(--surface)); }
+.saved { display: inline-flex; gap: 4px; align-items: center; margin-top: 8px; color: var(--ok); }
+.activity-card { background: linear-gradient(150deg, var(--warn-soft), var(--surface)); border: 1px solid color-mix(in srgb, var(--gold) 40%, transparent); border-radius: var(--r-lg); padding: 20px 22px; }
+.activity-card .eyebrow { color: var(--warn); }
+.res-list { list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 8px; }
+.res-list a { display: flex; gap: 12px; align-items: center; padding: 12px 14px; border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); text-decoration: none; color: var(--ink); transition: border-color .15s, transform .15s; }
+.res-list a:hover { border-color: var(--accent); transform: translateX(2px); }
+.res-list a > svg:last-child { margin-left: auto; color: var(--ink-3); flex-shrink: 0; }
+.res-list b { display: block; font-size: .95rem; }
+.res-list small { display: block; color: var(--ink-3); font-size: .8rem; margin-top: 2px; }
+.res-ico { width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center; background: var(--accent-soft); color: var(--accent-text); flex-shrink: 0; }
+.unit-end { margin-top: 30px; padding-top: 22px; border-top: 1px solid var(--line); }
+.toc { display: grid; gap: 2px; border-top: 1px solid var(--line); padding-top: 10px; }
+.toc a { font-size: .84rem; color: var(--ink-2); text-decoration: none; padding: 5px 8px; border-radius: 8px; }
+.toc a:hover { background: var(--surface-2); color: var(--ink); }
+.mini-bar { height: 6px; background: var(--line); border-radius: 9px; overflow: hidden; margin-top: 10px; }
+.mini-bar i { display: block; height: 100%; background: var(--accent); border-radius: 9px; }
+.phase-intro { padding: 10px 10px 6px; }
+.nowrap { white-space: nowrap; }
+@media (max-width: 560px) { .session-row .nowrap { display: none; } }
+@media (max-width: 900px) { .enc-aside .toc { display: none; } }
+
+/* ---------- Cuaderno ---------- */
+.notebook { padding: 8px 24px 24px; }
+.nb-mod { padding-top: 18px; }
+.nb-mod + .nb-mod { border-top: 1px solid var(--line); margin-top: 18px; }
+.nb-mod h2 { font-size: 1.3rem; margin-top: 4px; }
+.nb-unit { margin-top: 16px; }
+.nb-unit h3 a { color: var(--ink); text-decoration: none; }
+.nb-q { font-size: .88rem; color: var(--ink-2); margin-top: 10px; font-weight: 600; }
+.nb-a { margin-top: 4px; padding: 10px 14px; border-left: 3px solid var(--accent-2); background: var(--surface-2); border-radius: 0 10px 10px 0; font-family: var(--font-display); font-style: italic; }
 
 /* ---------- Sheet / dialog ---------- */
 dialog.sheet {
@@ -568,6 +618,7 @@ body.is-admin { --bottom-h: 0px; }
 .list-editor .li .textarea { min-height: 44px; }
 .opt-editor { display: flex; gap: 10px; align-items: center; }
 .opt-editor input[type="radio"] { width: 20px; height: 20px; accent-color: var(--ok); flex-shrink: 0; }
+.ed-heading { font-family: var(--font-display); font-weight: 600; font-size: 1.1rem; padding-top: 10px; border-top: 1px solid var(--line); margin-top: 6px; }
 .qcard { border: 1px solid var(--line); border-radius: var(--r); padding: 16px; background: var(--surface); }
 .stat { display: grid; gap: 2px; }
 .stat b { font-family: var(--font-display); font-size: 1.8rem; font-weight: 650; line-height: 1.1; }
@@ -593,3 +644,4 @@ body.is-admin { --bottom-h: 0px; }
 }
 
 .toast-box { bottom: auto; top: 18px; }
+.btn-block { white-space: normal; text-align: center; }

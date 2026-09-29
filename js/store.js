@@ -15,6 +15,7 @@ const K = {
   oldAdminPin: "agape_admin_pin",
   mode: "agape_color_mode",
   cache: "agape_content_cache",
+  notes: "agape_notes_v1",
 };
 
 const read = (k, fallback = null) => {
@@ -186,6 +187,20 @@ export function courseState(course) {
   return { p, phases, donePhases, totalSessions, readSessions, pct, complete, next };
 }
 export const sessionKey = (phaseIdx, s) => `${phaseIdx}:${s.id}`;
+
+// ---------------- Cuaderno personal ----------------
+// { courseId: { "fase:unidad": { indicePregunta: "texto" } } }
+export function getNotes(courseId, key) {
+  const all = read(K.notes) || {};
+  return (all[courseId] && all[courseId][key]) || {};
+}
+export function setNote(courseId, key, qi, text) {
+  const all = read(K.notes) || {};
+  all[courseId] = all[courseId] || {};
+  all[courseId][key] = all[courseId][key] || {};
+  if (text && text.trim()) all[courseId][key][qi] = text; else delete all[courseId][key][qi];
+  write(K.notes, all);
+}
 
 // ---------------- Administración ----------------
 export function adminHash() {
