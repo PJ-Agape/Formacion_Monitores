@@ -76,7 +76,7 @@ window.addEventListener("hashchange", render);
 function applyTheme() {
   const c = S.activeCourse();
   document.documentElement.dataset.theme = (c && c.theme) || "amanecer";
-  const color = { amanecer: "#2a247f", cenaculo: "#3b0764", esperanza: "#064e3b" }[c?.theme] || "#2a247f";
+  const color = { amanecer: "#1351a4", cenaculo: "#0a2a6e", esperanza: "#0a3a78" }[c?.theme] || "#1351a4";
   $('meta[name="theme-color"]')?.setAttribute("content", color);
 }
 
@@ -141,7 +141,7 @@ function viewHome() {
 
   return `
   <section class="hero">
-    <svg class="hero-cross" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1"><path d="M12 2v20M5 8h14"/></svg>
+    <img class="hero-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">
     <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Camino de formación</span>
     <h1>${heroTitle(course.title)}</h1>
     <p class="lead">${esc(course.description)}</p>
@@ -156,10 +156,10 @@ function viewHome() {
   </section>
 
   <div class="grid grid-4" style="margin-top:20px">
-    ${tile("#/comunidad", "👥", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
-    ${tile("#/itinerario", "🧭", "Curso", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
-    ${tile("#/materiales", "🧰", "Materiales", c.materials.title)}
-    ${tile("#/oracion", "🕊️", "Oración", c.devotional.title)}
+    ${tile("#/comunidad", "users", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
+    ${tile("#/itinerario", "route", "Curso", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
+    ${tile("#/materiales", "book", "Materiales", c.materials.title)}
+    ${tile("#/oracion", "flame", "Oración", c.devotional.title)}
   </div>
 
   ${st.complete ? `
@@ -172,9 +172,9 @@ function viewHome() {
   <div id="installSlot"></div>
   `;
 }
-function tile(href, emoji, title, text) {
+function tile(href, ic, title, text) {
   return `<a class="card link" href="${href}">
-    <div class="tile-ico">${emoji}</div>
+    <div class="tile-ico tile-brand">${icon(ic)}</div>
     <h3>${esc(title)}</h3>
     <p class="muted small" style="margin-top:6px">${esc(text)}</p>
   </a>`;
@@ -731,7 +731,7 @@ function viewCertificate() {
   return `
   <nav class="crumbs no-print" style="margin-bottom:14px"><a href="#/itinerario">Curso</a>${icon("right")}<span>Constancia</span></nav>
   <div class="certificate">
-    <svg class="seal" viewBox="0 0 64 64" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="32" cy="32" r="29"/><circle cx="32" cy="32" r="24" stroke-dasharray="2 3"/><path d="M32 16v32M22 26h20" stroke-width="3" stroke-linecap="round"/></svg>
+    <img class="seal-logo" src="icons/logo-320.webp" width="96" height="96" alt="Logo Ágape Joven PJ">
     <div class="kicker">Pastoral Juvenil Ágape</div>
     <h2>Constancia de Formación y Envío</h2>
     <div class="small" style="color:#6f6a7e">Curso de formación de dirigentes «${esc(course.title)}»</div>
@@ -804,7 +804,8 @@ function viewProfile() {
   const isNew = !p.name;
   return `
   <div class="welcome">
-    ${isNew ? `<section class="hero" style="margin-bottom:18px">
+    ${isNew ? `<section class="hero" style="margin-bottom:18px;text-align:center">
+      <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo Ágape Joven PJ">
       <span class="eyebrow">Bienvenido a Ágape</span>
       <h1>Tu camino de <em>formación</em></h1>
       <p class="lead">Cuéntanos quién eres para acompañar tu avance en el curso y preparar tu constancia al final.</p>
@@ -858,7 +859,8 @@ function viewLogin() {
       <button class="btn btn-primary" style="margin-top:18px" data-action="signIn">${icon("users")} Reintentar</button>`,
   }[st.status];
   return `<div class="welcome">
-    <section class="hero" style="margin-bottom:18px">
+    <section class="hero" style="margin-bottom:18px;text-align:center">
+      <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo Ágape Joven PJ">
       <span class="eyebrow">Curso de formación de dirigentes</span>
       <h1>Tu camino de <em>formación</em></h1>
       <p class="lead">Ingresa con tu cuenta de Google para avanzar a tu ritmo, guardar tu cuaderno y recibir tu constancia. Tu avance te sigue en cualquier dispositivo.</p>
