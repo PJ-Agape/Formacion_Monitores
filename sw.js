@@ -1,6 +1,6 @@
 // Service worker: permite usar la app sin conexión.
 // Sube este número cuando cambies archivos de la app (html, css, js) para renovar la caché.
-const VERSION = "agape-v5";
+const VERSION = "agape-v6";
 const SHELL = [
   "./", "index.html", "css/app.css",
   "js/app.js", "js/admin.js", "js/store.js", "js/util.js", "js/config.js", "js/cloud.js", "js/qrcode.mjs", "js/qrcode-utf8.mjs",
@@ -36,14 +36,22 @@ self.addEventListener("fetch", (e) => {
     return;
   }
 
-  // Resto de la app: caché primero y se actualiza en segundo plano.
-  e.respondWith(
-    caches.match(req, { ignoreSearch: true }).then((hit) => {
-      const net = fetch(req).then((res) => {
+  // Páginas, estilos y código: primero la red (así los cambios publicados se ven de inmediato);
+  // sin conexión, la copia guardada. Fuentes e imágenes: primero la caché.
+  const isAsset = /\.(woff2|png|webp|jpg|svg)$/.test(url.pathname);
+  if (isAsset) {
+    e.respondWith(
+      caches.match(req, { ignoreSearch: true }).then((hit) => hit || fetch(req).then((res) => {
         if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); }
         return res;
-      }).catch(() => hit);
-      return hit || net;
-    })
+      }))
+    );
+    return;
+  }
+  e.respondWith(
+    fetch(req, { cache: "no-cache" }).then((res) => {
+      if (res.ok) { const copy = res.clone(); caches.open(VERSION).then((c) => c.put(req, copy)); }
+      return res;
+    }).catch(() => caches.match(req, { ignoreSearch: true }).then((hit) => hit || caches.match("index.html")))
   );
 });

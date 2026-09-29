@@ -979,7 +979,15 @@ async function boot() {
   }
   await render();
   if ("serviceWorker" in navigator && location.protocol.startsWith("http")) {
-    navigator.serviceWorker.register("sw.js").catch(() => {});
+    // Si se publica una versión nueva de la app, se recarga una vez para mostrarla.
+    const hadController = !!navigator.serviceWorker.controller;
+    let reloaded = false;
+    navigator.serviceWorker.addEventListener("controllerchange", () => {
+      if (!hadController || reloaded) return;
+      reloaded = true; location.reload();
+    });
+    navigator.serviceWorker.register("sw.js", { updateViaCache: "none" })
+      .then((r) => r.update().catch(() => {})).catch(() => {});
   }
 }
 boot();
