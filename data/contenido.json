@@ -1,5 +1,5 @@
 {
-  "version": 2,
+  "version": 3,
   "updatedAt": "2026-09-28",
   "roles": [
     {
@@ -2009,5 +2009,122 @@
         "who": "Dirigentes + Jóvenes"
       }
     ]
-  }
+  },
+  "library": [
+    {
+      "category": "Sagrada Escritura",
+      "title": "La Biblia · El Libro del Pueblo de Dios",
+      "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+      "note": "Traducción latinoamericana completa, en el sitio oficial del Vaticano. Todos los textos bíblicos del curso se pueden leer aquí."
+    },
+    {
+      "category": "Catecismo",
+      "title": "Catecismo de la Iglesia Católica",
+      "url": "https://www.vatican.va/archive/catechism_sp/index_sp.html",
+      "note": "El texto completo, organizado en cuatro partes: la fe, los sacramentos, la vida en Cristo y la oración."
+    },
+    {
+      "category": "Catecismo",
+      "title": "Catecismo · Cuarta parte: La oración cristiana",
+      "url": "https://www.vatican.va/archive/catechism_sp/p4s1_sp.html",
+      "note": "Qué es la oración, los Salmos y el Padre Nuestro. Base de las unidades sobre vida de oración."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Christus vivit (papa Francisco, 2019)",
+      "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html",
+      "note": "Exhortación a los jóvenes y a todo el pueblo de Dios. Es el documento más citado del curso."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Evangelii gaudium (papa Francisco, 2013)",
+      "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+      "note": "La alegría del Evangelio. Incluye el «arte del acompañamiento» y el llamado a primerear."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Gaudete et exsultate (papa Francisco, 2018)",
+      "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20180319_gaudete-et-exsultate.html",
+      "note": "La llamada a la santidad hoy: alegría, sentido del humor y discernimiento."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Fratelli tutti (papa Francisco, 2020)",
+      "url": "https://www.vatican.va/content/francesco/es/encyclicals/documents/papa-francesco_20201003_enciclica-fratelli-tutti.html",
+      "note": "Encíclica sobre la fraternidad y la amistad social. Útil para hablar de escucha y encuentro."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Verbum Domini (Benedicto XVI, 2010)",
+      "url": "https://www.vatican.va/content/benedict-xvi/es/apost_exhortations/documents/hf_ben-xvi_exh_20100930_verbum-domini.html",
+      "note": "La Palabra de Dios en la vida de la Iglesia. El número 87 presenta la lectio divina."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Dilexi te (León XIV, 2025)",
+      "url": "https://www.vatican.va/content/leo-xiv/es/apost_exhortations/documents/20251004-dilexi-te.html",
+      "note": "Exhortación sobre el amor hacia los pobres."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "Documento final del Sínodo sobre los jóvenes (2018)",
+      "url": "https://www.vatican.va/roman_curia/synod/documents/rc_synod_doc_20181027_doc-final-instrumentum-xvassemblea-giovani_sp.html",
+      "note": "«Los jóvenes, la fe y el discernimiento vocacional»: la mirada de la Iglesia universal sobre la juventud."
+    },
+    {
+      "category": "Documentos de la Iglesia",
+      "title": "León XIV · Vigilia con los jóvenes en Tor Vergata (2025)",
+      "url": "https://www.vatican.va/content/leo-xiv/es/speeches/2025/august/documents/20250802-veglia-tor-vergata.html",
+      "note": "Discurso del Jubileo de los Jóvenes sobre la amistad en Cristo."
+    },
+    {
+      "category": "Pastoral juvenil",
+      "title": "Civilización del Amor. Proyecto y misión (CELAM)",
+      "url": "https://pastoraljuvenil.cl/docs/187611760-Civilizacion-del-Amor-CAPYM-2da_Edicion.pdf",
+      "note": "Orientaciones para la Pastoral Juvenil latinoamericana: procesos, grupos, asesoría y metodología."
+    },
+    {
+      "category": "Pastoral juvenil",
+      "title": "Comisión Nacional de Pastoral Juvenil de Chile",
+      "url": "https://pastoraljuvenil.cl/",
+      "note": "Noticias, documentos magisteriales y subsidios de la Pastoral Juvenil chilena."
+    },
+    {
+      "category": "Prevención y ambientes seguros",
+      "title": "Integridad en el Servicio Eclesial (ISE)",
+      "url": "https://www.iglesia.cl/prevenirabusos/ise/",
+      "note": "Orientaciones de la Conferencia Episcopal de Chile para todos los que sirven en la Iglesia, incluidos los laicos."
+    },
+    {
+      "category": "Prevención y ambientes seguros",
+      "title": "Documento ISE en PDF",
+      "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf",
+      "note": "El texto completo para descargar y leer con el equipo."
+    },
+    {
+      "category": "Prevención y ambientes seguros",
+      "title": "Folleto «Ambientes sanos, seguros y de buen trato»",
+      "url": "https://www.iglesia.cl/prevenirabusos/documentos/FOLLETO_BASE.pdf",
+      "note": "Guía breve para quienes coordinan grupos y comunidades."
+    },
+    {
+      "category": "Prevención y ambientes seguros",
+      "title": "Recursos de prevención de la Iglesia de Chile",
+      "url": "https://www.iglesia.cl/prevenirabusos/recursos_int.php",
+      "note": "Materiales de difusión y formación en ambientes sanos y seguros."
+    },
+    {
+      "category": "Salud mental y ayuda",
+      "title": "Línea de Prevención del Suicidio *4141 (Minsal)",
+      "url": "https://www.minsal.cl/linea-de-atencion-4141-no-estas-solo-no-estas-sola/",
+      "note": "Gratuita y disponible las 24 horas, con psicólogos que escuchan y orientan."
+    },
+    {
+      "category": "Salud mental y ayuda",
+      "title": "Salud Responde 600 360 7777 (Minsal)",
+      "url": "https://saludresponde.minsal.cl/",
+      "note": "Orientación telefónica en salud, incluida salud mental."
+    }
+  ],
+  "songs": []
 }

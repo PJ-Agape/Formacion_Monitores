@@ -786,9 +786,133 @@ function cardHTML(c, kind) {
 }
 function viewMaterials() {
   const m = S.content().materials;
+  const lib = buildLibrary();
   return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(m.title)}</h1><p>${esc(m.desc)}</p></header>
-    <div class="grid grid-2" style="margin-top:18px">${m.cards.map((c) => cardHTML(c, "material")).join("")}</div>`;
+    <nav class="lib-jump row-wrap" style="margin-top:14px">
+      <a class="btn btn-sm btn-soft" href="#biblioteca" data-action="scrollTo" data-id="biblioteca">${icon("book")} Biblioteca digital · ${lib.total} recursos</a>
+    </nav>
+    <div class="grid grid-2" style="margin-top:18px">${m.cards.map((c) => cardHTML(c, "material")).join("")}</div>
+    ${libraryHTML(lib)}`;
 }
+
+// ---------------------------------------------------------------------------
+// BIBLIOTECA DIGITAL: se arma sola con los recursos y documentos citados en los cursos
+// ---------------------------------------------------------------------------
+const LIB_GROUPS = [
+  ["biblia", "Biblia y Catecismo", "Para leer y orar la Palabra, y consultar la fe de la Iglesia."],
+  ["magisterio", "Documentos de la Iglesia", "Exhortaciones, encíclicas y documentos del Papa y del Sínodo."],
+  ["pj", "Pastoral juvenil", "Orientaciones de la pastoral juvenil latinoamericana y chilena."],
+  ["cuidado", "Ambientes sanos y seguros", "Orientaciones y materiales de prevención de la Iglesia en Chile."],
+  ["ayuda", "Salud mental y redes de ayuda", "Líneas de apoyo gratuitas y orientación en salud."],
+  ["otros", "Otros recursos", ""],
+];
+function libGroup(url) {
+  const u = String(url).toLowerCase();
+  if (/catechism|esl0506|biblia/.test(u)) return "biblia";
+  if (/prevenirabusos|iglesiadesantiago.*ambientes/.test(u)) return "cuidado";
+  if (/minsal|saludresponde|4141/.test(u)) return "ayuda";
+  if (/pastoraljuvenil|celam|capym/.test(u)) return "pj";
+  if (/vatican\.va/.test(u)) return "magisterio";
+  return "otros";
+}
+// Nombre y descripción de los documentos más citados (si no está aquí, se usa lo que dice la unidad).
+const LIB_META = [
+  ["christus-vivit", "Christus vivit", "Exhortación del papa Francisco a los jóvenes y a todo el pueblo de Dios (2019)."],
+  ["evangelii-gaudium", "Evangelii gaudium", "Exhortación del papa Francisco sobre el anuncio del Evangelio en el mundo actual (2013)."],
+  ["gaudete-et-exsultate", "Gaudete et exsultate", "Exhortación del papa Francisco sobre la llamada a la santidad hoy (2018)."],
+  ["fratelli-tutti", "Fratelli tutti", "Encíclica del papa Francisco sobre la fraternidad y la amistad social (2020)."],
+  ["verbum-domini", "Verbum Domini", "Exhortación de Benedicto XVI sobre la Palabra de Dios; incluye la lectio divina (2010)."],
+  ["dilexi-te", "Dilexi te", "Exhortación del papa León XIV sobre el amor a los pobres (2025)."],
+  ["veglia-tor-vergata", "León XIV: vigilia con los jóvenes en Tor Vergata", "Discurso del Jubileo de los Jóvenes sobre la amistad en Cristo (2025)."],
+  ["synod_doc_20181027", "Documento final del Sínodo sobre los jóvenes", "Los jóvenes, la fe y el discernimiento vocacional (2018)."],
+  ["esl0506", "Biblia · El Libro del Pueblo de Dios", "Traducción latinoamericana de la Biblia, en el sitio del Vaticano."],
+  ["catechism_sp/p4s1", "Catecismo: La oración cristiana", "Cuarta parte del Catecismo de la Iglesia Católica."],
+  ["catechism_sp/index", "Catecismo de la Iglesia Católica", "Índice completo del Catecismo en español."],
+  ["capym", "Civilización del Amor. Proyecto y misión", "Orientaciones del CELAM para la Pastoral Juvenil latinoamericana."],
+  ["pastoraljuvenil.cl", "Comisión Nacional de Pastoral Juvenil", "Noticias, documentos y subsidios de la Pastoral Juvenil de Chile."],
+  ["prevenirabusos/ise", "Integridad en el Servicio Eclesial (ISE)", "Orientaciones de la Conferencia Episcopal de Chile para el servicio pastoral (2020)."],
+  ["ise.pdf", "Integridad en el Servicio Eclesial · PDF", "Texto completo para descargar."],
+  ["folleto_base", "Ambientes sanos, seguros y de buen trato", "Folleto para responsables de grupos y comunidades."],
+  ["recursos_int", "Recursos de prevención de la Iglesia de Chile", "Materiales de difusión y formación en prevención."],
+  ["4141", "Línea de prevención del suicidio *4141", "Ministerio de Salud. Gratuita, las 24 horas."],
+  ["saludresponde", "Salud Responde · 600 360 7777", "Orientación en salud del Ministerio de Salud, incluida salud mental."],
+];
+const libMeta = (url) => { const u = url.toLowerCase(); return LIB_META.find(([k]) => u.includes(k)); };
+const cleanSource = (src) => String(src || "").replace(/\s+\d[\d\s,.\-–y]*$/, "").replace(/\s*\(.*?\)\s*$/, "").trim();
+function buildLibrary() {
+  const byUrl = new Map();
+  S.content().courses.forEach((course) => course.phases.forEach((ph, pi) => ph.sessions.forEach((se) => {
+    const cite = { course: course.id, courseTitle: course.title, pi, id: se.id, title: se.title };
+    const add = (url, title, note, weight) => {
+      if (!url || !/^https?:\/\//.test(url)) return;
+      const key = url.replace(/[#?].*$/, "").replace(/\/$/, "");
+      let e = byUrl.get(key);
+      if (!e) { e = { url, title, note: note || "", weight, cites: [] }; byUrl.set(key, e); }
+      if (weight > e.weight && title) { e.title = title; e.weight = weight; }
+      if (!e.note && note) e.note = note;
+      if (!e.cites.some((c) => c.course === cite.course && c.id === cite.id)) e.cites.push(cite);
+    };
+    (se.resources || []).forEach((r) => add(r.url, r.title, r.note, 2));
+    (se.church || []).forEach((c) => add(c.url, cleanSource(c.source), "", 1));
+  })));
+  const items = [...byUrl.values()].map((e) => {
+    const m = libMeta(e.url);
+    const title = m ? m[1] : e.title.replace(/,\s*(capítulo|números?|número)\b.*$/i, "").replace(/:\s*(capítulo|números?)\b.*$/i, "");
+    const note = m ? m[2] : (/\b(números?|lee|capítulo)\b/i.test(e.note) ? "" : e.note);
+    const cites = [...e.cites].sort((x, y) => x.course.localeCompare(y.course) || x.pi - y.pi || x.id.localeCompare(y.id, "es", { numeric: true }));
+    return { ...e, title, note, cites, group: libGroup(e.url) };
+  });
+  items.sort((a, b) => b.cites.length - a.cites.length || a.title.localeCompare(b.title, "es"));
+  return { total: items.length, groups: LIB_GROUPS.map(([k, t, d]) => ({ k, t, d, items: items.filter((i) => i.group === k) })).filter((g) => g.items.length) };
+}
+function libraryHTML(lib) {
+  if (!lib.total) return "";
+  const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
+  return `
+  <section id="biblioteca" class="library">
+    <div class="section-title"><h2>Biblioteca digital</h2></div>
+    <p class="muted" style="max-width:62ch">Todos los documentos y recursos que se citan en los cursos, reunidos en un solo lugar para consultarlos cuando quieras. Se abren en su sitio oficial.</p>
+    <label class="search" style="display:block;margin:16px 0 8px">
+      ${icon("search")}<span class="sr-only">Buscar en la biblioteca</span>
+      <input id="libSearch" type="search" placeholder="Buscar: Christus vivit, Catecismo, prevención, *4141…" autocomplete="off">
+    </label>
+    ${lib.groups.map((g) => `
+      <div class="lib-group" data-lib-group>
+        <h3 class="lib-h">${esc(g.t)} <span class="chip">${g.items.length}</span></h3>
+        ${g.d ? `<p class="xs muted" style="margin-top:2px">${esc(g.d)}</p>` : ""}
+        <div class="lib-list">
+          ${g.items.map((it) => `
+          <article class="lib-item" data-lib="${esc((it.title + " " + it.note + " " + host(it.url)).toLowerCase())}">
+            <a class="lib-link" href="${esc(it.url)}" target="_blank" rel="noopener">
+              <span class="res-ico">${icon("book")}</span>
+              <span class="lib-body"><b>${esc(it.title)}</b>${it.note ? `<small>${esc(it.note)}</small>` : ""}<small class="lib-host">${esc(host(it.url))}</small></span>
+              ${icon("arrowR")}
+            </a>
+            <div class="lib-cites"><span class="xs muted">Citado en</span>
+              ${it.cites.slice(0, 8).map((c) => `<a class="chip accent" href="#/unidad/${c.pi}/${encodeURIComponent(c.id)}" data-action="libOpen" data-course="${esc(c.course)}" data-pi="${c.pi}" data-id="${esc(c.id)}" title="${esc(c.courseTitle + " · " + c.title)}">${esc(c.id)}</a>`).join("")}
+              ${it.cites.length > 8 ? `<span class="xs muted">y ${it.cites.length - 8} más</span>` : ""}
+            </div>
+          </article>`).join("")}
+        </div>
+      </div>`).join("")}
+    <p class="xs muted lib-empty" id="libEmpty" hidden>Nada coincide con la búsqueda.</p>
+  </section>`;
+}
+actions.libOpen = (el) => {
+  S.setActiveCourse(el.dataset.course);
+  location.hash = `#/unidad/${el.dataset.pi}/${encodeURIComponent(el.dataset.id)}`;
+};
+document.addEventListener("input", (e) => {
+  if (e.target.id !== "libSearch") return;
+  const q = e.target.value.trim().toLowerCase();
+  let any = 0;
+  $$("[data-lib-group]").forEach((g) => {
+    let n = 0;
+    g.querySelectorAll(".lib-item").forEach((it) => { const hit = !q || it.dataset.lib.includes(q); it.hidden = !hit; if (hit) n++; });
+    g.hidden = !n; any += n;
+  });
+  $("#libEmpty").hidden = !!any;
+});
 function viewPrayer() {
   const d = S.content().devotional;
   return `<header class="page-head"><span class="eyebrow">Vida de oración</span><h1>${esc(d.title)}</h1><p>${esc(d.desc)}</p></header>

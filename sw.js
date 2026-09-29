@@ -1,6 +1,6 @@
 // Service worker: permite usar la app sin conexión.
 // Sube este número cuando cambies archivos de la app (html, css, js) para renovar la caché.
-const VERSION = "agape-v6";
+const VERSION = "agape-v7";
 const SHELL = [
   "./", "index.html", "css/app.css",
   "js/app.js", "js/admin.js", "js/store.js", "js/util.js", "js/config.js", "js/cloud.js", "js/qrcode.mjs", "js/qrcode-utf8.mjs",

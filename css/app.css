@@ -670,3 +670,20 @@ body.is-admin { --bottom-h: 0px; }
 .unit-dots { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 8px; }
 .unit-dots span { font-size: .72rem; font-weight: 700; padding: 4px 8px; border-radius: 8px; background: var(--surface-2); color: var(--ink-3); }
 .unit-dots span.on { background: var(--ok-soft); color: var(--ok); }
+
+/* ---------- Biblioteca digital ---------- */
+.library { margin-top: 44px; padding-top: 8px; border-top: 1px solid var(--line); }
+.library .section-title { margin-top: 26px; }
+.lib-group { margin-top: 26px; }
+.lib-h { font-family: var(--font-display); font-weight: 600; font-size: 1.2rem; display: flex; align-items: center; gap: 10px; }
+.lib-list { display: grid; gap: 10px; margin-top: 12px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 380px), 1fr)); }
+.lib-item { border: 1px solid var(--line); border-radius: var(--r); background: var(--surface); display: grid; min-width: 0; }
+.lib-link { display: flex; gap: 12px; align-items: center; padding: 14px 16px; text-decoration: none; color: var(--ink); }
+.lib-link:hover b { color: var(--accent-text); }
+.lib-link > svg:last-child { margin-left: auto; color: var(--ink-3); flex-shrink: 0; }
+.lib-body { min-width: 0; }
+.lib-body b { display: block; font-size: .95rem; }
+.lib-body small { display: block; color: var(--ink-3); font-size: .8rem; margin-top: 2px; }
+.lib-body .lib-host { color: var(--accent-text); font-weight: 600; }
+.lib-cites { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; padding: 10px 16px 12px; border-top: 1px dashed var(--line); }
+.lib-cites .chip { text-decoration: none; }
