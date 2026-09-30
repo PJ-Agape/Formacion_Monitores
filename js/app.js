@@ -174,19 +174,46 @@ function viewHome() {
   const first = (p.name || "").split(" ")[0];
   const nx = nextLink(course, st);
 
+  const today = new Date().toISOString().slice(0, 10);
+  const slides = HOME_SLIDES.filter((x) => (!x.from || today >= x.from) && (!x.to || today <= x.to));
+  const courseSlide = `<article class="car-slide" data-theme-c="blue" aria-roledescription="diapositiva">
+      <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
+      <div class="car-body">
+        <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Curso de formación de dirigentes</span>
+        <h2 class="car-title">${heroTitle(course.title)}</h2>
+        <p class="lead">${esc(course.description)}</p>
+        <div class="actions">
+          <a class="btn btn-gold" href="${nx.href}" ${nx.quiz != null ? `data-action="goQuiz" data-phase="${nx.quiz}"` : ""}>${esc(nx.label)} ${icon("arrowR")}</a>
+        </div>
+        <div class="hero-progress">
+          <div class="bar"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></div>
+          <span class="small"><b>${st.readSessions}/${st.totalSessions}</b> unidades</span>
+        </div>
+      </div>
+      ${illus("camino", "car-illus")}
+    </article>`;
+  const html = slides.map((x) => x.key === "curso" ? courseSlide : `<article class="car-slide" data-theme-c="${x.theme}" aria-roledescription="diapositiva">
+      <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
+      <div class="car-body">
+        <span class="eyebrow">${esc(x.kicker)}</span>
+        ${x.hand ? `<span class="car-hand">${esc(x.hand)}</span>` : ""}
+        <h2 class="car-title">${x.title}</h2>
+        <p class="lead">${esc(x.text)}</p>
+        ${x.chips ? `<div class="car-chips">${x.chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
+        <div class="actions">${x.actions.map(([h, l, cls]) => `<a class="btn ${cls || "btn-gold"}" href="${h}">${esc(l)} ${cls ? "" : icon("arrowR")}</a>`).join("")}</div>
+      </div>
+      ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">` : ""}
+      ${illus(x.illus, "car-illus")}
+    </article>`).join("");
+  onAfterRender(startCarousel);
+
   return `
-  <section class="hero">
-    <img class="hero-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">
-    <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Camino de formación</span>
-    <h1>${heroTitle(course.title)}</h1>
-    <p class="lead">${esc(course.description)}</p>
-    <div class="actions">
-      <a class="btn btn-gold" href="${nx.href}" ${nx.quiz != null ? `data-action="goQuiz" data-phase="${nx.quiz}"` : ""}>${esc(nx.label)} ${icon("arrowR")}</a>
-      <a class="btn btn-glass" href="#/comunidad">Guía de servicio</a>
-    </div>
-    <div class="hero-progress">
-      <div class="bar"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></div>
-      <span class="small"><b>${st.readSessions}/${st.totalSessions}</b> unidades</span>
+  <section class="carousel" aria-roledescription="carrusel" aria-label="Bienvenida">
+    <div class="car-track" id="carTrack">${html}</div>
+    <div class="car-ctrl">
+      <button class="icon-btn" data-action="carGo" data-d="-1" aria-label="Anterior">${icon("left")}</button>
+      <div class="car-dots" role="tablist">${slides.map((x, i) => `<button role="tab" aria-label="${esc(x.label)}" data-action="carTo" data-i="${i}" class="${i ? "" : "on"}"></button>`).join("")}</div>
+      <button class="icon-btn" data-action="carGo" data-d="1" aria-label="Siguiente">${icon("right")}</button>
     </div>
   </section>
 
@@ -213,6 +240,49 @@ function viewHome() {
   <div id="wallSlot"></div>
   <div id="installSlot"></div>
   `;
+}
+// Portada de bienvenida: carrusel. Las diapositivas de temporada se muestran solo en sus fechas.
+const HOME_SLIDES = [
+  { key: "agape", label: "Qué es Ágape", theme: "sky", kicker: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", hand: "bienvenido a casa",
+    title: "Amor que <em>transforma</em>", logo: true, illus: "comunidad",
+    text: "Somos jóvenes de la parroquia que caminan juntos para encontrarse con Jesús, formarse y servir. Aquí nadie es espectador: cada uno importa, con su historia y lo que aporta.",
+    chips: ["Familiar y comunitario", "Intuitivo", "Activo"],
+    actions: [["#/comunidad", "Conoce la comunidad"], ["#/agenda", "Ver la agenda", "btn-glass"]] },
+  { key: "curso", label: "Curso de dirigentes" },
+  { key: "santos", label: "Todos los Santos", theme: "gold", from: "2026-09-15", to: "2026-11-02", kicker: "Domingo 1 de noviembre · Solemnidad", hand: "tú también estás llamado",
+    title: "Todos los <em>Santos</em>", illus: "santos",
+    text: "La santidad no es para unos pocos: es la vocación de todos. Celebramos a quienes ya viven junto a Dios, como san Alberto Hurtado y santa Teresa de los Andes, y el 2 de noviembre rezamos por nuestros difuntos.",
+    actions: [["#/agenda", "Horarios en la agenda"], ["#/oracion", "Rezar con el devocionario", "btn-glass"]] },
+  { key: "maria", label: "Mes de María", theme: "rose", from: "2026-09-15", to: "2026-12-08", kicker: "8 de noviembre al 8 de diciembre", hand: "con flores a María",
+    title: "Mes de <em>María</em>", illus: "flores",
+    text: "Durante un mes nos reunimos a rezar, cantar y llevar flores a la Virgen, como es tradición en Chile. Invita a tu familia y a tus amigos: María nos enseña a decir «aquí estoy».",
+    actions: [["#/agenda", "Ver días y horarios"], ["#/muro", "Anuncios del muro", "btn-glass"]] },
+];
+let carTimer = null, carI = 0;
+function startCarousel() {
+  const track = document.getElementById("carTrack");
+  clearInterval(carTimer);
+  if (!track) return;
+  carI = 0;
+  const n = track.children.length;
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const show = (i) => {
+    carI = (i + n) % n;
+    track.style.transform = `translateX(${-carI * 100}%)`;
+    [...track.children].forEach((s, k) => { s.setAttribute("aria-hidden", k !== carI); s.inert = k !== carI; });
+    document.querySelectorAll(".car-dots button").forEach((b, k) => { b.classList.toggle("on", k === carI); b.setAttribute("aria-selected", k === carI); });
+  };
+  const play = () => { clearInterval(carTimer); if (!reduce && n > 1) carTimer = setInterval(() => { if (!document.getElementById("carTrack")) return clearInterval(carTimer); show(carI + 1); }, 7000); };
+  actions.carGo = (el) => { show(carI + +el.dataset.d); play(); };
+  actions.carTo = (el) => { show(+el.dataset.i); play(); };
+  const box = track.parentElement;
+  box.onmouseenter = () => clearInterval(carTimer);
+  box.onmouseleave = play;
+  box.addEventListener("focusin", () => clearInterval(carTimer));
+  let sx = null;
+  box.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
+  box.addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) { show(carI + (dx < 0 ? 1 : -1)); play(); } sx = null; }, { passive: true });
+  show(0); play();
 }
 function tile(href, ic, title, text) {
   return `<a class="card link" href="${href}">
