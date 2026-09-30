@@ -4,7 +4,7 @@
 // aparecen solos a partir del programa del año.
 
 import { esc, icon, toast } from "./util.js";
-import { illus } from "./ilustraciones.js";
+import { illus, SCENE_KEYS } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -52,8 +52,9 @@ function all() {
 const byDay = () => all().reduce((m, e) => ((m[e.date] = m[e.date] || []).push(e), m), {});
 
 // ---------------------------------------------------------------------------
-export function viewAgenda() {
+export function viewAgenda(day) {
   const now = new Date();
+  if (day) { const d = parse(day); month = new Date(d.getFullYear(), d.getMonth(), 1); selDay = day; }
   if (!month) month = new Date(now.getFullYear(), now.getMonth(), 1);
   ctx.onAfterRender(async () => {
     await loadCamino();
@@ -127,7 +128,7 @@ function paintList() {
     return `<article class="ag-ev${open ? " open" : ""}" style="--c:${t.color}">
       <button class="ag-ev-head" data-action="agOpen" data-id="${esc(e.id)}" aria-expanded="${open}">
         <span class="ag-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>
-        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}</span><strong>${esc(e.title)}</strong>
+        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}</span><strong>${esc(e.title)}</strong>
           <span class="muted small">${[e.start ? `${esc(e.start)}${e.end ? `–${esc(e.end)}` : ""}` : "", esc(e.place || e.audience || "")].filter(Boolean).join(" · ")}</span></span>
       </button>
       ${open ? `<div class="ag-ev-body">
@@ -171,6 +172,20 @@ function openForm(ev) {
       </div>
       <div class="field"><label>Lugar</label><input class="input" name="place" maxlength="120" value="${esc(e.place || "")}" placeholder="Ej: Salón parroquial"></div>
       <div class="field"><label>Detalle</label><textarea class="textarea" name="desc" maxlength="1500" placeholder="Qué traer, a qué hora termina, a quién consultar…">${esc(e.desc || "")}</textarea></div>
+      <fieldset class="p-dates ag-feat-box">
+        <label class="row" style="gap:8px;font-weight:800"><input type="checkbox" name="feat" id="agFeat" ${e.feat ? "checked" : ""}> ${icon("sparkle")} Destacar en Inicio</label>
+        <span class="xs muted">Aparece como diapositiva en el carrusel de bienvenida entre las fechas que elijas.</span>
+        <div class="stack" id="agFeatOpts" style="--gap:10px;margin-top:10px" ${e.feat ? "" : "hidden"}>
+          <div class="ag-form-row">
+            <div class="field"><label>Mostrar desde</label><input class="input" type="date" name="featFrom" value="${esc(e.featFrom || todayIso())}"></div>
+            <div class="field"><label>Mostrar hasta (incluido)</label><input class="input" type="date" name="featTo" value="${esc(e.featTo || "")}"><span class="xs muted">En blanco: hasta el día del evento.</span></div>
+          </div>
+          <div class="ag-form-row">
+            <div class="field"><label>Frase manuscrita</label><input class="input" name="featHand" maxlength="40" value="${esc(e.featHand || "")}" placeholder="¡no te lo pierdas!"></div>
+            <div class="field"><label>Ilustración</label><select class="select" name="featIllus"><option value="">Automática según el tipo</option>${SCENE_KEYS.map((k) => `<option value="${k}" ${e.featIllus === k ? "selected" : ""}>${k.charAt(0).toUpperCase() + k.slice(1)}</option>`).join("")}</select></div>
+          </div>
+        </div>
+      </fieldset>
     </div>
     <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="agClose">Cancelar</button>
       <button class="btn btn-primary" type="submit">Guardar</button></div>
@@ -223,18 +238,27 @@ function registerActions() {
     try { await ctx.cloud.deleteEvent(el.dataset.id); openId = null; toast("Evento borrado"); } catch { toast("No se pudo borrar", ""); }
   };
   A.agIcs = (el) => { const e = all().find((x) => x.id === el.dataset.id); if (e) ics(e); };
-  document.addEventListener("change", (e) => { if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); } });
+  document.addEventListener("change", (e) => {
+    if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); }
+    if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
+  });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "agForm") return;
     e.preventDefault();
     const f = new FormData(e.target);
     const data = Object.fromEntries(["title", "date", "start", "end", "type", "audience", "place", "desc"].map((k) => [k, String(f.get(k) || "").trim()]));
     if (!data.title || !data.date) return;
+    data.feat = f.get("feat") === "on";
+    for (const k of ["featFrom", "featTo", "featHand", "featIllus"]) data[k] = data.feat ? String(f.get(k) || "").trim() : "";
+    if (data.feat && !data.featFrom) data.featFrom = todayIso();
+    if (data.feat && data.featTo && data.featTo < data.featFrom) { toast("«Mostrar hasta» es anterior a «Mostrar desde»", ""); return; }
+    const old = e.target.dataset.id && (events || []).find((x) => x.id === e.target.dataset.id);
+    if (old && old.featOrder != null) data.featOrder = old.featOrder;
     try {
       const id = await ctx.cloud.saveEvent(e.target.dataset.id || null, data);
       document.getElementById("agDialog")?.close();
       const d = parse(data.date); month = new Date(d.getFullYear(), d.getMonth(), 1); selDay = data.date; openId = id;
-      toast("Guardado en la agenda"); paint();
+      toast(data.feat ? "Guardado y destacado en Inicio" : "Guardado en la agenda"); paint();
     } catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); }
   });
 }

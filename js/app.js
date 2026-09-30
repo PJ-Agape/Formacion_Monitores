@@ -10,6 +10,7 @@ import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
 import * as chat from "./chat.js";
 import * as agenda from "./agenda.js";
+import * as portada from "./portada.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -38,6 +39,7 @@ const routes = [
   [/^\/$/, viewHome, "inicio"],
   [/^\/muro$/, () => wall.viewWall(), "muro"],
   [/^\/agenda$/, () => agenda.viewAgenda(), "agenda"],
+  [/^\/agenda\/(\d{4}-\d{2}-\d{2})$/, (d) => agenda.viewAgenda(d), "agenda"],
   [/^\/chat$/, () => chat.viewRooms(), "muro"],
   [/^\/chat\/([a-z]+)$/, (k) => chat.viewRoom(k), "muro"],
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
@@ -174,8 +176,6 @@ function viewHome() {
   const first = (p.name || "").split(" ")[0];
   const nx = nextLink(course, st);
 
-  const today = new Date().toISOString().slice(0, 10);
-  const slides = HOME_SLIDES.filter((x) => (!x.from || today >= x.from) && (!x.to || today <= x.to));
   const courseSlide = `<article class="car-slide" data-theme-c="blue" aria-roledescription="diapositiva">
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
       <div class="car-body">
@@ -192,30 +192,26 @@ function viewHome() {
       </div>
       ${illus("camino", "car-illus")}
     </article>`;
-  const html = slides.map((x) => x.key === "curso" ? courseSlide : `<article class="car-slide" data-theme-c="${x.theme}" aria-roledescription="diapositiva">
-      <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
-      <div class="car-body">
-        <span class="eyebrow">${esc(x.kicker)}</span>
-        ${x.hand ? `<span class="car-hand">${esc(x.hand)}</span>` : ""}
-        <h2 class="car-title">${x.title}</h2>
-        <p class="lead">${esc(x.text)}</p>
-        ${x.chips ? `<div class="car-chips">${x.chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
-        <div class="actions">${x.actions.map(([h, l, cls]) => `<a class="btn ${cls || "btn-gold"}" href="${h}"${h.startsWith("#") ? "" : ' target="_blank" rel="noopener"'}>${esc(l)} ${cls ? "" : icon("arrowR")}</a>`).join("")}</div>
-      </div>
-      ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">` : ""}
-      ${illus(x.illus, "car-illus")}
-    </article>`).join("");
+  const carousel = () => {
+    const slides = portada.current();
+    return `<section class="carousel" id="homeCarousel" aria-roledescription="carrusel" aria-label="Bienvenida">
+    <div class="car-track" id="carTrack">${slides.map((x) => (x.course ? courseSlide : portada.slideHTML(x))).join("")}</div>
+    ${slides.length > 1 ? `<div class="car-ctrl">
+      <button class="icon-btn" data-action="carGo" data-d="-1" aria-label="Anterior">${icon("left")}</button>
+      <div class="car-dots" role="tablist">${slides.map((x, i) => `<button role="tab" aria-label="${esc((x.label || x.title || "").replace(/\*/g, ""))}" data-action="carTo" data-i="${i}" class="${i ? "" : "on"}"></button>`).join("")}</div>
+      <button class="icon-btn" data-action="carGo" data-d="1" aria-label="Siguiente">${icon("right")}</button>
+    </div>` : ""}
+  </section>`;
+  };
+  onAfterRender(() => portada.refresh().then((changed) => {
+    const el = document.getElementById("homeCarousel");
+    if (!changed || !el) return;
+    el.outerHTML = carousel(); startCarousel();
+  }));
   onAfterRender(startCarousel);
 
   return `
-  <section class="carousel" aria-roledescription="carrusel" aria-label="Bienvenida">
-    <div class="car-track" id="carTrack">${html}</div>
-    <div class="car-ctrl">
-      <button class="icon-btn" data-action="carGo" data-d="-1" aria-label="Anterior">${icon("left")}</button>
-      <div class="car-dots" role="tablist">${slides.map((x, i) => `<button role="tab" aria-label="${esc(x.label)}" data-action="carTo" data-i="${i}" class="${i ? "" : "on"}"></button>`).join("")}</div>
-      <button class="icon-btn" data-action="carGo" data-d="1" aria-label="Siguiente">${icon("right")}</button>
-    </div>
-  </section>
+  ${carousel()}
 
   <div class="grid grid-4" style="margin-top:20px">
     ${tile("#/comunidad", "users", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
@@ -241,23 +237,6 @@ function viewHome() {
   <div id="installSlot"></div>
   `;
 }
-// Portada de bienvenida: carrusel. Las diapositivas de temporada se muestran solo en sus fechas.
-const HOME_SLIDES = [
-  { key: "agape", label: "Qué es Ágape", theme: "sky", kicker: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", hand: "bienvenido a casa",
-    title: "Amor que <em>transforma</em>", logo: true, illus: "comunidad",
-    text: "Somos jóvenes de la parroquia que caminan juntos para encontrarse con Jesús, formarse y servir. Aquí nadie es espectador: cada uno importa, con su historia y lo que aporta.",
-    chips: ["Familiar y comunitario", "Intuitivo", "Activo"],
-    actions: [["#/comunidad", "Conoce la comunidad"], ["#/agenda", "Ver la agenda", "btn-glass"]] },
-  { key: "curso", label: "Curso de dirigentes" },
-  { key: "santos", label: "Todos los Santos", theme: "gold", from: "2026-09-15", to: "2026-11-02", kicker: "Domingo 1 de noviembre · Solemnidad", hand: "tú también estás llamado",
-    title: "Todos los <em>Santos</em>", illus: "santos",
-    text: "La santidad no es para unos pocos: es la vocación de todos. Celebramos a quienes ya viven junto a Dios, como san Alberto Hurtado y santa Teresa de los Andes, y el 2 de noviembre rezamos por nuestros difuntos.",
-    actions: [["#/agenda", "Horarios en la agenda"], ["#/oracion", "Rezar con el devocionario", "btn-glass"]] },
-  { key: "maria", label: "Mes de María", theme: "rose", from: "2026-09-15", to: "2026-12-08", kicker: "8 de noviembre al 8 de diciembre", hand: "con flores a María",
-    title: "Mes de <em>María</em>", illus: "flores",
-    text: "Durante un mes nos reunimos a rezar, cantar y llevar flores a la Virgen, como es tradición en Chile. Invita a tu familia y a tus amigos: María nos enseña a decir «aquí estoy».",
-    actions: [["presentaciones/mes-de-maria.html", "Rezar los 31 días"], ["#/agenda", "Ver días y horarios", "btn-glass"]] },
-];
 let carTimer = null, carI = 0;
 function startCarousel() {
   const track = document.getElementById("carTrack");
@@ -1241,6 +1220,7 @@ wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 
 async function boot() {
   try {

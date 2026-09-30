@@ -396,9 +396,9 @@ export function watchAgenda(cb, onErr) {
   if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
   return fb.onSnapshot(fb.collection(db, "agenda"), (qs) => cb(snapRows(qs)), (e) => { console.warn("Agenda:", e); onErr && onErr(e); });
 }
-export async function listAgenda() {
-  if (!enabled || !db) return [];
-  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "agenda")), 6000)); } catch { return []; }
+export async function listAgenda(strict) {
+  if (!enabled || !db) return strict ? null : [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "agenda")), 6000)); } catch { return strict ? null : []; }
 }
 export async function saveEvent(id, data) {
   const ref = id ? fb.doc(db, "agenda", id) : fb.doc(fb.collection(db, "agenda"));
@@ -406,3 +406,19 @@ export async function saveEvent(id, data) {
   return ref.id;
 }
 export const deleteEvent = (id) => fb.deleteDoc(fb.doc(db, "agenda", id));
+export const patchEvent = (id, data) => fb.updateDoc(fb.doc(db, "agenda", id), data);
+
+// ---------------------------------------------------------------------------
+// Portada de Inicio (carrusel). Se guarda como content/portada: la lee cualquiera,
+// la editan los administradores (misma regla que el contenido publicado).
+// ---------------------------------------------------------------------------
+export async function getPortada() {
+  if (!enabled || !db) return null;
+  try {
+    const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", "portada")), 6000);
+    return snap.exists() ? safeJSON(snap.data().json, { slides: {} }) : { slides: {} };
+  } catch { return null; }
+}
+export async function savePortada(data) {
+  await fb.setDoc(fb.doc(db, "content", "portada"), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
+}

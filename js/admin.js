@@ -2,6 +2,7 @@
 // y guía de comunidad. Todo se edita en un borrador y se publica al final.
 
 import * as S from "./store.js";
+import * as portada from "./portada.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -33,6 +34,7 @@ export async function renderAdmin(sub, _api) {
     case "resumen": body = await summaryView(draft); break;
     case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
     case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
+    case "portada": body = portada.adminView(); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
     case "comunidad": body = communityView(draft); break;
@@ -52,6 +54,7 @@ function shell(page, body) {
     <nav class="admin-side" aria-label="Gestión">
       ${link("resumen", "#/admin", "Resumen", "grid")}
       ${cloudOn ? link("dirigentes", "#/admin/dirigentes", "Dirigentes", "users") : ""}
+      ${cloudOn ? link("portada", "#/admin/portada", "Portada", "sparkle") : ""}
       ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
       ${link("materiales", "#/admin/materiales", "Materiales", "book")}
       ${link("oracion", "#/admin/oracion", "Oración", "flame")}
