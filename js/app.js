@@ -8,6 +8,7 @@ import qrcode from "./qrcode.mjs";
 import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
+import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
 
@@ -70,11 +71,27 @@ export async function render() {
   if (html == null) return;
   const v = viewEl();
   v.innerHTML = (section !== "admin" && S.isPreview() ? previewBanner() : "") + html;
+  decorate(v, section);
   v.classList.remove("view-enter"); void v.offsetWidth; v.classList.add("view-enter");
   if (path !== lastPath) window.scrollTo({ top: 0, behavior: "instant" in window ? "instant" : "auto" });
   lastPath = path;
   updateInstallSlot();
   afterRender.splice(0).forEach((f) => f());
+}
+// Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
+const HEAD_ILLUS = { comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
+function decorate(v, section) {
+  const hero = v.querySelector(".hero");
+  if (hero && !hero.querySelector(".z-illus")) {
+    hero.insertAdjacentHTML("afterbegin", '<i class="hero-blob b1"></i><i class="hero-blob b2"></i><i class="hero-blob b3"></i>');
+    if (!hero.style.textAlign) hero.insertAdjacentHTML("beforeend", illus("comunidad", "hero-illus"));
+  }
+  const head = v.querySelector(".page-head");
+  const key = HEAD_ILLUS[section];
+  if (head && key && !head.querySelector(".z-illus") && !v.querySelector(".zine")) {
+    head.classList.add("has-illus");
+    head.insertAdjacentHTML("beforeend", illus(key, "head-illus"));
+  }
 }
 const afterRender = [];
 export const onAfterRender = (f) => afterRender.push(f);
