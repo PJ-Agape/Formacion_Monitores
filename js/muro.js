@@ -3,6 +3,7 @@
 // ingresar con la cuenta invitada. Los administradores moderan en el mismo muro.
 
 import { esc, icon, toast, initials } from "./util.js";
+import { tabs as chatTabs } from "./chat.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -114,6 +115,7 @@ export function viewWall() {
   return `
   <header class="page-head"><span class="eyebrow">Muro de la comunidad</span><h1>Anuncios y <em>conversación</em></h1>
     <p>Avisos del equipo, temas para pensar juntos y preguntas de los dirigentes. Escribe con el mismo cariño con que hablarías en la reunión.</p></header>
+  ${chatTabs("muro")}
 
   ${s.ready ? `
   <form class="card wall-compose" id="wallCompose" style="margin-top:16px">

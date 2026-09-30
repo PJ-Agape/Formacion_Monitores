@@ -122,6 +122,25 @@ service cloud.firestore {
       }
     }
 
+
+    // Chat por salas: todas grupales. Leen y escriben solo los miembros de cada sala;
+    // la sala general es de todos. Los administradores están en todas y moderan.
+    function inSala(sala) {
+      return isMember() && (sala == 'general' || isAdmin()
+        || sala in me().get('salas', me().role == 'admin' ? ['coordinacion', 'dirigentes', 'aspirantes'] : ['dirigentes']));
+    }
+    match /chat/{sala}/msgs/{msgId} {
+      allow read: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala);
+      allow create: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala)
+        && request.resource.data.authorUid == request.auth.uid && request.resource.data.authorRole == me().role
+        && request.resource.data.authorName is string && request.resource.data.authorName.size() <= 60
+        && validText(request.resource.data.text, 1500)
+        && request.resource.data.reports.size() == 0 && request.resource.data.createdAt == request.time
+        && request.resource.data.keys().hasOnly(['text', 'authorUid', 'authorName', 'authorRole', 'reports', 'createdAt']);
+      allow update: if inSala(sala) && changed().hasOnly(['reports']) && onlyMyKey('reports');
+      allow delete: if isAdmin() || (inSala(sala) && resource.data.authorUid == request.auth.uid);
+    }
+
     // Moderación: los administradores revisan todas las respuestas del muro.
     match /{path=**}/replies/{replyId} {
       allow read: if isAdmin();

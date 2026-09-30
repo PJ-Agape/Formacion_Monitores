@@ -8,6 +8,7 @@ import qrcode from "./qrcode.mjs";
 import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
+import * as chat from "./chat.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -35,6 +36,8 @@ document.addEventListener("click", (e) => {
 const routes = [
   [/^\/$/, viewHome, "inicio"],
   [/^\/muro$/, () => wall.viewWall(), "muro"],
+  [/^\/chat$/, () => chat.viewRooms(), "muro"],
+  [/^\/chat\/([a-z]+)$/, (k) => chat.viewRoom(k), "muro"],
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
   [/^\/encuentros$/, () => camino.viewHub(), "comunidad"],
   [/^\/encuentros\/([a-z]+)$/, (k) => camino.viewRevista(k), "comunidad"],
@@ -112,7 +115,7 @@ function applyTheme() {
 // ---------------------------------------------------------------------------
 const NAV = [
   ["inicio", "#/", "Inicio", "home"],
-  ["muro", "#/muro", "Muro", "chat"],
+  ["muro", "#/muro", "Muro y chat", "chat"],
   ["comunidad", "#/comunidad", "Comunidad", "users"],
   ["itinerario", "#/itinerario", "Curso", "route"],
   ["materiales", "#/materiales", "Materiales", "book"],
@@ -1150,6 +1153,7 @@ actions.install = async () => {
 // ---------------------------------------------------------------------------
 wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 camino.setup({ actions, render: () => render(), cloud });
+chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 
 async function boot() {
   try {

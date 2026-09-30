@@ -354,3 +354,37 @@ export function toggleMark(path, field, on) {
   return fb.updateDoc(ref, { [`${field}.${user.uid}`]: on ? true : fb.deleteField() });
 }
 export const myUid = () => (user ? user.uid : "");
+
+// ---------------------------------------------------------------------------
+// Chat por salas (todas grupales; lo privado queda fuera de la app).
+// ---------------------------------------------------------------------------
+export const SALAS = [
+  { key: "general", name: "Sala general", desc: "Todos los que tienen cuenta en Ágape." },
+  { key: "coordinacion", name: "Equipo coordinador", desc: "Asesores y coordinadores." },
+  { key: "dirigentes", name: "Dirigentes", desc: "Los dirigentes del grupo." },
+  { key: "aspirantes", name: "Aspirantes", desc: "Quienes disciernen servir como dirigentes, con sus acompañantes." },
+];
+export const defaultSalas = (role) => (role === "admin" ? ["coordinacion", "dirigentes", "aspirantes"] : ["dirigentes"]);
+export function mySalas() {
+  if (!account) return [];
+  if (state().isAdmin) return SALAS.map((s) => s.key);
+  return ["general", ...(Array.isArray(account.salas) ? account.salas : defaultSalas(account.role))];
+}
+export function watchChat(sala, cb, onErr) {
+  if (!enabled || !db) return () => {};
+  const q = fb.query(fb.collection(db, "chat", sala, "msgs"), fb.orderBy("createdAt", "desc"), fb.limit(200));
+  return fb.onSnapshot(q, (qs) => cb(snapRows(qs).reverse()), (e) => { console.warn("Chat:", e); onErr && onErr(e); });
+}
+export async function lastChat(sala) {
+  try {
+    const qs = await withTimeout(fb.getDocs(fb.query(fb.collection(db, "chat", sala, "msgs"), fb.orderBy("createdAt", "desc"), fb.limit(1))), 6000);
+    return snapRows(qs)[0] || null;
+  } catch { return null; }
+}
+export async function sendChat(sala, text) {
+  await fb.setDoc(fb.doc(fb.collection(db, "chat", sala, "msgs")), {
+    text, ...author(), reports: {}, createdAt: fb.serverTimestamp(),
+  });
+}
+export const deleteChat = (sala, id) => fb.deleteDoc(fb.doc(db, "chat", sala, "msgs", id));
+export const reportChat = (sala, id, on) => toggleMark(["chat", sala, "msgs", id], "reports", on);

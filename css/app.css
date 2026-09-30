@@ -1336,3 +1336,43 @@ dialog.sheet { border: 3px solid var(--z-b); box-shadow: 8px 8px 0 var(--z-b); }
 @media (max-width: 560px) { .hero > .hero-logo { position: relative; } }
 .hero-blob.b2 { left: auto; right: 26%; top: auto; bottom: -50px; width: 110px; height: 110px; }
 @media (max-width: 560px) { .hero-blob.b3 { right: -20px; top: 40%; } .hero h1 { font-size: 3rem; } }
+
+/* ---------- Chat por salas ---------- */
+.wall-tabs { margin: 14px 0 4px; gap: 8px; }
+.chat-rooms { display: grid; gap: 14px; margin-top: 18px; grid-template-columns: repeat(auto-fit, minmax(min(100%, 320px), 1fr)); }
+.chat-room { display: flex !important; align-items: center; gap: 14px; padding: 14px 16px; border-left: 10px solid var(--sc) !important; }
+.chat-room-ill { width: 96px; flex-shrink: 0; }
+.chat-room-ill .z-illus { color: var(--ink); --il-bg: var(--surface); --il-pop: var(--sc); }
+.chat-room-body { flex: 1; min-width: 0; display: grid; gap: 3px; }
+.chat-last { color: var(--ink-2); font-weight: 600; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 4px; font-style: italic; }
+.chat-head { display: flex; align-items: center; gap: 12px; margin-bottom: 12px; }
+.chat-head h1 { font-family: var(--font-display); font-weight: 800; font-stretch: 82%; font-size: clamp(1.6rem, 5vw, 2.3rem); letter-spacing: -0.03em; line-height: 1; }
+.chat-head-dot { width: 18px; height: 18px; border-radius: 50%; background: var(--sc); border: 2px solid var(--z-b); flex-shrink: 0; }
+.chat-box { padding: 0; display: flex; flex-direction: column; height: min(72vh, 680px); overflow: hidden; }
+@media (max-width: 760px) { .chat-box { height: calc(100dvh - var(--header-h) - var(--bottom-h) - 150px); min-height: 360px; } }
+.chat-list { flex: 1; overflow-y: auto; padding: 16px 14px 8px; display: flex; flex-direction: column; gap: 4px; background: var(--paper);
+  background-image: radial-gradient(color-mix(in srgb, var(--line-2) 60%, transparent) 1px, transparent 1px); background-size: 18px 18px; }
+.chat-day { text-align: center; margin: 12px 0 6px; }
+.chat-day span { display: inline-block; background: var(--surface); border: 1.5px solid var(--z-b); border-radius: 999px; padding: 3px 12px; font-size: .74rem; font-weight: 800; text-transform: capitalize; }
+.chat-msg { display: flex; align-items: flex-end; gap: 8px; max-width: 86%; margin-top: 8px; }
+.chat-msg.cont { margin-top: 0; }
+.chat-msg.mine { align-self: flex-end; flex-direction: row-reverse; }
+.chat-msg .avatar, .avatar-space { width: 32px; height: 32px; flex-shrink: 0; font-size: .75rem; }
+.chat-msg .avatar.staff { background: #ffba03; color: #0b2566; }
+.chat-msg.mine .avatar-space { display: none; }
+.chat-bubble { background: var(--surface); border: 2px solid var(--z-b); border-radius: 18px 18px 18px 6px; padding: 8px 12px 6px; box-shadow: 3px 3px 0 var(--z-b); min-width: 0; }
+.chat-msg.mine .chat-bubble { background: #dcebfb; border-radius: 18px 18px 6px 18px; }
+.chat-name { display: block; font-size: .8rem; font-weight: 800; color: #1351a4; margin-bottom: 2px; }
+.chat-text { overflow-wrap: anywhere; line-height: 1.4; color: var(--ink); }
+.chat-meta { display: block; text-align: right; font-size: .68rem; color: var(--ink-3); margin-top: 2px; }
+.chat-menu { opacity: 0; transition: opacity .15s; align-self: center; }
+.chat-msg:hover .chat-menu, .chat-menu[open], .chat-msg:focus-within .chat-menu { opacity: 1; }
+@media (hover: none) { .chat-menu { opacity: .55; } }
+.chat-menu summary.icon-btn { width: 28px; height: 28px; border-width: 1.5px; }
+.chat-msg.mine .wall-menu-list { right: auto; left: 0; }
+.chat-empty { margin: auto; text-align: center; display: grid; justify-items: center; gap: 8px; }
+.chat-empty .z-illus { width: 200px; color: var(--ink); --il-bg: var(--paper); --il-pop: #ffba03; }
+.chat-compose { display: flex; gap: 10px; align-items: flex-end; padding: 10px 12px; border-top: 2px solid var(--z-b); background: var(--surface); }
+.chat-compose .textarea { min-height: 44px; max-height: 140px; resize: none; padding: 10px 14px; line-height: 1.35; }
+.chat-compose .btn { height: 46px; width: 50px; padding: 0; flex-shrink: 0; }
+@media (prefers-color-scheme: dark) { :root:not([data-mode="light"]) .chat-msg.mine .chat-bubble { background: #173a66; } :root:not([data-mode="light"]) .chat-name { color: #9ccaff; } }

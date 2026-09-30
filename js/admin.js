@@ -487,6 +487,14 @@ async function personView(uid) {
       <button class="btn btn-sm ${u.active === false ? "btn-soft" : "btn-danger"}" data-action="aUserActive" data-uid="${esc(u.uid)}" data-active="${u.active === false ? "1" : "0"}">${u.active === false ? "Reactivar cuenta" : "Poner en pausa"}</button>
     </div>` : ""}
   </div>
+  ${(() => {
+    const salas = Array.isArray(u.salas) ? u.salas : api.cloud.defaultSalas(u.role);
+    return `<div class="card"><h3>Salas de chat</h3>
+      <p class="muted small" style="margin-top:4px">La sala general es de todos.${u.role === "admin" ? " Los administradores están en todas las salas para moderar." : ""}</p>
+      <div class="row-wrap" style="margin-top:12px">${api.cloud.SALAS.filter((x) => x.key !== "general").map((x) =>
+        `<label class="chip ${salas.includes(x.key) || u.role === "admin" ? "accent" : ""}" style="cursor:pointer;padding:8px 12px">
+          <input type="checkbox" data-action="aUserSala" data-uid="${esc(u.uid)}" data-sala="${x.key}" ${salas.includes(x.key) || u.role === "admin" ? "checked" : ""} ${u.role === "admin" ? "disabled" : ""}> ${esc(x.name)}</label>`).join("")}</div></div>`;
+  })()}
   ${S.content().courses.map((course) => {
     const p = detail[course.id] || { read: {}, phases: {}, scores: {} };
     const any = Object.keys(p.read || {}).length || Object.keys(p.phases || {}).length;
@@ -754,6 +762,16 @@ function bindActions() {
     const toAdmin = el.dataset.role === "admin";
     if (!confirm(toAdmin ? "¿Dar acceso de administrador a esta persona? Podrá editar el contenido y ver el avance de todos." : "¿Quitar el rol de administrador?")) return;
     try { await api.cloud.updateUser(el.dataset.uid, { role: el.dataset.role }); await loadPeople(true); api.render(); toast("Rol actualizado"); }
+    catch (e) { toast("No se pudo cambiar: " + (e.code || e.message), ""); }
+  };
+  A.aUserSala = async (el) => {
+    const data = await loadPeople();
+    const u = data.users.find((x) => x.uid === el.dataset.uid);
+    if (!u) return;
+    const cur = new Set(Array.isArray(u.salas) ? u.salas : api.cloud.defaultSalas(u.role));
+    el.checked = !cur.has(el.dataset.sala);
+    if (el.checked) cur.add(el.dataset.sala); else cur.delete(el.dataset.sala);
+    try { await api.cloud.updateUser(u.uid, { salas: [...cur] }); await loadPeople(true); api.render(); toast("Salas actualizadas"); }
     catch (e) { toast("No se pudo cambiar: " + (e.code || e.message), ""); }
   };
   A.aUserActive = async (el) => {
