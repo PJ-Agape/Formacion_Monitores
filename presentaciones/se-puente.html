@@ -3,7 +3,13 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<style>@font-face{font-family:"Bricolage Grotesque";src:url("../fonts/bricolage-grotesque-latin-standard-normal.woff2") format("woff2-variations");font-weight:200 800;font-stretch:75% 100%;font-display:swap}@font-face{font-family:"Caveat";src:url("../fonts/caveat-latin-700-normal.woff2") format("woff2");font-weight:700;font-display:swap}</style>
+<style>@font-face{font-family:"Bricolage Grotesque";src:url("../fonts/bricolage-grotesque-latin-standard-normal.woff2") format("woff2-variations");font-weight:200 800;font-stretch:75% 100%;font-display:swap}@font-face{font-family:"Caveat";src:url("../fonts/caveat-latin-700-normal.woff2") format("woff2");font-weight:700;font-display:swap}.nav button.music .ico-on { display: none; }
+.nav button.music.on .ico-on { display: block; }
+.nav button.music.on .ico-off { display: none; }
+.nav button.music.on { background: var(--coral, #ef591c); color: #fff; animation: beat 1.25s ease-in-out infinite; }
+@keyframes beat { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.06); } }
+@media (prefers-reduced-motion: reduce) { .nav button.music.on { animation: none; } }
+</style>
 <link rel="icon" href="../icons/favicon-64.png" type="image/png">
 <title>Sé Puente · Ágape</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -636,6 +642,7 @@ canvas.confetti { position: absolute; inset: 0; width: 100%; height: 100%; point
 <nav class="hud" aria-label="Navegación">
   <div class="bar" aria-hidden="true"><i id="fill"></i></div>
   <div class="nav">
+    <button id="music" class="music" aria-pressed="false" aria-label="Activar música" title="Música (tecla M)"><svg class="ico-on" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/></svg><svg class="ico-off" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="M9 18V5l11-2v13"/><circle cx="6" cy="18" r="3"/><circle cx="17" cy="16" r="3"/><path d="M3 3l18 18"/></svg></button>
     <button id="prev" aria-label="Slide anterior"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5"/><path d="m11 6-6 6 6 6"/></svg></button>
     <button id="next" class="next" aria-label="Slide siguiente"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m13 6 6 6-6 6"/></svg></button>
   </div>
@@ -700,6 +707,7 @@ canvas.confetti { position: absolute; inset: 0; width: 100%; height: 100%; point
     requestAnimationFrame(() => to.classList.add("is-active"));
     setTimeout(() => { from.classList.remove("is-leaving"); busy = false; }, reduce ? 20 : 1050);
     current = i; update(); enter(to);
+    document.dispatchEvent(new CustomEvent("slidechange", { detail: i }));
     try { history.replaceState(null, "", `#s${i + 1}`); } catch (e) {}
   }
   function update() {
@@ -807,5 +815,109 @@ canvas.confetti { position: absolute; inset: 0; width: 100%; height: 100%; point
   const start = m ? Math.max(0, Math.min(slides.length - 1, +m[1] - 1)) : 0;
   if (start) { slides[0].classList.remove("is-active"); slides[start].classList.add("is-active"); current = start; }
   update(); enter(slides[current]);
+})();
+</script>
+
+<script>
+// Música de fondo original, generada en vivo con Web Audio (sin archivos ni derechos de terceros).
+// Cambia de ánimo según la diapositiva: tranquila, media, alegre o fiesta.
+(() => {
+  const btn = document.getElementById("music");
+  if (!btn || !(window.AudioContext || window.webkitAudioContext)) { if (btn) btn.hidden = true; return; }
+  // Ánimo por diapositiva (1 a 12)
+  const MOODS = ["alegre", "tranquila", "alegre", "alegre", "alegre", "media", "media", "tranquila", "alegre", "fiesta", "tranquila", "fiesta"];
+  const MIX = {
+    tranquila: { pad: .55, bell: .5, pluck: 0, drums: 0, bass: .25, clap: 0, cut: 900 },
+    media: { pad: .45, bell: .32, pluck: .35, drums: 0, bass: .38, clap: 0, cut: 1500 },
+    alegre: { pad: .34, bell: .12, pluck: .5, drums: .42, bass: .5, clap: 0, cut: 2400 },
+    fiesta: { pad: .34, bell: .22, pluck: .6, drums: .55, bass: .55, clap: .35, cut: 3200 },
+  };
+  const BPM = 96, BEAT = 60 / BPM, STEP = BEAT / 2; // corcheas
+  // Progresión en Re mayor: D – A – Bm – G (un compás cada acorde)
+  const CHORDS = [[62, 66, 69], [61, 64, 69], [59, 62, 66], [59, 62, 67]];
+  const BASS = [38, 33, 35, 31];
+  const mtof = (m) => 440 * Math.pow(2, (m - 69) / 12);
+
+  let ac = null, master, bus = {}, filt, delay, on = false, timer = null, step = 0, nextT = 0, mood = "alegre", noiseBuf;
+
+  function build() {
+    ac = new (window.AudioContext || window.webkitAudioContext)();
+    master = ac.createGain(); master.gain.value = 0; master.connect(ac.destination);
+    const comp = ac.createDynamicsCompressor(); comp.threshold.value = -18; comp.connect(master);
+    delay = ac.createDelay(1); delay.delayTime.value = BEAT * .75;
+    const fb = ac.createGain(); fb.gain.value = .35; const wet = ac.createGain(); wet.gain.value = .3;
+    delay.connect(fb); fb.connect(delay); delay.connect(wet); wet.connect(comp);
+    filt = ac.createBiquadFilter(); filt.type = "lowpass"; filt.frequency.value = 1500; filt.Q.value = .6; filt.connect(comp);
+    for (const k of ["pad", "bell", "pluck", "drums", "bass", "clap"]) {
+      bus[k] = ac.createGain(); bus[k].gain.value = 0;
+      if (k === "pad") bus[k].connect(filt); else bus[k].connect(comp);
+      if (k === "bell" || k === "pluck") bus[k].connect(delay);
+    }
+    noiseBuf = ac.createBuffer(1, ac.sampleRate * .5, ac.sampleRate);
+    const d = noiseBuf.getChannelData(0); for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+  }
+  function env(g, t, a, peak, r) { g.gain.setValueAtTime(0.0001, t); g.gain.exponentialRampToValueAtTime(peak, t + a); g.gain.exponentialRampToValueAtTime(0.0001, t + a + r); }
+  function tone(type, f, t, a, peak, r, dest, detune = 0) {
+    const o = ac.createOscillator(), g = ac.createGain(); o.type = type; o.frequency.value = f; o.detune.value = detune;
+    o.connect(g); g.connect(dest); env(g, t, a, peak, r); o.start(t); o.stop(t + a + r + .05);
+  }
+  function pad(chord, t) {
+    for (const m of chord) for (const dt of [-7, 7]) {
+      const o = ac.createOscillator(), g = ac.createGain(); o.type = "sawtooth"; o.frequency.value = mtof(m - 12); o.detune.value = dt;
+      o.connect(g); g.connect(bus.pad); const len = BEAT * 4;
+      g.gain.setValueAtTime(0.0001, t); g.gain.linearRampToValueAtTime(.05, t + .6); g.gain.setValueAtTime(.05, t + len - .3); g.gain.linearRampToValueAtTime(0.0001, t + len + .2);
+      o.start(t); o.stop(t + len + .3);
+    }
+  }
+  function kick(t) {
+    const o = ac.createOscillator(), g = ac.createGain(); o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(45, t + .18);
+    o.connect(g); g.connect(bus.drums); env(g, t, .005, .9, .25); o.start(t); o.stop(t + .3);
+  }
+  function noise(t, dur, peak, freq, dest) {
+    const s = ac.createBufferSource(), f = ac.createBiquadFilter(), g = ac.createGain(); s.buffer = noiseBuf;
+    f.type = "highpass"; f.frequency.value = freq; s.connect(f); f.connect(g); g.connect(dest); env(g, t, .002, peak, dur); s.start(t); s.stop(t + dur + .05);
+  }
+  function schedule(t, s) {
+    const bar = Math.floor(s / 8) % 4, pos = s % 8, chord = CHORDS[bar];
+    if (pos === 0) { pad(chord, t); tone("sine", mtof(BASS[bar]), t, .02, .5, BEAT * 1.6, bus.bass); }
+    if (pos === 4) tone("sine", mtof(BASS[bar] + 12), t, .02, .3, BEAT * .9, bus.bass);
+    // campanitas lentas (tranquila)
+    if (pos % 4 === 0) tone("sine", mtof(chord[(s / 4) % 3 | 0] + 12), t, .01, .22, 1.6, bus.bell);
+    // arpegio punteado
+    const arp = [0, 1, 2, 1, 0, 2, 1, 2][pos];
+    tone("triangle", mtof(chord[arp] + 12), t, .005, .18, .22, bus.pluck);
+    // batería suave
+    if (pos === 0 || pos === 4) kick(t);
+    if (pos % 2 === 1) noise(t, .05, .12, 6000, bus.drums);
+    if (pos === 2 || pos === 6) noise(t, .12, .35, 1500, bus.clap);
+  }
+  function tick() {
+    while (nextT < ac.currentTime + .15) { schedule(nextT, step); nextT += STEP; step++; }
+  }
+  function setMood(m, fade = 1.6) {
+    mood = m; if (!ac) return;
+    const mix = MIX[m], t = ac.currentTime;
+    for (const k in bus) { bus[k].gain.cancelScheduledValues(t); bus[k].gain.setValueAtTime(bus[k].gain.value, t); bus[k].gain.linearRampToValueAtTime(mix[k], t + fade); }
+    filt.frequency.cancelScheduledValues(t); filt.frequency.setValueAtTime(filt.frequency.value, t); filt.frequency.linearRampToValueAtTime(mix.cut, t + fade);
+  }
+  function start() {
+    if (!ac) build();
+    ac.resume(); on = true;
+    step = 0; nextT = ac.currentTime + .1; timer = setInterval(tick, 25);
+    setMood(mood, .8);
+    master.gain.cancelScheduledValues(ac.currentTime); master.gain.linearRampToValueAtTime(.55, ac.currentTime + 1.2);
+    btn.setAttribute("aria-pressed", "true"); btn.setAttribute("aria-label", "Silenciar música"); btn.classList.add("on");
+  }
+  function stop() {
+    on = false; const t = ac.currentTime;
+    master.gain.cancelScheduledValues(t); master.gain.setValueAtTime(master.gain.value, t); master.gain.linearRampToValueAtTime(0, t + .6);
+    setTimeout(() => { if (!on) { clearInterval(timer); ac.suspend(); } }, 700);
+    btn.setAttribute("aria-pressed", "false"); btn.setAttribute("aria-label", "Activar música"); btn.classList.remove("on");
+  }
+  btn.addEventListener("click", () => (on ? stop() : start()));
+  document.addEventListener("keydown", (e) => { if ((e.key === "m" || e.key === "M") && !e.ctrlKey && !e.metaKey && !e.altKey) (on ? stop() : start()); });
+  document.addEventListener("slidechange", (e) => setMood(MOODS[e.detail] || "media"));
+  const m0 = /^#s(\d+)$/.exec(location.hash); mood = MOODS[m0 ? +m0[1] - 1 : 0] || "alegre";
+  document.addEventListener("visibilitychange", () => { if (!ac || !on) return; document.hidden ? ac.suspend() : ac.resume(); });
 })();
 </script>
