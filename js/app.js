@@ -811,6 +811,11 @@ function viewMaterials() {
   const m = S.content().materials;
   const lib = buildLibrary();
   return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(m.title)}</h1><p>${esc(m.desc)}</p></header>
+    <a class="card link camino-banner" href="#/encuentros" style="margin-top:14px">
+      <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
+      <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Revistas Camino Ágape</strong>
+      <span class="muted small">Revista principal, guía de coordinación y revistas Ingreso, Madurez y Aspirante, para leer o descargar en PDF.</span></span>${icon("right")}
+    </a>
     <nav class="lib-jump row-wrap" style="margin-top:14px">
       <a class="btn btn-sm btn-soft" href="#biblioteca" data-action="scrollTo" data-id="biblioteca">${icon("book")} Biblioteca digital · ${lib.total} recursos</a>
     </nav>
