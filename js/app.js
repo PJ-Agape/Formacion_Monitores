@@ -200,7 +200,7 @@ function viewHome() {
         <h2 class="car-title">${x.title}</h2>
         <p class="lead">${esc(x.text)}</p>
         ${x.chips ? `<div class="car-chips">${x.chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
-        <div class="actions">${x.actions.map(([h, l, cls]) => `<a class="btn ${cls || "btn-gold"}" href="${h}">${esc(l)} ${cls ? "" : icon("arrowR")}</a>`).join("")}</div>
+        <div class="actions">${x.actions.map(([h, l, cls]) => `<a class="btn ${cls || "btn-gold"}" href="${h}"${h.startsWith("#") ? "" : ' target="_blank" rel="noopener"'}>${esc(l)} ${cls ? "" : icon("arrowR")}</a>`).join("")}</div>
       </div>
       ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">` : ""}
       ${illus(x.illus, "car-illus")}
@@ -256,7 +256,7 @@ const HOME_SLIDES = [
   { key: "maria", label: "Mes de María", theme: "rose", from: "2026-09-15", to: "2026-12-08", kicker: "8 de noviembre al 8 de diciembre", hand: "con flores a María",
     title: "Mes de <em>María</em>", illus: "flores",
     text: "Durante un mes nos reunimos a rezar, cantar y llevar flores a la Virgen, como es tradición en Chile. Invita a tu familia y a tus amigos: María nos enseña a decir «aquí estoy».",
-    actions: [["#/agenda", "Ver días y horarios"], ["#/muro", "Anuncios del muro", "btn-glass"]] },
+    actions: [["presentaciones/mes-de-maria.html", "Rezar los 31 días"], ["#/agenda", "Ver días y horarios", "btn-glass"]] },
 ];
 let carTimer = null, carI = 0;
 function startCarousel() {
