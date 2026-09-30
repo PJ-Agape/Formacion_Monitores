@@ -9,6 +9,7 @@ import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
 import * as chat from "./chat.js";
+import * as agenda from "./agenda.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -36,6 +37,7 @@ document.addEventListener("click", (e) => {
 const routes = [
   [/^\/$/, viewHome, "inicio"],
   [/^\/muro$/, () => wall.viewWall(), "muro"],
+  [/^\/agenda$/, () => agenda.viewAgenda(), "agenda"],
   [/^\/chat$/, () => chat.viewRooms(), "muro"],
   [/^\/chat\/([a-z]+)$/, (k) => chat.viewRoom(k), "muro"],
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
@@ -82,7 +84,7 @@ export async function render() {
   afterRender.splice(0).forEach((f) => f());
 }
 // Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
-const HEAD_ILLUS = { comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
+const HEAD_ILLUS = { agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
 function decorate(v, section) {
   const hero = v.querySelector(".hero");
   if (hero && !hero.querySelector(".z-illus")) {
@@ -115,16 +117,17 @@ function applyTheme() {
 // ---------------------------------------------------------------------------
 const NAV = [
   ["inicio", "#/", "Inicio", "home"],
+  ["agenda", "#/agenda", "Agenda", "grid"],
   ["muro", "#/muro", "Muro y chat", "chat"],
   ["comunidad", "#/comunidad", "Comunidad", "users"],
   ["itinerario", "#/itinerario", "Curso", "route"],
   ["materiales", "#/materiales", "Materiales", "book"],
-  ["oracion", "#/oracion", "Oración", "flame"],
+  ["oracion", "#/oracion", "Oración", "flame", "top"],
 ];
 function renderChrome(section) {
   const cur = (k) => (k === section ? 'aria-current="page"' : "");
   $("#topNav").innerHTML = NAV.map(([k, h, l]) => `<a href="${h}" ${cur(k)}>${l}</a>`).join("");
-  $("#bottomNav").innerHTML = NAV.map(([k, h, l, ic]) =>
+  $("#bottomNav").innerHTML = NAV.filter((n) => n[4] !== "top").map(([k, h, l, ic]) =>
     `<a href="${h}" ${cur(k)}><span class="ico-wrap">${icon(ic)}</span>${l}</a>`).join("");
   const p = S.getProfile();
   const inAdmin = section === "admin" && (cloud.enabled ? cloud.state().isAdmin : S.isAdmin());
@@ -163,7 +166,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => wall.homeHighlight());
+  onAfterRender(() => { wall.homeHighlight(); agenda.homeNext(); });
   const c = S.content();
   const course = S.activeCourse();
   const st = S.courseState(course);
@@ -206,6 +209,7 @@ function viewHome() {
     <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
     <span class="muted small">Revista principal, guía de coordinación y revistas de cada etapa.</span></span>${icon("right")}
   </a>
+  <div id="agendaSlot" style="margin-top:16px"></div>
   <div id="wallSlot"></div>
   <div id="installSlot"></div>
   `;
@@ -1154,6 +1158,7 @@ actions.install = async () => {
 wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 
 async function boot() {
   try {

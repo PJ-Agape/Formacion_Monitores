@@ -388,3 +388,21 @@ export async function sendChat(sala, text) {
 }
 export const deleteChat = (sala, id) => fb.deleteDoc(fb.doc(db, "chat", sala, "msgs", id));
 export const reportChat = (sala, id, on) => toggleMark(["chat", sala, "msgs", id], "reports", on);
+
+// ---------------------------------------------------------------------------
+// Agenda oficial del grupo: la lee cualquiera, la editan los administradores.
+// ---------------------------------------------------------------------------
+export function watchAgenda(cb, onErr) {
+  if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
+  return fb.onSnapshot(fb.collection(db, "agenda"), (qs) => cb(snapRows(qs)), (e) => { console.warn("Agenda:", e); onErr && onErr(e); });
+}
+export async function listAgenda() {
+  if (!enabled || !db) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "agenda")), 6000)); } catch { return []; }
+}
+export async function saveEvent(id, data) {
+  const ref = id ? fb.doc(db, "agenda", id) : fb.doc(fb.collection(db, "agenda"));
+  await fb.setDoc(ref, { ...data, updatedBy: account.email, updatedAt: fb.serverTimestamp() });
+  return ref.id;
+}
+export const deleteEvent = (id) => fb.deleteDoc(fb.doc(db, "agenda", id));

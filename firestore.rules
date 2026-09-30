@@ -141,6 +141,13 @@ service cloud.firestore {
       allow delete: if isAdmin() || (inSala(sala) && resource.data.authorUid == request.auth.uid);
     }
 
+
+    // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.
+    match /agenda/{eventId} {
+      allow read: if true;
+      allow write: if isAdmin();
+    }
+
     // Moderación: los administradores revisan todas las respuestas del muro.
     match /{path=**}/replies/{replyId} {
       allow read: if isAdmin();
