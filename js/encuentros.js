@@ -58,6 +58,13 @@ function dateOf(s) {
   const m = String(s).match(/(\d+) de (\w+) de (\d{4})/);
   return m ? new Date(+m[3], MESES.indexOf(m[2]), +m[1]) : null;
 }
+const monthOf = (e) => { const m = String(e.fecha).match(/de (\w+) de/); return m ? m[1] : ""; };
+const papaOf = (d, e) => (d.papa && d.papa.meses[monthOf(e)]) || null;
+const prioOf = (d, e) => (d.diocesis && d.diocesis.prioridades.find((p) => p.key === e.diocesis)) || null;
+function papaRibbon(d, e) {
+  const p = papaOf(d, e);
+  return p ? `<div class="z-pope"><span class="z-pope-ico">✝</span><div><small>Rezamos con el Papa · ${esc(monthOf(e))}</small><b>${esc(p.titulo)}</b></div></div>` : "";
+}
 const shortDate = (s) => { const m = String(s).match(/(\d+) de (\w+)/); return m ? `${m[1]} ${m[2].slice(0, 3)}` : s; };
 const SVG = {
   book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7.5 4.5 4 4.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2Z"/><path d="M12 6.5v14"/></svg>',
@@ -117,7 +124,7 @@ export async function viewRevista(k) {
   const front = cover(d, k) + (k === "principal" ? principalPages(d) : k === "coordinacion" ? guideIntro(d) : stageIntro(d, k));
   const body = paged ? d.tramos.map((t) => {
     const encs = d.encuentros.filter((e) => e.tramo === t.key);
-    return tramoPage(d, t, encs) + encs.map((e) => `<div class="z-enc${e.n === sel.n ? " on" : ""}" data-zenc="${e.n}">${k === "coordinacion" ? guidePages(d, e) : stagePages(e, k)}</div>`).join("");
+    return tramoPage(d, t, encs) + encs.map((e) => `<div class="z-enc${e.n === sel.n ? " on" : ""}" data-zenc="${e.n}">${k === "coordinacion" ? guidePages(d, e) : stagePages(d, e, k)}</div>`).join("");
   }).join("") : "";
   const back = k === "coordinacion" ? "" : backPage(d);
   return `
@@ -245,12 +252,31 @@ function principalPages(d) {
         <p class="z-small"><b>Para pasar de etapa:</b> ${esc(e.paso)}</p><p class="z-small">${esc(e.signo)}</p>
       </div>`).join("")}</div>`),
     page(S.anio, bubble(S.anio.body[0]) + roadHTML(d.tramos.map((t) => t.name)) + cards(S.anio.items)),
+    S.iglesia ? page(S.iglesia, bubble(S.iglesia.body[0]) + churchCards(d)) : "",
+    S.iglesia ? popePage(d) : "",
     calendarPage(d),
     page(S.encuentro, bubble(S.encuentro.body[0]) + stepsGrid(d)),
     page(S.acompanan, bubble(S.acompanan.body[0]) + cards(S.acompanan.items)),
     page(S.paso, bubble(S.paso.body[0]) + rest(S.paso) + `<div class="z-signos">${d.etapas.map((e) => `<div style="${zvars(REVISTAS[e.key])}"><b>${esc(e.name)}</b><span>${esc(e.signo)}</span></div>`).join("")}</div>`),
     page(S.cuidado, bubble(S.cuidado.body[0]) + rest(S.cuidado)),
   ].join("");
+}
+
+function churchCards(d) {
+  const dio = d.diocesis;
+  return `<h3 class="z-h">${esc(dio.nombre)} <small class="z-h-sub">${esc(dio.doc)}</small></h3>
+    <div class="z-cards z-cards-2">${dio.prioridades.map((p) => `<div class="z-card"><span class="z-card-n">${p.n}</span><h3>${esc(p.titulo)}</h3><p>${esc(p.texto)}</p><p class="z-agape"><b>En Ágape:</b> ${esc(p.agape)}</p></div>`).join("")}</div>
+    <p class="z-text z-small">${esc(dio.nota)}</p>`;
+}
+function popePage(d) {
+  const meses = Object.entries(d.papa.meses);
+  return `<section class="z-page z-sec">
+      <span class="z-hand z-tilt">cada mes, con toda la Iglesia</span>
+      <h2 class="z-h z-h-big">Rezamos con el Papa</h2>
+      <div class="z-bubble"><p>Cada mes el Papa León XIV confía a toda la Iglesia una intención de oración. En el primer encuentro de cada mes la presentamos, y la rezamos juntos en la oración inicial.</p></div>
+      <div class="z-popes">${meses.map(([m, p]) => `<div><small>${esc(m)}</small><b>${esc(p.titulo)}</b><span>${esc(p.texto)}</span></div>`).join("")}</div>
+      <p class="z-text z-small">Fuente: ${esc(d.papa.fuente)}.</p>
+    </section>`;
 }
 
 // ----- Guía de coordinación -----
@@ -274,6 +300,7 @@ function guidePages(d, e) {
       <div class="z-bubble"><h3>Objetivo</h3><p>${esc(e.objetivo)}</p></div>
       ${wordCard(e, "Palabra del domingo")}
       <div class="z-note-card"><small>Idea para el comentario</small><p>${esc(e.comentario)}</p></div>
+
       <div class="z-two">
         <div class="z-list"><h4>Preparar antes</h4><ul class="z-check">${e.preparar.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>
         <div class="z-list"><h4>Materiales</h4><ul>${e.materiales.map((x) => `<li>${esc(x)}</li>`).join("")}</ul></div>
@@ -281,9 +308,13 @@ function guidePages(d, e) {
     </section>
     <section class="z-page z-work">
       <h2 class="z-h">Momentos <span class="z-mark">juntos</span> <small class="z-h-sub">Encuentro ${e.n} · ${esc(e.tema)}</small></h2>
+      ${(() => { const p = papaOf(d, e), q = prioOf(d, e); return (p || q) ? `<div class="z-church">
+        ${p ? `<div><small>Intención del Papa · ${esc(monthOf(e))}</small><b>${esc(p.titulo)}</b><p>${esc(p.texto)}</p></div>` : ""}
+        ${q ? `<div><small>Prioridad diocesana ${q.n}</small><b>${esc(q.titulo)}</b><p>${esc(q.agape)}</p></div>` : ""}
+      </div>` : ""; })()}
       <div class="z-timeline">
         ${step(0, `Acogida · ${e.acogida.name}`, `<p>${esc(e.acogida.text)}</p>`)}
-        ${step(1, "Oración inicial", `<p>${esc(e.oracion)}</p>`)}
+        ${step(1, "Oración inicial", `<p>${esc(e.oracion)}</p>${papaOf(d, e) ? `<p><b>Con el Papa:</b> se reza por la intención del mes, «${esc(papaOf(d, e).titulo.replace(/^Por /, "por "))}».</p>` : ""}`)}
         ${step(2, `Palabra · ${e.evangelio.ref}`, `<p>Lectura en la Biblia del grupo, un minuto de silencio y el comentario de la ficha.</p>`)}
         ${step(3, "Trabajo por etapa", `<p>Cada etapa con su acompañante (página siguiente).</p>`)}
         ${step(4, "Plenario y envío", `<p>${esc(e.plenario)}</p><p>${esc(e.envio)}</p>`)}
@@ -323,7 +354,7 @@ function stageIntro(d, k) {
       <p class="z-hand z-note">Tráela cada semana. Raya, subraya, dibuja: es tuya.</p>
     </section>`;
 }
-function stagePages(e, k) {
+function stagePages(d, e, k) {
   const x = e.etapas[k];
   return `
     <section class="z-page z-hero" id="enc-${e.n}">
@@ -331,6 +362,7 @@ function stagePages(e, k) {
       <div class="z-bubble"><h3>${esc(x.titulo)}</h3><p>${esc(x.intro)}</p></div>
       ${wordCard(e)}
       <blockquote class="z-quote z-tilt-r">${esc(x.frase)}</blockquote>
+      ${papaRibbon(d, e)}
     </section>
     <section class="z-page z-work">
       <h2 class="z-h">Para <span class="z-mark">conversar</span></h2>

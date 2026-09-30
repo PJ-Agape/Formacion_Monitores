@@ -78,6 +78,14 @@
    ]
   },
   {
+   "id": "iglesia",
+   "kicker": "Con la Diócesis y con el Papa",
+   "title": "Caminamos con la Iglesia",
+   "body": [
+    "Somos parte de la Diócesis San Bartolomé de Chillán. Camino Ágape asume sus prioridades pastorales y, cada mes, reza con la intención que el Papa León XIV propone a toda la Iglesia. Así, lo que vivimos en nuestro grupo se une a lo que vive la Iglesia en Ñuble y en el mundo."
+   ]
+  },
+  {
    "id": "encuentro",
    "kicker": "Cada semana",
    "title": "Así es un encuentro",
@@ -352,7 +360,8 @@
    "tips": [
     "En el primer encuentro del año, la acogida importa más que el contenido: dedica tiempo a saludar a cada uno y anota los nombres de quienes llegan.",
     "Guarda las cartas de los aspirantes cerradas y en un lugar seguro: se devuelven en el encuentro 33, en noviembre."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 2,
@@ -465,7 +474,8 @@
    "tips": [
     "Presenta la confesión como un encuentro con la misericordia, no como un trámite ni una amenaza. Nunca preguntes quién fue.",
     "Pide a los de Ingreso que traigan su vaso en unas semanas: ver brotar la semilla es parte del aprendizaje."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 3,
@@ -578,7 +588,8 @@
    "tips": [
     "Envía un mensaje a mitad de semana con los horarios del Triduo: la Semana Santa se vive mejor en grupo.",
     "En el lavado de manos, deja que cada uno elija con quién hacerlo; si alguien prefiere solo mirar, está bien."
-   ]
+   ],
+   "diocesis": "sacerdotes"
   },
   {
    "n": 4,
@@ -691,7 +702,8 @@
    "tips": [
     "Después de la Semana Santa, que el encuentro sea una fiesta: la Pascua dura cincuenta días, no un fin de semana.",
     "Guarda las preguntas de la caja y respóndelas de verdad en próximos encuentros; si alguna te supera, consulta con los asesores."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 5,
@@ -804,7 +816,8 @@
    "tips": [
     "Si el grupo es grande, el noticiero puede hacerse en dos rondas para que no se alarguen los tiempos.",
     "Anota las preguntas de Aspirante que resultaron más difíciles: pueden servir como tema para futuros encuentros."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 6,
@@ -917,7 +930,8 @@
    "tips": [
     "Si en el trabajo de Aspirante aparece alguna situación que preocupe, no la resuelvan solos: conversen con la coordinación y los asesores.",
     "Aprovecha la Jornada de Oración por las Vocaciones para rezar en grupo por los sacerdotes y consagrados de la parroquia."
-   ]
+   ],
+   "diocesis": "sacerdotes"
   },
   {
    "n": 7,
@@ -1030,7 +1044,8 @@
    "tips": [
     "En el árbol de los frutos, reparte los nombres para que todos reciban la misma cantidad de frutas; nadie debe quedar con menos.",
     "Guarda el árbol de los frutos: puede quedar a la vista en la sala durante el tiempo de Pascua."
-   ]
+   ],
+   "diocesis": "sinodal"
   },
   {
    "n": 8,
@@ -1143,7 +1158,8 @@
    "tips": [
     "El tema de la amistad puede tocar experiencias de soledad o conflictos con amigos: escucha con delicadeza y nunca obligues a compartir.",
     "En la subasta, lo importante no es quién compra más, sino la conversación posterior: reserva tiempo para ella."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 9,
@@ -1256,7 +1272,8 @@
    "tips": [
     "Que el gesto misionero sea sencillo y posible: es mejor algo pequeño bien hecho que algo grande que no se alcanza a realizar antes de Pentecostés.",
     "Acompaña a los aspirantes durante la semana con un mensaje para ver cómo avanza la preparación, sin tomar el control."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 10,
@@ -1368,7 +1385,8 @@
    "tips": [
     "Hoy la convivencia es tan importante como el trabajo por etapas: acorta otros tiempos si es necesario para que la fiesta tenga su espacio.",
     "En el correo del Espíritu, escribe tú primero en las hojas de quienes suelen recibir menos, para que nadie quede con la hoja vacía."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 11,
@@ -1480,7 +1498,8 @@
    "tips": [
     "Deja visible el papelógrafo «Nuestra parroquia» durante todo el tramo de la Iglesia y agrégale algo cada semana.",
     "Si alguien comparte una mala experiencia con la Iglesia, escúchalo sin discutir: la acogida del grupo es la mejor respuesta."
-   ]
+   ],
+   "diocesis": "sinodal"
   },
   {
    "n": 12,
@@ -1592,7 +1611,8 @@
    "tips": [
     "Deja claro que el pan de la oración inicial es solo un signo, no la Eucaristía, para evitar confusiones.",
     "Ir juntos a la misa o procesión de Corpus Christi vale más que cualquier explicación: acompáñalos y siéntense juntos."
-   ]
+   ],
+   "diocesis": "sacerdotes"
   },
   {
    "n": 13,
@@ -1704,7 +1724,8 @@
    "tips": [
     "Habla siempre de «las personas que te cuidan» y no des por hecho un modelo de familia: hay jóvenes que viven con abuelos, con un solo papá o mamá, o en otras realidades.",
     "Si un joven comparte una situación familiar que te preocupa, no la resuelvas solo: conversa con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 14,
@@ -1816,7 +1837,8 @@
    "tips": [
     "El próximo encuentro pregunta por los almácigos: es una forma sencilla de dar continuidad y de conversar sobre el crecimiento.",
     "Guarda las cartas de los aspirantes en un lugar seguro y anota que deben entregarse a los jóvenes de ingreso del próximo año."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 15,
@@ -1928,7 +1950,8 @@
    "tips": [
     "Los papeles de los barcos no se leen: se destruyen después del encuentro. Díselo a los jóvenes para que escriban con libertad.",
     "Si algo de lo que aparece en el encuentro te preocupa, no lo guardes ni lo resuelvas solo: sigue el protocolo de cuidado y conversa con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 16,
@@ -2040,7 +2063,8 @@
    "tips": [
     "Aprovecha el receso para que el equipo evalúe el primer semestre y prepare el segundo, especialmente el Mes de la Solidaridad de agosto.",
     "Los papelitos del manto no se leen en público: guárdalos para rezar por esas intenciones durante las vacaciones."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 17,
@@ -2152,7 +2176,8 @@
    "tips": [
     "El reencuentro es más importante que el tema: da tiempo para ponerse al día y recibir a quienes llegan con calma.",
     "Anota las ideas de los aspirantes para el servicio solidario: serán la base del trabajo del Mes de la Solidaridad."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 18,
@@ -2265,7 +2290,8 @@
    "tips": [
     "En la dinámica de madurez, aclara al final que el reparto desigual fue a propósito, para que nadie se quede con una mala sensación.",
     "Aprovecha el caso de aspirantes para que empiecen a soñar el servicio solidario de agosto."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 19,
@@ -2378,7 +2404,8 @@
    "tips": [
     "El servicio lo diseñan los aspirantes: acompaña, pregunta y ordena, pero no decidas por ellos.",
     "Si algún joven vive de cerca alguna necesidad del mapa, cuida que no se sienta expuesto; si algo preocupa, conversa con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 20,
@@ -2491,7 +2518,8 @@
    "tips": [
     "Revisa con los aspirantes los permisos necesarios: autorización de las familias, coordinación con la parroquia y adultos responsables.",
     "Si en la línea de energía aparece un cansancio que preocupa, no lo resuelvas solo: conversa con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 21,
@@ -2604,7 +2632,8 @@
    "tips": [
     "Si el servicio incluye visitas a personas vulnerables o a adultos mayores, cuida su dignidad: sin fotos sin permiso y siempre con adultos responsables.",
     "El 18 de agosto, día de San Alberto Hurtado, puede ser un buen momento para el servicio o para rezar juntos por él."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 22,
@@ -2717,7 +2746,8 @@
    "tips": [
     "Recibe las preguntas de fe sin escandalizarte: es mejor una duda dicha en el grupo que una callada.",
     "Si en la caja aparece algo que preocupe por el bienestar de un joven, no lo comentes en grupo: conversa con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 23,
@@ -2830,7 +2860,8 @@
    "tips": [
     "Agradece públicamente a los aspirantes por liderar el servicio: es un paso importante en su camino de discernimiento.",
     "Guarda por escrito la evaluación del servicio para la coordinación y para el equipo del próximo año."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 24,
@@ -2943,7 +2974,8 @@
    "tips": [
     "En los tríos de madurez, pide que se compartan temas sencillos; nadie debe sentirse presionado a contar algo íntimo.",
     "Conviene recordar a los aspirantes que en las próximas semanas tendrán una conversación personal de discernimiento con su acompañante."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 25,
@@ -3056,7 +3088,8 @@
    "tips": [
     "Al hablar de la cruz, evita el dolorismo: pon el acento en el amor y en que Jesús nos acompaña.",
     "En la dinámica de aspirantes, cuida el espacio para que nadie se golpee y que el guía sea siempre respetuoso."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 26,
@@ -3169,7 +3202,8 @@
    "tips": [
     "En madurez, no pidas que nadie diga en voz alta qué lo hace tropezar: basta con que lo piense.",
     "Si en la conversación aparece algo que preocupa, no lo resuelvas solo: conversa con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "sinodal"
   },
   {
    "n": 27,
@@ -3282,7 +3316,8 @@
    "tips": [
     "Nunca des por supuesto cómo es la familia de un joven: habla siempre de «quienes te cuidan».",
     "Si un joven cuenta algo que preocupa sobre su seguridad o la de otro, no lo guardes: conversa de inmediato con la coordinación y los asesores."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 28,
@@ -3395,7 +3430,8 @@
    "tips": [
     "En la caja del espejo, guarda el secreto: la sorpresa es lo que hace que funcione.",
     "No conviertas el Evangelio en un sermón sobre la plata: el centro es la mirada de amor de Jesús."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 29,
@@ -3508,7 +3544,8 @@
    "tips": [
     "Guarda el decálogo de los aspirantes: se usará en la celebración de envío del encuentro 34.",
     "Avisa con tiempo a los encargados de los servicios parroquiales que algunos jóvenes podrían acercarse."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 30,
@@ -3621,7 +3658,8 @@
    "tips": [
     "En el camino a ciegas usa solo obstáculos blandos y ofrece a quien no quiera vendarse que cierre los ojos o haga de guía.",
     "Guarda el canasto de ingreso sin abrirlo: las intenciones son personales y se ofrecen tal como están."
-   ]
+   ],
+   "diocesis": "acogida"
   },
   {
    "n": 31,
@@ -3734,7 +3772,8 @@
    "tips": [
     "Si un joven dice que no se quiere o se nota muy decaído, acógelo con cariño y conversa con la coordinación y los asesores.",
     "Recuerda a los aspirantes que su regla de vida es personal: no se evalúa, se acompaña."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 32,
@@ -3847,7 +3886,8 @@
    "tips": [
     "Deja claro a los aspirantes que no hay presión: decidir no ser dirigente es tan valioso como decir que sí.",
     "Si algún aspirante está muy inquieto con su discernimiento, conversa con la coordinación y los asesores para acompañarlo mejor."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 33,
@@ -3960,7 +4000,8 @@
    "tips": [
     "Guarda los tres papelógrafos de evaluación: son la base para planificar el próximo año con la coordinación.",
     "Entrega las cartas con mucho respeto y sin apuro; si un aspirante se emociona, dale espacio y acompáñalo."
-   ]
+   ],
+   "diocesis": "jovenes"
   },
   {
    "n": 34,
@@ -4073,7 +4114,8 @@
    "tips": [
     "Coordina todo con el párroco con dos semanas de anticipación, y cuida que el rito sea breve dentro de la misa.",
     "Ten presente que no todas las familias podrán venir: que ningún joven se sienta solo, el grupo es también su familia."
-   ]
+   ],
+   "diocesis": "jovenes"
   }
  ],
  "tramos": [
@@ -4129,5 +4171,83 @@
    "que": "Fiestas Patrias",
    "texto": "Sin encuentro."
   }
- ]
+ ],
+ "papa": {
+  "fuente": "Red Mundial de Oración del Papa · Intenciones de oración del Papa León XIV para 2027",
+  "url": "https://www.popesprayer.va/es/intenciones-de-oracion-del-papa-2027/",
+  "meses": {
+   "marzo": {
+    "titulo": "Por el respeto de la dignidad de la vida humana",
+    "texto": "Oremos para que, ante una cultura centrada en la productividad y la inmediatez, seamos capaces de descubrir y valorar la dignidad única de cada persona."
+   },
+   "abril": {
+    "titulo": "Por el arte como don que humaniza",
+    "texto": "Oremos para que el arte sea acogido como un verdadero don que nos humaniza, eleva el espíritu y ayuda a contemplar la belleza de Dios en la creación."
+   },
+   "mayo": {
+    "titulo": "Por las oportunidades laborales para todos",
+    "texto": "Oremos para que el desarrollo tecnológico abra caminos de trabajo digno y la colaboración entre generaciones fortalezca un futuro donde cada persona pueda ofrecer sus talentos."
+   },
+   "junio": {
+    "titulo": "Por un buen uso de la inteligencia artificial",
+    "texto": "Oremos para que el desarrollo de la inteligencia artificial esté siempre al servicio de la dignidad humana y sepamos usarla con sabiduría."
+   },
+   "julio": {
+    "titulo": "Por los abuelos y ancianos",
+    "texto": "Oremos para que los miembros de la Iglesia valoremos el tesoro de fe y de sabiduría que nos ofrecen los abuelos y ancianos, dispuestos a aprender de su experiencia."
+   },
+   "agosto": {
+    "titulo": "Por la vocación de los jóvenes",
+    "texto": "Oremos para que los jóvenes en búsqueda de su vocación propia reconozcan a Jesucristo como compañero de camino a quien pueden abrir su corazón."
+   },
+   "septiembre": {
+    "titulo": "Por una conversión ecológica integral",
+    "texto": "Oremos para que aprendamos a vivir una relación nueva con la creación, protegiéndola con justicia y encontrando en la contemplación de lo creado el camino hacia una vida más armoniosa y agradecida."
+   },
+   "octubre": {
+    "titulo": "Por las comunidades cristianas",
+    "texto": "Oremos para que cada parroquia, comunidad o grupo cristiano sea un centro de irradiación misionera que forme nuevos discípulos al servicio del Evangelio."
+   },
+   "noviembre": {
+    "titulo": "Por la integración de los migrantes",
+    "texto": "Oremos para que los migrantes y desplazados, acompañados y consolados por la Sagrada Familia en su propio camino de desarraigo, encuentren comunidades que los acojan con dignidad, solidaridad y verdadera integración."
+   }
+  }
+ },
+ "diocesis": {
+  "nombre": "Diócesis San Bartolomé de Chillán",
+  "doc": "Prioridades Pastorales 2023–2025 «Camino al Centenario»",
+  "url": "https://diocesisdechillan.cl/wp-content/uploads/2024/04/Prioridades-Pastorales-web-1.pdf",
+  "nota": "Son las prioridades vigentes publicadas por la Diócesis. La Asamblea Diocesana 2026 las evaluó para proyectar nuevas líneas: cuando se publiquen, se actualizan aquí.",
+  "prioridades": [
+   {
+    "key": "sinodal",
+    "n": 1,
+    "titulo": "Estructuras en clave sinodal",
+    "texto": "Una Iglesia de corresponsabilidad, donde laicos y pastores caminan y deciden juntos.",
+    "agape": "En Ágape nadie es espectador: los jóvenes preparan, animan y evalúan los encuentros, y el equipo se organiza en roles compartidos."
+   },
+   {
+    "key": "acogida",
+    "n": 2,
+    "titulo": "Acogida, transparencia y solidaridad",
+    "texto": "Comunidades que reciben a todos, cuidan a los más frágiles, previenen todo abuso y sirven a los vulnerables.",
+    "agape": "Cada encuentro parte con la acogida; cuidamos ambientes sanos y seguros, y en agosto hacemos un servicio solidario como grupo."
+   },
+   {
+    "key": "jovenes",
+    "n": 3,
+    "titulo": "Jóvenes y catequesis",
+    "texto": "Los jóvenes y la catequesis como prioridad: agentes juveniles, liderazgo entre pares, encuentros y formación.",
+    "agape": "Camino Ágape es la respuesta de nuestra parroquia a esta prioridad: acompaña a los confirmados y forma a los futuros dirigentes, jóvenes que acompañan a jóvenes."
+   },
+   {
+    "key": "sacerdotes",
+    "n": 4,
+    "titulo": "Acompañar a los sacerdotes",
+    "texto": "Cuidar la vida fraterna, espiritual y ministerial de nuestros sacerdotes.",
+    "agape": "Rezamos por nuestro párroco y los sacerdotes de la diócesis, y agradecemos su servicio, especialmente en Semana Santa, el Buen Pastor y Corpus Christi."
+   }
+  ]
+ }
 }
