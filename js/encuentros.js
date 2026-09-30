@@ -94,7 +94,7 @@ export async function viewHub() {
     <span class="mag-num">${e.n}</span>
     <div style="flex:1"><strong>${esc(e.tema)}</strong><div class="muted small">${esc(e.domingo)} · ${esc(e.fecha)} · ${esc(e.evangelio.ref)}</div></div>
   </div>`).join("")}</div>
-  <p class="xs muted" style="margin-top:14px">${d.encuentros.length} encuentros en ${d.tramos.length} tramos, de Adviento 2026 a Cristo Rey 2027.</p>`;
+  <p class="xs muted" style="margin-top:14px">${d.encuentros.length} encuentros en ${d.tramos.length} tramos, de marzo a Cristo Rey (noviembre de 2027).</p>`;
 }
 
 // ---------------------------------------------------------------------------
