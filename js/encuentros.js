@@ -5,6 +5,7 @@
 // y se imprimen o guardan como PDF: la revista completa o solo un encuentro.
 
 import { esc, icon } from "./util.js";
+import { illus, illusFor } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, cloud }
 let data = null, loading = null;
@@ -174,6 +175,7 @@ function cover(d, k) {
       <span class="z-hand z-tilt">${esc(hand)}</span>
       <h1 class="z-mega">${esc(big)}</h1>
       <div class="z-cover-card"><b>${esc(st ? st.name : r.short)}</b><span>${esc(d.ciclo)}</span></div>
+      ${illus({ principal: "equipo", coordinacion: "mesa", ingreso: "acogida", madurez: "camino", aspirante: "servir" }[k], "z-illus-cover")}
       <p class="z-cover-foot">Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay</p>
     </section>`;
 }
@@ -183,6 +185,7 @@ function tramoPage(d, t, encs) {
   return `<div class="z-tramo${first === sel.n ? " on" : ""}" data-first="${first}">
     <section class="z-page z-divider">
       <i class="z-blob b1"></i><i class="z-blob b3"></i>
+      ${illus({ cuaresma: "trigo", pascua: "espiritu", junio: "comunidad", agosto: "panes", primavera: "envio" }[t.key] || "camino", "z-illus-tramo")}
       <span class="z-hand z-tilt">tramo ${i} de ${d.tramos.length}</span>
       <h2 class="z-mega">${esc(t.name)}</h2>
       <span class="z-chip">${esc(t.fechas)}</span>
@@ -217,6 +220,7 @@ function backPage(d) {
   const prayer = d.principal.find((s) => s.prayer).prayer;
   return `<section class="z-page z-back">
       <span class="z-hand z-tilt">para rezar siempre</span>
+      ${illus("oracion", "z-illus-back")}
       <h2 class="z-mega">Oración del Camino</h2>
       <p class="z-prayer">${esc(prayer).replace(/\n/g, "<br>")}</p>
       <img src="icons/logo-320.webp" alt="" width="90" height="90">
@@ -238,7 +242,9 @@ function principalPages(d) {
   const S = Object.fromEntries(d.principal.map((s) => [s.id, s]));
   const bubble = (txt) => `<div class="z-bubble"><p>${esc(txt)}</p></div>`;
   const cards = (items) => `<div class="z-cards">${items.map((it, i) => `<div class="z-card"><span class="z-card-n">${i + 1}</span><h3>${esc(it.title)}</h3><p>${esc(it.text)}</p></div>`).join("")}</div>`;
+  const SI = { bienvenida: "camino", identidad: "corazon", etapas: "semilla", anio: "futuro", iglesia: "comunidad", encuentro: "mesa", acompanan: "equipo", paso: "envio", cuidado: "ninos" };
   const page = (s, inner) => `<section class="z-page z-sec" id="p-${s.id}">
+      ${illus(SI[s.id], "z-illus-sec")}
       <span class="z-hand z-tilt">${esc(s.kicker)}</span>
       <h2 class="z-h z-h-big">${esc(s.title)}</h2>${inner}</section>`;
   const rest = (s) => s.body.slice(1).map((p) => `<p class="z-text">${esc(p)}</p>`).join("");
@@ -297,7 +303,7 @@ function guidePages(d, e) {
   return `
     <section class="z-page z-hero">
       ${heroTop(e)}
-      <div class="z-bubble"><h3>Objetivo</h3><p>${esc(e.objetivo)}</p></div>
+      <div class="z-duo z-duo-r"><div class="z-bubble"><h3>Objetivo</h3><p>${esc(e.objetivo)}</p></div>${illusFor(e, "z-illus-duo")}</div>
       ${wordCard(e, "Palabra del domingo")}
       <div class="z-note-card"><small>Idea para el comentario</small><p>${esc(e.comentario)}</p></div>
 
@@ -351,7 +357,7 @@ function stageIntro(d, k) {
       ${roadHTML(st.bloques)}
       <h2 class="z-h">Así es cada encuentro</h2>
       ${stepsGrid(d)}
-      <p class="z-hand z-note">Tráela cada semana. Raya, subraya, dibuja: es tuya.</p>
+      <div class="z-duo"><p class="z-hand z-note">Tráela cada semana. Raya, subraya, dibuja: es tuya.</p>${illus("biblia", "z-illus-duo")}</div>
     </section>`;
 }
 function stagePages(d, e, k) {
@@ -361,7 +367,7 @@ function stagePages(d, e, k) {
       ${heroTop(e)}
       <div class="z-bubble"><h3>${esc(x.titulo)}</h3><p>${esc(x.intro)}</p></div>
       ${wordCard(e)}
-      <blockquote class="z-quote z-tilt-r">${esc(x.frase)}</blockquote>
+      <div class="z-duo"><blockquote class="z-quote z-tilt-r">${esc(x.frase)}</blockquote>${illusFor(e, "z-illus-duo")}</div>
       ${papaRibbon(d, e)}
     </section>
     <section class="z-page z-work">

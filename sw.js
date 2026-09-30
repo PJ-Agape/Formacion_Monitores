@@ -1,9 +1,9 @@
 // Service worker: permite usar la app sin conexión.
 // Sube este número cuando cambies archivos de la app (html, css, js) para renovar la caché.
-const VERSION = "agape-v16";
+const VERSION = "agape-v17";
 const SHELL = [
   "./", "index.html", "css/app.css",
-  "js/app.js", "js/admin.js", "js/store.js", "js/util.js", "js/config.js", "js/cloud.js", "js/muro.js", "js/encuentros.js", "js/qrcode.mjs", "js/qrcode-utf8.mjs",
+  "js/app.js", "js/admin.js", "js/store.js", "js/util.js", "js/config.js", "js/cloud.js", "js/muro.js", "js/encuentros.js", "js/ilustraciones.js", "js/qrcode.mjs", "js/qrcode-utf8.mjs",
   "fonts/fraunces-latin-wght-normal.woff2", "fonts/fraunces-latin-wght-italic.woff2", "fonts/plus-jakarta-sans-latin-wght-normal.woff2", "fonts/bricolage-grotesque-latin-standard-normal.woff2", "fonts/caveat-latin-700-normal.woff2",
   "icons/logo-160.webp", "icons/logo-320.webp", "icons/favicon-64.png", "icons/icon-192.png", "manifest.webmanifest", "data/contenido.json", "data/encuentros.json",
 ];
