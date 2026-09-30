@@ -15,17 +15,27 @@ service cloud.firestore {
       return signedIn() && exists(/databases/$(database)/documents/users/$(request.auth.uid)) && me().active == true;
     }
     function isAdmin() { return isMember() && me().role == 'admin'; }
+    // Equipo: administradores y coordinadores (Agenda, Portada y moderación de muro y chat).
+    function isStaff() { return isMember() && me().role in ['admin', 'coordinador']; }
+    function validRole(r) { return r in ['admin', 'coordinador', 'dirigente', 'aspirante']; }
+    // Cuentas protegidas: siempre administradoras y activas.
+    function protectedEmail(e) { return e in ['iperezconus84@gmail.com']; }
 
     // Contenido del curso publicado desde Gestión: lo lee cualquiera, lo escribe un administrador.
     match /content/{docId} {
       allow read: if true;
       allow write: if isAdmin();
     }
+    // Portada de Inicio: también la editan los coordinadores.
+    match /content/portada {
+      allow write: if isStaff();
+    }
 
     // Invitaciones: el documento se llama como el correo invitado (en minúsculas).
     match /invites/{email} {
       allow get: if signedIn() && myEmail() == email;
-      allow read, write: if isAdmin();
+      allow read, delete: if isAdmin();
+      allow create, update: if isAdmin() && validRole(request.resource.data.role);
     }
 
     // Cuentas. Cada persona crea la suya al entrar por primera vez, solo si fue invitada
@@ -44,8 +54,9 @@ service cloud.firestore {
       // Cada uno puede actualizar su nombre, parroquia y última conexión; nunca su rol ni su estado.
       allow update: if (isMember() && request.auth.uid == uid
           && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'parish', 'lastSeen']))
-        || isAdmin();
-      allow delete: if isAdmin();
+        || (isAdmin() && validRole(request.resource.data.role)
+            && (!protectedEmail(resource.data.email) || (request.resource.data.role == 'admin' && request.resource.data.active == true)));
+      allow delete: if isAdmin() && !protectedEmail(resource.data.email);
     }
 
     // Avance en los cursos: lo escribe su dueño; lo leen su dueño y los administradores.
@@ -87,14 +98,14 @@ service cloud.firestore {
     function validText(t, max) { return t is string && t.size() > 0 && t.size() <= max; }
 
     match /wall/{postId} {
-      allow read: if resource.data.hidden == false || isAdmin();
+      allow read: if resource.data.hidden == false || isStaff();
       allow create: if isMember() && asAuthor(request.resource.data)
         && validText(request.resource.data.title, 140) && request.resource.data.body is string && request.resource.data.body.size() <= 4000
         && request.resource.data.type in ['anuncio', 'tema', 'pregunta']
-        && (isAdmin() || (request.resource.data.type == 'pregunta' && request.resource.data.pinned == false))
+        && (isStaff() || (request.resource.data.type == 'pregunta' && request.resource.data.pinned == false))
         && request.resource.data.closed == false && request.resource.data.replyCount == 0
         && request.resource.data.lastActivity == request.time;
-      allow update: if isAdmin()
+      allow update: if isStaff()
         || (isMember() && resource.data.hidden == false && (
           markUpdate()
           // al responder o borrar una respuesta se actualiza el contador
@@ -104,21 +115,21 @@ service cloud.firestore {
           || (resource.data.authorUid == request.auth.uid && changed().hasOnly(['title', 'body', 'editedAt'])
               && validText(request.resource.data.title, 140) && request.resource.data.body.size() <= 4000)
         ));
-      allow delete: if isAdmin() || (isMember() && resource.data.authorUid == request.auth.uid);
+      allow delete: if isStaff() || (isMember() && resource.data.authorUid == request.auth.uid);
 
       match /replies/{replyId} {
         function post() { return get(/databases/$(database)/documents/wall/$(postId)).data; }
-        allow read: if (resource.data.hidden == false && post().hidden == false) || isAdmin();
+        allow read: if (resource.data.hidden == false && post().hidden == false) || isStaff();
         allow create: if isMember() && asAuthor(request.resource.data) && validText(request.resource.data.body, 2000)
           && post().hidden == false && post().closed == false && post().type != 'anuncio';
-        allow update: if isAdmin()
+        allow update: if isStaff()
           || (isMember() && resource.data.hidden == false && (
             markUpdate()
             || (resource.data.authorUid == request.auth.uid && changed().hasOnly(['body', 'editedAt'])
                 && validText(request.resource.data.body, 2000))
           ));
         // la borra su autor, un administrador o el autor del tema (al borrar su tema completo)
-        allow delete: if isAdmin() || (isMember() && (resource.data.authorUid == request.auth.uid || post().authorUid == request.auth.uid));
+        allow delete: if isStaff() || (isMember() && (resource.data.authorUid == request.auth.uid || post().authorUid == request.auth.uid));
       }
     }
 
@@ -126,8 +137,8 @@ service cloud.firestore {
     // Chat por salas: todas grupales. Leen y escriben solo los miembros de cada sala;
     // la sala general es de todos. Los administradores están en todas y moderan.
     function inSala(sala) {
-      return isMember() && (sala == 'general' || isAdmin()
-        || sala in me().get('salas', me().role == 'admin' ? ['coordinacion', 'dirigentes', 'aspirantes'] : ['dirigentes']));
+      return isMember() && (sala == 'general' || isStaff()
+        || sala in me().get('salas', me().role == 'aspirante' ? ['aspirantes'] : ['dirigentes']));
     }
     match /chat/{sala}/msgs/{msgId} {
       allow read: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala);
@@ -138,19 +149,19 @@ service cloud.firestore {
         && request.resource.data.reports.size() == 0 && request.resource.data.createdAt == request.time
         && request.resource.data.keys().hasOnly(['text', 'authorUid', 'authorName', 'authorRole', 'reports', 'createdAt']);
       allow update: if inSala(sala) && changed().hasOnly(['reports']) && onlyMyKey('reports');
-      allow delete: if isAdmin() || (inSala(sala) && resource.data.authorUid == request.auth.uid);
+      allow delete: if isStaff() || (inSala(sala) && resource.data.authorUid == request.auth.uid);
     }
 
 
     // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.
     match /agenda/{eventId} {
       allow read: if true;
-      allow write: if isAdmin();
+      allow write: if isStaff();
     }
 
     // Moderación: los administradores revisan todas las respuestas del muro.
     match /{path=**}/replies/{replyId} {
-      allow read: if isAdmin();
+      allow read: if isStaff();
     }
   }
 }

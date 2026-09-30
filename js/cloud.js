@@ -8,6 +8,19 @@ import * as S from "./store.js";
 
 export const enabled = !!(CONFIG.firebase && CONFIG.firebase.apiKey);
 
+// Roles de la pastoral
+export const ROLES = [
+  { key: "admin", label: "Administrador", short: "Admin", desc: "Todo: Gestión completa, cuentas, roles, contenido del curso y seguimiento." },
+  { key: "coordinador", label: "Coordinador", short: "Coordinación", desc: "Agenda, Portada de Inicio y moderación del muro y del chat. No cambia roles ni el curso." },
+  { key: "dirigente", label: "Dirigente", short: "Dirigente", desc: "Hace el curso, participa en el muro y en sus salas de chat." },
+  { key: "aspirante", label: "Aspirante", short: "Aspirante", desc: "Como dirigente, pero entra por defecto a la sala Aspirantes." },
+];
+export const STAFF = ["admin", "coordinador"];
+export const roleLabel = (r) => (ROLES.find((x) => x.key === r) || ROLES[2]).label;
+export const isStaffRole = (r) => STAFF.includes(r);
+// Cuentas protegidas: siempre administradoras, nadie puede quitarles el rol ni pausarlas.
+export const isProtected = (email) => (CONFIG.bootstrapAdmins || []).map((e) => String(e).toLowerCase()).includes(String(email || "").toLowerCase());
+
 let fb = null, auth = null, db = null;
 let user = null;      // usuario de Firebase Auth
 let account = null;   // documento users/{uid}
@@ -24,6 +37,9 @@ export function state() {
   return {
     enabled, status, user, account, error: lastError,
     isAdmin: !!(account && account.active !== false && account.role === "admin"),
+    // Equipo: administradores y coordinadores (moderan muro y chat, editan Agenda y Portada)
+    isStaff: !!(account && account.active !== false && STAFF.includes(account.role)),
+    role: account ? account.role : "",
     ready: status === "ready",
   };
 }
@@ -287,7 +303,7 @@ const snapRows = (qs) => qs.docs.map((d) => ({ id: d.id, ...d.data({ serverTimes
 const wallCol = () => fb.collection(db, "wall");
 const repliesCol = (pid) => fb.collection(db, "wall", pid, "replies");
 // Los administradores ven también lo oculto; el resto, solo lo visible.
-const visibleQuery = (col) => (state().isAdmin ? col : fb.query(col, fb.where("hidden", "==", false)));
+const visibleQuery = (col) => (state().isStaff ? col : fb.query(col, fb.where("hidden", "==", false)));
 
 export function watchWall(cb, onErr) {
   if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
@@ -364,10 +380,10 @@ export const SALAS = [
   { key: "dirigentes", name: "Dirigentes", desc: "Los dirigentes del grupo." },
   { key: "aspirantes", name: "Aspirantes", desc: "Quienes disciernen servir como dirigentes, con sus acompañantes." },
 ];
-export const defaultSalas = (role) => (role === "admin" ? ["coordinacion", "dirigentes", "aspirantes"] : ["dirigentes"]);
+export const defaultSalas = (role) => (STAFF.includes(role) ? ["coordinacion", "dirigentes", "aspirantes"] : role === "aspirante" ? ["aspirantes"] : ["dirigentes"]);
 export function mySalas() {
   if (!account) return [];
-  if (state().isAdmin) return SALAS.map((s) => s.key);
+  if (state().isStaff) return SALAS.map((s) => s.key);
   return ["general", ...(Array.isArray(account.salas) ? account.salas : defaultSalas(account.role))];
 }
 export function watchChat(sala, cb, onErr) {

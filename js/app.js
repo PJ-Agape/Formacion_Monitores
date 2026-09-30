@@ -132,7 +132,7 @@ function renderChrome(section) {
   $("#bottomNav").innerHTML = NAV.filter((n) => n[4] !== "top").map(([k, h, l, ic]) =>
     `<a href="${h}" ${cur(k)}><span class="ico-wrap">${icon(ic)}</span>${l}</a>`).join("");
   const p = S.getProfile();
-  const inAdmin = section === "admin" && (cloud.enabled ? cloud.state().isAdmin : S.isAdmin());
+  const inAdmin = section === "admin" && (cloud.enabled ? cloud.state().isStaff : S.isAdmin());
   const guest = cloud.enabled && !cloud.state().ready;
   $("#profileChip").innerHTML = inAdmin
     ? `<span class="avatar">${icon("gear")}</span><span class="name">Gestión</span>`
@@ -1134,7 +1134,7 @@ function viewAccount() {
   const a = st.account;
   return `<div class="welcome">
     <header class="page-head"><span class="eyebrow">Mi cuenta</span><h1>${esc(a.name)}</h1>
-      <p>${esc(a.email)} · <span class="chip ${a.role === "admin" ? "warn" : "accent"}">${a.role === "admin" ? "Administrador" : "Dirigente"}</span></p></header>
+      <p>${esc(a.email)} · <span class="chip ${cloud.isStaffRole(a.role) ? "warn" : "accent"}">${esc(cloud.roleLabel(a.role))}</span></p></header>
     <form class="card stack" id="accountForm" style="--gap:14px">
       <div class="field"><label for="acName">Nombre y apellido</label><input class="input big" id="acName" name="name" required value="${esc(a.name)}"></div>
       <div class="field"><label for="acParish">Capilla o parroquia</label><input class="input big" id="acParish" name="parish" value="${esc(a.parish || "")}"></div>
@@ -1142,7 +1142,7 @@ function viewAccount() {
       <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
     </form>
     <div class="row-wrap" style="justify-content:center;margin-top:16px">
-      ${st.isAdmin ? `<a class="btn btn-soft" href="#/admin">${icon("gear")} Gestión</a>` : ""}
+      ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>` : ""}
       <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
     </div>
     <div id="installSlot" style="margin-top:14px"></div>
@@ -1224,8 +1224,9 @@ portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 
 async function boot() {
   try {
-    if (cloud.enabled) { await cloud.init(); cloud.onChange(render); }
+    if (cloud.enabled) await cloud.init();
     await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
+    if (cloud.enabled) cloud.onChange(render); // después de cargar el contenido, para no dibujar sin datos
   } catch (e) {
     viewEl().innerHTML = `<div class="card" style="text-align:center;padding:40px"><h2 class="display">No se pudo cargar el contenido</h2>
       <p class="muted" style="margin-top:8px">Revisa tu conexión e inténtalo de nuevo.</p>

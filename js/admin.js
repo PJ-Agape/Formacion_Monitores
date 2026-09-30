@@ -20,6 +20,7 @@ export async function renderAdmin(sub, _api) {
   if (cloudOn) {
     const st = api.cloud.state();
     if (!st.ready) return cloudGate(st);
+    if (!st.isAdmin && st.isStaff) return coordShell(portada.adminView());
     if (!st.isAdmin) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
       <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
       <h1 class="display" style="font-size:1.6rem">Solo para administradores</h1>
@@ -43,6 +44,23 @@ export async function renderAdmin(sub, _api) {
     default: body = summaryView(draft);
   }
   return shell(page, body);
+}
+
+// Coordinadores: Gestión reducida a la Portada (la Agenda y la moderación se hacen en sus propias páginas).
+function coordShell(body) {
+  return `
+  <div class="admin-shell">
+    <nav class="admin-side" aria-label="Gestión">
+      <a href="#/admin/portada" aria-current="page">${icon("sparkle")} Portada</a>
+      <a href="#/agenda">${icon("grid")} Agenda</a>
+      <a href="#/muro">${icon("chat")} Muro y chat</a>
+      <div class="side-extra"><a href="#/">${icon("out")} Salir de Gestión</a></div>
+    </nav>
+    <div class="stack" style="--gap:18px;min-width:0">
+      <div class="note">Tu cuenta es de <b>coordinación</b>: editas la Portada y la Agenda, y moderas el muro y el chat. Cuentas, roles y contenido del curso los maneja un administrador.</div>
+      ${body}
+    </div>
+  </div>`;
 }
 
 function shell(page, body) {
@@ -449,7 +467,7 @@ async function peopleView() {
       <tbody>
       ${list.length ? list.map(({ u, r }) => `<tr class="${u.active === false ? "paused" : ""}">
         <td><a href="#/admin/dirigentes/${esc(u.uid)}"><b>${esc(u.name || u.email)}</b></a>
-          <span class="sub">${esc(u.parish || "")}${u.role === "admin" ? ` · <span class="chip warn">Admin</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
+          <span class="sub">${esc(u.parish || "")}${u.role && u.role !== "dirigente" ? ` · <span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
         <td><div class="cell-bar"><div class="mini-bar"><i style="width:${t.units ? (r.units / t.units) * 100 : 0}%"></i></div><span>${r.units}/${t.units}</span></div></td>
         <td>${r.modules}/${t.modules}</td>
         <td>${ago(r.last)}</td>
@@ -463,7 +481,7 @@ async function peopleView() {
     <h3>Invitaciones pendientes · ${data.invites.length}</h3>
     <p class="muted small" style="margin-top:4px">Aún no han ingresado. Envíales el enlace de la app para que entren con ese correo de Google.</p>
     <div class="stack" style="--gap:6px;margin-top:12px">${data.invites.map((i) => `
-      <div class="tree-item"><div class="t"><strong>${esc(i.name || i.id)}</strong><span>${esc(i.id)} · ${i.role === "admin" ? "Administrador" : "Dirigente"}${i.parish ? " · " + esc(i.parish) : ""}</span></div>
+      <div class="tree-item"><div class="t"><strong>${esc(i.name || i.id)}</strong><span>${esc(i.id)} · ${esc(api.cloud.roleLabel(i.role))}${i.parish ? " · " + esc(i.parish) : ""}</span></div>
         <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
         ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
   </div>` : ""}`;
@@ -481,22 +499,23 @@ async function personView(uid) {
     <div style="flex:1;min-width:220px">
       <h1 class="display" style="font-size:1.8rem">${esc(u.name)}</h1>
       <p class="muted small" style="margin-top:4px">${esc(u.email)}${u.parish ? " · " + esc(u.parish) : ""}</p>
-      <div class="row-wrap" style="margin-top:10px"><span class="chip ${u.role === "admin" ? "warn" : "accent"}">${u.role === "admin" ? "Administrador" : "Dirigente"}</span>
+      <div class="row-wrap" style="margin-top:10px"><span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>${api.cloud.isProtected(u.email) ? ` <span class="chip">${icon("lock")} Cuenta protegida</span>` : ""}
         ${u.active === false ? `<span class="chip">En pausa</span>` : `<span class="chip ok">Activa</span>`}
         <span class="chip">Última actividad: ${ago(u.progress?.updatedAt || u.lastSeen)}</span></div>
     </div>
-    ${u.uid !== me.uid ? `<div class="row-wrap">
-      <button class="btn btn-sm btn-ghost" data-action="aUserRole" data-uid="${esc(u.uid)}" data-role="${u.role === "admin" ? "dirigente" : "admin"}">${u.role === "admin" ? "Quitar rol de administrador" : "Hacer administrador"}</button>
+    ${u.uid !== me.uid && !api.cloud.isProtected(u.email) ? `<div class="row-wrap">
+      <label class="field" style="margin:0"><span class="xs muted">Rol</span>
+        <select class="select" id="aRoleSel" data-uid="${esc(u.uid)}" style="width:auto">${api.cloud.ROLES.map((r) => `<option value="${r.key}" ${(u.role || "dirigente") === r.key ? "selected" : ""}>${esc(r.label)}</option>`).join("")}</select></label>
       <button class="btn btn-sm ${u.active === false ? "btn-soft" : "btn-danger"}" data-action="aUserActive" data-uid="${esc(u.uid)}" data-active="${u.active === false ? "1" : "0"}">${u.active === false ? "Reactivar cuenta" : "Poner en pausa"}</button>
     </div>` : ""}
   </div>
   ${(() => {
     const salas = Array.isArray(u.salas) ? u.salas : api.cloud.defaultSalas(u.role);
     return `<div class="card"><h3>Salas de chat</h3>
-      <p class="muted small" style="margin-top:4px">La sala general es de todos.${u.role === "admin" ? " Los administradores están en todas las salas para moderar." : ""}</p>
+      <p class="muted small" style="margin-top:4px">La sala general es de todos.${api.cloud.isStaffRole(u.role) ? " Administradores y coordinadores están en todas las salas para moderar." : ""}</p>
       <div class="row-wrap" style="margin-top:12px">${api.cloud.SALAS.filter((x) => x.key !== "general").map((x) =>
-        `<label class="chip ${salas.includes(x.key) || u.role === "admin" ? "accent" : ""}" style="cursor:pointer;padding:8px 12px">
-          <input type="checkbox" data-action="aUserSala" data-uid="${esc(u.uid)}" data-sala="${x.key}" ${salas.includes(x.key) || u.role === "admin" ? "checked" : ""} ${u.role === "admin" ? "disabled" : ""}> ${esc(x.name)}</label>`).join("")}</div></div>`;
+        `<label class="chip ${salas.includes(x.key) || api.cloud.isStaffRole(u.role) ? "accent" : ""}" style="cursor:pointer;padding:8px 12px">
+          <input type="checkbox" data-action="aUserSala" data-uid="${esc(u.uid)}" data-sala="${x.key}" ${salas.includes(x.key) || api.cloud.isStaffRole(u.role) ? "checked" : ""} ${api.cloud.isStaffRole(u.role) ? "disabled" : ""}> ${esc(x.name)}</label>`).join("")}</div></div>`;
   })()}
   ${S.content().courses.map((course) => {
     const p = detail[course.id] || { read: {}, phases: {}, scores: {} };
@@ -528,7 +547,7 @@ function peopleCsv() {
   const lines = [["Nombre", "Correo", "Parroquia", "Rol", "Estado", "Unidades completadas", "Total unidades", "Módulos aprobados", "Última actividad", "Constancia"].map(cell).join(",")];
   people.users.forEach((u) => {
     const r = rowFor(u, course), d = tsDate(r.last);
-    lines.push([u.name, u.email, u.parish, u.role === "admin" ? "Administrador" : "Dirigente", u.active === false ? "En pausa" : "Activa",
+    lines.push([u.name, u.email, u.parish, api.cloud.roleLabel(u.role), u.active === false ? "En pausa" : "Activa",
       r.units, t.units, r.modules, d && !isNaN(d) ? d.toISOString().slice(0, 10) : "", r.complete ? r.cert : ""].map(cell).join(","));
   });
   download(`seguimiento-${slug(course.title)}.csv`, "﻿" + lines.join("\n"), "text/csv;charset=utf-8");
@@ -579,7 +598,7 @@ const SPECS = {
   },
   box: () => [["title", "Título de la sección", "text"], ["desc", "Descripción", "textarea"]],
   invite: () => [["email", "Correo de Google", "text", null, "nombre@gmail.com"], ["name", "Nombre y apellido", "text"], ["parish", "Capilla o parroquia", "text"],
-    ["role", "Rol", "select", [["dirigente", "Dirigente (hace el curso)"], ["admin", "Administrador (gestión y seguimiento)"]]]],
+    ["role", "Rol", "select", [["dirigente", "Dirigente (hace el curso)"], ["aspirante", "Aspirante (sala Aspirantes)"], ["coordinador", "Coordinador (agenda, portada y moderación)"], ["admin", "Administrador (gestión completa)"]]]],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
   identity: () => [["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
   methods: () => [["icon", "Emoji", "text", null, "🏡"], ["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
@@ -740,7 +759,7 @@ function bindActions() {
   A.aPeopleRefresh = async () => { await loadPeople(true); api.render(); toast("Datos actualizados"); };
   A.aPeopleCsv = () => peopleCsv();
   A.aInvite = () => openEditor({
-    title: "Invitar a un dirigente", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente" },
+    title: "Invitar a una persona", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente" },
     onSave: (o) => {
       const email = String(o.email || "").trim().toLowerCase();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast("Escribe un correo válido", ""); return false; }
@@ -761,12 +780,16 @@ function bindActions() {
     try { await api.cloud.deleteInvite(el.dataset.email); await loadPeople(true); api.render(); toast("Invitación anulada"); }
     catch (e) { toast("No se pudo anular: " + (e.code || e.message), ""); }
   };
-  A.aUserRole = async (el) => {
-    const toAdmin = el.dataset.role === "admin";
-    if (!confirm(toAdmin ? "¿Dar acceso de administrador a esta persona? Podrá editar el contenido y ver el avance de todos." : "¿Quitar el rol de administrador?")) return;
-    try { await api.cloud.updateUser(el.dataset.uid, { role: el.dataset.role }); await loadPeople(true); api.render(); toast("Rol actualizado"); }
-    catch (e) { toast("No se pudo cambiar: " + (e.code || e.message), ""); }
-  };
+  document.addEventListener("change", async (e) => {
+    if (e.target.id !== "aRoleSel") return;
+    const sel = e.target, role = sel.value, r = api.cloud.ROLES.find((x) => x.key === role);
+    const u = (await loadPeople()).users.find((x) => x.uid === sel.dataset.uid);
+    if (!u || !r) return;
+    if (!confirm(`¿Cambiar el rol de ${u.name || u.email} a ${r.label}?\n\n${r.desc}`)) { sel.value = u.role || "dirigente"; return; }
+    // Al cambiar de rol se vuelven a usar las salas por defecto del nuevo rol.
+    try { await api.cloud.updateUser(u.uid, { role, salas: api.cloud.defaultSalas(role) }); await loadPeople(true); api.render(); toast("Rol actualizado"); }
+    catch (err) { sel.value = u.role || "dirigente"; toast("No se pudo cambiar: " + (err.code || err.message), ""); }
+  });
   A.aUserSala = async (el) => {
     const data = await loadPeople();
     const u = data.users.find((x) => x.uid === el.dataset.uid);

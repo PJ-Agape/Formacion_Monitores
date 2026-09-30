@@ -66,7 +66,7 @@ export function viewAgenda(day) {
     });
     paint();
   });
-  const admin = ctx.cloud.state().isAdmin;
+  const admin = ctx.cloud.state().isStaff;
   return `
   <header class="page-head"><span class="eyebrow">Ventana oficial del grupo</span><h1>Agenda <em>Ágape</em></h1>
     <p>Encuentros, celebraciones y actividades de la pastoral, siempre al día. Lo que está aquí es lo oficial.</p></header>
@@ -122,7 +122,7 @@ function paintList() {
   else { const t = todayIso(); list = all().filter((e) => e.date >= t).slice(0, 8); title = "Próximas fechas"; }
   $("#agListTitle").innerHTML = `${esc(title)}${selDay ? ` <button class="btn btn-sm btn-ghost" data-action="agDay" data-day="">Ver próximas</button>` : ""}`;
   if (!list.length) { box.innerHTML = `<div class="ag-empty">${illus("descanso")}<p class="muted small">${selDay ? "Nada agendado este día." : "No hay fechas próximas agendadas."}</p></div>`; return; }
-  const admin = ctx.cloud.state().isAdmin;
+  const admin = ctx.cloud.state().isStaff;
   box.innerHTML = list.map((e) => {
     const t = TYPES[e.type] || TYPES.otro, d = parse(e.date), open = openId === e.id;
     return `<article class="ag-ev${open ? " open" : ""}" style="--c:${t.color}">

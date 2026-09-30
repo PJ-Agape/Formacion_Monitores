@@ -46,14 +46,14 @@ function sortPosts(list) {
 
 // ---------- Bloques comunes ----------
 function byline(x) {
-  const staff = x.authorRole === "admin";
+  const staff = x.authorRole === "admin" || x.authorRole === "coordinador";
   return `<span class="wall-by">
     <span class="avatar ${staff ? "staff" : ""}">${esc(initials(x.authorName))}</span>
     <span><b>${esc(x.authorName || "Dirigente")}</b>${staff ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}<br>
     <span class="xs muted">${when(x.createdAt)}${x.editedAt ? " · editado" : ""}</span></span></span>`;
 }
 function modBadges(x) {
-  if (!st().isAdmin) return "";
+  if (!st().isStaff) return "";
   const r = count(x.reports);
   return `${x.hidden ? `<span class="chip">${icon("eye")} Oculto</span>` : ""}${r ? `<span class="chip danger">Reportado ${r}</span>` : ""}`;
 }
@@ -67,7 +67,7 @@ const heart = () => `<svg width="1.1em" height="1.1em" viewBox="0 0 24 24" fill=
 function menu(x, kind, pid) {
   // Opciones: dueño (editar, borrar), administrador (fijar, cerrar, ocultar, borrar), resto (reportar)
   const own = me() && x.authorUid === me();
-  const admin = st().isAdmin;
+  const admin = st().isStaff;
   const d = `data-kind="${kind}" data-pid="${esc(pid)}" data-rid="${kind === "reply" ? esc(x.id) : ""}"`;
   const items = [];
   if (own) items.push(`<button data-action="wallEdit" ${d}>${icon("edit")} Editar</button>`);
@@ -111,7 +111,7 @@ export function viewWall() {
     ctx.onLeave(stop);
     paintList();
   });
-  const canTopic = s.ready && s.isAdmin;
+  const canTopic = s.ready && s.isStaff;
   return `
   <header class="page-head"><span class="eyebrow">Muro de la comunidad</span><h1>Anuncios y <em>conversación</em></h1>
     <p>Avisos del equipo, temas para pensar juntos y preguntas de los dirigentes. Escribe con el mismo cariño con que hablarías en la reunión.</p></header>
@@ -135,7 +135,7 @@ export function viewWall() {
 
   <div class="row-wrap wall-filters" style="margin-top:20px" role="tablist">
     ${FILTERS.map(([k, l]) => `<button class="btn btn-sm ${filter === k ? "btn-soft" : "btn-ghost"}" data-action="wallFilter" data-f="${k}" role="tab" aria-selected="${filter === k}">${l}</button>`).join("")}
-    ${s.isAdmin ? `<button class="btn btn-sm ${filter === "reportes" ? "btn-soft" : "btn-ghost"}" data-action="wallFilter" data-f="reportes">Moderación</button>` : ""}
+    ${s.isStaff ? `<button class="btn btn-sm ${filter === "reportes" ? "btn-soft" : "btn-ghost"}" data-action="wallFilter" data-f="reportes">Moderación</button>` : ""}
   </div>
   <div id="wallList" class="stack" style="--gap:12px;margin-top:14px" aria-live="polite"></div>
   <p class="xs muted" style="text-align:center;margin-top:22px">Si ves algo que no corresponde, usa «Reportar» en el menú del mensaje y el equipo lo revisará.</p>`;
@@ -348,7 +348,7 @@ function registerActions() {
       if (!title) return;
       const btn = f.querySelector("[type=submit]"); btn.disabled = true;
       try {
-        await ctx.cloud.createPost({ type: String(d.get("type") || "pregunta"), title, body: String(d.get("body") || "").trim(), pinned: !!d.get("pinned") && st().isAdmin });
+        await ctx.cloud.createPost({ type: String(d.get("type") || "pregunta"), title, body: String(d.get("body") || "").trim(), pinned: !!d.get("pinned") && st().isStaff });
         f.reset(); toast("Publicado en el muro");
       } catch (err) { fail(err); }
       btn.disabled = false;

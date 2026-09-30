@@ -107,7 +107,7 @@ function paint(err) {
   if (!box) return;
   if (err && !msgs.length) { box.innerHTML = `<div class="note">No pudimos cargar los mensajes. Revisa tu conexión.</div>`; return; }
   if (!msgs) return;
-  const me = ctx.cloud.myUid(), admin = st().isAdmin;
+  const me = ctx.cloud.myUid(), admin = st().isStaff;
   const nearBottom = box.scrollHeight - box.scrollTop - box.clientHeight < 120;
   if (!msgs.length) {
     box.innerHTML = `<div class="chat-empty">${illus("amigos")}<p class="muted">Todavía no hay mensajes. ¡Rompe el hielo!</p></div>`;
@@ -128,9 +128,9 @@ function paint(err) {
     if (mine || admin) opts.push(`<button data-action="chatDelete" data-id="${esc(m.id)}">${icon("trash")} Borrar</button>`);
     if (!mine) opts.push(`<button data-action="chatReport" data-id="${esc(m.id)}" data-on="${myRep ? 0 : 1}">${icon("x")} ${myRep ? "Quitar mi reporte" : "Reportar"}</button>`);
     return `${sep}<div class="chat-msg ${mine ? "mine" : ""} ${cont ? "cont" : ""}">
-      ${!mine && !cont ? `<span class="avatar ${m.authorRole === "admin" ? "staff" : ""}">${esc(initials(m.authorName))}</span>` : `<span class="avatar-space"></span>`}
+      ${!mine && !cont ? `<span class="avatar ${ctx.cloud.isStaffRole(m.authorRole) ? "staff" : ""}">${esc(initials(m.authorName))}</span>` : `<span class="avatar-space"></span>`}
       <div class="chat-bubble">
-        ${!mine && !cont ? `<b class="chat-name">${esc(m.authorName)}${m.authorRole === "admin" ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}</b>` : ""}
+        ${!mine && !cont ? `<b class="chat-name">${esc(m.authorName)}${ctx.cloud.isStaffRole(m.authorRole) ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}</b>` : ""}
         <div class="chat-text">${linkify(m.text)}</div>
         <span class="chat-meta">${when(m.createdAt)}${admin && reps ? ` · <span class="chip danger xs-chip">Reportado ${reps}</span>` : ""}</span>
       </div>
