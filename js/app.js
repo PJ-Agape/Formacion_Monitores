@@ -816,6 +816,18 @@ function viewMaterials() {
       <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Revistas Camino Ágape</strong>
       <span class="muted small">Revista principal, guía de coordinación y revistas Ingreso, Madurez y Aspirante, para leer o descargar en PDF.</span></span>${icon("right")}
     </a>
+    <div class="grid grid-2" style="margin-top:14px">
+      <a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener">
+        <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
+        <span style="flex:1"><span class="eyebrow">Presentación para jóvenes</span><strong>Sé puente</strong>
+        <span class="muted small">Para invitar a los futuros dirigentes al curso. Se abre a pantalla completa.</span></span>${icon("right")}
+      </a>
+      <a class="card link camino-banner" href="presentaciones/el-arte-de-encontrarnos.html" target="_blank" rel="noopener">
+        <span class="tile-ico tile-brand" style="margin:0">${icon("grid")}</span>
+        <span style="flex:1"><span class="eyebrow">Presentación institucional</span><strong>El Arte de Encontrarnos</strong>
+        <span class="muted small">Para el consejo pastoral, el párroco y las familias.</span></span>${icon("right")}
+      </a>
+    </div>
     <nav class="lib-jump row-wrap" style="margin-top:14px">
       <a class="btn btn-sm btn-soft" href="#biblioteca" data-action="scrollTo" data-id="biblioteca">${icon("book")} Biblioteca digital · ${lib.total} recursos</a>
     </nav>
