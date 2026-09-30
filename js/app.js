@@ -980,6 +980,18 @@ document.addEventListener("input", (e) => {
 function viewPrayer() {
   const d = S.content().devotional;
   return `<header class="page-head"><span class="eyebrow">Vida de oración</span><h1>${esc(d.title)}</h1><p>${esc(d.desc)}</p></header>
+    <div class="grid grid-2" style="margin-top:14px">
+      <a class="card link camino-banner" href="presentaciones/mes-de-maria.html" target="_blank" rel="noopener">
+        <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
+        <span style="flex:1"><span class="eyebrow">8 de noviembre al 8 de diciembre</span><strong>Mes de María: Con María, puente hacia Jesús</strong>
+        <span class="muted small">31 días con oración inicial, Rosario, motivación juvenil, desafío y oración final.</span></span>${icon("right")}
+      </a>
+      <a class="card link camino-banner" href="presentaciones/mes-de-maria.pdf" download>
+        <span class="tile-ico tile-brand" style="margin:0">${icon("print")}</span>
+        <span style="flex:1"><span class="eyebrow">Para imprimir</span><strong>Mes de María en PDF</strong>
+        <span class="muted small">Tamaño carta, una página por día, con las oraciones y la guía del Rosario.</span></span>${icon("dl")}
+      </a>
+    </div>
     <div class="grid grid-2" style="margin-top:18px">${d.cards.map((c) => cardHTML(c, "prayer")).join("")}</div>`;
 }
 
