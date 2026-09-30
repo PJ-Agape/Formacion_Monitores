@@ -7,6 +7,7 @@ import { esc, rich, plain, icon, toast, initials } from "./util.js";
 import qrcode from "./qrcode.mjs";
 import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
+import * as camino from "./encuentros.js";
 
 qrcode.stringToBytes = utf8Bytes;
 
@@ -34,6 +35,8 @@ const routes = [
   [/^\/$/, viewHome, "inicio"],
   [/^\/muro$/, () => wall.viewWall(), "muro"],
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
+  [/^\/encuentros$/, () => camino.viewHub(), "comunidad"],
+  [/^\/encuentros\/([a-z]+)$/, (k) => camino.viewRevista(k), "comunidad"],
   [/^\/comunidad$/, viewCommunity, "comunidad"],
   [/^\/itinerario$/, viewItinerary, "itinerario"],
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
@@ -178,6 +181,11 @@ function viewHome() {
     <span class="spacer"></span>${icon("right")}
   </a>` : ""}
 
+  <a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
+    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
+    <span class="muted small">Revista principal, guía de coordinación y revistas de cada etapa.</span></span>${icon("right")}
+  </a>
   <div id="wallSlot"></div>
   <div id="installSlot"></div>
   `;
@@ -203,6 +211,11 @@ function viewCommunity() {
     <h1>Guía de servicio pastoral</h1>
     <p>${esc(a.intro || "")}</p>
   </header>
+  <a class="card link camino-banner no-print" href="#/encuentros" style="margin:6px 0 10px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
+    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
+    <span class="muted small">El itinerario del grupo en tres etapas: ingreso, madurez y aspirante.</span></span>${icon("right")}
+  </a>
 
   <div class="section-title"><span class="num">01</span><h2>Identidad y propósito</h2></div>
   <div class="grid grid-3">
@@ -1102,6 +1115,7 @@ actions.install = async () => {
 // Arranque
 // ---------------------------------------------------------------------------
 wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+camino.setup({ actions, render: () => render(), cloud });
 
 async function boot() {
   try {

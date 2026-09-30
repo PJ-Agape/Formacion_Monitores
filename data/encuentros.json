@@ -1,0 +1,363 @@
+{
+  "version": 1,
+  "title": "Camino Ágape",
+  "subtitle": "Itinerario de encuentros semanales de la Pastoral Juvenil Ágape",
+  "claim": "Crecer juntos hasta ser adultos cristianos comprometidos con la parroquia.",
+  "ciclo": "Año litúrgico 2026–2027 · Ciclo B",
+  "pilot": "Piloto para revisión: revista principal y primer mes (Adviento 2026).",
+
+  "principal": [
+    {
+      "id": "bienvenida",
+      "kicker": "Para empezar",
+      "title": "¿Qué es Camino Ágape?",
+      "body": [
+        "Camino Ágape es el itinerario que acompaña a los jóvenes de nuestra parroquia desde que terminan su catequesis de Confirmación hasta que se sienten llamados a servir como dirigentes. No es un curso que se aprueba: es un camino que se recorre en comunidad, semana a semana, al ritmo del año de la Iglesia.",
+        "Queremos que cada joven descubra que la fe no es algo que se «termina» con un sacramento, sino una amistad con Jesús que crece, se pone a prueba y se vuelve servicio. La meta es que lleguen a ser adultos cristianos, alegres y comprometidos, y que algunos de ellos sean los futuros líderes de la comunidad.",
+        "Esta revista principal es la columna vertebral del grupo. Aquí está lo que somos, cómo caminamos y hacia dónde vamos. Las guías de coordinación y las revistas de cada etapa se apoyan en ella."
+      ]
+    },
+    {
+      "id": "identidad",
+      "kicker": "Quiénes somos",
+      "title": "Un amor que transforma",
+      "body": [
+        "Ágape es la palabra griega que el Nuevo Testamento usa para el amor de Dios: un amor gratuito, que no pide nada a cambio y que cambia la vida de quien lo recibe. Por eso nuestro lema es «Amor que transforma».",
+        "No buscamos ser un grupo grande, sino un grupo verdadero: donde cada uno es conocido por su nombre, donde se ora de verdad y donde se sirve a los demás sin esperar aplausos. Caminamos con la parroquia y con el año litúrgico, y todo lo que hacemos se organiza a partir de él."
+      ],
+      "items": [
+        { "title": "Método familiar y comunitario", "text": "Nos organizamos en grupos pequeños donde cada joven se sabe acogido, valorado y parte de algo más grande. Nadie es espectador." },
+        { "title": "Método intuitivo", "text": "Aprendemos a leer lo que no siempre se dice: gestos, silencios, miradas. Formamos la empatía para acompañar de verdad." },
+        { "title": "Método activo", "text": "Los jóvenes son protagonistas de su formación: dinámicas, desafíos, servicio concreto. Se aprende haciendo y compartiendo." }
+      ]
+    },
+    {
+      "id": "etapas",
+      "kicker": "El recorrido",
+      "title": "Tres etapas, tres años",
+      "body": [
+        "El camino tiene tres etapas de un año cada una. En cada etapa el joven vive los mismos encuentros semanales que el resto del grupo, pero trabaja con preguntas, desafíos y acompañamiento pensados para su momento.",
+        "El paso de una etapa a otra no es automático: se conversa con el joven, se discierne con sus acompañantes y se celebra en comunidad."
+      ]
+    },
+    {
+      "id": "anio",
+      "kicker": "Caminar con la Iglesia",
+      "title": "El año del grupo",
+      "body": [
+        "El año del grupo comienza con el Adviento, igual que el año de la Iglesia. Cada tiempo litúrgico es un bloque con su propio tono: esperar, convertirse, celebrar la Resurrección, servir en lo cotidiano. En cada encuentro, el Evangelio del domingo ilumina el tema propio de cada etapa."
+      ],
+      "items": [
+        { "title": "Bloque 1 · Adviento y Navidad", "text": "Fines de noviembre y diciembre. Llegar, despertar, decir «aquí estoy». Cierre con celebración de Navidad en comunidad." },
+        { "title": "Receso de verano", "text": "Enero y febrero. Sin encuentros semanales; se proponen actividades especiales (convivencia, servicio de verano, misión) según lo que programe la coordinación." },
+        { "title": "Bloque 2 · Cuaresma", "text": "Desde el Miércoles de Ceniza (10 de febrero de 2027) hasta Semana Santa. Mirar la propia historia, convertirse, reconciliarse. Participación del grupo en la Semana Santa parroquial." },
+        { "title": "Bloque 3 · Pascua", "text": "De la Pascua (28 de marzo de 2027) a Pentecostés (16 de mayo). Jesús vivo, la alegría de la fe, el envío. Pentecostés se celebra como fiesta del grupo." },
+        { "title": "Bloque 4 · Tiempo ordinario", "text": "De junio a noviembre. La fe en lo de todos los días y el servicio en la parroquia. Incluye el Mes de la Solidaridad (agosto) y el Mes de María (desde el 8 de noviembre). Termina con la celebración de paso de etapa." }
+      ]
+    },
+    {
+      "id": "encuentro",
+      "kicker": "Cada semana",
+      "title": "Así es un encuentro",
+      "body": [
+        "El encuentro semanal dura cerca de 90 minutos. Todos empiezan y terminan juntos; en el centro, cada etapa trabaja en su propio grupo con su animador o dirigente. La estructura se repite para que los jóvenes la hagan suya y para que preparar cada semana sea más simple."
+      ]
+    },
+    {
+      "id": "acompanan",
+      "kicker": "Los que sirven",
+      "title": "Quiénes acompañan",
+      "body": [
+        "El camino lo sostiene el equipo de servicio de Ágape. Cada etapa tiene al menos un animador o dirigente responsable, que conoce a sus jóvenes por su nombre, prepara el trabajo de su grupo y se preocupa cuando alguien falta."
+      ],
+      "items": [
+        { "title": "Asesores", "text": "Cuidan el sentido del camino y la unión con el párroco. Acompañan a la coordinación y ayudan a discernir los pasos de etapa." },
+        { "title": "Coordinadores", "text": "Programan el año, reparten los encuentros en la reunión quincenal y velan por que cada semana esté preparada." },
+        { "title": "Animadores", "text": "Guían los momentos comunes del encuentro y animan a los grupos de cada etapa." },
+        { "title": "Dirigentes", "text": "Preparan materiales y dinámicas, acompañan a los grupos pequeños y se hacen cargo de la logística." }
+      ]
+    },
+    {
+      "id": "paso",
+      "kicker": "Crecer",
+      "title": "El paso de etapa",
+      "body": [
+        "Al terminar cada año, el equipo conversa personalmente con cada joven: cómo ha vivido el camino, qué ha descubierto, qué desea. El paso no depende de notas ni de asistencia perfecta, sino de un crecimiento que el joven y sus acompañantes pueden reconocer.",
+        "El paso se celebra en una liturgia sencilla, idealmente en la misa de la comunidad, con un signo propio de cada etapa. Quien termina la etapa de aspirante y decide servir inicia el curso de formación de dirigentes «El Arte de Encontrarnos» y, al completarlo, recibe su envío."
+      ]
+    },
+    {
+      "id": "cuidado",
+      "kicker": "Un lugar seguro",
+      "title": "Cuidarnos unos a otros",
+      "body": [
+        "Camino Ágape es un espacio sano y seguro. Los encuentros se realizan en la parroquia o en lugares conocidos por las familias, siempre con al menos dos adultos del equipo. Las familias conocen el calendario y a los responsables de cada etapa.",
+        "Lo que un joven comparte en su grupo se cuida con respeto. Si un acompañante percibe que alguien lo está pasando mal o que su bienestar puede estar en riesgo, no lo resuelve solo: lo conversa con la coordinación y con los asesores, que saben cómo pedir ayuda. Seguimos las orientaciones de la Iglesia en Chile para ambientes sanos y seguros."
+      ]
+    },
+    {
+      "id": "oracion",
+      "kicker": "Rezamos juntos",
+      "title": "Oración del Camino",
+      "prayer": "Señor Jesús,\ntú que caminaste con los discípulos de Emaús\ny les hiciste arder el corazón,\ncamina también con nosotros.\n\nEnséñanos a esperar sin miedo,\na mirarnos con tus ojos\ny a amar como tú nos amas.\n\nQue esta comunidad sea casa para quien llega,\nescuela para quien busca\ny envío para quien se siente llamado.\n\nMaría, mujer del «sí»,\nacompaña nuestros pasos.\nAmén."
+    }
+  ],
+
+  "etapas": [
+    {
+      "key": "ingreso",
+      "name": "Ingreso",
+      "lema": "Bienvenido a casa",
+      "who": "Jóvenes que están terminando su catequesis de Confirmación.",
+      "goal": "Descubrir que la comunidad es un lugar donde soy acogido tal como soy, y que la fe es una amistad con Jesús que recién comienza.",
+      "signo": "Al terminar la etapa, cada joven recibe la cruz del grupo.",
+      "rasgos": ["Llega con curiosidad y, a veces, con timidez.", "Necesita sentirse parte antes que recibir contenidos.", "Da sus primeros pasos en la oración personal."],
+      "bloques": ["Despertar: llegar a la comunidad", "Mi historia con Dios", "Jesús vivo, mi amigo", "La Iglesia, mi casa"],
+      "paso": "Recibió la Confirmación, participa con regularidad y desea seguir caminando con el grupo."
+    },
+    {
+      "key": "madurez",
+      "name": "Madurez",
+      "lema": "Mi fe en primera persona",
+      "who": "Jóvenes ya confirmados que dan sus primeros pasos acompañados por la comunidad.",
+      "goal": "Hacer propia la fe: pasar de «me enseñaron» a «yo creo», y empezar a servir en la parroquia con otros.",
+      "signo": "Al terminar la etapa, cada joven recibe una Biblia con una dedicatoria de su comunidad.",
+      "rasgos": ["Se hace preguntas profundas y a veces duda.", "Busca coherencia entre lo que cree y lo que vive.", "Está listo para asumir pequeñas responsabilidades."],
+      "bloques": ["Una fe despierta", "Conversión y libertad", "Testigos de la Resurrección", "Servir en la parroquia"],
+      "paso": "Vive su fe con más autonomía, participó en al menos una experiencia de servicio y expresa el deseo de discernir su llamado."
+    },
+    {
+      "key": "aspirante",
+      "name": "Aspirante",
+      "lema": "Llamados a servir",
+      "who": "Jóvenes que están discerniendo si quieren continuar como dirigentes en Ágape.",
+      "goal": "Discernir con libertad el llamado a servir y conocer el liderazgo al estilo de Jesús: el que sirve.",
+      "signo": "Quien decide servir recibe su envío como dirigente tras completar el curso «El Arte de Encontrarnos».",
+      "rasgos": ["Ya se siente parte y quiere aportar.", "Necesita acompañamiento personal para discernir.", "Empieza a ayudar en la preparación de encuentros."],
+      "bloques": ["Disponibles", "El liderazgo de Jesús: servir", "Enviados", "Discernir y decidir"],
+      "paso": "Tomó una decisión libre y conversada sobre su servicio, y quienes lo acompañan reconocen en él los rasgos de un servidor."
+    }
+  ],
+
+  "estructura": [
+    { "name": "Acogida", "min": 10, "who": "Todos", "text": "Recibir a cada joven por su nombre. Una dinámica breve para romper el hielo y ponerse al día de la semana." },
+    { "name": "Oración inicial", "min": 10, "who": "Todos", "text": "Signo, canto y una oración sencilla. Se enciende la vela del encuentro." },
+    { "name": "Palabra del domingo", "min": 15, "who": "Todos", "text": "Lectura del Evangelio del domingo en la Biblia del grupo, un momento de silencio y un breve comentario." },
+    { "name": "Trabajo por etapa", "min": 35, "who": "Ingreso · Madurez · Aspirante", "text": "Cada etapa se reúne con su animador o dirigente para trabajar su tema con dinámica, preguntas y un desafío para la semana." },
+    { "name": "Plenario y envío", "min": 15, "who": "Todos", "text": "Cada grupo comparte una frase o un signo. Oración final, avisos y el desafío de la semana." },
+    { "name": "Convivencia", "min": 5, "who": "Todos", "text": "Algo para compartir. No se salta: aquí también se hace comunidad." }
+  ],
+
+  "encuentros": [
+    {
+      "n": 1,
+      "domingo": "I Domingo de Adviento",
+      "fecha": "29 de noviembre de 2026",
+      "evangelio": { "ref": "Marcos 13, 33-37", "resumen": "Jesús compara nuestra vida con la de los servidores de una casa cuyo dueño salió de viaje y volverá sin avisar. Les pide estar atentos y velar, para no ser encontrados dormidos." },
+      "tema": "Despiertos",
+      "lema": "¡Estén atentos!",
+      "objetivo": "Comenzar el año del grupo despiertos: reconocer qué esperamos de este camino y qué nos adormece.",
+      "comentario": "Adviento significa «llegada». Jesús no nos pide miedo, sino atención: vivir despiertos para reconocerlo cuando llega en las personas y en lo cotidiano. Comenzar un año juntos es una buena ocasión para despertar.",
+      "preparar": [
+        "Confirmar el lugar y avisar a las familias el inicio del año del grupo.",
+        "Preparar la corona de Adviento del grupo (puede hacerse entre todos al inicio).",
+        "Tener lista la Biblia del grupo marcada en Marcos 13, 33-37.",
+        "Imprimir o compartir la revista de cada etapa.",
+        "Definir quién anima cada momento y quién acompaña cada etapa."
+      ],
+      "materiales": ["Corona de Adviento y fósforos", "Biblia del grupo", "Papeles y lápices", "Un despertador o alarma de celular", "Tarjetas para el desafío de la semana"],
+      "acogida": { "name": "La alarma", "text": "Suena una alarma y todos deben ponerse en parejas con alguien que no conozcan bien. Cada pareja tiene un minuto para descubrir tres cosas en común. Se repite dos o tres veces. Al final, algunas parejas cuentan lo más curioso que descubrieron." },
+      "oracion": "Se enciende la primera vela de la corona. Un joven lee: «Ven, Señor, no tardes». Todos repiten. Se reza un Padre Nuestro tomados de las manos.",
+      "etapas": {
+        "ingreso": {
+          "titulo": "¿Qué espero de este camino?",
+          "objetivo": "Que los recién llegados expresen lo que esperan del grupo y se sientan bienvenidos.",
+          "intro": "Llegar a un grupo nuevo puede dar un poco de nervios. Está bien. Aquí nadie espera que sepas todo ni que seas perfecto: solo que vengas como eres. Hoy empezamos a caminar juntos.",
+          "dinamica": { "name": "La maleta del viaje", "pasos": ["Cada joven dibuja una maleta en su hoja.", "Dentro escribe o dibuja tres cosas que trae al grupo (algo que le gusta, algo que sabe hacer, una pregunta que tiene).", "Fuera de la maleta escribe algo que le gustaría encontrar en el grupo.", "Se comparte en ronda, sin obligar a nadie a leer todo.", "El animador cierra agradeciendo lo que cada uno trae: el grupo es más rico con cada uno."] },
+          "preguntas": ["¿Qué me trajo hasta aquí?", "¿Qué me gustaría encontrar en este grupo?", "¿Qué me da un poco de miedo o de vergüenza al empezar?"],
+          "desafio": "Esta semana, saluda por su nombre a alguien del grupo o de la parroquia a quien normalmente no saludarías.",
+          "frase": "No tienes que llegar listo. Solo tienes que llegar."
+        },
+        "madurez": {
+          "titulo": "¿Qué me adormece?",
+          "objetivo": "Reconocer lo que adormece la fe en lo cotidiano y elegir un gesto concreto para vivir despiertos este Adviento.",
+          "intro": "Jesús dice «velen», y no lo dice para asustarnos. A veces vivimos en piloto automático: el celular, la rutina, el cansancio. La fe también puede quedarse dormida. Hoy miramos con honestidad qué nos adormece.",
+          "dinamica": { "name": "Modo avión", "pasos": ["Cada uno anota en un papel tres cosas que le quitan tiempo o atención en una semana normal.", "En otra columna anota tres momentos en que se sintió realmente despierto o vivo.", "En parejas comparten sus listas y buscan qué tienen en común los momentos «despiertos».", "En grupo: ¿dónde aparece Dios en esos momentos?", "Cada uno elige un «modo avión» para esta semana: algo que va a apagar para dar espacio a lo importante."] },
+          "preguntas": ["¿En qué momentos de mi semana vivo en piloto automático?", "¿Cuándo fue la última vez que sentí que Dios estaba cerca?", "¿Qué significa para mí estar «despierto» en la fe?"],
+          "desafio": "Elige un momento al día para dejar el celular a un lado y rezar o leer el Evangelio del domingo con calma.",
+          "frase": "Velar no es dejar de vivir: es vivir con los ojos abiertos."
+        },
+        "aspirante": {
+          "titulo": "¿A qué estoy atento?",
+          "objetivo": "Descubrir que el servidor es quien está atento a los demás, empezando por los detalles.",
+          "intro": "En la parábola, el dueño deja a cada servidor «su tarea». Quien sirve en una comunidad es alguien atento: se da cuenta de quién llegó por primera vez, de quién está callado, de lo que falta. Hoy miramos nuestra comunidad con esos ojos.",
+          "dinamica": { "name": "El inventario del servidor", "pasos": ["Recorran en silencio el lugar del encuentro o la parroquia durante cinco minutos.", "Cada uno anota tres cosas que nadie parece haber notado: algo que falta, alguien que necesita atención, algo que podría estar mejor.", "Compartan lo que vieron y elijan juntos una necesidad real y sencilla del grupo o de la parroquia.", "Piensen cómo podrían hacerse cargo de ella durante el Adviento.", "El acompañante cierra: servir empieza por mirar."] },
+          "preguntas": ["¿Qué veo en mi comunidad que otros no ven?", "¿Qué tarea me está confiando hoy el Señor?", "¿Qué me cuesta más: darme cuenta o hacerme cargo?"],
+          "desafio": "Hazte cargo, en silencio, de algo pequeño que nadie te pidió: preparar, ordenar, acompañar a alguien.",
+          "frase": "El servidor no espera que le pidan: mira y se hace cargo."
+        }
+      },
+      "plenario": "Cada etapa comparte una palabra que resuma lo vivido. Se escriben en un papelógrafo con el título «Despiertos» que acompañará todo el Adviento.",
+      "envio": "Todos de pie alrededor de la corona: «Señor, que esta semana te reconozcamos cuando llegues». Se entregan las tarjetas con el desafío de cada etapa.",
+      "evaluar": ["¿Llegaron jóvenes nuevos? ¿Quién les dará seguimiento esta semana?", "¿Los tiempos alcanzaron? ¿Qué momento se alargó?", "¿Hubo algún joven que se viera incómodo o muy callado?"],
+      "tips": ["El primer encuentro marca el tono del año: más acogida que contenido.", "Anota los nombres de quienes llegan por primera vez y escríbeles durante la semana."]
+    },
+    {
+      "n": 2,
+      "domingo": "II Domingo de Adviento",
+      "fecha": "6 de diciembre de 2026",
+      "evangelio": { "ref": "Marcos 1, 1-8", "resumen": "Comienza el Evangelio de Jesús. Juan el Bautista aparece en el desierto invitando a preparar el camino del Señor y a convertirse, y anuncia que viene alguien más grande que él." },
+      "tema": "Preparar el camino",
+      "lema": "Preparen el camino del Señor",
+      "objetivo": "Mirar el propio camino para descubrir por dónde Dios ya ha pasado y qué hay que despejar para que llegue.",
+      "comentario": "Juan no prepara el camino con grandes obras, sino invitando a mirar la propia vida y a cambiar lo necesario. Preparar el camino es quitar obstáculos: rencores, excusas, miedos. Y recordar que Dios ya ha estado presente en nuestra historia.",
+      "preparar": [
+        "Traer materiales para trazar un camino en el suelo (lana, cinta o tiza).",
+        "Tener la Biblia del grupo marcada en Marcos 1, 1-8.",
+        "Preparar piedras pequeñas (una por joven) para el momento de oración.",
+        "Revisar con los acompañantes de cada etapa la dinámica que les toca."
+      ],
+      "materiales": ["Lana o cinta de papel para marcar un camino", "Piedras pequeñas", "Hojas y lápices de colores", "Corona de Adviento", "Tarjetas del desafío"],
+      "acogida": { "name": "El camino en el suelo", "text": "Se marca un camino en el suelo con lana o cinta. Cada joven, al llegar, se ubica en el punto del camino que representa cómo llegó esta semana: al inicio (cansado), a la mitad (más o menos) o al final (con energía). Se comparte brevemente." },
+      "oracion": "Se encienden dos velas de la corona. Cada joven toma una piedra: representa algo que hoy le pesa o le estorba en el camino. La sostiene en silencio durante la lectura.",
+      "etapas": {
+        "ingreso": {
+          "titulo": "Mi historia con Dios",
+          "objetivo": "Reconocer los momentos en que Dios ha estado presente en la propia historia.",
+          "intro": "Todos tenemos una historia. Algunas partes son lindas y otras cuestan. Dios no aparece solo en la iglesia: ha estado en las personas que nos quieren, en momentos que recordamos, incluso cuando no lo notábamos. Hoy miramos nuestro camino.",
+          "dinamica": { "name": "Mi línea de vida", "pasos": ["Cada joven dibuja una línea desde su nacimiento hasta hoy.", "Marca cinco momentos importantes: alegrías, cambios, pérdidas, logros.", "Junto a cada momento escribe quién estuvo con él.", "En silencio, se pregunta en cuál de esos momentos pudo estar Dios.", "Quien quiera comparte un momento. Nadie está obligado a contar lo que no desea."] },
+          "preguntas": ["¿Qué personas han sido importantes en mi camino?", "¿En qué momento de mi vida sentí a Dios cerca, aunque no lo supiera?", "¿Qué me gustaría que Dios hiciera en esta nueva etapa?"],
+          "desafio": "Agradece esta semana a una persona que haya sido importante en tu historia. Puede ser un mensaje, una llamada o un abrazo.",
+          "frase": "Dios ya estaba en tu camino antes de que tú lo buscaras."
+        },
+        "madurez": {
+          "titulo": "Despejar el camino",
+          "objetivo": "Identificar un obstáculo concreto en la propia vida de fe y dar un paso de reconciliación.",
+          "intro": "Juan pedía convertirse. Convertirse no es volverse perfecto de un día para otro: es girar un poco la dirección. Todos cargamos piedras en el camino: un rencor, una mala costumbre, una relación que se rompió. Hoy miramos una de esas piedras.",
+          "dinamica": { "name": "Piedras en el camino", "pasos": ["Con la piedra de la oración inicial en la mano, cada joven piensa en qué representa para él.", "En la hoja escribe: qué es, desde cuándo la carga y cómo le afecta.", "En parejas de confianza comparten solo lo que quieran.", "El acompañante explica el sentido del sacramento de la Reconciliación como un regalo para empezar de nuevo, sin presionar.", "Cada uno escribe un paso pequeño y posible para esta semana."] },
+          "preguntas": ["¿Qué piedra me está costando cargar?", "¿Hay alguien con quien necesito reconciliarme?", "¿Qué paso pequeño puedo dar para despejar mi camino?"],
+          "desafio": "Da el paso que escribiste. Si lo deseas, acércate a la Reconciliación antes de Navidad.",
+          "frase": "Convertirse es girar un poco, no cambiarlo todo de golpe."
+        },
+        "aspirante": {
+          "titulo": "Voz que prepara",
+          "objetivo": "Descubrir, desde Juan el Bautista, que el servidor prepara el camino para que otros se encuentren con Jesús.",
+          "intro": "Juan tenía muchos seguidores, pero no se quedó con ellos: los preparó para Jesús. Un buen dirigente se parece a Juan. Su misión no es que los demás lo sigan a él, sino ayudarles a encontrarse con el Señor.",
+          "dinamica": { "name": "Preparar el encuentro", "pasos": ["El grupo recibe una tarea real: preparar la acogida del próximo encuentro para todo el grupo.", "Se reparten roles: quién recibe, quién ambienta el lugar, quién propone la dinámica de acogida.", "Diseñan juntos la dinámica, con tiempos y materiales.", "Conversan: ¿qué cambia cuando uno prepara en vez de solo asistir?", "El acompañante cierra: preparar también es una forma de orar."] },
+          "preguntas": ["¿Quién preparó el camino para que yo llegara a este grupo?", "¿Qué me gustaría que otros encontraran gracias a mí?", "¿Cómo se prepara un encuentro para que otros se sientan en casa?"],
+          "desafio": "Prepara con tu grupo la acogida del próximo encuentro.",
+          "frase": "El que prepara el camino no es el camino: lo abre para otros."
+        }
+      },
+      "plenario": "Todos dejan su piedra junto a la corona, como signo de lo que quieren entregar a Dios. Cada etapa comparte una frase de su trabajo.",
+      "envio": "Oración: «Señor, allana nuestros caminos y haz de nosotros un camino para otros». Avisos y tarjetas del desafío.",
+      "evaluar": ["¿Algún joven compartió algo delicado que requiera acompañamiento? Conversarlo con la coordinación con discreción.", "¿El grupo de aspirantes tiene claro su encargo para el próximo encuentro?"],
+      "tips": ["En la línea de vida pueden aparecer recuerdos dolorosos: nunca obligues a compartir y agradece siempre lo que se comparta.", "Ofrece información sobre los horarios de confesión de la parroquia en Adviento."]
+    },
+    {
+      "n": 3,
+      "domingo": "III Domingo de Adviento (Gaudete)",
+      "fecha": "13 de diciembre de 2026",
+      "evangelio": { "ref": "Juan 1, 6-8. 19-28", "resumen": "Juan es enviado como testigo de la luz. Cuando le preguntan quién es, responde con sencillez: no es el Mesías, sino una voz que prepara el camino, y dice que no es digno ni de desatar las sandalias del que viene." },
+      "tema": "¿Quién eres tú?",
+      "lema": "Testigos de la luz",
+      "objetivo": "Reconocer con alegría la propia identidad y los dones recibidos, para ser testigos de la luz de Jesús.",
+      "comentario": "Gaudete significa «alégrense». Es el domingo de la alegría, porque el Señor está cerca. A Juan le preguntan «¿quién eres tú?» y responde sabiendo quién es y quién no es. Conocerse, con lo bueno y lo que falta, da una alegría profunda: la de saberse querido y enviado.",
+      "preparar": [
+        "Ambientar con algo de color rosado, propio de este domingo.",
+        "Tener velas pequeñas o linternas para el momento del envío.",
+        "Marcar la Biblia en Juan 1, 6-8. 19-28.",
+        "Coordinar con el grupo de aspirantes, que prepara la acogida."
+      ],
+      "materiales": ["Velas pequeñas o linternas", "Hojas, sobres y lápices", "Espejo pequeño (para ingreso)", "Corona de Adviento", "Tarjetas del desafío"],
+      "acogida": { "name": "La preparan los aspirantes", "text": "El grupo de aspirantes recibe y anima la acogida que preparó la semana anterior. La coordinación solo acompaña y da el tiempo." },
+      "oracion": "Se encienden tres velas, la tercera es la de la alegría. Canto alegre. Cada joven dice en voz alta una cosa por la que está contento esta semana.",
+      "etapas": {
+        "ingreso": {
+          "titulo": "¿Quién soy yo?",
+          "objetivo": "Reconocer los propios dones y saberse querido por Dios tal como uno es.",
+          "intro": "A Juan le preguntaron: «¿Quién eres tú?». No es una pregunta fácil. A veces nos definimos por lo que otros dicen de nosotros, por las notas o por las redes. Dios nos mira distinto: ve todo lo bueno que hay en nosotros, incluso lo que todavía no descubrimos.",
+          "dinamica": { "name": "Lo que otros ven en mí", "pasos": ["Cada joven escribe su nombre en la parte de arriba de una hoja.", "Las hojas circulan por el grupo y cada uno escribe en la de los demás una cualidad o un don que ha visto en esa persona.", "Solo se permiten cosas positivas y verdaderas.", "Cada uno recibe su hoja y la lee en silencio.", "Se comparte: ¿qué me sorprendió? ¿qué me costó creer?"] },
+          "preguntas": ["¿Cómo me presentaría si alguien me pregunta «¿quién eres?»", "¿Qué don descubrí hoy que no sabía que tenía?", "¿Qué me cuesta aceptar de mí mismo?"],
+          "desafio": "Guarda la hoja con lo que te escribieron y léela cuando te cueste quererte.",
+          "frase": "Eres mucho más de lo que crees. Dios lo sabe."
+        },
+        "madurez": {
+          "titulo": "Testigo en mi ambiente",
+          "objetivo": "Descubrir cómo ser testigo de la luz de Jesús en el colegio, la casa y los amigos, sin miedo y sin imponerse.",
+          "intro": "Juan fue «testigo de la luz». Un testigo no inventa ni exagera: cuenta lo que vio y vive de acuerdo a eso. Ser testigo de Jesús no significa predicar a todos: significa que se note, en cómo tratamos a los demás, que algo en nosotros ha cambiado.",
+          "dinamica": { "name": "Luz en mis lugares", "pasos": ["Cada joven dibuja cuatro círculos: casa, colegio o trabajo, amigos, redes.", "En cada círculo anota una situación en que le cuesta mostrar su fe.", "En grupo eligen dos situaciones y conversan cómo sería vivirlas como testigos, con ejemplos concretos.", "Cada uno elige un lugar donde quiere ser luz esta semana.", "El acompañante cierra con un testimonio breve y sencillo de su propia vida."] },
+          "preguntas": ["¿Dónde me cuesta más que se note que soy cristiano?", "¿Qué persona ha sido para mí testigo de la luz?", "¿Qué gesto concreto puede mostrar mi fe sin palabras?"],
+          "desafio": "Haz un gesto de luz en el lugar que elegiste: ayudar, defender a alguien, pedir perdón, compartir.",
+          "frase": "Un testigo no convence con palabras: contagia con su vida."
+        },
+        "aspirante": {
+          "titulo": "No soy yo",
+          "objetivo": "Comprender que el servidor no busca ser protagonista y vivir el servicio con humildad y alegría.",
+          "intro": "Juan pudo haber dicho que él era el importante. Pero dijo: «No soy yo». Hoy es fácil querer ser protagonista, tener seguidores, que nos reconozcan. El liderazgo de Jesús es distinto: el que sirve se alegra cuando los demás crecen.",
+          "dinamica": { "name": "Evaluar la acogida", "pasos": ["El grupo evalúa la acogida que animó al inicio del encuentro: ¿qué resultó? ¿qué no?", "Cada uno cuenta cómo se sintió al servir: nervios, alegría, ganas de ser visto.", "Leen de nuevo la respuesta de Juan: «No soy digno de desatar la correa de sus sandalias».", "Conversan: ¿cuándo servir se vuelve protagonismo?", "Cada uno escribe una frase sobre el tipo de servidor que quiere ser."] },
+          "preguntas": ["¿Qué sentí al preparar y animar a otros?", "¿Busco que me reconozcan cuando sirvo?", "¿Qué me da alegría del servicio, aunque nadie lo vea?"],
+          "desafio": "Sirve esta semana en algo donde nadie vaya a saber que fuiste tú.",
+          "frase": "La alegría del servidor es que otros se encuentren con Jesús."
+        }
+      },
+      "plenario": "Cada etapa comparte una palabra de alegría. Se apagan las luces y se encienden velas pequeñas a partir de la corona, pasando la luz de uno en uno.",
+      "envio": "Con las velas encendidas: «Señor, que seamos testigos de tu luz». Se anuncia la celebración de Navidad del próximo encuentro y se pide a cada uno traer algo para compartir.",
+      "evaluar": ["¿Cómo funcionó la acogida preparada por los aspirantes? Agradecerles en privado y darles una observación concreta.", "¿Está organizada la celebración de Navidad (lugar, comida, invitados)?"],
+      "tips": ["Cuida que en «Lo que otros ven en mí» nadie escriba bromas: revisa las hojas antes de devolverlas si el grupo es nuevo.", "Las velas pequeñas requieren cuidado: tener agua cerca y un adulto atento."]
+    },
+    {
+      "n": 4,
+      "domingo": "IV Domingo de Adviento",
+      "fecha": "20 de diciembre de 2026",
+      "evangelio": { "ref": "Lucas 1, 26-38", "resumen": "El ángel Gabriel visita a María en Nazaret y le anuncia que será la madre de Jesús. María pregunta, escucha y responde con libertad: «Aquí está la servidora del Señor, hágase en mí según tu palabra»." },
+      "tema": "Aquí estoy",
+      "lema": "Hágase en mí",
+      "objetivo": "Aprender de María a decir «sí» a Dios con libertad y celebrar en comunidad la cercanía de la Navidad.",
+      "comentario": "María no dijo «sí» sin preguntar. Tuvo dudas, preguntó y, cuando entendió que Dios estaba con ella, se entregó con confianza. Su «sí» cambió la historia. En este último encuentro del año, cada uno puede decir su propio «aquí estoy», del tamaño que pueda.",
+      "preparar": [
+        "Este encuentro incluye la celebración de Navidad: organizar comida para compartir y ambientación.",
+        "Preparar un pesebre sencillo; la imagen del Niño se pone al final.",
+        "Tener sobres y hojas para la carta de los aspirantes.",
+        "Preparar un pequeño recuerdo navideño para cada joven (tarjeta con la frase de su etapa).",
+        "Avisar a las familias el horario de término y las fechas del receso de verano."
+      ],
+      "materiales": ["Pesebre e imagen del Niño Jesús", "Hojas, sobres y lápices", "Tarjetas de recuerdo", "Corona de Adviento", "Comida para compartir"],
+      "acogida": { "name": "Amigo secreto de palabras", "text": "Cada joven saca un papel con el nombre de otro. Durante el encuentro debe encontrar un momento para decirle algo bueno que ha visto en él durante el Adviento. Al final se revela quién era el amigo secreto de cada uno." },
+      "oracion": "Se encienden las cuatro velas de la corona. Se reza el Ave María lentamente, con un momento de silencio después de «el Señor está contigo».",
+      "etapas": {
+        "ingreso": {
+          "titulo": "Mi primer sí",
+          "objetivo": "Dar un primer «sí» concreto a la comunidad y al camino que empieza.",
+          "intro": "María era joven cuando Dios le pidió algo grande. Ella preguntó, pensó y dijo que sí. A ti Dios no te pide algo imposible: solo que sigas caminando con esta comunidad. Tu primer «sí» puede ser pequeño, pero es tuyo.",
+          "dinamica": { "name": "Mi sí del tamaño que puedo", "pasos": ["El acompañante cuenta brevemente la historia de la Anunciación con sus palabras.", "Cada joven recibe una tarjeta con tres tamaños de «sí»: pequeño, mediano, grande.", "En cada uno escribe algo que podría ofrecer al grupo (por ejemplo: venir, traer algo, ayudar en una actividad).", "Elige uno y lo comparte con el grupo.", "El acompañante agradece: la comunidad crece con cada «sí»."] },
+          "preguntas": ["¿Qué le preguntaría yo a Dios si me pidiera algo?", "¿A qué quiero decir «sí» en esta comunidad?", "¿Qué me ayudaría a seguir viniendo después del verano?"],
+          "desafio": "Durante las vacaciones, reza cada noche un Ave María y pide por tu grupo.",
+          "frase": "Un sí pequeño, dicho con el corazón, es enorme para Dios."
+        },
+        "madurez": {
+          "titulo": "Discípulos como María",
+          "objetivo": "Descubrir en María el modelo del discípulo que escucha, pregunta y confía.",
+          "intro": "María es la primera discípula de Jesús. No lo tenía todo claro: preguntó «¿cómo será esto?». Creer no es no tener dudas, es confiar aun con preguntas. Ella nos enseña que la fe adulta se hace preguntas y, aun así, se entrega.",
+          "dinamica": { "name": "Escuchar, preguntar, responder", "pasos": ["Lean juntos de nuevo el Evangelio y marquen tres momentos: María escucha, María pregunta, María responde.", "Cada uno piensa en una decisión que tiene por delante (estudios, relaciones, la fe misma).", "En la hoja escribe qué está escuchando, qué preguntas tiene y qué le gustaría responder.", "En tríos comparten lo que quieran.", "El acompañante cierra con una oración a María por las decisiones de cada uno."] },
+          "preguntas": ["¿Qué dudas tengo hoy sobre mi fe?", "¿Qué me enseña María sobre cómo tomar decisiones?", "¿Qué significa para mí «hágase en mí»?"],
+          "desafio": "Durante el verano, lee cada domingo el Evangelio del día y escribe una frase que te toque.",
+          "frase": "La fe adulta se hace preguntas y, aun así, confía."
+        },
+        "aspirante": {
+          "titulo": "Aquí estoy, Señor",
+          "objetivo": "Iniciar el discernimiento personal sobre el llamado a servir, desde la disponibilidad de María.",
+          "intro": "«Aquí está la servidora del Señor». María no se define por lo que tiene, sino por su disponibilidad. Discernir el llamado a servir empieza así: poniéndose delante de Dios con libertad, sin apuro, para escuchar qué nos pide.",
+          "dinamica": { "name": "Carta al Señor", "pasos": ["Un momento de silencio con música suave.", "Cada joven escribe una carta personal a Jesús: qué ha vivido este año, qué siente sobre servir, qué miedos y deseos tiene.", "La carta se guarda en un sobre cerrado con su nombre. Nadie la lee.", "El acompañante guarda los sobres y los devolverá al final del año de aspirante.", "Se cierra rezando juntos: «Aquí estoy, Señor, para hacer tu voluntad»."] },
+          "preguntas": ["¿Qué siento cuando pienso en servir como dirigente?", "¿Qué me da miedo y qué me entusiasma?", "¿Qué necesito para discernir con libertad?"],
+          "desafio": "Durante el verano, conversa con un dirigente o animador sobre cómo descubrió su llamado.",
+          "frase": "Discernir es ponerse disponible y dejar que Dios hable."
+        }
+      },
+      "plenario": "Se revelan los amigos secretos. Un joven de cada etapa pone una figura en el pesebre; al final se coloca el Niño Jesús mientras se canta un villancico.",
+      "envio": "Bendición de Navidad para todos y sus familias. Se entrega el recuerdo con la frase de cada etapa. Se anuncian las actividades del verano y la fecha de regreso.",
+      "evaluar": ["Evaluación del primer bloque en la próxima reunión quincenal: asistencia, clima del grupo, jóvenes que necesitan seguimiento.", "¿Quién mantendrá el contacto con los jóvenes durante el verano?", "Guardar en un lugar seguro los sobres de los aspirantes."],
+      "tips": ["Es un encuentro de fiesta: deja que la celebración ocupe tiempo, pero no te saltes el trabajo por etapa.", "Envía un saludo de Navidad a cada joven y a su familia durante la semana."]
+    }
+  ]
+}
