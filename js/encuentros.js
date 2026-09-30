@@ -83,7 +83,7 @@ export async function viewHub() {
     const r = REVISTAS[k];
     const locked = k === "coordinacion" && !canSeeGuide();
     return `<a class="card link mag-card" href="#/encuentros/${k}" style="${zvars(r)}">
-      <span class="mag-card-cover"><b>${esc(d.title)}</b><span>${esc(r.name)}</span></span>
+      <span class="z-thumb" aria-hidden="true"><span class="z-thumb-in zine" data-rev="${k}" style="${zvars(r)}">${cover(d, k)}</span></span>
       <span class="mag-card-body"><span class="eyebrow">${esc(r.kicker)}</span><h3>${esc(r.name)}</h3>
       <span class="muted small">${esc(r.for)}</span>${locked ? `<span class="chip" style="margin-top:8px">${icon("lock")} Con tu cuenta</span>` : ""}</span>
     </a>`;
