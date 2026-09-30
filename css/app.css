@@ -855,3 +855,172 @@ a.wall-title:hover h3 { color: var(--accent-text); }
   .mag-h3 { margin: 3mm 0 2mm; }
 }
 .mag-sec h4 svg { display: inline; vertical-align: -2px; margin-right: 4px; }
+
+/* ---------- Revista del joven: estilo zine ---------- */
+@font-face { font-family: "Bricolage"; src: url("../fonts/bricolage-grotesque-latin-standard-normal.woff2") format("woff2-variations"); font-weight: 200 800; font-stretch: 75% 100%; font-display: swap; }
+@font-face { font-family: "Caveat"; src: url("../fonts/caveat-latin-700-normal.woff2") format("woff2"); font-weight: 700; font-display: swap; }
+.zine { --z-cream: #fff6e5; --z-navy: #0b2566; max-width: 760px; margin: 0 auto; display: grid; gap: 18px; font-family: "Bricolage", var(--font-body); color: var(--z-navy); }
+.zine .z-enc, .zine .z-front, .zine .z-end { display: none; }
+.zine .z-enc.on { display: grid; gap: 18px; }
+.zine.show-intro .z-front, .zine.show-intro .z-end { display: grid; gap: 18px; }
+.z-tabs { display: flex; gap: 8px; overflow-x: auto; padding: 4px 2px 12px; margin: 0 auto 6px; max-width: 760px; scrollbar-width: none; }
+.z-tabs button { flex-shrink: 0; border: 2px solid var(--z-navy, #0b2566); background: #fff; color: #0b2566; border-radius: 999px; padding: 8px 14px; font: 700 .86rem "Bricolage", var(--font-body); cursor: pointer; }
+.z-tabs button b { display: inline-grid; place-items: center; width: 22px; height: 22px; border-radius: 50%; background: #0b2566; color: #fff; font-size: .75rem; margin-right: 4px; }
+.z-tabs button.on { background: #0b2566; color: #fff; }
+.z-tabs button.on b { background: #ffba03; color: #0b2566; }
+
+.z-page { position: relative; overflow: hidden; border-radius: 28px; padding: 36px 34px; background: var(--z-cream); border: 3px solid var(--z-navy); box-shadow: 8px 8px 0 var(--z-navy); }
+.z-mega { font-family: "Bricolage", sans-serif; font-weight: 800; font-stretch: 78%; letter-spacing: -0.035em; line-height: .88; font-size: clamp(3rem, 12vw, 6.2rem); margin: 0; }
+.z-hand { font-family: "Caveat", cursive; font-weight: 700; font-size: 2rem; color: var(--zp); display: inline-block; line-height: 1; }
+.z-tilt { transform: rotate(-4deg); }
+.z-tilt-r { transform: rotate(2deg); }
+.z-h { font-weight: 800; font-stretch: 85%; font-size: clamp(1.8rem, 6vw, 2.6rem); letter-spacing: -0.02em; line-height: 1; margin: 6px 0 16px; }
+.z-mark { background: linear-gradient(transparent 55%, color-mix(in srgb, var(--zp) 55%, transparent) 55%); padding: 0 4px; }
+
+/* portada */
+.z-cover { background: var(--zb); color: var(--zi); min-height: 640px; display: flex; flex-direction: column; gap: 18px; }
+.z-blob { position: absolute; border-radius: 50%; }
+.z-blob.b1 { width: 420px; height: 420px; right: -150px; bottom: -120px; background: var(--zp); }
+.z-blob.b2 { width: 160px; height: 160px; left: -50px; top: 42%; background: #fff6e5; opacity: .9; }
+.z-blob.b3 { width: 90px; height: 90px; right: 34%; top: 18%; background: #8ad2fa; }
+.zine[data-rev="ingreso"] .z-blob.b3 { background: #1351a4; }
+.z-cover > * { position: relative; }
+.z-cover-top { display: flex; justify-content: space-between; align-items: flex-start; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; font-size: .85rem; }
+.z-cover-top img { width: 130px; height: 130px; border-radius: 50%; box-shadow: 0 0 0 8px rgba(255,255,255,.35); }
+.z-cover .z-hand { color: var(--zi); font-size: 2.4rem; margin-top: 30px; }
+.zine[data-rev="madurez"] .z-cover .z-hand, .zine[data-rev="aspirante"] .z-cover .z-hand { color: #ffba03; }
+.z-cover .z-mega { font-size: clamp(3.6rem, 15vw, 7.4rem); max-width: 7ch; }
+.z-cover-card { margin-top: auto; align-self: flex-start; background: var(--z-navy); color: #fff6e5; border-radius: 22px; padding: 16px 22px; box-shadow: 6px 6px 0 #fff6e5; transform: rotate(-2deg); display: grid; }
+.z-cover-card b { font-size: 2rem; font-weight: 800; color: #ffba03; line-height: 1; }
+.z-cover-card span { font-size: .9rem; margin-top: 4px; }
+.z-cover-foot { font-size: .8rem; font-weight: 600; opacity: .85; }
+
+/* intro de etapa */
+.z-sticker { position: absolute; right: 26px; top: 22px; background: #ffba03; border: 3px solid var(--z-navy); border-radius: 16px; padding: 10px 14px; font-weight: 800; font-size: .85rem; width: 200px; box-shadow: 4px 4px 0 var(--z-navy); z-index: 1; }
+.z-intro .z-h:first-of-type { margin-top: 84px; }
+.z-road { position: relative; display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; margin: 8px 0 28px; color: var(--zb); }
+.zine[data-rev="ingreso"] .z-road { color: #1351a4; }
+.z-road-line { position: absolute; left: 0; right: 0; top: 0; width: 100%; height: 70px; }
+.z-stop { position: relative; display: grid; justify-items: center; text-align: center; gap: 8px; padding-top: 6px; }
+.z-stop b { width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; font-size: 1.6rem; font-weight: 800; background: var(--zb); color: var(--zi); border: 3px solid var(--z-navy); box-shadow: 3px 3px 0 var(--z-navy); }
+.z-stop:nth-child(odd of .z-stop) b { transform: translateY(18px); }
+.z-stop span { font-weight: 700; font-size: .92rem; line-height: 1.15; color: var(--z-navy); margin-top: 18px; }
+.z-steps { display: grid; grid-template-columns: repeat(3, 1fr); gap: 10px; }
+.z-step { background: #fff; border: 2px solid var(--z-navy); border-radius: 18px; padding: 12px; display: grid; gap: 2px; }
+.z-step-ico { font-size: 1.4rem; color: var(--zp); line-height: 1; }
+.zine[data-rev="ingreso"] .z-step-ico { color: #ef591c; }
+.z-step b { font-size: .95rem; line-height: 1.1; }
+.z-step small { color: #4a5d7a; font-weight: 700; }
+.z-note { margin-top: 22px; font-size: 1.8rem; color: var(--z-navy); }
+
+/* encuentro: portada */
+.z-hero { display: grid; gap: 16px; }
+.z-hero::before { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 250px; background: var(--zb); border-bottom: 3px solid var(--z-navy); }
+.z-hero > * { position: relative; }
+.z-hero-top { display: flex; justify-content: space-between; align-items: flex-start; color: var(--zi); }
+.z-num { font-weight: 800; font-stretch: 75%; font-size: 5.5rem; line-height: .8; color: transparent; -webkit-text-stroke: 2.5px var(--zi); }
+.z-chip { background: var(--z-cream); color: var(--z-navy); border: 2px solid var(--z-navy); border-radius: 14px; padding: 8px 12px; font-size: .78rem; font-weight: 600; text-align: right; line-height: 1.3; }
+.z-tema { color: var(--zi); font-size: clamp(3rem, 11vw, 5.4rem); margin-top: -4px; }
+.z-lema { justify-self: start; background: var(--z-cream); border: 2px solid var(--z-navy); border-radius: 12px; padding: 4px 14px 8px; font-size: 1.9rem; color: #ef591c; margin-top: 6px; box-shadow: 3px 3px 0 var(--z-navy); }
+.zine[data-rev="aspirante"] .z-lema { color: #1351a4; }
+.z-bubble { position: relative; background: #fff; border: 3px solid var(--z-navy); border-radius: 24px; padding: 18px 20px; margin-top: 8px; }
+.z-bubble::after { content: ""; position: absolute; left: 36px; bottom: -16px; width: 26px; height: 26px; background: #fff; border-right: 3px solid var(--z-navy); border-bottom: 3px solid var(--z-navy); transform: rotate(45deg); }
+.z-bubble h3 { font-weight: 800; font-stretch: 85%; font-size: 1.7rem; line-height: 1.05; margin-bottom: 8px; color: var(--z-navy); }
+.z-bubble p { font-size: 1.02rem; line-height: 1.5; color: #24406e; }
+.z-word { display: flex; gap: 14px; align-items: flex-start; background: var(--zs); border-radius: 20px; padding: 16px 18px; margin-top: 12px; }
+.z-word-ico { width: 46px; height: 46px; flex-shrink: 0; border-radius: 14px; background: var(--z-navy); color: #ffba03; display: grid; place-items: center; }
+.z-word-ico svg { width: 26px; height: 26px; }
+.z-word small { font-weight: 800; letter-spacing: .1em; text-transform: uppercase; font-size: .7rem; color: #4a5d7a; }
+.z-word b { display: block; font-size: 1.5rem; font-weight: 800; line-height: 1.1; margin: 2px 0 6px; }
+.z-word p { font-size: .92rem; line-height: 1.45; color: #24406e; }
+.z-quote { margin: 8px 0 0; background: var(--z-navy); color: #fff6e5; border-radius: 22px; padding: 22px 24px; font-weight: 800; font-stretch: 85%; font-size: clamp(1.5rem, 4.8vw, 2.1rem); line-height: 1.1; box-shadow: 6px 6px 0 var(--zp); }
+.z-quote::before { content: "“"; display: block; font-size: 3.5rem; line-height: .6; color: #ffba03; margin-bottom: 4px; }
+
+/* encuentro: trabajo */
+.z-qs { display: grid; gap: 14px; }
+.z-q { position: relative; background: #fff; border: 2px solid var(--z-navy); border-radius: 20px; padding: 14px 16px 10px 58px; }
+.z-q:nth-child(2) { margin-left: 18px; }
+.z-qn { position: absolute; left: 12px; top: 12px; width: 34px; height: 34px; border-radius: 50%; background: var(--zb); color: var(--zi); display: grid; place-items: center; font-weight: 800; border: 2px solid var(--z-navy); }
+.z-q p { font-weight: 700; font-size: 1.08rem; line-height: 1.25; }
+.z-write { display: grid; margin-top: 4px; }
+.z-write i { display: block; height: 30px; border-bottom: 2px dotted #b9c9de; }
+.z-coupon { position: relative; margin-top: 22px; background: #ffba03; border: 3px dashed var(--z-navy); border-radius: 22px; padding: 22px 22px 16px; transform: rotate(-1deg); }
+.z-scissors { position: absolute; top: -17px; left: 26px; background: var(--z-cream); padding: 0 6px; width: 34px; height: 30px; display: grid; place-items: center; }
+.z-scissors svg { width: 24px; height: 24px; }
+.z-coupon small { font-weight: 800; letter-spacing: .12em; text-transform: uppercase; font-size: .78rem; }
+.z-coupon p { font-weight: 800; font-stretch: 88%; font-size: 1.45rem; line-height: 1.15; margin-top: 6px; }
+.z-coupon-foot { display: flex; align-items: center; gap: 8px; margin-top: 14px; font-weight: 700; font-size: .95rem; }
+.z-box { width: 22px; height: 22px; border: 3px solid var(--z-navy); border-radius: 6px; background: #fff; }
+.z-pray { position: relative; margin-top: 22px; background: #fff; border: 2px solid var(--z-navy); border-radius: 20px; padding: 16px 18px 12px; background-image: linear-gradient(90deg, transparent 38px, #ffcfbf 38px, #ffcfbf 40px, transparent 40px); }
+.z-pray h3 { display: flex; align-items: center; gap: 8px; font-weight: 800; font-size: 1.25rem; padding-left: 30px; }
+.z-pray h3 svg { width: 20px; height: 20px; }
+.z-pray .z-write { padding-left: 30px; }
+.z-doodle { position: absolute; right: 18px; top: 10px; font-size: 1.8rem; color: var(--zp); transform: rotate(12deg); }
+.z-doodle.d2 { top: auto; bottom: 10px; right: 40px; font-size: 1.4rem; color: #ef591c; }
+.zine[data-rev="ingreso"] .z-doodle { color: #1351a4; }
+
+/* contraportada */
+.z-back { background: var(--zb); color: var(--zi); text-align: center; display: grid; justify-items: center; gap: 14px; }
+.z-back .z-mega { font-size: clamp(2.6rem, 9vw, 4.4rem); }
+.z-back .z-hand { color: var(--zi); }
+.zine[data-rev="madurez"] .z-back .z-hand, .zine[data-rev="aspirante"] .z-back .z-hand { color: #ffba03; }
+.z-prayer { background: var(--z-cream); color: var(--z-navy); border: 3px solid var(--z-navy); border-radius: 22px; padding: 22px 26px; font-size: 1.12rem; line-height: 1.55; font-weight: 600; max-width: 30em; box-shadow: 6px 6px 0 var(--z-navy); }
+.z-back img { border-radius: 50%; margin-top: 8px; }
+
+@media (max-width: 560px) {
+  .z-page { padding: 26px 20px; border-radius: 22px; box-shadow: 5px 5px 0 var(--z-navy); }
+  .z-sticker { position: relative; right: auto; top: auto; margin: 0 0 14px auto; }
+  .z-intro .z-h:first-of-type { margin-top: 0; }
+  .z-road { grid-template-columns: repeat(2, 1fr); row-gap: 22px; }
+  .z-road-line { display: none; }
+  .z-stop:nth-child(odd of .z-stop) b { transform: none; }
+  .z-stop span { margin-top: 0; }
+  .z-steps { grid-template-columns: repeat(2, 1fr); }
+  .z-num { font-size: 4.2rem; }
+  .z-hero::before { height: 220px; }
+  .z-cover { min-height: 560px; }
+  .z-cover-top img { width: 96px; height: 96px; }
+  .z-q:nth-child(2) { margin-left: 0; }
+}
+@page zine { size: A4 portrait; margin: 0; }
+@media print {
+  .zine { page: zine; display: block; max-width: none; }
+  .zine .z-front, .zine .z-end, .zine .z-enc { display: block !important; }
+  .zine * { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .z-page { box-sizing: border-box; width: 210mm; height: 297mm; border-radius: 0; border: 0; box-shadow: none; margin: 0; padding: 16mm 15mm; break-after: page; display: flex; flex-direction: column; }
+  .z-hero, .z-work, .z-intro { gap: 5mm; }
+  .z-hero > *, .z-work > * { margin-top: 0; }
+  .z-work .z-qs { flex: 1; align-content: start; }
+  .z-cover { min-height: 0; }
+  .z-cover .z-mega { font-size: 118pt; }
+  .z-tema { font-size: 70pt; }
+  .z-hero::before { height: 92mm; }
+  .z-write i { height: 9mm; }
+  .z-q .z-write i:nth-child(n) { height: 10mm; }
+  .z-pray { flex: 0 0 auto; }
+  .z-back { justify-content: center; }
+}
+.z-cover > .z-blob { position: absolute; }
+@media print {
+  .z-hero, .z-work { justify-content: space-between; }
+  .z-bubble p { font-size: 13pt; }
+  .z-bubble h3 { font-size: 22pt; }
+  .z-word b { font-size: 20pt; }
+  .z-word p { font-size: 11.5pt; }
+  .z-quote { font-size: 26pt; padding: 8mm 9mm; }
+  .z-q p { font-size: 13pt; }
+  .z-q .z-write i:nth-child(n) { height: 13mm; }
+  .z-pray .z-write i { height: 11mm; }
+  .z-coupon p { font-size: 18pt; }
+  .z-intro { justify-content: space-between; }
+  .z-step { padding: 5mm; }
+  .z-step b { font-size: 13pt; }
+  .z-stop span { font-size: 12pt; }
+}
+.z-lema, .z-cover-card { align-self: flex-start; justify-self: start; }
+.z-blob.b2 { top: -60px; left: -60px; width: 180px; height: 180px; }
+@media print {
+  .z-sticker { width: 70mm; font-size: 12pt; padding: 4mm 5mm; }
+  .z-sticker .z-write i { height: 10mm; }
+  .z-lema { font-size: 26pt; }
+}

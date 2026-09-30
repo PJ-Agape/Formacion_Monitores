@@ -10,6 +10,15 @@ let data = null, loading = null;
 export function setup(c) {
   ctx = c;
   ctx.actions.magPrint = () => window.print();
+  ctx.actions.zineGo = (el) => {
+    zineOn = +el.dataset.n;
+    const art = document.querySelector(".zine");
+    if (!art) return;
+    art.classList.toggle("show-intro", zineOn === 0);
+    art.querySelectorAll(".z-enc").forEach((x) => x.classList.toggle("on", +x.dataset.zenc === zineOn));
+    document.querySelectorAll(".z-tabs button").forEach((b) => b.classList.toggle("on", +b.dataset.n === zineOn));
+    document.querySelector(".z-tabs")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  };
 }
 
 async function load() {
@@ -73,6 +82,7 @@ export async function viewRevista(k) {
       <p class="muted" style="margin-top:8px">Ingresa con la cuenta con que te invitaron para verla.</p>
       <button class="btn btn-primary" style="margin-top:16px" data-action="signIn">Ingresar</button></div>`;
   }
+  if (STAGE_COLOR[k]) return zine(d, k);
   const body = k === "principal" ? principal(d) : k === "coordinacion" ? coordinacion(d) : joven(d, k);
   return `
   <div class="row-wrap no-print" style="margin-bottom:14px">
@@ -210,4 +220,100 @@ function joven(d, k) {
   return intro + d.encuentros.map(enc).join("") +
     `<section class="mag-sec mag-break"><span class="mag-kicker">Para rezar siempre</span><h2>Oración del Camino</h2>
       <blockquote class="mag-prayer">${esc(d.principal.find((s) => s.prayer).prayer).replace(/\n/g, "<br>")}</blockquote></section>`;
+}
+
+// ---------------------------------------------------------------------------
+// Revista del joven en formato "zine": poco texto por bloque, tipografía grande,
+// stickers y espacios para escribir. En la app se ve un encuentro a la vez.
+// ---------------------------------------------------------------------------
+const ZINE = {
+  ingreso: { bg: "#8ad2fa", ink: "#0b2566", pop: "#ef591c", soft: "#e3f4fe", n: 1 },
+  madurez: { bg: "#1351a4", ink: "#ffffff", pop: "#ffba03", soft: "#e1edfb", n: 2 },
+  aspirante: { bg: "#ef591c", ink: "#ffffff", pop: "#ffba03", soft: "#fde9df", n: 3 },
+};
+const SVG = {
+  book: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 6.5C10 5 7.5 4.5 4 4.5v14c3.5 0 6 .5 8 2 2-1.5 4.5-2 8-2v-14c-3.5 0-6 .5-8 2Z"/><path d="M12 6.5v14"/></svg>',
+  scissors: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><circle cx="6" cy="6" r="3"/><circle cx="6" cy="18" r="3"/><path d="M20 4 8.1 15.9M14.5 14.5 20 20M8.1 8.1 12 12"/></svg>',
+  pen: '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 20h4L19 9a2.8 2.8 0 0 0-4-4L4 16v4Z"/></svg>',
+  flame: '<svg viewBox="0 0 24 24" fill="currentColor"><path d="M12 22c-4 0-7-2.8-7-6.6 0-3.7 2.6-5.8 4.1-8.4.4 1.8 1.4 2.9 2.6 3.4C12 7.2 13 4.4 15.2 2.8c.2 3.8 3.8 6 3.8 11.6 0 4.5-3 7.6-7 7.6Z"/></svg>',
+};
+const bubbleLines = (n) => `<span class="z-write">${"<i></i>".repeat(n)}</span>`;
+let zineOn = 0;
+
+function zine(d, k) {
+  const st = d.etapas.find((x) => x.key === k);
+  const z = ZINE[k];
+  const style = `--zb:${z.bg};--zi:${z.ink};--zp:${z.pop};--zs:${z.soft}`;
+  const icons = ["☺", "✦", "✚", "◎", "↗", "☕"];
+  const cover = `<section class="z-page z-cover">
+      <i class="z-blob b1"></i><i class="z-blob b2"></i><i class="z-blob b3"></i>
+      <div class="z-cover-top"><span>Camino Ágape</span><img src="icons/logo-320.webp" alt="Logo Ágape Joven PJ" width="130" height="130"></div>
+      <span class="z-hand z-tilt">tu revista · etapa ${z.n}</span>
+      <h1 class="z-mega">${esc(st.lema)}</h1>
+      <div class="z-cover-card"><b>${esc(st.name)}</b><span>${esc(d.ciclo)}</span></div>
+      <p class="z-cover-foot">Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay</p>
+    </section>`;
+  const intro = `<section class="z-page z-intro">
+      <div class="z-sticker z-tilt-r">Esta revista es de<br>${bubbleLines(1)}</div>
+      <h2 class="z-h">Tu año en <span class="z-mark">4 paradas</span></h2>
+      <div class="z-road">
+        <svg class="z-road-line" viewBox="0 0 600 120" preserveAspectRatio="none" aria-hidden="true"><path d="M20 90 C 140 -10, 220 150, 320 60 S 520 0, 585 70" fill="none" stroke="currentColor" stroke-width="6" stroke-dasharray="2 14" stroke-linecap="round"/></svg>
+        ${st.bloques.map((b, i) => `<div class="z-stop"><b>${i + 1}</b><span>${esc(b)}</span></div>`).join("")}
+      </div>
+      <h2 class="z-h">Así es cada encuentro</h2>
+      <div class="z-steps">${d.estructura.map((m, i) => `<div class="z-step"><span class="z-step-ico">${icons[i] || "•"}</span><b>${esc(m.name)}</b><small>${m.min}′</small></div>`).join("")}</div>
+      <p class="z-hand z-note">Tráela cada semana. Raya, subraya, dibuja: es tuya.</p>
+    </section>`;
+  const enc = (e) => {
+    const x = e.etapas[k];
+    return `<div class="z-enc ${e.n === zineOn ? "on" : ""}" data-zenc="${e.n}">
+    <section class="z-page z-hero" id="enc-${e.n}">
+      <div class="z-hero-top">
+        <span class="z-num">${String(e.n).padStart(2, "0")}</span>
+        <span class="z-chip">${esc(e.domingo)}<br><b>${esc(e.fecha)}</b></span>
+      </div>
+      <h2 class="z-mega z-tema">${esc(e.tema)}</h2>
+      <span class="z-hand z-lema z-tilt">${esc(e.lema)}</span>
+      <div class="z-bubble"><h3>${esc(x.titulo)}</h3><p>${esc(x.intro)}</p></div>
+      <div class="z-word">
+        <span class="z-word-ico">${SVG.book}</span>
+        <div><small>Lee en tu Biblia</small><b>${esc(e.evangelio.ref)}</b><p>${esc(e.evangelio.resumen)}</p></div>
+      </div>
+      <blockquote class="z-quote z-tilt-r">${esc(x.frase)}</blockquote>
+    </section>
+    <section class="z-page z-work">
+      <h2 class="z-h">Para <span class="z-mark">conversar</span></h2>
+      <div class="z-qs">${x.preguntas.map((q, i) => `<div class="z-q"><span class="z-qn">${i + 1}</span><p>${esc(q)}</p>${bubbleLines(2)}</div>`).join("")}</div>
+      <div class="z-coupon">
+        <span class="z-scissors">${SVG.scissors}</span>
+        <small>Desafío de la semana</small>
+        <p>${esc(x.desafio)}</p>
+        <div class="z-coupon-foot"><span class="z-box"></span> ¡Lo hice! <span class="spacer"></span> Día: ______</div>
+      </div>
+      <div class="z-pray"><h3>${SVG.pen} Mi oración</h3>${bubbleLines(3)}<span class="z-doodle">✦</span><span class="z-doodle d2">♡</span></div>
+    </section>
+    </div>`;
+  };
+  const prayer = d.principal.find((s) => s.prayer).prayer;
+  const back = `<section class="z-page z-back">
+      <span class="z-hand z-tilt">para rezar siempre</span>
+      <h2 class="z-mega">Oración del Camino</h2>
+      <p class="z-prayer">${esc(prayer).replace(/\n/g, "<br>")}</p>
+      <img src="icons/logo-320.webp" alt="" width="90" height="90">
+    </section>`;
+  const tabs = `<nav class="z-tabs no-print" aria-label="Encuentros">
+      <button data-action="zineGo" data-n="0" class="${zineOn === 0 ? "on" : ""}">Inicio</button>
+      ${d.encuentros.map((e) => `<button data-action="zineGo" data-n="${e.n}" class="${zineOn === e.n ? "on" : ""}"><b>${e.n}</b> ${esc(e.tema)}</button>`).join("")}
+    </nav>`;
+  return `
+  <div class="row-wrap no-print" style="margin-bottom:12px">
+    <a class="btn btn-sm btn-ghost" href="#/encuentros">${icon("arrowL")} Camino Ágape</a><span class="spacer"></span>
+    <button class="btn btn-sm btn-primary" data-action="magPrint">${icon("dl")} Descargar PDF</button>
+  </div>
+  ${tabs}
+  <article class="zine ${zineOn === 0 ? "show-intro" : ""}" style="${style}" data-rev="${k}">
+    <div class="z-front">${cover}${intro}</div>
+    ${d.encuentros.map(enc).join("")}
+    <div class="z-end">${back}</div>
+  </article>`;
 }
