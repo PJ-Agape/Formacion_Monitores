@@ -42,7 +42,8 @@ service cloud.firestore {
     // (con el rol de la invitación) o si es administrador inicial.
     match /users/{uid} {
       allow get: if signedIn() && request.auth.uid == uid;
-      allow read: if isAdmin();
+      // Administradores: todo. Coordinadores: directorio para armar salas (el avance sigue siendo solo de administradores).
+      allow read: if isStaff();
       allow create: if signedIn() && request.auth.uid == uid
         && request.resource.data.email == myEmail()
         && request.resource.data.active == true
@@ -135,15 +136,38 @@ service cloud.firestore {
     }
 
 
-    // Chat por salas: todas grupales. Leen y escriben solo los miembros de cada sala;
-    // la sala general es de todos. Los administradores están en todas y moderan.
+    // Chat por salas: todas grupales. Leen y escriben solo los integrantes de cada sala.
+    // Cuatro salas fijas (la general es de todos) y las que crea el equipo en «salas».
+    // Administradores y coordinadores están en todas y moderan.
+    function builtIn(sala) { return sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes']; }
+    function salaDoc(sala) { return get(/databases/$(database)/documents/salas/$(sala)).data; }
+    function inCustom(sala) {
+      return exists(/databases/$(database)/documents/salas/$(sala)) && (isStaff()
+        || salaDoc(sala).access == 'all'
+        || (salaDoc(sala).access == 'roles' && me().role in salaDoc(sala).roles)
+        || (salaDoc(sala).access == 'people' && request.auth.uid in salaDoc(sala).members));
+    }
     function inSala(sala) {
-      return isMember() && (sala == 'general' || isStaff()
-        || sala in me().get('salas', me().role == 'aspirante' ? ['aspirantes'] : ['dirigentes']));
+      return isMember() && (builtIn(sala)
+        ? (sala == 'general' || isStaff() || sala in me().get('salas', me().role == 'aspirante' ? ['aspirantes'] : ['dirigentes']))
+        : inCustom(sala));
+    }
+    function openSala(sala) { return builtIn(sala) || salaDoc(sala).get('archived', false) != true; }
+
+    // Salas creadas por el equipo: las ven quienes tienen cuenta; las crean y editan administradores y coordinadores.
+    match /salas/{salaId} {
+      allow read: if isMember();
+      allow create, update: if isStaff() && !builtIn(salaId)
+        && validText(request.resource.data.name, 60)
+        && request.resource.data.access in ['all', 'roles', 'people']
+        && request.resource.data.roles is list && request.resource.data.members is list
+        && (request.resource.data.access != 'roles' || request.resource.data.roles.size() > 0)
+        && (request.resource.data.access != 'people' || request.resource.data.members.size() >= 3);
+      allow delete: if isStaff();
     }
     match /chat/{sala}/msgs/{msgId} {
-      allow read: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala);
-      allow create: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala)
+      allow read: if inSala(sala);
+      allow create: if inSala(sala) && openSala(sala)
         && request.resource.data.authorUid == request.auth.uid && request.resource.data.authorRole == me().role
         && request.resource.data.authorName is string && request.resource.data.authorName.size() <= 60
         && validText(request.resource.data.text, 1500)
@@ -194,8 +218,8 @@ service cloud.firestore {
 
     // Quién está en línea en cada sala (cada uno escribe solo su propia presencia).
     match /chat/{sala}/presence/{uid} {
-      allow read: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala);
-      allow create, update: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala)
+      allow read: if inSala(sala);
+      allow create, update: if inSala(sala)
         && uid == request.auth.uid && request.resource.data.at == request.time
         && request.resource.data.keys().hasOnly(['name', 'avatar', 'role', 'at']);
       allow delete: if (signedIn() && uid == request.auth.uid) || isStaff();

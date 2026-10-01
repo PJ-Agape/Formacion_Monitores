@@ -2,7 +2,7 @@
 // dirigentes y aspirantes). No hay mensajes privados: lo privado queda fuera de la app.
 
 import { esc, icon, toast, initials } from "./util.js";
-import { illus } from "./ilustraciones.js";
+import { illus, SCENE_KEYS } from "./ilustraciones.js";
 import { avatar } from "./avatares.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
@@ -14,6 +14,16 @@ const seenBuzz = new Set();
 const ONLINE_MS = 150000; // se considera en línea si dio señales en los últimos 2,5 minutos
 const SALA_ILLUS = { general: "comunidad", coordinacion: "mesa", dirigentes: "equipo", aspirantes: "camino" };
 const SALA_COLOR = { general: "#8ad2fa", coordinacion: "#ffba03", dirigentes: "#1351a4", aspirantes: "#ef591c" };
+const COLORS = ["#8ad2fa", "#ffba03", "#ef591c", "#1351a4", "#fde0d2", "#9be3b0"];
+const colorOf = (s) => s.color || SALA_COLOR[s.key] || "#8ad2fa";
+const illusOf = (s) => (s.illus && SCENE_KEYS.includes(s.illus) ? s.illus : SALA_ILLUS[s.key] || "amigos");
+const ROLE_NAMES = { admin: "Administradores", coordinador: "Coordinadores", dirigente: "Dirigentes", aspirante: "Aspirantes" };
+function accessText(s) {
+  if (!s.custom) return "";
+  if (s.access === "all") return "Todos los que tienen cuenta";
+  if (s.access === "roles") return (s.roles || []).map((r) => ROLE_NAMES[r] || r).join(", ") || "Solo el equipo";
+  return `${(s.members || []).length} integrantes elegidos`;
+}
 
 export function tabs(active) {
   return `<nav class="wall-tabs row-wrap" aria-label="Muro y chat">
@@ -48,35 +58,43 @@ const linkify = (v) => esc(v).replace(/(https?:\/\/[^\s<]+[^\s<.,;:!?)\]])/g, '<
 // ---------------------------------------------------------------------------
 // Lista de salas  (#/chat)
 // ---------------------------------------------------------------------------
-export function viewRooms() {
+export async function viewRooms() {
   const g = gate();
-  const salas = ctx.cloud.SALAS.filter((s) => ctx.cloud.mySalas().includes(s.key));
+  if (!g) await ctx.cloud.loadSalas();
+  const staff = st().isStaff;
+  const salas = ctx.cloud.allSalas().filter((s) => ctx.cloud.canSee(s));
+  const active = salas.filter((s) => !s.archived), archived = salas.filter((s) => s.archived);
   if (!g) ctx.onAfterRender(async () => {
-    for (const s of salas) {
+    for (const s of active) {
       const m = await ctx.cloud.lastChat(s.key);
       const el = document.querySelector(`[data-last="${s.key}"]`);
       if (el) el.textContent = m ? `${m.authorName}: ${m.text.slice(0, 70)}${m.text.length > 70 ? "…" : ""}` : "Aún no hay mensajes. ¡Saluda!";
     }
   });
+  const card = (s) => `<div class="chat-room-wrap"><a class="card link chat-room${s.archived ? " is-arch" : ""}" href="#/chat/${encodeURIComponent(s.key)}" style="--sc:${colorOf(s)}">
+      <span class="chat-room-ill">${illus(illusOf(s))}</span>
+      <span class="chat-room-body"><h3>${esc(s.name)}${s.archived ? ` <span class="chip xs-chip">Archivada</span>` : ""}</h3><span class="muted small">${esc(s.desc || "")}</span>
+      ${staff && s.custom ? `<span class="xs muted">👥 ${esc(accessText(s))}</span>` : ""}
+      ${s.archived ? "" : `<span class="chat-last small" data-last="${esc(s.key)}">…</span>`}</span>${icon("right")}
+    </a>${staff && s.custom ? `<button class="icon-btn chat-room-edit" data-action="salaEdit" data-id="${esc(s.key)}" aria-label="Editar sala">${icon("edit")}</button>` : ""}</div>`;
   return `
   <header class="page-head"><span class="eyebrow">Chat de la comunidad</span><h1>Conversemos <em>juntos</em></h1>
     <p>Salas de grupo para coordinarnos y compartir. Todo lo que se escribe aquí lo ven los integrantes de la sala; para temas personales o privados, usa otro canal con tu acompañante.</p></header>
   ${tabs("chat")}
-  ${g || `<div class="chat-rooms">${salas.map((s) => `<a class="card link chat-room" href="#/chat/${s.key}" style="--sc:${SALA_COLOR[s.key]}">
-      <span class="chat-room-ill">${illus(SALA_ILLUS[s.key])}</span>
-      <span class="chat-room-body"><h3>${esc(s.name)}</h3><span class="muted small">${esc(s.desc)}</span>
-      <span class="chat-last small" data-last="${s.key}">…</span></span>${icon("right")}
-    </a>`).join("")}</div>
-    <p class="xs muted" style="margin-top:16px">¿No ves una sala que te corresponde? El equipo coordinador asigna las salas desde Gestión.</p>`}`;
+  ${g || `${staff ? `<div class="row-wrap" style="margin:10px 0"><button class="btn btn-gold btn-sm" data-action="salaNew">${icon("plus")} Nueva sala</button></div>` : ""}
+    <div class="chat-rooms">${active.map(card).join("")}</div>
+    ${archived.length ? `<h3 class="mag-hub-sub" style="margin-top:22px">Salas archivadas</h3><div class="chat-rooms">${archived.map(card).join("")}</div>` : ""}
+    <p class="xs muted" style="margin-top:16px">¿No ves una sala que te corresponde? El equipo coordinador asigna las salas.</p>`}`;
 }
 
 // ---------------------------------------------------------------------------
 // Una sala  (#/chat/:sala)
 // ---------------------------------------------------------------------------
-export function viewRoom(key) {
+export async function viewRoom(key) {
   const g = gate();
-  const sala = ctx.cloud.SALAS.find((s) => s.key === key);
-  if (!sala) return null;
+  if (!g) await ctx.cloud.loadSalas();
+  const sala = ctx.cloud.allSalas().find((s) => s.key === key);
+  if (!sala) return g ? `${g}` : null;
   if (!g && !ctx.cloud.mySalas().includes(key)) {
     return `${tabs("chat")}<div class="card" style="text-align:center;padding:32px"><h2 class="display">Esta sala no es para tu cuenta</h2>
       <p class="muted" style="margin-top:8px">Si crees que deberías estar, pídelo al equipo coordinador.</p>
@@ -94,19 +112,20 @@ export function viewRoom(key) {
     $("#chatText")?.focus({ preventScroll: true });
   });
   return `
-  <div class="chat-head" style="--sc:${SALA_COLOR[key]}">
+  <div class="chat-head" style="--sc:${colorOf(sala)}">
     <a class="icon-btn" href="#/chat" aria-label="Volver a las salas">${icon("arrowL")}</a>
     <span class="chat-head-dot"></span>
-    <div style="flex:1;min-width:0"><h1>${esc(sala.name)}</h1><span class="xs muted">${esc(sala.desc)}</span></div>
+    <div style="flex:1;min-width:0"><h1>${esc(sala.name)}</h1><span class="xs muted">${esc(sala.desc || "")}${st().isStaff && sala.custom ? ` · 👥 ${esc(accessText(sala))}` : ""}</span></div>
+    ${st().isStaff && sala.custom ? `<button class="icon-btn" data-action="salaEdit" data-id="${esc(sala.key)}" aria-label="Editar sala">${icon("edit")}</button>` : ""}
   </div>
   ${g ? "" : `<div class="chat-online" id="chatOnline" aria-label="En línea en esta sala"></div>`}
   ${g || `<div class="chat-box card">
     <div class="chat-list" id="chatList" aria-live="polite"><div class="muted small" style="text-align:center;padding:30px">Cargando…</div></div>
     <div class="chat-replybar" id="chatReply" hidden></div>
-    <form class="chat-compose" id="chatForm" data-sala="${esc(key)}">
+    ${sala.archived ? `<div class="chat-arch">${icon("lock")} Sala archivada: se puede leer, pero ya no recibe mensajes.</div>` : `<form class="chat-compose" id="chatForm" data-sala="${esc(key)}">
       <textarea id="chatText" class="textarea" rows="1" maxlength="1500" placeholder="Escribe un mensaje…" aria-label="Mensaje"></textarea>
       <button class="btn btn-primary" type="submit" aria-label="Enviar">${icon("send")}</button>
-    </form>
+    </form>`}
   </div>
   <p class="xs muted" style="margin-top:10px;text-align:center">Lo que escribes lo ven todos los integrantes de esta sala. Si algo no corresponde, repórtalo desde el menú del mensaje.</p>`}`;
 }
@@ -224,6 +243,50 @@ function canBuzz(uid) {
   return 0;
 }
 
+// ---------- Crear y editar salas (administradores y coordinadores) ----------
+let people = null;
+async function salaEditor(id) {
+  await ctx.cloud.loadSalas();
+  const s = id ? ctx.cloud.allSalas().find((x) => x.key === id) : { name: "", desc: "", color: COLORS[0], illus: "amigos", access: "roles", roles: ["coordinador"], members: [] };
+  if (!s) return;
+  if (!people) people = await ctx.cloud.listPeople();
+  let d = document.getElementById("salaDlg");
+  if (!d) { d = document.createElement("dialog"); d.id = "salaDlg"; d.className = "sheet p-sheet"; document.body.appendChild(d); }
+  const me = ctx.cloud.myUid();
+  const sorted = [...people].sort((a, b) => String(a.name).localeCompare(String(b.name), "es"));
+  d.innerHTML = `<form method="dialog" id="salaForm" data-id="${esc(id || "")}">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Chat</span><h2>${id ? "Editar sala" : "Nueva sala"}</h2></div>
+      <button type="button" class="icon-btn" data-action="salaClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:12px">
+      <div class="ag-form-row">
+        <div class="field"><label>Nombre</label><input class="input" name="name" required maxlength="60" value="${esc(s.name)}" placeholder="Coro, Equipo de liturgia, Retiro…"></div>
+        <div class="field"><label>Descripción</label><input class="input" name="desc" maxlength="120" value="${esc(s.desc || "")}" placeholder="Para qué es esta sala"></div>
+      </div>
+      <div class="ag-form-row">
+        <div class="field"><label>Color</label><div class="can-chips">${COLORS.map((c) => `<label class="av-sw sala-sw" style="--c:${c}"><input type="radio" name="color" value="${c}" ${s.color === c ? "checked" : ""}></label>`).join("")}</div></div>
+        <div class="field"><label>Ilustración</label><select class="select" name="illus">${SCENE_KEYS.map((k) => `<option value="${k}" ${illusOf(s) === k ? "selected" : ""}>${k.charAt(0).toUpperCase() + k.slice(1)}</option>`).join("")}</select></div>
+      </div>
+      <fieldset class="p-dates"><legend>¿Quiénes entran?</legend>
+        <div class="can-chips">
+          <label class="chip"><input type="radio" name="access" value="all" ${s.access === "all" ? "checked" : ""}> Todos los que tienen cuenta</label>
+          <label class="chip"><input type="radio" name="access" value="roles" ${s.access === "roles" ? "checked" : ""}> Ciertos roles</label>
+          <label class="chip"><input type="radio" name="access" value="people" ${s.access === "people" ? "checked" : ""}> Personas elegidas</label>
+        </div>
+        <div class="sala-roles can-chips" style="margin-top:10px" ${s.access === "roles" ? "" : "hidden"}>${Object.entries(ROLE_NAMES).map(([k, l]) => `<label class="chip"><input type="checkbox" name="roles" value="${k}" ${(s.roles || []).includes(k) ? "checked" : ""}> ${l}</label>`).join("")}</div>
+        <div class="sala-people" style="margin-top:10px" ${s.access === "people" ? "" : "hidden"}>
+          <input class="input" id="salaFind" placeholder="Buscar por nombre…" style="margin-bottom:8px">
+          <div class="sala-list">${sorted.map((u) => `<label class="sala-person" data-n="${esc(String(u.name).toLowerCase())}"><input type="checkbox" name="members" value="${esc(u.uid)}" ${(s.members || []).includes(u.uid) || (!id && u.uid === me) ? "checked" : ""}> ${esc(u.name)} <span class="xs muted">${esc(ctx.cloud.roleLabel(u.role))}</span></label>`).join("") || `<p class="muted small">No pudimos cargar la lista de personas.</p>`}</div>
+          <p class="xs muted">Mínimo 3 personas: las salas son siempre de grupo. Administradores y coordinadores entran a todas para acompañar.</p>
+        </div>
+      </fieldset>
+      ${id ? `<label class="row" style="gap:8px"><input type="checkbox" name="archived" ${s.archived ? "checked" : ""}> Archivar (queda de solo lectura)</label>` : ""}
+    </div>
+    <div class="sheet-foot">${id ? `<button type="button" class="btn btn-danger btn-sm" data-action="salaDel" data-id="${esc(id)}">${icon("trash")} Borrar sala</button>` : ""}<span class="spacer"></span>
+      <button type="button" class="btn btn-ghost" data-action="salaClose">Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div>
+  </form>`;
+  d.showModal();
+}
+
 function registerActions() {
   const A = ctx.actions;
   const close = (el) => { const d = el.closest("details"); if (d) d.open = false; };
@@ -231,6 +294,14 @@ function registerActions() {
     close(el);
     if (!confirm("¿Borrar este mensaje para todos?")) return;
     ctx.cloud.deleteChat(current, el.dataset.id).catch(() => toast("No se pudo borrar", ""));
+  };
+  A.salaNew = () => salaEditor(null);
+  A.salaEdit = (el) => salaEditor(el.dataset.id);
+  A.salaClose = () => document.getElementById("salaDlg")?.close();
+  A.salaDel = async (el) => {
+    if (!confirm("¿Borrar esta sala y todos sus mensajes? No se puede deshacer. Si solo quieres cerrarla, mejor archívala.")) return;
+    try { await ctx.cloud.deleteSala(el.dataset.id); document.getElementById("salaDlg")?.close(); toast("Sala borrada"); location.hash = "#/chat"; ctx.render(); }
+    catch (e) { console.warn(e); toast("No se pudo borrar", ""); }
   };
   A.chatReact = (el) => {
     close(el);
@@ -285,6 +356,31 @@ function registerActions() {
     m.style.left = Math.max(8, Math.min(r.left, innerWidth - 210)) + "px"; m.style.top = r.bottom + 4 + "px";
   }, true);
   document.addEventListener("click", (e) => { if (!e.target.closest(".chat-pres")) document.querySelectorAll(".chat-pres[open]").forEach((x) => (x.open = false)); });
+  document.addEventListener("change", (e) => {
+    if (e.target.name === "access" && e.target.closest("#salaForm")) {
+      const f = e.target.form; f.querySelector(".sala-roles").hidden = e.target.value !== "roles"; f.querySelector(".sala-people").hidden = e.target.value !== "people";
+    }
+  });
+  document.addEventListener("input", (e) => {
+    if (e.target.id !== "salaFind") return;
+    const q = e.target.value.trim().toLowerCase();
+    document.querySelectorAll(".sala-person").forEach((l) => (l.hidden = !!q && !l.dataset.n.includes(q)));
+  });
+  document.addEventListener("submit", async (e) => {
+    if (e.target.id !== "salaForm") return;
+    e.preventDefault();
+    const f = new FormData(e.target), id = e.target.dataset.id || null;
+    const data = { name: String(f.get("name") || "").trim(), desc: String(f.get("desc") || "").trim(), color: String(f.get("color") || COLORS[0]),
+      illus: String(f.get("illus") || "amigos"), access: String(f.get("access") || "roles"), roles: f.getAll("roles").map(String), members: f.getAll("members").map(String),
+      archived: f.get("archived") === "on" };
+    if (!data.name) return;
+    if (data.access === "roles" && !data.roles.length) { toast("Elige al menos un rol", ""); return; }
+    if (data.access === "people" && data.members.length < 3) { toast("Una sala necesita al menos 3 personas", ""); return; }
+    if (data.access !== "people") data.members = [];
+    if (data.access !== "roles") data.roles = [];
+    try { const nid = await ctx.cloud.saveSala(id, data); document.getElementById("salaDlg")?.close(); toast(id ? "Sala actualizada" : "Sala creada"); if (!id) location.hash = "#/chat/" + nid; else ctx.render(); }
+    catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); }
+  });
   document.addEventListener("submit", (e) => { if (e.target.id === "chatForm") { e.preventDefault(); send(e.target); } });
   document.addEventListener("keydown", (e) => {
     if (e.target.id === "chatText" && e.key === "Enter" && !e.shiftKey && !e.isComposing && matchMedia("(pointer: fine)").matches) {

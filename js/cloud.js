@@ -381,10 +381,50 @@ export const SALAS = [
   { key: "aspirantes", name: "Aspirantes", desc: "Quienes disciernen servir como dirigentes, con sus acompañantes." },
 ];
 export const defaultSalas = (role) => (STAFF.includes(role) ? ["coordinacion", "dirigentes", "aspirantes"] : role === "aspirante" ? ["aspirantes"] : ["dirigentes"]);
+// Salas creadas por el equipo (colección «salas»). Cada una dice quiénes entran:
+// todos («all»), ciertos roles («roles») o personas elegidas («people», mínimo 3).
+let custom = null;
+export async function loadSalas(force) {
+  if (!enabled || !db || !account) return custom || [];
+  if (custom && !force) return custom;
+  try { custom = snapRows(await withTimeout(fb.getDocs(fb.collection(db, "salas")), 6000)); } catch { custom = custom || []; }
+  return custom;
+}
+export const BUILTIN = SALAS.map((s) => s.key);
+export function allSalas() {
+  return [...SALAS, ...(custom || []).map((s) => ({ ...s, key: s.id, custom: true }))];
+}
+export function canSee(s) {
+  if (!account || account.active === false) return false;
+  if (state().isStaff) return true;
+  if (!s.custom) return s.key === "general" || (Array.isArray(account.salas) ? account.salas : defaultSalas(account.role)).includes(s.key);
+  if (s.access === "all") return true;
+  if (s.access === "roles") return (s.roles || []).includes(account.role);
+  return (s.members || []).includes(user.uid);
+}
 export function mySalas() {
   if (!account) return [];
-  if (state().isStaff) return SALAS.map((s) => s.key);
-  return ["general", ...(Array.isArray(account.salas) ? account.salas : defaultSalas(account.role))];
+  return allSalas().filter(canSee).map((s) => s.key);
+}
+export async function saveSala(id, data) {
+  const ref = id ? fb.doc(db, "salas", id) : fb.doc(fb.collection(db, "salas"));
+  await fb.setDoc(ref, { ...data, updatedBy: account.email, updatedAt: fb.serverTimestamp() }, );
+  custom = null; await loadSalas(true);
+  return ref.id;
+}
+// Borra una sala con sus mensajes y su presencia (lo hace el equipo, que puede borrar mensajes).
+export async function deleteSala(id) {
+  for (const sub of ["msgs", "presence"]) {
+    const qs = await fb.getDocs(fb.collection(db, "chat", id, sub));
+    for (const d of qs.docs) await fb.deleteDoc(fb.doc(db, "chat", id, sub, d.id));
+  }
+  await fb.deleteDoc(fb.doc(db, "salas", id));
+  custom = null; await loadSalas(true);
+}
+// Directorio para elegir integrantes (lo ven administradores y coordinadores).
+export async function listPeople() {
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "users")), 8000)).filter((u) => u.active !== false).map((u) => ({ uid: u.id, name: u.name || u.email, role: u.role })); }
+  catch { return []; }
 }
 export function watchChat(sala, cb, onErr) {
   if (!enabled || !db) return () => {};
