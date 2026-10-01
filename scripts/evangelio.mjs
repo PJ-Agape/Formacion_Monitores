@@ -32,7 +32,7 @@ function phrase(text) {
   for (const m of t.matchAll(SAY)) {
     const start = m.index + m[0].length, rest = t.slice(start), end = rest.search(/[»”"]/);
     const speech = end >= 0 ? rest.slice(0, end) : rest;
-    sentences(speech).forEach((x, i) => cands.push({ x, w: 4 - Math.min(i, 3) * 0.3 }));
+    sentences(speech).forEach((x, i) => cands.push({ x, w: i === 0 ? 5.2 : 4 - Math.min(i, 3) * 0.3 }));
   }
   for (const m of t.matchAll(/[«“"]([^«»“”"]{20,500})[»”"]/g)) sentences(m[1]).forEach((x) => cands.push({ x, w: 1 }));
   sentences(t).forEach((x) => cands.push({ x, w: 0 }));
@@ -40,7 +40,7 @@ function phrase(text) {
   for (const c of cands) {
     const f = tidy(c.x), n = words(f);
     if (n < 7 || n > 28) continue;
-    let score = c.w + (GOOD.test(f) ? 3 : 0) - (BAD.test(f) ? 6 : 0) - (/\?$/.test(f) ? 2 : 0) + (n >= 9 && n <= 22 ? 1 : 0) - (/:/.test(f) ? 2 : 0) - (/\bpar[aá]bola\b/i.test(f) ? 2 : 0);
+    let score = c.w + (GOOD.test(f) ? 1.5 : 0) - (BAD.test(f) ? 6 : 0) - (/\?$/.test(f) ? 2 : 0) + (n >= 9 && n <= 22 ? 1 : 0) - (/:/.test(f) ? 2 : 0) - (/\bpar[aá]bola\b/i.test(f) ? 2 : 0);
     if (/^(En aquel tiempo|Jes[uú]s (dijo|respondi)|Despu[eé]s de esto)/i.test(f)) score -= 3;
     if (!best || score > best.score) best = { f, score };
   }
