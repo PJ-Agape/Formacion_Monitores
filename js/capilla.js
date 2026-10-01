@@ -128,6 +128,7 @@ export function view() {
   const own = cards.filter((c) => c !== lectio);
   const member = st().ready;
   ctx.onAfterRender(() => {
+    loadGospel().then(paintGospel);
     if (!member) return;
     const stop = ctx.cloud.watchVelas((rows) => { velas = rows; paintVelas(); }, () => { velas = velas || []; paintVelas(true); });
     ctx.onLeave(stop);
@@ -145,7 +146,7 @@ export function view() {
         <span class="cap-season"><i></i>${esc(s.name)} · color ${esc(s.color)}</span>
         <span class="cap-date">${esc(now.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" }))}</span>
       </div>
-      <p class="cap-hint">${esc(s.hint)}</p>
+      <div class="cap-gospel" id="capGospel">${gospelHTML(s)}</div>
     </div>
     <article class="cap-moment">
       <span class="eyebrow">${esc(m.label)}</span>
@@ -194,7 +195,7 @@ export function view() {
     <div class="cap-room-head"><span class="cap-num">03</span><h2>La <em>Palabra</em> de hoy</h2></div>
     <div class="grid grid-2">
       <a class="card link cap-word" href="https://www.vaticannews.va/es/evangelio-de-hoy.html" target="_blank" rel="noopener">
-        <span class="eyebrow">Evangelio del día</span>
+        <span class="eyebrow" id="capWordRef">Evangelio del día</span>
         <strong>Lee lo que Jesús nos dice hoy</strong>
         <span class="muted small">Las lecturas de la misa de hoy, en Vatican News.</span>
         <span class="go">Abrir el Evangelio ${icon("arrowR")}</span>
@@ -258,6 +259,33 @@ export function view() {
   </section>
 
   <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`;
+}
+
+// ---------------------------------------------------------------------------
+// Evangelio del día (data/evangelio.json, lo actualiza cada día una acción de GitHub)
+// ---------------------------------------------------------------------------
+let gospel = null;
+try { gospel = JSON.parse(localStorage.getItem("agape_evangelio") || "null"); } catch {}
+const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
+async function loadGospel() {
+  try {
+    const g = await fetch("data/evangelio.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null));
+    if (g && g.days) { gospel = g; try { localStorage.setItem("agape_evangelio", JSON.stringify(g)); } catch {} }
+  } catch {}
+}
+const READ_URL = "https://www.vaticannews.va/es/evangelio-de-hoy.html";
+function gospelHTML(s) {
+  const g = gospel && gospel.days && gospel.days[todayKey()];
+  if (!g || !g.frase) return `<p class="cap-hint">${esc(s.hint)}</p>`;
+  return `<a class="cap-gq" href="${READ_URL}" target="_blank" rel="noopener">
+      <span class="cap-gq-t">${esc(g.titulo || "Evangelio del día")}</span>
+      <span class="cap-gq-f">«${esc(g.frase)}»</span>
+      <span class="cap-gq-r">${esc(g.cita)} · Leer el Evangelio completo ↗</span></a>`;
+}
+function paintGospel() {
+  const box = document.getElementById("capGospel"); if (box) box.innerHTML = gospelHTML(season());
+  const g = gospel && gospel.days && gospel.days[todayKey()];
+  const ref = document.getElementById("capWordRef"); if (ref && g) ref.textContent = `Evangelio del día · ${g.cita}`;
 }
 
 // ---------------------------------------------------------------------------
