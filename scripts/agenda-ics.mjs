@@ -1,0 +1,89 @@
+// Genera agenda.ics (calendario para suscribirse) a partir de la Agenda de Firestore
+// y de los encuentros del Camino Ágape. Lo ejecuta cada hora una acción de GitHub.
+// Uso: node scripts/agenda-ics.mjs [salida]   (sin dependencias; Node 18+)
+import { readFileSync, writeFileSync, existsSync } from "node:fs";
+
+const OUT = process.argv[2] || "agenda.ics";
+const cfg = readFileSync("js/config.js", "utf8");
+const KEY = (cfg.match(/apiKey:\s*"([^"]+)"/) || [])[1];
+const PROJECT = (cfg.match(/projectId:\s*"([^"]+)"/) || [])[1];
+const TZ = "America/Santiago";
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const TYPES = { encuentro: "Encuentro", actividad: "Actividad", liturgia: "Liturgia", equipo: "Equipo", otro: "Otro" };
+
+// --- Firestore (lectura pública de la colección agenda) ---
+const val = (v) => v == null ? undefined : "stringValue" in v ? v.stringValue : "booleanValue" in v ? v.booleanValue
+  : "integerValue" in v ? +v.integerValue : "doubleValue" in v ? v.doubleValue : "timestampValue" in v ? v.timestampValue : undefined;
+async function agenda() {
+  const rows = [];
+  let page = "";
+  do {
+    const url = `https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/agenda?pageSize=300&key=${KEY}${page ? "&pageToken=" + page : ""}`;
+    const r = await fetch(url);
+    if (!r.ok) throw new Error(`Firestore ${r.status}: ${await r.text()}`);
+    const j = await r.json();
+    for (const d of j.documents || []) {
+      const f = Object.fromEntries(Object.entries(d.fields || {}).map(([k, v]) => [k, val(v)]));
+      rows.push({ id: d.name.split("/").pop(), ...f, updated: d.updateTime });
+    }
+    page = j.nextPageToken || "";
+  } while (page);
+  return rows.filter((e) => /^\d{4}-\d{2}-\d{2}$/.test(e.date || "") && e.title);
+}
+
+// --- Camino Ágape (mismo criterio que la Agenda de la app) ---
+function camino() {
+  if (!existsSync("data/encuentros.json")) return [];
+  const d = JSON.parse(readFileSync("data/encuentros.json", "utf8"));
+  return d.encuentros.map((e) => {
+    const m = String(e.fecha).match(/(\d+) de (\w+) de (\d{4})/);
+    if (!m) return null;
+    return { id: "camino-" + e.n, date: `${m[3]}-${String(MESES.indexOf(m[2]) + 1).padStart(2, "0")}-${m[1].padStart(2, "0")}`,
+      title: `Camino Ágape · Encuentro ${e.n}: ${e.tema}`, type: "encuentro",
+      desc: `${e.domingo}. Evangelio: ${e.evangelio.ref}. El encuentro se realiza durante esta semana; el equipo confirma día y hora.` };
+  }).filter(Boolean);
+}
+
+// --- iCalendar ---
+const esc = (s) => String(s || "").replace(/\\/g, "\\\\").replace(/[,;]/g, (m) => "\\" + m).replace(/\r?\n/g, "\\n");
+function fold(line) {
+  const out = []; let cur = "", bytes = 0;
+  for (const ch of line) {
+    const b = Buffer.byteLength(ch);
+    if (bytes + b > (out.length ? 74 : 75)) { out.push(cur); cur = ""; bytes = 0; }
+    cur += ch; bytes += b;
+  }
+  out.push(cur);
+  return out.join("\r\n ");
+}
+const ymd = (s) => s.replace(/-/g, "");
+const nextDay = (s) => { const [y, m, d] = s.split("-").map(Number); const x = new Date(Date.UTC(y, m - 1, d + 1)); return x.toISOString().slice(0, 10).replace(/-/g, ""); };
+const hm = (t) => (/^\d{1,2}:\d{2}$/.test(t || "") ? t.padStart(5, "0").replace(":", "") + "00" : null);
+const stamp = (iso) => (iso ? new Date(iso) : new Date()).toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
+
+function vevent(e) {
+  const s = hm(e.start), en = hm(e.end) || s;
+  const desc = [e.desc, e.audience ? `Para: ${e.audience}` : "", "Agenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda"].filter(Boolean).join("\n\n");
+  return ["BEGIN:VEVENT", `UID:${e.id}@pj-agape`, `DTSTAMP:${stamp(e.updated)}`,
+    s ? `DTSTART;TZID=${TZ}:${ymd(e.date)}T${s}` : `DTSTART;VALUE=DATE:${ymd(e.date)}`,
+    s ? `DTEND;TZID=${TZ}:${ymd(e.date)}T${en > s ? en : s}` : `DTEND;VALUE=DATE:${nextDay(e.date)}`,
+    `SUMMARY:${esc(e.title)}`, e.place ? `LOCATION:${esc(e.place)}` : "", `DESCRIPTION:${esc(desc)}`,
+    `CATEGORIES:${esc(TYPES[e.type] || "Otro")}`, s ? "" : "TRANSP:TRANSPARENT", "END:VEVENT"].filter(Boolean);
+}
+
+const VTZ = ["BEGIN:VTIMEZONE", `TZID:${TZ}`, "X-LIC-LOCATION:America/Santiago",
+  "BEGIN:STANDARD", "TZOFFSETFROM:-0300", "TZOFFSETTO:-0400", "TZNAME:-04", "DTSTART:19700405T000000", "RRULE:FREQ=YEARLY;BYMONTH=4;BYDAY=1SU", "END:STANDARD",
+  "BEGIN:DAYLIGHT", "TZOFFSETFROM:-0400", "TZOFFSETTO:-0300", "TZNAME:-03", "DTSTART:19700906T000000", "RRULE:FREQ=YEARLY;BYMONTH=9;BYDAY=1SU", "END:DAYLIGHT",
+  "END:VTIMEZONE"];
+
+const own = await agenda();
+const all = [...own, ...camino()].sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")));
+const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Pastoral Juvenil Agape//Agenda//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+  "X-WR-CALNAME:Agenda Ágape", "X-WR-CALDESC:Agenda oficial de la Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", `X-WR-TIMEZONE:${TZ}`,
+  "REFRESH-INTERVAL;VALUE=DURATION:PT1H", "X-PUBLISHED-TTL:PT1H", ...VTZ, ...all.flatMap(vevent), "END:VCALENDAR"];
+const ics = lines.map(fold).join("\r\n") + "\r\n";
+const prev = existsSync(OUT) ? readFileSync(OUT, "utf8") : "";
+// Sin cambios en los eventos: no reescribir (evita commits innecesarios por el DTSTAMP)
+const strip = (t) => t.replace(/^DTSTAMP:.*$/gm, "");
+if (strip(prev) !== strip(ics)) { writeFileSync(OUT, ics); console.log(`agenda.ics: ${own.length} eventos de la Agenda + Camino Ágape (${all.length} en total)`); }
+else console.log("agenda.ics sin cambios");

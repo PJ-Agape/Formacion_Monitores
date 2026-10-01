@@ -1770,3 +1770,5 @@ body.cap-quiet { overflow: hidden; }
 .fi-row-wrap { display: flex; align-items: center; gap: 6px; }
 .fi-row-wrap .fi-row { flex: 1; }
 .fi-del { width: 30px; height: 30px; }
+.card.link.ag-sub-o, .ag-sub-o { display: flex; flex-direction: column; gap: 4px; }
+.ag-sub-o strong { font-size: 1.05rem; }

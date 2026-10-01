@@ -73,6 +73,7 @@ export function viewAgenda(day) {
   <div class="row-wrap" style="margin:14px 0 4px">
     ${admin ? `<button class="btn btn-primary btn-sm" data-action="agNew">${icon("plus")} Nuevo evento</button>` : ""}
     <label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar encuentros Camino Ágape</label>
+    <span class="spacer"></span><button class="btn btn-sm btn-gold" data-action="agSub">${icon("grid")} Suscribirme al calendario</button>
   </div>
   <div class="ag-layout">
     <section class="card ag-cal" aria-label="Calendario">
@@ -224,7 +225,33 @@ export async function homeNext() {
     <span class="go">Ver la agenda completa ${icon("arrowR")}</span></a>`;
 }
 
+// Suscripción: agenda.ics se regenera cada hora desde la Agenda (acción de GitHub).
+const ICS_URL = new URL("agenda.ics", location.href.split("#")[0]).href;
+function subDialog() {
+  const webcal = ICS_URL.replace(/^https?:/, "webcal:");
+  const google = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(webcal);
+  let d = document.getElementById("agSubDlg");
+  if (!d) { d = document.createElement("dialog"); d.id = "agSubDlg"; d.className = "sheet"; document.body.appendChild(d); }
+  d.innerHTML = `<div class="sheet-head"><div style="flex:1"><span class="eyebrow">Agenda Ágape</span><h2>Suscríbete al calendario</h2></div>
+      <button type="button" class="icon-btn" data-action="agSubClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:14px">
+      <p>Se hace una sola vez. Desde ahí, los eventos de la Agenda y los encuentros del Camino Ágape aparecen solos en tu calendario, y se actualizan cuando el equipo los cambia.</p>
+      <a class="card link ag-sub-o" href="${google}" target="_blank" rel="noopener"><strong>Google Calendar</strong><span class="muted small">Se abre Google Calendar: toca «Agregar». En el celular, hazlo una vez desde el computador o desde calendar.google.com.</span></a>
+      <a class="card link ag-sub-o" href="${webcal}"><strong>iPhone, iPad o Mac</strong><span class="muted small">Se abre Calendario: toca «Suscribirse».</span></a>
+      <div class="card ag-sub-o"><strong>Outlook u otro calendario</strong><span class="muted small">Agrega un calendario «desde internet» con esta dirección:</span>
+        <div class="row-wrap" style="margin-top:8px"><input class="input" id="agSubUrl" readonly value="${ICS_URL}" style="flex:1;min-width:200px"><button class="btn btn-sm btn-primary" data-action="agSubCopy">${icon("copy")} Copiar</button></div></div>
+      <p class="xs muted">Tu calendario revisa los cambios cada algunas horas (Google puede tardar hasta un día). El calendario es de solo lectura: los eventos los crea el equipo coordinador en esta Agenda.</p>
+    </div>`;
+  d.showModal();
+}
+
 function registerActions() {
+  ctx.actions.agSub = () => subDialog();
+  ctx.actions.agSubClose = () => document.getElementById("agSubDlg")?.close();
+  ctx.actions.agSubCopy = async () => {
+    const i = document.getElementById("agSubUrl");
+    try { await navigator.clipboard.writeText(ICS_URL); toast("Dirección copiada"); } catch { i.select(); toast("Selecciona y copia la dirección"); }
+  };
   const A = ctx.actions;
   A.agMonth = (el) => { month = new Date(month.getFullYear(), month.getMonth() + +el.dataset.d, 1); selDay = null; paint(); };
   A.agToday = () => { const n = new Date(); month = new Date(n.getFullYear(), n.getMonth(), 1); selDay = todayIso(); paint(); };
