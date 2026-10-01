@@ -144,7 +144,8 @@ export function viewList() {
   <nav class="wall-tabs row-wrap" aria-label="Cancionero">
     <button class="btn btn-sm ${tab === "canciones" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="canciones">${icon("book")} Canciones</button>
     <button class="btn btn-sm ${tab === "misas" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="misas">${icon("grid")} Misas y celebraciones</button>
-    ${staff ? `<span class="spacer"></span><button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
+    <span class="spacer"></span><button class="btn btn-sm btn-ghost" data-action="canExport">${icon("dl")} Exportar</button>
+    ${staff ? `<button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
   </nav>
   ${gate()}
   ${tab === "canciones" ? `
@@ -192,13 +193,13 @@ export function viewSong(id, misaId) {
   ctx.onAfterRender(() => { repaint = () => paintSong(id); watchAll(); paintSong(id); });
   return `<div id="canSong"><p class="muted" style="padding:30px;text-align:center">Cargando…</p></div>`;
 }
-function songBody(s, shift) {
+function songBody(s, shift, chords = prefs.chords) {
   const lines = String(s.body || "").split("\n");
   return lines.map((ln) => {
     const t = ln.trim();
     if (!t) return `<div class="can-gap"></div>`;
     if (/^[^\[\]]{1,30}:$/.test(t)) return `<div class="can-sec">${esc(t.slice(0, -1))}</div>`;
-    if (!prefs.chords || !/\[/.test(ln)) return `<div class="can-line">${esc(ln.replace(/\[[^\]]*\]/g, "")) || "&nbsp;"}</div>`;
+    if (!chords || !/\[/.test(ln)) return `<div class="can-line">${esc(ln.replace(/\[[^\]]*\]/g, "")) || "&nbsp;"}</div>`;
     const parts = ln.split(/\[([^\]]+)\]/);
     let html = parts[0] ? `<span class="can-seg"><b class="can-ch">&nbsp;</b><span>${esc(parts[0])}</span></span>` : "";
     for (let i = 1; i < parts.length; i += 2) {
@@ -271,6 +272,7 @@ function paintMisa(id) {
   <div class="row-wrap" style="margin-bottom:14px">
     ${slots.length ? `<button class="btn btn-primary" data-action="canProject" data-scope="misa" data-id="${esc(r.id)}">${icon("eye")} Proyectar toda la misa</button>
     <a class="btn btn-gold" href="#/cancionero/${encodeURIComponent(slots[0].id)}?misa=${encodeURIComponent(r.id)}">Empezar con ${esc(slotLabel(slots[0].m))} ${icon("arrowR")}</a>` : ""}
+    <button class="btn btn-ghost" data-action="canExport" data-misa="${esc(r.id)}">${icon("dl")} Exportar</button>
     ${st().isStaff ? `<span class="spacer"></span><button class="btn btn-sm btn-soft" data-action="canEditMisa" data-id="${esc(r.id)}">${icon("edit")} Editar</button>
       <button class="btn btn-sm btn-danger" data-action="canDelMisa" data-id="${esc(r.id)}">${icon("trash")} Borrar</button>` : ""}
   </div>
@@ -381,6 +383,142 @@ function misaEditor(r) {
   d.showModal();
 }
 
+// ---------------------------------------------------------------------------
+// Exportar: PDF (impresión sin cortar canciones), PowerPoint y texto
+// ---------------------------------------------------------------------------
+function exportSet(o) {
+  if (o.misa) {
+    const r = (misas || []).find((x) => x.id === o.misa);
+    const items = r ? (r.slots || []).filter((x) => x.id && byId(x.id)).map((x) => ({ m: x.m, song: byId(x.id) })) : [];
+    return { title: r ? r.name : "Celebración", sub: r && r.date ? new Date(r.date + "T12:00").toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "", items, groups: null };
+  }
+  const order = Object.fromEntries(MOMENTOS.map(([k], i) => [k, i]));
+  const firstM = (s) => (s.momentos || []).slice().sort((a, b) => order[a] - order[b])[0] || "zz";
+  let list = all().filter((s) => !o.momento || (s.momentos || []).includes(o.momento));
+  list.sort((a, b) => (order[o.momento || firstM(a)] ?? 99) - (order[o.momento || firstM(b)] ?? 99) || a.title.localeCompare(b.title, "es"));
+  const items = list.map((song) => ({ m: o.momento || firstM(song), song }));
+  items.forEach((x, i) => (x.n = i + 1));
+  const groups = MOMENTOS.map(([k, l]) => ({ l, list: items.filter((x) => (x.song.momentos || []).includes(k)) })).filter((g) => g.list.length);
+  const loose = items.filter((x) => !(x.song.momentos || []).length);
+  if (loose.length) groups.push({ l: "Otras", list: loose });
+  return { title: o.momento ? `Cancionero Ágape · ${MLABEL[o.momento]}` : "Cancionero Ágape", sub: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", items, groups };
+}
+const shiftOf = (o, s) => (o.tono ? prefs.shift[s.id] || 0 : 0);
+
+function exportDialog(misaId) {
+  const d = dialog("canExpDlg");
+  d.innerHTML = `<form method="dialog" id="canExpForm" data-misa="${esc(misaId || "")}">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Cancionero</span><h2>Exportar ${misaId ? "esta celebración" : "el cancionero"}</h2></div>
+      <button type="button" class="icon-btn" data-action="canClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:14px">
+      <fieldset class="p-dates"><legend>Formato</legend>
+        <div class="can-fmt">
+          <label class="card can-fmt-o"><input type="radio" name="fmt" value="pdf" checked><strong>PDF para imprimir</strong><span class="muted small">Con portada e índice. Cada canción queda entera en su página o columna.</span></label>
+          <label class="card can-fmt-o"><input type="radio" name="fmt" value="pptx"><strong>PowerPoint</strong><span class="muted small">Una estrofa por diapositiva, letra grande, para proyectar o editar.</span></label>
+          <label class="card can-fmt-o"><input type="radio" name="fmt" value="txt"><strong>Texto</strong><span class="muted small">Archivo .txt para editar en Word, Docs o el bloc de notas.</span></label>
+        </div>
+      </fieldset>
+      ${misaId ? "" : `<div class="field"><label>Qué canciones</label><select class="select" name="momento"><option value="">Todo el cancionero</option>${MOMENTOS.map(([k, l]) => `<option value="${k}">Solo ${esc(l)}</option>`).join("")}</select></div>`}
+      <div class="can-opts">
+        <label class="chip"><input type="checkbox" name="chords" checked> Con acordes</label>
+        <label class="chip"><input type="checkbox" name="tono" checked> En el tono que elegí</label>
+        <label class="chip" data-only="pdf"><input type="checkbox" name="cols"> Dos columnas</label>
+      </div>
+      <p class="xs muted">PDF: en la ventana de impresión elige «Guardar como PDF». Las canciones largas que no caben en una página siguen en la siguiente. En PowerPoint no van los acordes.</p>
+    </div>
+    <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="canClose">Cancelar</button><button class="btn btn-primary" type="submit">${icon("dl")} Exportar</button></div>
+  </form>`;
+  d.showModal();
+}
+
+function exportPDF(set, o) {
+  let book = document.getElementById("canBook");
+  if (!book) { book = document.createElement("div"); book.id = "canBook"; document.body.appendChild(book); }
+  book.className = `can-book${o.cols ? " cols-2" : ""}`;
+  const today = new Date().toLocaleDateString("es-CL", { month: "long", year: "numeric" });
+  const head = (x, i) => `<header class="cb-head"><span class="cb-n">${x.n || i + 1}</span><div><h2>${esc(x.song.title)}</h2>
+      <span class="cb-meta">${[set.groups ? "" : slotLabel(x.m), x.song.author || "", o.chords ? "Tono " + chordName(firstChord(x.song.body), shiftOf(o, x.song), prefs.nota) : ""].filter(Boolean).map(esc).join(" · ")}</span></div></header>`;
+  book.innerHTML = `
+    <section class="cb-cover"><img src="icons/logo-320.webp" alt="" width="160" height="160">
+      <h1>${esc(set.title)}</h1><p class="cb-sub">${esc(set.sub)}</p><p class="cb-date">Edición ${esc(today)}</p></section>
+    ${set.groups ? `<section class="cb-index"><h2>Índice</h2>${set.groups.map((g) => `<div class="cb-ig"><h3>${esc(g.l)}</h3><ol>${g.list.map((x) => `<li><b>${x.n}</b> ${esc(x.song.title)}</li>`).join("")}</ol></div>`).join("")}</section>`
+      : `<section class="cb-index"><h2>Orden de la celebración</h2><ol class="cb-order">${set.items.map((x, i) => `<li><b>${esc(slotLabel(x.m))}</b> ${esc(x.song.title)}</li>`).join("")}</ol></section>`}
+    <section class="cb-songs">${set.items.map((x, i) => `<article class="cb-song">${head(x, i)}<div class="can-sheet cb-body">${songBody(x.song, shiftOf(o, x.song), o.chords)}</div></article>`).join("")}</section>`;
+  document.body.classList.add("can-printing");
+  const done = () => { document.body.classList.remove("can-printing"); window.removeEventListener("afterprint", done); };
+  window.addEventListener("afterprint", done);
+  setTimeout(() => window.print(), 300);
+}
+
+function chordOverLyric(ln, shift) {
+  const parts = ln.split(/\[([^\]]+)\]/);
+  let text = parts[0], ch = "";
+  for (let i = 1; i < parts.length; i += 2) {
+    let pos = text.length;
+    if (ch.length && ch.length >= pos) { pos = ch.length + 1; text = text.padEnd(pos); }
+    ch = ch.padEnd(pos) + chordName(parts[i], shift, prefs.nota);
+    text += parts[i + 1] || "";
+  }
+  return ch.trimEnd() + "\n" + text.trimEnd();
+}
+function exportTXT(set, o) {
+  const out = [set.title.toUpperCase(), set.sub, ""];
+  if (set.groups) {
+    out.push("ÍNDICE");
+    set.groups.forEach((g) => { out.push("", g.l + ":"); g.list.forEach((x) => out.push(`  ${String(x.n).padStart(3)}. ${x.song.title}`)); });
+  } else set.items.forEach((x) => out.push(`${slotLabel(x.m)}: ${x.song.title}`));
+  set.items.forEach((x, i) => {
+    out.push("", "", "=".repeat(48), `${set.groups ? (x.n || i + 1) + ". " : slotLabel(x.m).toUpperCase() + " · "}${x.song.title}`);
+    const meta = [x.song.author || "", o.chords ? "Tono " + chordName(firstChord(x.song.body), shiftOf(o, x.song), prefs.nota) : ""].filter(Boolean).join(" · ");
+    if (meta) out.push(meta);
+    out.push("=".repeat(48), "");
+    String(x.song.body || "").split("\n").forEach((ln) => {
+      out.push(o.chords && /\[/.test(ln) ? chordOverLyric(ln, shiftOf(o, x.song)) : ln.replace(/\[[^\]]*\]/g, ""));
+    });
+  });
+  const blob = new Blob(["\ufeff" + out.join("\n").replace(/\n/g, "\r\n")], { type: "text/plain;charset=utf-8" });
+  save(blob, fileBase(set) + ".txt");
+}
+const fileBase = (set) => set.title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "cancionero";
+function save(blob, name) {
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
+  document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 800);
+}
+function loadPptx() {
+  if (window.PptxGenJS) return Promise.resolve(window.PptxGenJS);
+  return new Promise((res, rej) => {
+    const sc = document.createElement("script"); sc.src = "js/vendor/pptxgen.bundle.js";
+    sc.onload = () => res(window.PptxGenJS); sc.onerror = () => rej(new Error("No se pudo cargar PowerPoint"));
+    document.head.appendChild(sc);
+  });
+}
+async function exportPPTX(set) {
+  toast("Preparando la presentación…");
+  const P = await loadPptx();
+  const pptx = new P();
+  pptx.layout = "LAYOUT_WIDE"; pptx.title = set.title; pptx.company = "Pastoral Juvenil Ágape";
+  const BG = "0B2566", CREAM = "FFF6E5", GOLD = "FFBA03";
+  const cover = pptx.addSlide(); cover.background = { color: BG };
+  cover.addText(set.title, { x: 0.6, y: 2.4, w: 12.1, h: 1.6, fontFace: "Arial", fontSize: 54, bold: true, color: CREAM, align: "center" });
+  cover.addText(set.sub || "", { x: 0.6, y: 4.0, w: 12.1, h: 0.8, fontFace: "Arial", fontSize: 22, color: GOLD, align: "center" });
+  set.items.forEach((x) => {
+    stanzas(x.song).forEach((sl) => {
+      const s = pptx.addSlide(); s.background = { color: BG };
+      if (sl.title) {
+        if (x.m && !set.groups) s.addText(slotLabel(x.m), { x: 0.6, y: 2.0, w: 12.1, h: 0.7, fontFace: "Arial", fontSize: 26, italic: true, color: GOLD, align: "center" });
+        s.addText(sl.title, { x: 0.6, y: 2.7, w: 12.1, h: 1.6, fontFace: "Arial", fontSize: 54, bold: true, color: CREAM, align: "center", fit: "shrink" });
+        if (sl.sub) s.addText(sl.sub, { x: 0.6, y: 4.3, w: 12.1, h: 0.6, fontFace: "Arial", fontSize: 18, color: CREAM, align: "center", transparency: 30 });
+      } else {
+        const n = sl.lines.length, size = n <= 4 ? 40 : n <= 6 ? 34 : n <= 8 ? 28 : 22;
+        if (sl.label) s.addText(sl.label, { x: 0.6, y: 0.35, w: 12.1, h: 0.6, fontFace: "Arial", fontSize: 22, italic: true, color: GOLD, align: "center" });
+        s.addText(sl.lines.join("\n"), { x: 0.6, y: 1.0, w: 12.1, h: 6.0, fontFace: "Arial", fontSize: size, bold: true, color: CREAM, align: "center", valign: "middle", lineSpacingMultiple: 1.15, fit: "shrink" });
+        s.addText(x.song.title, { x: 0.6, y: 7.0, w: 12.1, h: 0.4, fontFace: "Arial", fontSize: 12, color: CREAM, align: "right", transparency: 50 });
+      }
+    });
+  });
+  await pptx.writeFile({ fileName: fileBase(set) + ".pptx" });
+}
+
 function registerActions() {
   const A = ctx.actions;
   A.canTab = (el) => { tab = el.dataset.t; ctx.render(); };
@@ -402,7 +540,8 @@ function registerActions() {
   A.canEdit = (el) => songEditor(byId(el.dataset.id));
   A.canNewMisa = () => misaEditor(null);
   A.canEditMisa = (el) => misaEditor((misas || []).find((x) => x.id === el.dataset.id));
-  A.canClose = () => { document.getElementById("canDlg")?.close(); document.getElementById("canMisaDlg")?.close(); };
+  A.canClose = () => { ["canDlg", "canMisaDlg", "canExpDlg"].forEach((k) => document.getElementById(k)?.close()); };
+  A.canExport = (el) => exportDialog(el.dataset.misa || "");
   A.canDel = async (el) => {
     if (!confirm("¿Borrar esta canción del cancionero?")) return;
     try { await ctx.cloud.deleteCancion(el.dataset.id); toast("Canción borrada"); location.hash = "#/cancionero"; } catch { toast("No se pudo borrar", ""); }
@@ -423,6 +562,21 @@ function registerActions() {
   document.addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) (dx < 0 ? A.canNext : A.canPrev)(); sx = null; }, { passive: true });
   document.addEventListener("fullscreenchange", () => { if (!document.fullscreenElement && document.getElementById("canProj")) { /* sigue abierto sin pantalla completa */ } });
   document.addEventListener("submit", async (e) => {
+    if (e.target.id === "canExpForm") {
+      e.preventDefault();
+      const f = new FormData(e.target);
+      const o = { misa: e.target.dataset.misa || "", momento: String(f.get("momento") || ""), chords: f.get("chords") === "on", tono: f.get("tono") === "on", cols: f.get("cols") === "on" };
+      const set = exportSet(o);
+      if (!set.items.length) { toast("No hay canciones para exportar", ""); return; }
+      document.getElementById("canExpDlg")?.close();
+      const fmt = f.get("fmt");
+      try {
+        if (fmt === "pdf") exportPDF(set, o);
+        else if (fmt === "txt") { exportTXT(set, o); toast("Texto descargado"); }
+        else { await exportPPTX(set); toast("Presentación descargada"); }
+      } catch (err) { console.warn(err); toast("No se pudo exportar. Revisa tu conexión.", ""); }
+      return;
+    }
     if (e.target.id === "canForm") {
       e.preventDefault();
       const f = new FormData(e.target);
