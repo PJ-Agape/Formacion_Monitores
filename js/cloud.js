@@ -438,3 +438,19 @@ export async function getPortada() {
 export async function savePortada(data) {
   await fb.setDoc(fb.doc(db, "content", "portada"), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
 }
+
+// ---------------------------------------------------------------------------
+// Velas de la capilla: intenciones de la comunidad (solo las ven quienes tienen cuenta).
+// ---------------------------------------------------------------------------
+export function watchVelas(cb, onErr) {
+  if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
+  const q = fb.query(fb.collection(db, "velas"), fb.orderBy("createdAt", "desc"), fb.limit(80));
+  return fb.onSnapshot(q, (qs) => cb(snapRows(qs)), (e) => { console.warn("Velas:", e); onErr && onErr(e); });
+}
+export async function lightVela(text) {
+  await fb.setDoc(fb.doc(fb.collection(db, "velas")), {
+    text: String(text || "").slice(0, 140), authorUid: user.uid, authorName: shortName(account.name), prays: {}, createdAt: fb.serverTimestamp(),
+  });
+}
+export const prayVela = (id, on) => toggleMark(["velas", id], "prays", on);
+export const deleteVela = (id) => fb.deleteDoc(fb.doc(db, "velas", id));

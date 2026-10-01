@@ -153,6 +153,19 @@ service cloud.firestore {
     }
 
 
+    // Velas de la capilla: intenciones que solo ve la comunidad con cuenta.
+    // Cada uno enciende la suya; todos pueden marcar «rezo por esto»; la apaga su autor o el equipo.
+    match /velas/{velaId} {
+      allow read: if isMember();
+      allow create: if isMember() && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.keys().hasOnly(['text', 'authorUid', 'authorName', 'prays', 'createdAt'])
+        && request.resource.data.text is string && request.resource.data.text.size() <= 140
+        && request.resource.data.authorName is string && request.resource.data.authorName.size() <= 60
+        && request.resource.data.prays.size() == 0 && request.resource.data.createdAt == request.time;
+      allow update: if isMember() && changed().hasOnly(['prays']) && onlyMyKey('prays');
+      allow delete: if isStaff() || (isMember() && resource.data.authorUid == request.auth.uid);
+    }
+
     // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.
     match /agenda/{eventId} {
       allow read: if true;

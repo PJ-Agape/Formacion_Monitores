@@ -11,6 +11,7 @@ import * as camino from "./encuentros.js";
 import * as chat from "./chat.js";
 import * as agenda from "./agenda.js";
 import * as portada from "./portada.js";
+import * as capilla from "./capilla.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -50,7 +51,7 @@ const routes = [
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
-  [/^\/oracion$/, viewPrayer, "oracion"],
+  [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/constancia$/, viewCertificate, "itinerario"],
   [/^\/perfil$/, viewProfile, "perfil"],
   [/^\/verificar\/(.+)$/, viewVerify, "verificar"],
@@ -123,8 +124,8 @@ const NAV = [
   ["muro", "#/muro", "Muro y chat", "chat"],
   ["comunidad", "#/comunidad", "Comunidad", "users"],
   ["itinerario", "#/itinerario", "Curso", "route"],
-  ["materiales", "#/materiales", "Materiales", "book"],
-  ["oracion", "#/oracion", "Oración", "flame", "top"],
+  ["materiales", "#/materiales", "Materiales", "book", "top"],
+  ["oracion", "#/oracion", "Capilla", "flame"],
 ];
 function renderChrome(section) {
   const cur = (k) => (k === section ? 'aria-current="page"' : "");
@@ -217,7 +218,7 @@ function viewHome() {
     ${tile("#/comunidad", "users", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
     ${tile("#/itinerario", "route", "Curso", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
     ${tile("#/materiales", "book", "Materiales", c.materials.title)}
-    ${tile("#/oracion", "flame", "Oración", c.devotional.title)}
+    ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}
   </div>
 
   ${st.complete ? `
@@ -1026,24 +1027,6 @@ document.addEventListener("input", (e) => {
   });
   $("#libEmpty").hidden = !!any;
 });
-function viewPrayer() {
-  const d = S.content().devotional;
-  return `<header class="page-head"><span class="eyebrow">Vida de oración</span><h1>${esc(d.title)}</h1><p>${esc(d.desc)}</p></header>
-    <div class="grid grid-2" style="margin-top:14px">
-      <a class="card link camino-banner" href="presentaciones/mes-de-maria.html" target="_blank" rel="noopener">
-        <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
-        <span style="flex:1"><span class="eyebrow">8 de noviembre al 8 de diciembre</span><strong>Mes de María: Con María, puente hacia Jesús</strong>
-        <span class="muted small">31 días con oración inicial, Rosario, motivación juvenil, desafío y oración final.</span></span>${icon("right")}
-      </a>
-      <a class="card link camino-banner" href="presentaciones/mes-de-maria.pdf" download>
-        <span class="tile-ico tile-brand" style="margin:0">${icon("print")}</span>
-        <span style="flex:1"><span class="eyebrow">Para imprimir</span><strong>Mes de María en PDF</strong>
-        <span class="muted small">Tamaño carta, una página por día, con las oraciones y la guía del Rosario.</span></span>${icon("dl")}
-      </a>
-    </div>
-    <div class="grid grid-2" style="margin-top:18px">${d.cards.map((c) => cardHTML(c, "prayer")).join("")}</div>`;
-}
-
 // ---------------------------------------------------------------------------
 // PERFIL / BIENVENIDA
 // ---------------------------------------------------------------------------
@@ -1221,6 +1204,7 @@ camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
+capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {
   try {

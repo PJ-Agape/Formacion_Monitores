@@ -1513,3 +1513,118 @@ dialog.sheet { border: 3px solid var(--z-b); box-shadow: 8px 8px 0 var(--z-b); }
   .p-prev { height: 190px; }
   .p-prev-in { width: 222%; transform: scale(.45); }
 }
+
+/* ===================== Capilla Ágape ===================== */
+.cap-hero { display: grid; grid-template-columns: 1.15fr .85fr; gap: 18px; align-items: stretch; margin-top: 6px; }
+.cap-arch { position: relative; text-align: center; padding: 34px 26px 28px; color: #0b2566;
+  background: radial-gradient(120% 80% at 50% 0%, #fff6e5 0%, #fdeec9 45%, #cfe9fb 100%);
+  border: 2px solid #0b2566; border-radius: 999px 999px 26px 26px / 300px 300px 26px 26px; box-shadow: 6px 6px 0 #0b2566; overflow: hidden; isolation: isolate; }
+.cap-arch::before { content: ""; position: absolute; inset: 0; z-index: -1; opacity: .5;
+  background: repeating-linear-gradient(90deg, transparent 0 46px, rgba(11,37,102,.05) 46px 48px); }
+.cap-rose { width: min(190px, 46vw); height: auto; display: block; margin: 10px auto 4px; filter: drop-shadow(0 0 22px rgba(255,186,3,.55)); }
+@media (prefers-reduced-motion: no-preference) { .cap-rose { animation: capGlow 6s ease-in-out infinite; } }
+@keyframes capGlow { 50% { filter: drop-shadow(0 0 34px rgba(255,186,3,.8)); } }
+.cap-hand { display: block; font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: clamp(1.6rem, 3.6vw, 2.2rem); transform: rotate(-2deg); margin-top: 6px; }
+.cap-hand.sm { font-size: 1.6rem; margin: 2px 0 6px; }
+.cap-title { font-family: var(--font-display); font-weight: 800; font-stretch: 78%; letter-spacing: -0.035em; line-height: .9; font-size: clamp(2.8rem, 8vw, 4.6rem); margin: 4px 0 8px; }
+.cap-title em { font-style: normal; background: linear-gradient(transparent 60%, #ffba03 60%); padding: 0 .06em; }
+.cap-sub { max-width: 34ch; margin: 0 auto; font-size: 1.05rem; line-height: 1.5; }
+.cap-chips { display: flex; flex-wrap: wrap; justify-content: center; gap: 8px; margin-top: 14px; }
+.cap-chips span { background: #fff6e5; border: 2px solid #0b2566; border-radius: 999px; padding: 4px 12px; font-weight: 800; font-size: .8rem; box-shadow: 2px 2px 0 #0b2566; }
+.cap-date::first-letter { text-transform: uppercase; }
+.cap-date { display: inline-block; }
+.cap-season i { display: inline-block; width: 11px; height: 11px; border-radius: 50%; background: var(--season); border: 2px solid #0b2566; margin-right: 6px; vertical-align: -1px; }
+.cap-hint { margin-top: 10px; font-size: .92rem; opacity: .85; }
+.cap-moment { background: #0b2566; color: #fff6e5; border: 2px solid #0b2566; border-radius: 26px; padding: 26px 24px; box-shadow: 6px 6px 0 #ffba03; display: flex; flex-direction: column; justify-content: center; }
+.cap-moment .eyebrow { color: #8ad2fa; }
+.cap-moment .cap-hand { color: #ffba03; }
+.cap-prayer { font-size: 1.12rem; line-height: 1.7; }
+.cap-moment .cap-prayer { font-size: 1.18rem; }
+
+.cap-nav { position: sticky; top: 64px; z-index: 5; display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding: 12px 2px; margin: 18px 0 4px; background: linear-gradient(#fff6e5 75%, transparent); }
+.cap-nav::-webkit-scrollbar { display: none; }
+.cap-nav a { flex: 0 0 auto; text-decoration: none; color: #0b2566; font-weight: 800; font-size: .88rem; background: #fff; border: 2px solid #0b2566; border-radius: 999px; padding: 6px 14px; box-shadow: 2px 2px 0 #0b2566; }
+.cap-nav a:hover { background: #ffba03; }
+
+.cap-room { scroll-margin-top: 130px; margin-top: 30px; }
+.cap-room-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
+.cap-room-head h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.03em; font-size: clamp(1.7rem, 4.4vw, 2.4rem); line-height: 1; }
+.cap-room-head h2 em { font-style: normal; font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.15em; letter-spacing: 0; }
+.cap-num { font-family: var(--font-hand); font-weight: 700; font-size: 1.4rem; color: #1351a4; }
+.cap-lead { margin: -4px 0 14px; max-width: 60ch; }
+
+.cap-silence { display: flex; gap: 22px; align-items: center; flex-wrap: wrap; background: linear-gradient(135deg, #fff 0%, #fff6e5 100%); }
+.cap-candle { width: 70px; height: auto; flex: 0 0 auto; overflow: visible; }
+.cap-candle.sm { width: 52px; } .cap-candle.xs { width: 34px; } .cap-candle.big { width: 110px; }
+.cap-candle .flame, .cap-candle .flame-in, .cap-candle .glow { opacity: 0; transition: opacity .6s; transform-origin: 30px 44px; }
+.cap-candle.lit .flame, .cap-candle.lit .flame-in { opacity: 1; } .cap-candle.lit .glow { opacity: .22; }
+@media (prefers-reduced-motion: no-preference) {
+  .cap-candle.lit .flame { animation: capFlicker 2.4s ease-in-out infinite; }
+  .cap-candle.lit .glow { animation: capHalo 3s ease-in-out infinite; transform-origin: 30px 30px; }
+}
+@keyframes capFlicker { 0%,100% { transform: scale(1) rotate(0); } 30% { transform: scale(1.04,.96) rotate(-2deg); } 60% { transform: scale(.97,1.05) rotate(2deg); } }
+@keyframes capHalo { 50% { transform: scale(1.15); opacity: .32; } }
+.cap-verse { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.25rem, 3vw, 1.6rem); line-height: 1.3; letter-spacing: -0.01em; }
+.cap-ref { font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.3rem; }
+
+.cap-vela-form, .cap-vela-guest { display: flex; gap: 16px; align-items: center; flex-wrap: wrap; }
+.cap-velas { display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 12px; margin-top: 14px; }
+.cap-count { grid-column: 1 / -1; }
+.cap-vela { display: flex; gap: 12px; align-items: flex-start; background: #fff; border: 2px solid #0b2566; border-radius: 18px; padding: 12px 14px; box-shadow: 3px 3px 0 #ffba03; }
+.cap-vela-body { flex: 1; min-width: 0; } .cap-vela-body p { line-height: 1.45; overflow-wrap: anywhere; }
+.cap-empty { grid-column: 1 / -1; text-align: center; padding: 18px; }
+
+.card.link.cap-word { display: flex; flex-direction: column; gap: 6px; background: #8ad2fa; }
+.cap-word .eyebrow, .cap-lectio .eyebrow, .cap-myst .eyebrow, .cap-lectio strong, .cap-myst-name { display: block; }
+.cap-word strong { font-size: 1.6rem !important; }
+.cap-word strong, .cap-lectio strong, .cap-myst-name { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
+.cap-word .go { margin-top: auto; font-weight: 800; display: inline-flex; gap: 6px; align-items: center; padding-top: 10px; }
+.cap-steps { counter-reset: s; list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
+.cap-steps li { counter-increment: s; position: relative; padding-left: 44px; line-height: 1.45; }
+.cap-steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
+  background: #ffba03; border: 2px solid #0b2566; font-weight: 800; font-size: .9rem; }
+.cap-myst { background: #fde0d2; }
+.cap-myst ol { margin: 12px 0 0 1.2em; display: grid; gap: 6px; }
+.cap-how { margin-top: 14px; border-top: 2px dashed rgba(11,37,102,.35); padding-top: 10px; }
+.cap-how summary { cursor: pointer; font-weight: 800; }
+.cap-how ol { margin: 8px 0 6px 1.2em; display: grid; gap: 4px; }
+
+.cap-classic { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; align-items: start; }
+.cap-pr { padding: 0; }
+.cap-pr summary { list-style: none; cursor: pointer; display: flex; justify-content: space-between; align-items: center; padding: 16px 18px; font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; }
+.cap-pr summary::-webkit-details-marker { display: none; }
+.cap-pr summary svg { transition: transform .25s; width: 20px; height: 20px; }
+.cap-pr[open] summary svg { transform: rotate(180deg); }
+.cap-pr[open] summary { border-bottom: 2px dashed rgba(11,37,102,.3); }
+.cap-pr .cap-prayer { padding: 14px 18px 18px; font-size: 1.05rem; }
+
+.cap-own { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 14px; }
+.cap-card h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; margin: 4px 0 10px; line-height: 1.1; }
+.cap-card:not(.is-list) { background: #fff6e5; }
+.cap-card:not(.is-list) .cap-prayer { font-size: 1.1rem; }
+.cap-foot { text-align: center; margin: 40px auto 10px; max-width: 46ch; font-family: var(--font-display); font-weight: 700; font-size: 1.15rem; line-height: 1.35; }
+.cap-foot span { display: block; font-family: var(--font-hand); color: #ef591c; font-size: 1.3rem; margin-top: 4px; }
+
+/* Silencio a pantalla completa */
+.cap-overlay { position: fixed; inset: 0; z-index: 100; display: grid; place-items: center; padding: 24px;
+  background: radial-gradient(70% 60% at 50% 35%, #1351a4 0%, #0b2566 70%, #061541 100%); color: #fff6e5; text-align: center; animation: capIn .6s ease; }
+@keyframes capIn { from { opacity: 0; } }
+.cap-ov-in { max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
+.cap-overlay .cap-verse { color: #fff6e5; } .cap-overlay .cap-ref { color: #ffba03; }
+.cap-breath { width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(138,210,250,.6); display: grid; place-items: center; }
+.cap-breath i { width: 40px; height: 40px; border-radius: 50%; background: rgba(138,210,250,.45); }
+@media (prefers-reduced-motion: no-preference) { .cap-breath i { animation: capBreath 8s ease-in-out infinite; } }
+@keyframes capBreath { 0%,100% { transform: scale(1); } 50% { transform: scale(2.7); } }
+.cap-breath-t { font-family: var(--font-hand); font-size: 1.6rem; color: #8ad2fa; }
+.cap-left { font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: .1em; opacity: .7; }
+body.cap-quiet { overflow: hidden; }
+
+@media (max-width: 760px) {
+  .cap-hero { grid-template-columns: 1fr; }
+  .cap-arch { padding: 26px 18px 22px; border-radius: 999px 999px 22px 22px / 220px 220px 22px 22px; }
+  .cap-nav { top: 58px; }
+  .cap-silence { justify-content: center; text-align: center; }
+  .cap-silence .row-wrap { justify-content: center; }
+}
+.cap-vela-guest > div { min-width: 200px; }
+.cap-overlay .cap-candle.lit .glow { fill: #ffd25e; }
