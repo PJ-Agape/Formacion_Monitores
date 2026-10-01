@@ -400,7 +400,14 @@ export async function lastChat(sala) {
 export async function sendChat(sala, text, replyTo) {
   const data = { text, ...author(), reports: {}, reactions: {}, createdAt: fb.serverTimestamp() };
   if (replyTo && replyTo.id) data.replyTo = { id: String(replyTo.id), name: String(replyTo.name || "").slice(0, 60), text: String(replyTo.text || "").slice(0, 140) };
-  await fb.setDoc(fb.doc(fb.collection(db, "chat", sala, "msgs")), data);
+  try { await fb.setDoc(fb.doc(fb.collection(db, "chat", sala, "msgs")), data); }
+  catch (e) {
+    // Respaldo mientras las reglas nuevas no estén publicadas: mensaje simple como antes.
+    if (e && e.code === "permission-denied") {
+      const { authorUid, authorName, authorRole } = author();
+      await fb.setDoc(fb.doc(fb.collection(db, "chat", sala, "msgs")), { text, authorUid, authorName, authorRole, reports: {}, createdAt: fb.serverTimestamp() });
+    } else throw e;
+  }
 }
 // Zumbido: queda como mensaje visible en la sala («X le envió un zumbido a Y»).
 export async function sendBuzz(sala, to) {
