@@ -1852,3 +1852,11 @@ body.cap-quiet { overflow: hidden; }
 .chat-room-edit { position: absolute; top: 10px; right: 10px; width: 32px; height: 32px; background: #fff6e5; z-index: 2; }
 .chat-room.is-arch { opacity: .7; }
 .chat-arch { padding: 14px; text-align: center; font-weight: 700; border-top: 2px dashed rgba(11,37,102,.2); background: #fff6e5; }
+
+/* Muro: felicitación por completar el curso */
+.wall-post.logro { background: linear-gradient(135deg, #fff6e5 0%, #fff1cc 60%, #fde0d2 100%); position: relative; overflow: hidden; }
+.logro-in { display: flex; gap: 16px; align-items: center; margin: 6px 0 4px; }
+.logro-av .avatar { width: 72px; height: 72px; font-size: 1.4rem; }
+.logro-hand { font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.5rem; display: block; transform: rotate(-2deg); }
+.wall-post.logro h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.5rem; line-height: 1.05; margin: 2px 0 6px; }
+@media (max-width: 520px) { .logro-in { flex-direction: column; align-items: flex-start; } }

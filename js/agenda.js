@@ -69,7 +69,7 @@ export function viewAgenda(day) {
     const stop = ctx.cloud.watchAgenda((rows) => { events = rows; paint(); }, () => { events = events || []; paint(); });
     ctx.onLeave(stop);
     ctx.cloud.latestWall && ctx.cloud.latestWall().then((rows) => {
-      news = rows.filter((p) => !p.hidden && p.type === "anuncio").sort((a, b) => (b.pinned === true) - (a.pinned === true) || (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)).slice(0, 3);
+      news = rows.filter((p) => !p.hidden && (p.type === "anuncio" || p.type === "logro")).sort((a, b) => (b.pinned === true) - (a.pinned === true) || (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)).slice(0, 3);
       paintNews();
     });
     paint();

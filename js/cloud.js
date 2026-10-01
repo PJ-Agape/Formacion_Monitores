@@ -249,7 +249,23 @@ export async function registerCertificate(course, prog) {
       uid: user.uid, name: account.name, parish: account.parish || "", course: course.title, courseId: course.id,
       date: prog.completedDate || new Date().toISOString(), createdAt: fb.serverTimestamp(),
     });
+    await celebrate(course, prog.certCode);
   } catch (e) { console.warn("Constancia:", e); }
+}
+// Felicitación automática en el muro cuando alguien completa un curso (una por constancia).
+async function celebrate(course, code) {
+  try {
+    const ref = fb.doc(db, "wall", "logro-" + code);
+    if ((await withTimeout(fb.getDoc(ref))).exists()) return;
+    const first = String(account.name || "").trim().split(/\s+/)[0] || "dirigente";
+    await fb.setDoc(ref, {
+      type: "logro", certCode: code, title: `¡Felicitaciones, ${first}!`,
+      body: `${shortName(account.name)} completó el curso de formación «${course.title}». Su camino de formación ahora se hace servicio en la Pastoral Ágape. ¡Déjale tu saludo aquí abajo!`,
+      ...author(), pinned: false, closed: false, hidden: false, likes: {}, reports: {}, replyCount: 0,
+      createdAt: fb.serverTimestamp(), lastActivity: fb.serverTimestamp(),
+    });
+    window.dispatchEvent(new CustomEvent("agape:logro"));
+  } catch (e) { console.warn("Logro:", e); }
 }
 export async function getCertificate(code) {
   if (!enabled || !db) return undefined;

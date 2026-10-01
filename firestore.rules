@@ -103,8 +103,12 @@ service cloud.firestore {
       allow read: if resource.data.hidden == false || isStaff();
       allow create: if isMember() && asAuthor(request.resource.data)
         && validText(request.resource.data.title, 140) && request.resource.data.body is string && request.resource.data.body.size() <= 4000
-        && request.resource.data.type in ['anuncio', 'tema', 'pregunta']
-        && (isStaff() || (request.resource.data.type == 'pregunta' && request.resource.data.pinned == false))
+        && request.resource.data.type in ['anuncio', 'tema', 'pregunta', 'logro']
+        && (isStaff() || (request.resource.data.type == 'pregunta' && request.resource.data.pinned == false)
+          // Felicitación automática: solo por una constancia propia, una por constancia.
+          || (request.resource.data.type == 'logro' && request.resource.data.pinned == false
+              && request.resource.data.certCode is string && postId == 'logro-' + request.resource.data.certCode
+              && get(/databases/$(database)/documents/certificates/$(request.resource.data.certCode)).data.uid == request.auth.uid))
         && request.resource.data.closed == false && request.resource.data.replyCount == 0
         && request.resource.data.lastActivity == request.time;
       allow update: if isStaff()

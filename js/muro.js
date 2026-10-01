@@ -14,7 +14,9 @@ const TYPES = {
   anuncio: { label: "Anuncio", chip: "warn", icon: "sparkle" },
   tema: { label: "Tema", chip: "accent", icon: "chat" },
   pregunta: { label: "Pregunta", chip: "ok", icon: "search" },
+  logro: { label: "Logro", chip: "ok", icon: "award" },
 };
+const isNews = (p) => p.type === "anuncio" || p.type === "logro";
 const FILTERS = [["todo", "Todo"], ["anuncio", "Anuncios"], ["tema", "Temas"], ["pregunta", "Preguntas"]];
 let filter = "todo";
 let posts = null, loadError = false, flagged = null;
@@ -158,6 +160,7 @@ function paintList() {
       : `<div class="card" style="text-align:center;padding:32px"><p class="muted">No hay publicaciones ni respuestas reportadas u ocultas.</p></div>`;
     return;
   }
+  else if (filter === "anuncio") list = list.filter(isNews);
   else if (filter !== "todo") list = list.filter((p) => p.type === filter);
   if (!list.length) {
     box.innerHTML = `<div class="card" style="text-align:center;padding:32px"><p class="muted">${filter === "reportes" ? "No hay publicaciones reportadas ni ocultas." : "Todavía no hay publicaciones aquí."}</p></div>`;
@@ -166,7 +169,22 @@ function paintList() {
   box.innerHTML = list.map(postCard).join("");
 }
 
+function logroCard(p) {
+  return `<article class="card wall-post logro ${p.hidden ? "is-hidden" : ""}">
+    <div class="wall-head"><span class="chip ok">${icon("award")} Logro</span>${modBadges(p)}<span class="spacer"></span>${menu(p, "post", p.id)}</div>
+    <div class="logro-in">
+      <span class="logro-av">${avatar(p.authorAvatar, p.authorName)}</span>
+      <div><span class="logro-hand">¡lo logró!</span>
+        <a class="wall-title" href="#/muro/${encodeURIComponent(p.id)}"><h3>${esc(p.title)}</h3></a>
+        <p>${text(p.body || "")}</p></div>
+    </div>
+    <div class="wall-foot"><span class="xs muted">${when(p.createdAt)}</span><span class="spacer"></span>
+      ${st().ready ? likeBtn(p, `wall/${p.id}`) : count(p.likes) ? `<span class="wall-like static">${heart()} ${count(p.likes)}</span>` : ""}
+      <a class="btn btn-sm btn-gold" href="#/muro/${encodeURIComponent(p.id)}">🎉 ${p.replyCount ? `${p.replyCount} saludo${p.replyCount > 1 ? "s" : ""}` : "Saludar"}</a></div>
+  </article>`;
+}
 function postCard(p) {
+  if (p.type === "logro") return logroCard(p);
   const t = TYPES[p.type] || TYPES.tema;
   const excerpt = (p.body || "").length > 260 ? p.body.slice(0, 260).trim() + "…" : p.body || "";
   const talk = p.type !== "anuncio";
@@ -256,10 +274,10 @@ export async function homeHighlight() {
   const rows = (await ctx.cloud.latestWall()).filter((p) => !p.hidden);
   const s = $("#wallSlot");
   if (!s || !rows.length) return;
-  const ann = sortPosts(rows.filter((p) => p.type === "anuncio"))[0];
-  const talk = sortPosts(rows.filter((p) => p.type !== "anuncio"))[0];
+  const ann = sortPosts(rows.filter(isNews))[0];
+  const talk = sortPosts(rows.filter((p) => !isNews(p)))[0];
   s.innerHTML = `<div class="grid grid-2" style="margin-top:16px">
-    ${ann ? `<a class="card link wall-home anuncio" href="#/muro"><span class="eyebrow">${icon("sparkle")} Último anuncio</span><h3>${esc(ann.title)}</h3>
+    ${ann ? `<a class="card link wall-home anuncio" href="${ann.type === "logro" ? `#/muro/${encodeURIComponent(ann.id)}` : "#/muro"}"><span class="eyebrow">${icon(ann.type === "logro" ? "award" : "sparkle")} ${ann.type === "logro" ? "🎉 Nuevo logro" : "Último anuncio"}</span><h3>${esc(ann.title)}</h3>
       ${ann.body ? `<p class="muted small">${esc(ann.body.slice(0, 140))}${ann.body.length > 140 ? "…" : ""}</p>` : ""}<span class="go">Ver el muro ${icon("arrowR")}</span></a>` : ""}
     ${talk ? `<a class="card link wall-home" href="#/muro/${encodeURIComponent(talk.id)}"><span class="eyebrow">${icon("chat")} En conversación</span><h3>${esc(talk.title)}</h3>
       <p class="muted small">${talk.replyCount ? `${talk.replyCount} respuesta${talk.replyCount > 1 ? "s" : ""} · ` : ""}${when(talk.lastActivity)}</p><span class="go">Sumarme ${icon("arrowR")}</span></a>` : ""}
