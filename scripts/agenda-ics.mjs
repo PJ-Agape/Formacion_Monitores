@@ -2,6 +2,7 @@
 // y de los encuentros del Camino Ágape. Lo ejecuta cada hora una acción de GitHub.
 // Uso: node scripts/agenda-ics.mjs [salida]   (sin dependencias; Node 18+)
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { rrule } from "../js/repeat.js";
 
 const OUT = process.argv[2] || "agenda.ics";
 const cfg = readFileSync("js/config.js", "utf8");
@@ -12,7 +13,7 @@ const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "
 const TYPES = { encuentro: "Encuentro", actividad: "Actividad", liturgia: "Liturgia", equipo: "Equipo", otro: "Otro" };
 
 // --- Firestore (lectura pública de la colección agenda) ---
-const val = (v) => v == null ? undefined : "stringValue" in v ? v.stringValue : "booleanValue" in v ? v.booleanValue
+const val = (v) => v == null ? undefined : "arrayValue" in v ? (v.arrayValue.values || []).map(val) : "stringValue" in v ? v.stringValue : "booleanValue" in v ? v.booleanValue
   : "integerValue" in v ? +v.integerValue : "doubleValue" in v ? v.doubleValue : "timestampValue" in v ? v.timestampValue : undefined;
 async function agenda() {
   const rows = [];
@@ -67,6 +68,8 @@ function vevent(e) {
   return ["BEGIN:VEVENT", `UID:${e.id}@pj-agape`, `DTSTAMP:${stamp(e.updated)}`,
     s ? `DTSTART;TZID=${TZ}:${ymd(e.date)}T${s}` : `DTSTART;VALUE=DATE:${ymd(e.date)}`,
     s ? `DTEND;TZID=${TZ}:${ymd(e.date)}T${en > s ? en : s}` : `DTEND;VALUE=DATE:${nextDay(e.date)}`,
+    rrule(e, !s),
+    (e.exdates || []).length ? (s ? `EXDATE;TZID=${TZ}:${e.exdates.map((x) => ymd(x) + "T" + s).join(",")}` : `EXDATE;VALUE=DATE:${e.exdates.map(ymd).join(",")}`) : "",
     `SUMMARY:${esc(e.title)}`, e.place ? `LOCATION:${esc(e.place)}` : "", `DESCRIPTION:${esc(desc)}`,
     `CATEGORIES:${esc(TYPES[e.type] || "Otro")}`, s ? "" : "TRANSP:TRANSPARENT", "END:VEVENT"].filter(Boolean);
 }

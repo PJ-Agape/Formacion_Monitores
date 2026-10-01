@@ -5,6 +5,7 @@
 
 import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS } from "./ilustraciones.js";
+import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -45,8 +46,15 @@ async function loadCamino() {
     }).filter(Boolean);
   } catch { camino = []; }
 }
+// Expande los eventos que se repiten en sus fechas (id de cada fecha: «id@AAAA-MM-DD»).
+function expand(list, from, to) {
+  return list.flatMap((e) => (isRepeat(e) ? occurrences(e, from, to).map((d) => ({ ...e, id: `${e.id}@${d}`, baseId: e.id, date: d })) : [e]));
+}
+const shiftIso = (s, days) => { const d = parse(s); d.setDate(d.getDate() + days); return iso(d); };
 function all() {
-  const own = (events || []).filter((e) => e.date);
+  const m0 = iso(month || new Date()), t = todayIso();
+  const from = shiftIso(m0 < t ? m0 : t, -45), to = shiftIso(m0 > t ? m0 : t, 400);
+  const own = expand((events || []).filter((e) => e.date), from, to);
   return [...own, ...(showCamino ? camino : [])].sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")));
 }
 const byDay = () => all().reduce((m, e) => ((m[e.date] = m[e.date] || []).push(e), m), {});
@@ -129,17 +137,19 @@ function paintList() {
     return `<article class="ag-ev${open ? " open" : ""}" style="--c:${t.color}">
       <button class="ag-ev-head" data-action="agOpen" data-id="${esc(e.id)}" aria-expanded="${open}">
         <span class="ag-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>
-        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}</span><strong>${esc(e.title)}</strong>
+        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}</span><strong>${esc(e.title)}</strong>
           <span class="muted small">${[e.start ? `${esc(e.start)}${e.end ? `–${esc(e.end)}` : ""}` : "", esc(e.place || e.audience || "")].filter(Boolean).join(" · ")}</span></span>
       </button>
       ${open ? `<div class="ag-ev-body">
         ${e.desc ? `<p>${esc(e.desc)}</p>` : ""}
+        ${isRepeat(e) ? `<p class="small ag-rep">↻ ${esc(repeatText(e))}</p>` : ""}
         ${e.audience && !e.camino ? `<p class="small"><b>Para:</b> ${esc(e.audience)}</p>` : ""}
         ${e.place ? `<p class="small"><b>Lugar:</b> ${esc(e.place)}</p>` : ""}
         <div class="row-wrap" style="margin-top:8px">
           <button class="btn btn-sm btn-ghost" data-action="agIcs" data-id="${esc(e.id)}">${icon("dl")} Agregar a mi calendario</button>
-          ${admin && !e.camino ? `<button class="btn btn-sm btn-soft" data-action="agEdit" data-id="${esc(e.id)}">${icon("edit")} Editar</button>
-            <button class="btn btn-sm btn-danger" data-action="agDel" data-id="${esc(e.id)}">${icon("trash")} Borrar</button>` : ""}
+          ${admin && !e.camino ? `<button class="btn btn-sm btn-soft" data-action="agEdit" data-id="${esc(e.baseId || e.id)}">${icon("edit")} Editar${e.baseId ? " la serie" : ""}</button>
+            ${e.baseId ? `<button class="btn btn-sm btn-ghost" data-action="agSkip" data-id="${esc(e.baseId)}" data-date="${esc(e.date)}">${icon("x")} Saltar esta fecha</button>` : ""}
+            <button class="btn btn-sm btn-danger" data-action="agDel" data-id="${esc(e.baseId || e.id)}" data-rep="${e.baseId ? 1 : 0}">${icon("trash")} Borrar${e.baseId ? " la serie" : ""}</button>` : ""}
         </div></div>` : ""}
     </article>`;
   }).join("");
@@ -167,6 +177,11 @@ function openForm(ev) {
         <div class="field"><label>Desde</label><input class="input" type="time" name="start" value="${esc(e.start || "")}"></div>
         <div class="field"><label>Hasta</label><input class="input" type="time" name="end" value="${esc(e.end || "")}"></div>
       </div>
+      <div class="ag-form-row">
+        <div class="field"><label>Se repite</label><select class="select" name="repeat" id="agRepeat">${Object.entries(REPEATS).map(([k, l]) => `<option value="${k}" ${(e.repeat || "") === k ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+        <div class="field" id="agUntilBox" ${isRepeat(e) ? "" : "hidden"}><label>Hasta (opcional)</label><input class="input" type="date" name="until" value="${esc(e.until || "")}"><span class="xs muted">En blanco: sin fecha de término.</span></div>
+      </div>
+      ${(e.exdates || []).length ? `<p class="xs muted">Fechas saltadas: ${e.exdates.map((d) => esc(longDate(d))).join(" · ")}. <label class="row" style="display:inline-flex;gap:4px"><input type="checkbox" name="clearEx"> volver a incluirlas</label></p>` : ""}
       <div class="ag-form-row">
         <div class="field"><label>Tipo</label><select class="select" name="type">${Object.entries(TYPES).map(([k, t]) => `<option value="${k}" ${e.type === k ? "selected" : ""}>${t.label}</option>`).join("")}</select></div>
         <div class="field"><label>Para quiénes</label><input class="input" name="audience" maxlength="80" value="${esc(e.audience || "")}" placeholder="Todos, Dirigentes, Aspirantes…"></div>
@@ -203,6 +218,7 @@ function ics(e) {
     `UID:${e.id}@pj-agape`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
     e.start ? `DTSTART;TZID=America/Santiago:${d}T${t(e.start)}` : `DTSTART;VALUE=DATE:${d}`,
     e.start ? `DTEND;TZID=America/Santiago:${d}T${t(e.end || e.start)}` : `DTEND;VALUE=DATE:${iso(next).replace(/-/g, "")}`,
+    rrule(e, !e.start), (e.exdates || []).length ? (e.start ? `EXDATE;TZID=America/Santiago:${e.exdates.map((x) => x.replace(/-/g, "") + "T" + t(e.start)).join(",")}` : `EXDATE;VALUE=DATE:${e.exdates.map((x) => x.replace(/-/g, "")).join(",")}`) : "",
     `SUMMARY:${esc2(e.title)}`, e.place ? `LOCATION:${esc2(e.place)}` : "", e.desc ? `DESCRIPTION:${esc2(e.desc)}` : "",
     "END:VEVENT", "END:VCALENDAR"].filter(Boolean);
   const blob = new Blob([lines.join("\r\n")], { type: "text/calendar" });
@@ -217,7 +233,7 @@ export async function homeNext() {
   await loadCamino();
   const own = await ctx.cloud.listAgenda();
   const t = todayIso();
-  const list = [...own, ...camino].filter((e) => e.date >= t).sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || ""))).slice(0, 3);
+  const list = [...expand(own.filter((e) => e.date), t, shiftIso(t, 120)), ...camino].filter((e) => e.date >= t).sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || ""))).slice(0, 3);
   if (!list.length || !document.getElementById("agendaSlot")) return;
   document.getElementById("agendaSlot").innerHTML = `<a class="card link ag-home" href="#/agenda">
     <span class="eyebrow">${icon("grid")} Agenda Ágape</span>
@@ -261,14 +277,25 @@ function registerActions() {
   A.agNew = () => openForm(null);
   A.agEdit = (el) => openForm((events || []).find((e) => e.id === el.dataset.id));
   A.agClose = () => document.getElementById("agDialog")?.close();
+  A.agSkip = async (el) => {
+    const base = (events || []).find((x) => x.id === el.dataset.id); if (!base) return;
+    if (!confirm(`¿Saltar el ${longDate(el.dataset.date)}? El resto de las fechas se mantiene.`)) return;
+    try { await ctx.cloud.patchEvent(base.id, { exdates: [...new Set([...(base.exdates || []), el.dataset.date])].sort() }); openId = null; toast("Fecha saltada"); }
+    catch { toast("No se pudo guardar", ""); }
+  };
   A.agDel = async (el) => {
-    if (!confirm("¿Borrar este evento de la agenda?")) return;
+    if (!confirm(el.dataset.rep === "1" ? "¿Borrar TODAS las fechas de este evento que se repite? Para quitar solo una, usa «Saltar esta fecha»." : "¿Borrar este evento de la agenda?")) return;
     try { await ctx.cloud.deleteEvent(el.dataset.id); openId = null; toast("Evento borrado"); } catch { toast("No se pudo borrar", ""); }
   };
-  A.agIcs = (el) => { const e = all().find((x) => x.id === el.dataset.id); if (e) ics(e); };
+  A.agIcs = (el) => {
+    const e = all().find((x) => x.id === el.dataset.id); if (!e) return;
+    const base = e.baseId && (events || []).find((x) => x.id === e.baseId);
+    ics(base ? { ...base } : e);
+  };
   document.addEventListener("change", (e) => {
     if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); }
     if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
+    if (e.target.id === "agRepeat") { const o = $("#agUntilBox"); if (o) o.hidden = !e.target.value; }
   });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "agForm") return;
@@ -276,16 +303,20 @@ function registerActions() {
     const f = new FormData(e.target);
     const data = Object.fromEntries(["title", "date", "start", "end", "type", "audience", "place", "desc"].map((k) => [k, String(f.get(k) || "").trim()]));
     if (!data.title || !data.date) return;
+    data.repeat = REPEATS[String(f.get("repeat") || "")] ? String(f.get("repeat") || "") : "";
+    data.until = data.repeat ? String(f.get("until") || "") : "";
+    if (data.until && data.until < data.date) { toast("«Hasta» es anterior a la fecha del evento", ""); return; }
     data.feat = f.get("feat") === "on";
     for (const k of ["featFrom", "featTo", "featHand", "featIllus"]) data[k] = data.feat ? String(f.get(k) || "").trim() : "";
     if (data.feat && !data.featFrom) data.featFrom = todayIso();
     if (data.feat && data.featTo && data.featTo < data.featFrom) { toast("«Mostrar hasta» es anterior a «Mostrar desde»", ""); return; }
     const old = e.target.dataset.id && (events || []).find((x) => x.id === e.target.dataset.id);
     if (old && old.featOrder != null) data.featOrder = old.featOrder;
+    data.exdates = data.repeat && old && old.exdates && f.get("clearEx") !== "on" ? old.exdates : [];
     try {
       const id = await ctx.cloud.saveEvent(e.target.dataset.id || null, data);
       document.getElementById("agDialog")?.close();
-      const d = parse(data.date); month = new Date(d.getFullYear(), d.getMonth(), 1); selDay = data.date; openId = id;
+      const d = parse(data.date); month = new Date(d.getFullYear(), d.getMonth(), 1); selDay = data.date; openId = data.repeat ? `${id}@${data.date}` : id;
       toast(data.feat ? "Guardado y destacado en Inicio" : "Guardado en la agenda"); paint();
     } catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); }
   });

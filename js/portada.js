@@ -7,6 +7,7 @@
 
 import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS } from "./ilustraciones.js";
+import { isRepeat, nextOn, describe as repeatText } from "./repeat.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -50,15 +51,17 @@ const DEF = Object.fromEntries(DEFAULTS.map((d) => [d.key, d]));
 // Eventos de la Agenda → diapositivas
 const EV_THEME = { encuentro: "sky", actividad: "orange", liturgia: "gold", equipo: "blue", otro: "rose" };
 const EV_ILLUS = { encuentro: "comunidad", actividad: "amigos", liturgia: "eucaristia", equipo: "equipo", otro: "corazon" };
-function fromEvent(e) {
-  const when = [longDate(e.date), e.start ? `${e.start}${e.end ? `–${e.end}` : ""} h` : "", e.place || ""].filter(Boolean).join(" · ");
+function fromEvent(ev) {
+  // Si se repite, la diapositiva muestra la próxima fecha.
+  const e = isRepeat(ev) ? { ...ev, date: nextOn(ev, todayIso()) || ev.date } : ev;
+  const when = [isRepeat(ev) ? repeatText(ev) : longDate(e.date), e.start ? `${e.start}${e.end ? `–${e.end}` : ""} h` : "", e.place || ""].filter(Boolean).join(" · ");
   const text = e.desc ? (e.desc.length > 230 ? e.desc.slice(0, 228).trimEnd() + "…" : e.desc) : (e.audience ? `Para: ${e.audience}.` : "");
   return {
     key: "ev-" + e.id, eventId: e.id, event: true, label: e.title, order: Number.isFinite(+e.featOrder) && e.featOrder !== "" ? +e.featOrder : 15,
     theme: EV_THEME[e.type] || "sky", illus: e.featIllus && SCENE_KEYS.includes(e.featIllus) ? e.featIllus : (EV_ILLUS[e.type] || "comunidad"),
     kicker: when, hand: e.featHand || "¡no te lo pierdas!", title: e.title, text,
     b1: { label: "Ver en la agenda", href: `#/agenda/${e.date}` },
-    from: e.featFrom || "", to: e.featTo || e.date, date: e.date,
+    from: e.featFrom || "", to: e.featTo || (isRepeat(ev) ? (ev.until || "") : e.date), date: e.date,
   };
 }
 
@@ -88,8 +91,8 @@ export async function refresh() {
   const before = JSON.stringify({ over, featured });
   const [p, ag] = await Promise.all([ctx.cloud.getPortada ? ctx.cloud.getPortada() : null, ctx.cloud.listAgenda ? ctx.cloud.listAgenda(true) : null]);
   if (p) over = p.slides || {};
-  if (ag) featured = ag.filter((e) => e.feat === true && e.date).map(({ id, title, date, start, end, place, desc, audience, type, featFrom, featTo, featHand, featIllus, featOrder }) =>
-    ({ id, title, date, start, end, place, desc, audience, type, featFrom, featTo, featHand, featIllus, featOrder }));
+  if (ag) featured = ag.filter((e) => e.feat === true && e.date).map(({ id, title, date, start, end, place, desc, audience, type, featFrom, featTo, featHand, featIllus, featOrder, repeat, until, exdates }) =>
+    ({ id, title, date, start, end, place, desc, audience, type, featFrom, featTo, featHand, featIllus, featOrder, repeat, until, exdates }));
   loaded = true;
   const changed = JSON.stringify({ over, featured }) !== before;
   if (changed) saveCache();
