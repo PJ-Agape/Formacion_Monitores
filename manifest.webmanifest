@@ -1,7 +1,7 @@
 {
   "name": "Pastoral Juvenil Ágape",
   "short_name": "Ágape",
-  "description": "Itinerario de formación, guía de servicio, materiales y oraciones para dirigentes.",
+  "description": "La casa digital de la Pastoral Juvenil Ágape: agenda, muro y chat, curso de dirigentes, capilla, cancionero y materiales.",
   "lang": "es",
   "start_url": "./#/",
   "scope": "./",
@@ -9,14 +9,80 @@
   "orientation": "portrait-primary",
   "background_color": "#f3f8fd",
   "theme_color": "#1351a4",
-  "categories": ["education", "lifestyle"],
+  "categories": [
+    "education",
+    "lifestyle"
+  ],
   "icons": [
-    { "src": "icons/icon-192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "icons/icon-512.png", "sizes": "512x512", "type": "image/png" },
-    { "src": "icons/icon-maskable-512.png", "sizes": "512x512", "type": "image/png", "purpose": "maskable" }
+    {
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-512.png",
+      "sizes": "512x512",
+      "type": "image/png"
+    },
+    {
+      "src": "icons/icon-maskable-512.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
   ],
   "shortcuts": [
-    { "name": "Itinerario", "url": "./#/itinerario", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] },
-    { "name": "Oración", "url": "./#/oracion", "icons": [{ "src": "icons/icon-192.png", "sizes": "192x192" }] }
+    {
+      "name": "Muro y chat",
+      "short_name": "Muro",
+      "description": "Anuncios y conversaciones de la comunidad",
+      "url": "./#/muro",
+      "icons": [
+        {
+          "src": "icons/sc-muro.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Agenda",
+      "short_name": "Agenda",
+      "description": "Próximas fechas y encuentros",
+      "url": "./#/agenda",
+      "icons": [
+        {
+          "src": "icons/sc-agenda.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Capilla",
+      "short_name": "Capilla",
+      "description": "Un minuto con Jesús, velas y oraciones",
+      "url": "./#/oracion",
+      "icons": [
+        {
+          "src": "icons/sc-capilla.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    },
+    {
+      "name": "Cancionero",
+      "short_name": "Cancionero",
+      "description": "Canciones con acordes y repertorios de la misa",
+      "url": "./#/cancionero",
+      "icons": [
+        {
+          "src": "icons/sc-cancionero.png",
+          "sizes": "192x192",
+          "type": "image/png"
+        }
+      ]
+    }
   ]
 }

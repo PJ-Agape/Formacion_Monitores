@@ -240,6 +240,7 @@ function subDialog() {
       <a class="card link ag-sub-o" href="${webcal}"><strong>iPhone, iPad o Mac</strong><span class="muted small">Se abre Calendario: toca «Suscribirse».</span></a>
       <div class="card ag-sub-o"><strong>Outlook u otro calendario</strong><span class="muted small">Agrega un calendario «desde internet» con esta dirección:</span>
         <div class="row-wrap" style="margin-top:8px"><input class="input" id="agSubUrl" readonly value="${ICS_URL}" style="flex:1;min-width:200px"><button class="btn btn-sm btn-primary" data-action="agSubCopy">${icon("copy")} Copiar</button></div></div>
+      <div class="note small"><b>¿Lo quieres en la pantalla de inicio?</b> Agrega el widget de tu calendario: en Android, mantén presionado un espacio libre → Widgets → Google Calendar; en iPhone, mantén presionado → «+» → Calendario. Verás ahí las próximas fechas de Ágape.</div>
       <p class="xs muted">Tu calendario revisa los cambios cada algunas horas (Google puede tardar hasta un día). El calendario es de solo lectura: los eventos los crea el equipo coordinador en esta Agenda.</p>
     </div>`;
   d.showModal();
