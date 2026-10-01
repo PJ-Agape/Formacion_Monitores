@@ -1717,3 +1717,44 @@ body.cap-quiet { overflow: hidden; }
   .can-book .cb-body .can-gap { height: 2mm; }
   .can-book .can-line, .can-book .cb-ig, .can-book .cb-head { break-inside: avoid; }
 }
+
+/* ===================== Materiales: ficheros ===================== */
+.fi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 26px 18px; margin-top: 26px; align-items: start; }
+.fichero { position: relative; scroll-margin-top: 130px; background: #fff; border: 2px solid #0b2566; border-radius: 0 18px 18px 18px; box-shadow: 5px 5px 0 #0b2566; padding: 18px 18px 14px; margin-top: 16px; }
+.fichero::before { content: ""; position: absolute; inset: 0 0 auto 0; height: 10px; background: var(--fi); border-radius: 0 16px 0 0; border-bottom: 2px solid #0b2566; }
+.fi-tab { position: absolute; left: -2px; top: -30px; height: 30px; padding: 0 16px; display: inline-flex; align-items: center; background: var(--fi); border: 2px solid #0b2566; border-bottom: 0; border-radius: 12px 12px 0 0;
+  font-family: var(--font-hand); font-weight: 700; font-size: 1.15rem; color: #0b2566; }
+.fichero[style*="#1351a4"] .fi-tab, .fichero[style*="#0b2566"] .fi-tab, .fichero[style*="#ef591c"] .fi-tab { color: #fff6e5; }
+.fi-head { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
+.fi-head h2 { flex: 1; font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.02em; font-size: 1.5rem; line-height: 1.05; }
+.fi-count { min-width: 30px; height: 30px; border-radius: 999px; display: grid; place-items: center; padding: 0 8px; background: #fff6e5; border: 2px solid #0b2566; font-weight: 800; font-size: .85rem; }
+.fi-desc { font-size: .9rem; opacity: .8; margin: 4px 0 10px; }
+.fi-list { display: grid; gap: 0; }
+.fi-row { display: flex; align-items: center; gap: 12px; padding: 11px 4px; border-top: 2px dashed rgba(11,37,102,.18); text-decoration: none; color: inherit; cursor: pointer; list-style: none; }
+.fi-list > :first-child .fi-row, .fi-list > .fi-row:first-child, .fi-list > details:first-child > summary { border-top: 0; }
+.fi-row::-webkit-details-marker { display: none; }
+.fi-row:hover .fi-txt b { text-decoration: underline; text-underline-offset: 3px; }
+.fi-row > svg:last-child { width: 18px; height: 18px; flex: 0 0 auto; opacity: .7; transition: transform .2s; }
+.fi-row.is-off { opacity: .55; cursor: default; }
+.fi-ico { flex: 0 0 38px; height: 38px; border-radius: 12px; display: grid; place-items: center; background: var(--fi); border: 2px solid #0b2566; color: #0b2566; }
+.fichero[style*="#1351a4"] .fi-ico, .fichero[style*="#ef591c"] .fi-ico { color: #fff6e5; }
+.fi-ico svg { width: 18px; height: 18px; }
+.fi-txt { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.fi-txt b { font-size: 1rem; line-height: 1.25; }
+.fi-txt small { font-size: .82rem; opacity: .75; line-height: 1.3; }
+.fi-det[open] > summary > svg:last-child { transform: rotate(180deg); }
+.fi-open { padding: 0 0 12px; }
+.fi-open > .card { border: 0; box-shadow: none; padding: 4px 4px 0; background: transparent; }
+.fi-open > .card > .chip:first-child, .fi-open > .card > h3:first-of-type { display: none; }
+.fi-lib { margin-top: 44px; }
+.lib-cols { column-width: 300px; column-gap: 26px; margin-top: 10px; }
+.fi-lib .lib-group { break-inside: avoid; margin: 0 0 16px; }
+.fi-lib .lib-h { font-family: var(--font-hand); font-weight: 700; font-size: 1.35rem; color: #ef591c; margin: 6px 0 4px; }
+.lib-simple { list-style: none; padding: 0; margin: 0; }
+.lib-simple li a { display: flex; flex-direction: column; gap: 1px; padding: 7px 0; border-top: 2px dashed rgba(11,37,102,.15); text-decoration: none; color: inherit; }
+.lib-simple li:first-child a { border-top: 0; }
+.lib-simple b { font-weight: 700; line-height: 1.3; }
+.lib-simple a span { font-size: .78rem; color: #1351a4; font-weight: 700; }
+.lib-simple a:hover b { text-decoration: underline; text-underline-offset: 3px; }
+@media (max-width: 640px) { .fi-grid { grid-template-columns: 1fr; } }
+.fi-lib .lib-item { border: 0; box-shadow: none; background: none; padding: 0; margin: 0; border-radius: 0; }

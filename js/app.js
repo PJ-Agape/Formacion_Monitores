@@ -889,35 +889,53 @@ function cardHTML(c, kind) {
 function viewMaterials() {
   const m = S.content().materials;
   const lib = buildLibrary();
+  const row = (href, ic, title, sub, ext) => `<a class="fi-row" href="${href}"${ext ? ' target="_blank" rel="noopener"' : ""}>
+      <span class="fi-ico">${icon(ic)}</span><span class="fi-txt"><b>${esc(title)}</b>${sub ? `<small>${esc(sub)}</small>` : ""}</span>${icon(ext ? "arrowR" : "right")}</a>`;
+  const guide = (c) => {
+    if (c.type === "action") {
+      const has = !!(c.url && /^https?:\/\//.test(c.url));
+      return has ? row(esc(c.url), "print", c.title, c.tag || "", true)
+        : `<div class="fi-row is-off"><span class="fi-ico">${icon("print")}</span><span class="fi-txt"><b>${esc(c.title)}</b><small>Próximamente</small></span></div>`;
+    }
+    return `<details class="fi-det"><summary class="fi-row"><span class="fi-ico">${icon(c.type === "list" ? "route" : c.type === "crisis" ? "users" : "edit")}</span>
+      <span class="fi-txt"><b>${esc(c.title)}</b>${c.tag ? `<small>${esc(c.tag)}</small>` : ""}</span>${icon("down")}</summary>
+      <div class="fi-open">${cardHTML(c, "material")}</div></details>`;
+  };
+  const guides = (m.cards || []).filter((c) => c.type !== "action"), prints = (m.cards || []).filter((c) => c.type === "action");
+  const FILES = [
+    ["revistas", "Revistas", "#1351a4", "Encuentros semanales del Camino Ágape.", [
+      row("#/encuentros", "route", "Revistas Camino Ágape", "Principal, guía de coordinación e Ingreso, Madurez y Aspirante"),
+    ]],
+    ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
+      row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
+      row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
+      row("presentaciones/mes-de-maria.html", "flame", "Mes de María", "Con María, puente hacia Jesús · 31 días", true),
+    ]],
+    ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
+      row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),
+    ]],
+    ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", guides.map(guide)],
+    ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
+      `<a class="fi-row" href="presentaciones/mes-de-maria.pdf" download><span class="fi-ico">${icon("dl")}</span><span class="fi-txt"><b>Mes de María en PDF</b><small>Tamaño carta, una página por día</small></span>${icon("dl")}</a>`,
+      row("#/encuentros", "print", "Revistas Camino Ágape", "Se imprimen completas o solo el encuentro de la semana"),
+      row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
+      ...prints.map(guide),
+    ]],
+  ].filter((f) => f[4].length);
+  const nav = [...FILES.map(([k, t]) => [k, t]), ["biblioteca", "Biblioteca"]];
   return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(m.title)}</h1><p>${esc(m.desc)}</p></header>
-    <a class="card link camino-banner" href="#/encuentros" style="margin-top:14px">
-      <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
-      <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Revistas Camino Ágape</strong>
-      <span class="muted small">Revista principal, guía de coordinación y revistas Ingreso, Madurez y Aspirante, para leer o descargar en PDF.</span></span>${icon("right")}
-    </a>
-    <a class="card link camino-banner" href="#/cancionero" style="margin-top:14px">
-      <span class="tile-ico tile-brand" style="margin:0">${icon("book")}</span>
-      <span style="flex:1"><span class="eyebrow">Para animar la misa</span><strong>Cancionero Ágape</strong>
-      <span class="muted small">Canciones con acordes por momento de la misa, cambio de tono, proyección y repertorios.</span></span>${icon("right")}
-    </a>
-    <div class="grid grid-2" style="margin-top:14px">
-      <a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener">
-        <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
-        <span style="flex:1"><span class="eyebrow">Presentación para jóvenes</span><strong>Sé puente</strong>
-        <span class="muted small">Para invitar a los futuros dirigentes al curso. Se abre a pantalla completa.</span></span>${icon("right")}
-      </a>
-      <a class="card link camino-banner" href="presentaciones/el-arte-de-encontrarnos.html" target="_blank" rel="noopener">
-        <span class="tile-ico tile-brand" style="margin:0">${icon("grid")}</span>
-        <span style="flex:1"><span class="eyebrow">Presentación institucional</span><strong>El Arte de Encontrarnos</strong>
-        <span class="muted small">Para el consejo pastoral, el párroco y las familias.</span></span>${icon("right")}
-      </a>
+    <nav class="cap-nav" aria-label="Ficheros">${nav.map(([k, t]) => `<a href="#" data-action="fiGo" data-k="${k}">${esc(t)}</a>`).join("")}</nav>
+    <div class="fi-grid">${FILES.map(([k, t, col, d, items], i) => `
+      <section class="fichero" id="fi-${k}" style="--fi:${col}">
+        <span class="fi-tab">Fichero ${String(i + 1).padStart(2, "0")}</span>
+        <header class="fi-head"><h2>${esc(t)}</h2><span class="fi-count">${items.length}</span></header>
+        <p class="fi-desc">${esc(d)}</p>
+        <div class="fi-list">${items.join("")}</div>
+      </section>`).join("")}
     </div>
-    <nav class="lib-jump row-wrap" style="margin-top:14px">
-      <a class="btn btn-sm btn-soft" href="#biblioteca" data-action="scrollTo" data-id="biblioteca">${icon("book")} Biblioteca digital · ${lib.total} recursos</a>
-    </nav>
-    <div class="grid grid-2" style="margin-top:18px">${m.cards.map((c) => cardHTML(c, "material")).join("")}</div>
-    ${libraryHTML(lib)}`;
+    ${libraryHTML(lib, FILES.length + 1)}`;
 }
+actions.fiGo = (el) => document.getElementById("fi-" + el.dataset.k)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 
 // ---------------------------------------------------------------------------
 // BIBLIOTECA DIGITAL: se arma sola con los recursos y documentos citados en los cursos
@@ -989,36 +1007,24 @@ function buildLibrary() {
   items.sort((a, b) => b.cites.length - a.cites.length || a.title.localeCompare(b.title, "es"));
   return { total: items.length, groups: LIB_GROUPS.map(([k, t, d]) => ({ k, t, d, items: items.filter((i) => i.group === k) })).filter((g) => g.items.length) };
 }
-function libraryHTML(lib) {
+function libraryHTML(lib, num = 6) {
   if (!lib.total) return "";
   const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
   return `
-  <section id="biblioteca" class="library">
-    <div class="section-title"><h2>Biblioteca digital</h2></div>
-    <p class="muted" style="max-width:62ch">Todos los documentos y recursos que se citan en los cursos, reunidos en un solo lugar para consultarlos cuando quieras. Se abren en su sitio oficial.</p>
-    <label class="search" style="display:block;margin:16px 0 8px">
+  <section id="fi-biblioteca" class="fichero fi-lib" style="--fi:#0b2566">
+    <span class="fi-tab">Fichero ${String(num).padStart(2, "0")}</span>
+    <header class="fi-head"><h2>Biblioteca digital</h2><span class="fi-count">${lib.total}</span></header>
+    <p class="fi-desc">Los documentos que citan los cursos, cada uno con el enlace a su fuente oficial.</p>
+    <label class="search" style="display:block;margin:12px 0 4px">
       ${icon("search")}<span class="sr-only">Buscar en la biblioteca</span>
-      <input id="libSearch" type="search" placeholder="Buscar: Christus vivit, Catecismo, Biblia, prevención…" autocomplete="off">
+      <input id="libSearch" type="search" placeholder="Buscar: Christus vivit, Catecismo, Biblia…" autocomplete="off">
     </label>
-    ${lib.groups.map((g) => `
+    <div class="lib-cols">${lib.groups.map((g) => `
       <div class="lib-group" data-lib-group>
-        <h3 class="lib-h">${esc(g.t)} <span class="chip">${g.items.length}</span></h3>
-        ${g.d ? `<p class="xs muted" style="margin-top:2px">${esc(g.d)}</p>` : ""}
-        <div class="lib-list">
-          ${g.items.map((it) => `
-          <article class="lib-item" data-lib="${esc((it.title + " " + it.note + " " + host(it.url)).toLowerCase())}">
-            <a class="lib-link" href="${esc(it.url)}" target="_blank" rel="noopener">
-              <span class="res-ico">${icon("book")}</span>
-              <span class="lib-body"><b>${esc(it.title)}</b>${it.note ? `<small>${esc(it.note)}</small>` : ""}<small class="lib-host">${esc(host(it.url))}</small></span>
-              ${icon("arrowR")}
-            </a>
-            <div class="lib-cites"><span class="xs muted">Citado en</span>
-              ${it.cites.slice(0, 8).map((c) => `<a class="chip accent" href="#/unidad/${c.pi}/${encodeURIComponent(c.id)}" data-action="libOpen" data-course="${esc(c.course)}" data-pi="${c.pi}" data-id="${esc(c.id)}" title="${esc(c.courseTitle + " · " + c.title)}">${esc(c.id)}</a>`).join("")}
-              ${it.cites.length > 8 ? `<span class="xs muted">y ${it.cites.length - 8} más</span>` : ""}
-            </div>
-          </article>`).join("")}
-        </div>
-      </div>`).join("")}
+        <h3 class="lib-h">${esc(g.t)}</h3>
+        <ul class="lib-simple">${g.items.map((it) => `<li class="lib-item" data-lib="${esc((it.title + " " + host(it.url)).toLowerCase())}">
+          <a href="${esc(it.url)}" target="_blank" rel="noopener"><b>${esc(it.title)}</b><span>${esc(host(it.url))} ↗</span></a></li>`).join("")}</ul>
+      </div>`).join("")}</div>
     <p class="xs muted lib-empty" id="libEmpty" hidden>Nada coincide con la búsqueda.</p>
   </section>`;
 }
