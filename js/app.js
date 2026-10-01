@@ -140,7 +140,7 @@ const NAV = [
   ["agenda", "#/agenda", "Agenda", "grid"],
   ["muro", "#/muro", "Muro y chat", "chat"],
   ["comunidad", "#/comunidad", "Comunidad", "users"],
-  ["itinerario", "#/itinerario", "Curso", "route"],
+  ["itinerario", "#/itinerario", "Formación", "route"],
   ["materiales", "#/materiales", "Materiales", "book", "top"],
   ["oracion", "#/oracion", "Capilla", "flame"],
 ];
@@ -233,7 +233,7 @@ function viewHome() {
 
   <div class="grid grid-4" style="margin-top:20px">
     ${tile("#/comunidad", "users", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
-    ${tile("#/itinerario", "route", "Curso", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
+    ${tile("#/itinerario", "route", "Formación", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
     ${tile("#/materiales", "book", "Materiales", c.materials.title)}
     ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}
   </div>
@@ -582,7 +582,7 @@ function viewEncounter(phaseIdx, sid) {
     ${read ? `${icon("check")} Unidad completada` : "Marcar unidad como completada"}</button>`;
 
   return `
-  <nav class="crumbs no-print"><a href="#/itinerario">Curso</a>${icon("right")}<span>Módulo ${esc(ph.phaseNum)}</span>${icon("right")}<span>Unidad ${esc(se.id)}</span></nav>
+  <nav class="crumbs no-print"><a href="#/itinerario">Formación</a>${icon("right")}<span>Módulo ${esc(ph.phaseNum)}</span>${icon("right")}<span>Unidad ${esc(se.id)}</span></nav>
   <header class="enc-head">
     <span class="eyebrow">Módulo ${esc(ph.phaseNum)} · ${esc(ph.title)}</span>
     <h1>${esc(se.title)}</h1>
@@ -707,7 +707,7 @@ function viewNotebook() {
     return units ? `<section class="nb-mod"><span class="eyebrow">Módulo ${esc(ph.phaseNum)}</span><h2 class="display">${esc(ph.title)}</h2>${units}</section>` : "";
   }).join("");
   return `
-  <nav class="crumbs no-print"><a href="#/itinerario">Curso</a>${icon("right")}<span>Mi cuaderno</span></nav>
+  <nav class="crumbs no-print"><a href="#/itinerario">Formación</a>${icon("right")}<span>Mi cuaderno</span></nav>
   <header class="page-head"><span class="eyebrow">${esc(course.title)}</span><h1>Mi cuaderno</h1>
     <p>Tus reflexiones personales a lo largo del curso${p.name ? `, ${esc(p.name.split(" ")[0])}` : ""}. Se guardan solo en este dispositivo.</p></header>
   <div class="row-wrap no-print" style="margin:8px 0 20px">
@@ -853,7 +853,7 @@ function viewCertificate() {
   const svg = qr.createSvgTag({ cellSize: 3, margin: 0, scalable: true });
 
   return `
-  <nav class="crumbs no-print" style="margin-bottom:14px"><a href="#/itinerario">Curso</a>${icon("right")}<span>Constancia</span></nav>
+  <nav class="crumbs no-print" style="margin-bottom:14px"><a href="#/itinerario">Formación</a>${icon("right")}<span>Constancia</span></nav>
   <div class="certificate">
     <img class="seal-logo" src="icons/logo-320.webp" width="96" height="96" alt="Logo Ágape Joven PJ">
     <div class="kicker">Pastoral Juvenil Ágape</div>
