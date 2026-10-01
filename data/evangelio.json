@@ -1,10 +1,60 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
+  "2026-09-30": {
+   "titulo": "Miércoles de la 26.ª semana del Tiempo Ordinario",
+   "cita": "Lc 9,57-62.",
+   "frase": "Los zorros tienen sus cuevas y las aves del cielo sus nidos, pero el Hijo del hombre no tiene dónde reclinar la cabeza."
+  },
   "2026-10-01": {
    "titulo": "Jueves de la 26.ª semana del Tiempo Ordinario",
-   "cita": "Lc 10,1-12",
-   "frase": "La cosecha es abundante, pero los trabajadores son pocos."
+   "cita": "Lc 10,1-12.",
+   "frase": "Y les dijo: \"La cosecha es abundante, pero los trabajadores son pocos."
+  },
+  "2026-10-02": {
+   "titulo": "Santos Ángeles Custodios",
+   "cita": "Mt 18,1-5.10.",
+   "frase": "¿Quién es el más grande en el Reino de los Cielos?"
+  },
+  "2026-10-03": {
+   "titulo": "Sábado de la 26.ª semana del Tiempo Ordinario",
+   "cita": "Lc 10,17-24.",
+   "frase": "Señor, hasta los demonios se nos someten en tu Nombre."
+  },
+  "2026-10-04": {
+   "titulo": "27o domingo del Tiempo Ordinario",
+   "cita": "Mt 21,33-43.",
+   "frase": "Este es el heredero: vamos a matarlo para quedarnos con su herencia."
+  },
+  "2026-10-05": {
+   "titulo": "Lunes de la 27.ª semana del Tiempo Ordinario",
+   "cita": "Lc 10,25-37.",
+   "frase": "Maestro, ¿qué tengo que hacer para heredar la Vida eterna?"
+  },
+  "2026-10-06": {
+   "titulo": "Martes de la 27.ª semana del Tiempo Ordinario",
+   "cita": "Lc 10,38-42.",
+   "frase": "Señor, ¿no te importa que mi hermana me deje sola con todo el trabajo?"
+  },
+  "2026-10-07": {
+   "titulo": "Miércoles de la 27.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,1-4.",
+   "frase": "Señor, enséñanos a orar, así como Juan enseñó a sus discípulos."
+  },
+  "2026-10-08": {
+   "titulo": "Jueves de la 27.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,5-13.",
+   "frase": "También les aseguro: pidan y se les dará, busquen y encontrarán, llamen y se les abrirá."
+  },
+  "2026-10-09": {
+   "titulo": "Viernes de la 27.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,15-26.",
+   "frase": "Este expulsa a los demonios por el poder de Belzebul, el Príncipe de los demonios."
+  },
+  "2026-10-10": {
+   "titulo": "Sábado de la 27.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,27-28.",
+   "frase": "¡Feliz el seno que te llevó y los pechos que te amamantaron!"
   }
  }
 }
