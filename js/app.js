@@ -930,6 +930,7 @@ function viewMaterials() {
       row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
       row("presentaciones/mes-de-maria.html", "flame", "Mes de María", "Con María, puente hacia Jesús · 31 días", true),
+      row("presentaciones/sacramentos.html", "sparkle", "Los Sacramentos", "Qué es un sacramento y los siete, explicados en simple", true),
     ]],
     ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
       row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),

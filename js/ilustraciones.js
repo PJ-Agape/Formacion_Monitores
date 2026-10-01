@@ -50,6 +50,7 @@ const fish = (x, y) => P(`M${x - 14} ${y} q14 -12 26 0 q-12 12 -26 0 Z M${x + 12
 const crossHill = (x, y) => P(`M${x - 70} ${y} Q${x} ${y - 50} ${x + 70} ${y}`) + P(`M${x} ${y - 36} L${x} ${y - 96} M${x - 18} ${y - 80} L${x + 18} ${y - 80}`, 'stroke-width="4"');
 const dove = (x, y) => P(`M${x - 30} ${y} q20 -4 30 -18 q6 -8 14 -6 q6 2 4 8 l8 2 l-8 4 q-6 14 -24 16 q-14 2 -24 -6 Z`, 'fill="var(--il-bg,#fff)"') + P(`M${x - 6} ${y - 4} q-4 -22 -22 -30 q12 20 4 30`, 'fill="var(--il-bg,#fff)"') + C(x + 13, y - 18, 1.2, FILL);
 const flame = (x, y, s = 1) => P(`M${x} ${y} q${-10 * s} ${-10 * s} 0 ${-24 * s} q${10 * s} ${14 * s} 0 ${24 * s} Z`, POP);
+const drop = (x, y) => P(`M${x} ${y - 6} q-5 8 0 10 q5 -2 0 -10 Z`, 'fill="#8ad2fa" stroke="currentColor" stroke-width="1.8"');
 const wave = (y) => P(`M0 ${y} q15 -8 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0`);
 const road = () => P("M20 172 C 70 150, 60 120, 110 110 S 190 90, 220 60", 'stroke-dasharray="3 9" stroke-width="3"');
 
@@ -93,6 +94,9 @@ const SCENES = {
   oracion: () => fig(110, 168, { arms: "pray", legs: "kneel", face: "calm" }) + candle(170, 168) + sparkle(60, 60, 5) + ground(),
   santos: () => [60, 100, 140, 180].map((x, i) => fig(x, 168, { arms: i % 2 ? "up" : "out", s: .85, face: i === 1 ? "calm" : "smile" }) + P(`M${x - 11} ${168 - 66 * .85 - 11} a11 4 0 1 0 22 0 a11 4 0 1 0 -22 0`, 'stroke="var(--il-pop, #ffba03)" stroke-width="3"')).join("") + sparkle(30, 50, 6) + sparkle(210, 40, 7) + sparkle(120, 28, 5) + ground(),
   flores: () => fig(90, 168, { arms: "give" }) + [0, 1, 2].map((i) => P(`M${122 + i * 14} 132 l${-4 + i * 4} -30`, 'stroke-width="2.5"') + C(118 + i * 18, 98 - (i % 2) * 8, 7, POP) + C(118 + i * 18, 98 - (i % 2) * 8, 2.5, FILL)).join("") + P("M150 168 L150 80 q0 -16 14 -16 q14 0 14 16 L178 168 Z", 'fill="var(--il-bg,#fff)"') + fig(164, 150, { arms: "pray", s: .55, face: "calm" }) + sparkle(200, 50, 6) + ground(),
+  bautismo: () => fig(150, 168, { arms: "pray", legs: "kneel", face: "calm" }) + fig(78, 168, { arms: "wave" }) + P("M96 92 q12 -18 30 -6 q-12 12 -30 6 Z", POP) + [[132, 92], [138, 102], [131, 110]].map(([x, y]) => drop(x, y)).join("") + wave(178).replace(/M0 178/, "M20 178") + sparkle(196, 70) + sparkle(60, 52, 5),
+  uncion: () => fig(172, 168, { arms: "down", legs: "sit", face: "calm", flip: -1 }) + P("M140 146 L200 146 L200 168 M140 146 L140 168", 'stroke-width="2.5"') + fig(84, 168, { arms: "give" }) + P("M104 122 l8 0 l2 10 l-12 0 Z", 'fill="var(--il-bg,#fff)"') + drop(122, 112) + heart(170, 56, 8) + sparkle(60, 60, 5) + ground(),
+  matrimonio: () => fig(96, 168, { arms: "hug" }) + fig(144, 168, { arms: "hug", flip: -1 }) + C(112, 58, 11, 'stroke="var(--il-pop, #ffba03)" stroke-width="4.5"') + C(128, 58, 11, 'stroke="currentColor" stroke-width="3"') + sparkle(70, 54, 5) + sparkle(172, 48, 6) + ground(),
   biblia: () => fig(80, 168, { arms: "hold", legs: "sit" }) + book(140, 130, 32) + sparkle(140, 70) + ground(),
 };
 // Encuentro → escena
