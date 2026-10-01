@@ -166,6 +166,19 @@ service cloud.firestore {
       allow delete: if isStaff() || (isMember() && resource.data.authorUid == request.auth.uid);
     }
 
+    // Cancionero: lo ve la comunidad con cuenta (uso interno); lo editan coordinadores y administradores.
+    match /canciones/{songId} {
+      allow read: if isMember();
+      allow create, update: if isStaff() && validText(request.resource.data.title, 120)
+        && request.resource.data.body is string && request.resource.data.body.size() <= 20000;
+      allow delete: if isStaff();
+    }
+    match /repertorios/{repId} {
+      allow read: if isMember();
+      allow create, update: if isStaff() && validText(request.resource.data.name, 120);
+      allow delete: if isStaff();
+    }
+
     // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.
     match /agenda/{eventId} {
       allow read: if true;

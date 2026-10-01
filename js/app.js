@@ -12,6 +12,7 @@ import * as chat from "./chat.js";
 import * as agenda from "./agenda.js";
 import * as portada from "./portada.js";
 import * as capilla from "./capilla.js";
+import * as cancionero from "./cancionero.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -52,6 +53,9 @@ const routes = [
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
+  [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
+  [/^\/cancionero\/misa\/([^/?]+)$/, (id) => cancionero.viewMisa(id), "oracion"],
+  [/^\/cancionero\/([^/?]+)(?:\?misa=([^&]+))?$/, (id, m) => cancionero.viewSong(id, m), "oracion"],
   [/^\/constancia$/, viewCertificate, "itinerario"],
   [/^\/perfil$/, viewProfile, "perfil"],
   [/^\/verificar\/(.+)$/, viewVerify, "verificar"],
@@ -60,6 +64,7 @@ const routes = [
 
 let lastPath = null;
 export async function render() {
+  if (!S.content()) return; // aún cargando: el arranque dibuja apenas termina
   const path = decodeURIComponent(location.hash.replace(/^#/, "")) || "/";
   let match = null, fn = viewNotFound, section = "";
   for (const [re, f, sec] of routes) {
@@ -890,6 +895,11 @@ function viewMaterials() {
       <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Revistas Camino Ágape</strong>
       <span class="muted small">Revista principal, guía de coordinación y revistas Ingreso, Madurez y Aspirante, para leer o descargar en PDF.</span></span>${icon("right")}
     </a>
+    <a class="card link camino-banner" href="#/cancionero" style="margin-top:14px">
+      <span class="tile-ico tile-brand" style="margin:0">${icon("book")}</span>
+      <span style="flex:1"><span class="eyebrow">Para animar la misa</span><strong>Cancionero Ágape</strong>
+      <span class="muted small">Canciones con acordes por momento de la misa, cambio de tono, proyección y repertorios.</span></span>${icon("right")}
+    </a>
     <div class="grid grid-2" style="margin-top:14px">
       <a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener">
         <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
@@ -1204,6 +1214,7 @@ camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
+cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

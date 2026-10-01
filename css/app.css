@@ -1628,3 +1628,51 @@ body.cap-quiet { overflow: hidden; }
 }
 .cap-vela-guest > div { min-width: 200px; }
 .cap-overlay .cap-candle.lit .glow { fill: #ffd25e; }
+
+/* ===================== Cancionero ===================== */
+.card.link.cap-sing { display: flex; gap: 16px; align-items: center; background: #ffba03; }
+.cap-sing strong { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; }
+.cap-notes { font-size: 2rem; font-weight: 800; color: #0b2566; }
+.can-tools { display: grid; gap: 10px; margin: 14px 0; }
+.can-chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.can-chips .chip { cursor: pointer; }
+.can-chips label.chip { display: inline-flex; gap: 6px; align-items: center; }
+.can-list, .can-misas { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 12px; }
+.card.link.can-item, .card.link.can-misa { display: flex; gap: 14px; align-items: center; }
+.can-key, .can-date { flex: 0 0 52px; height: 52px; border-radius: 14px; border: 2px solid #0b2566; background: #8ad2fa; display: grid; place-items: center;
+  font-family: var(--font-display); font-weight: 800; font-size: 1.15rem; box-shadow: 2px 2px 0 #0b2566; text-align: center; line-height: 1; }
+.can-date { background: #ffba03; } .can-date small { display: block; font-size: .7rem; text-transform: uppercase; font-weight: 800; }
+.can-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 3px; }
+.can-main strong { font-size: 1.05rem; }
+.can-moms { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.can-moms .chip { font-size: .7rem; padding: 2px 8px; }
+.can-head { margin: 8px 0 12px; }
+.can-head h1 { font-family: var(--font-display); font-weight: 800; font-stretch: 80%; letter-spacing: -0.03em; font-size: clamp(2rem, 6vw, 3.2rem); line-height: 1; margin: 4px 0; }
+.can-bar { position: sticky; top: 64px; z-index: 4; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 0; background: linear-gradient(#fff6e5 80%, transparent); }
+.can-grp { display: inline-flex; align-items: center; gap: 6px; background: #fff; border: 2px solid #0b2566; border-radius: 999px; padding: 3px; }
+.can-grp .icon-btn { width: 34px; height: 34px; font-weight: 800; }
+.can-tono { padding: 0 6px; font-size: .9rem; } .can-tono b { font-size: 1.05rem; }
+.can-sheet { --can-size: 1; font-size: calc(1.08rem * var(--can-size)); line-height: 1.35; padding: 22px 22px 26px; overflow-x: auto; }
+.can-line { white-space: pre-wrap; margin: 2px 0; }
+.can-line.has-ch { white-space: normal; display: flex; flex-wrap: wrap; align-items: flex-end; margin: 6px 0 2px; }
+.can-seg { display: inline-flex; flex-direction: column; white-space: pre; }
+.can-ch { color: #ef591c; font-weight: 800; font-size: .86em; line-height: 1.1; padding-right: .35em; min-height: 1.1em; }
+.can-sec { font-family: var(--font-hand); font-weight: 700; color: #1351a4; font-size: 1.35em; margin-top: 10px; }
+.can-gap { height: .8em; }
+.can-setlist { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; counter-reset: c; }
+.can-setlist li { display: flex; gap: 12px; align-items: center; background: #fff; border: 2px solid #0b2566; border-radius: 16px; padding: 10px 14px; box-shadow: 3px 3px 0 #0b2566; }
+.can-setlist a { text-decoration: none; color: inherit; flex: 1; }
+.can-slot { flex: 0 0 120px; font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.25rem; line-height: 1; }
+.can-slots { display: grid; grid-template-columns: repeat(auto-fill, minmax(220px, 1fr)); gap: 10px; }
+.can-ta { font-family: ui-monospace, SFMono-Regular, Menlo, monospace; font-size: .92rem; }
+.can-proj { position: fixed; inset: 0; z-index: 110; background: #0b2566; color: #fff6e5; display: grid; grid-template-rows: 1fr auto; text-align: center; }
+.can-proj-in { display: flex; flex-direction: column; justify-content: center; align-items: center; padding: 4vh 6vw; gap: 2vh; }
+.can-proj-mom { font-family: var(--font-hand); font-weight: 700; color: #ffba03; font-size: clamp(1.4rem, 3.4vw, 2.6rem); }
+.can-proj-title { font-family: var(--font-display); font-weight: 800; font-stretch: 80%; font-size: clamp(2.6rem, 8vw, 6rem); line-height: .95; letter-spacing: -0.03em; }
+.can-proj-sub { opacity: .75; font-size: clamp(1rem, 2vw, 1.4rem); }
+.can-proj-txt { font-family: var(--font-display); font-weight: 700; font-size: clamp(1.6rem, 4.6vw, 3.6rem); line-height: 1.3; }
+.can-proj-ctrl { display: flex; gap: 12px; align-items: center; justify-content: center; padding: 14px; opacity: .55; transition: opacity .2s; }
+.can-proj-ctrl:hover, .can-proj-ctrl:focus-within { opacity: 1; }
+.can-proj-ctrl .icon-btn { background: #fff6e5; color: #0b2566; }
+@media print { .can-bar, .can-tools { display: none !important; } .can-sheet { border: 0; box-shadow: none; } }
+@media (max-width: 640px) { .can-slot { flex-basis: 92px; font-size: 1.1rem; } .can-bar { top: 58px; } }

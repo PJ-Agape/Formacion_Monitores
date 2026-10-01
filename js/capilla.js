@@ -133,7 +133,7 @@ export function view() {
     ctx.onLeave(stop);
     paintVelas();
   });
-  const rincones = [["silencio", "Silencio"], ["velas", "Velas"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"]];
+  const rincones = [["silencio", "Silencio"], ["velas", "Velas"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"]];
   return `
   <section class="cap-hero" style="--season:${s.hex}">
     <div class="cap-arch">
@@ -246,6 +246,15 @@ export function view() {
         ${c.type === "list" ? `<ol class="cap-steps">${(c.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol>`
           : `<p class="cap-prayer">${rich(String(c.text || "").replace(/^«|»$/g, "")).replace(/\n/g, "<br>")}</p>`}
       </article>`).join("")}</div>
+  </section>
+
+  <section class="cap-room" id="cap-cantar">
+    <div class="cap-room-head"><span class="cap-num">07</span><h2>Cantar es rezar <em>dos veces</em></h2></div>
+    <a class="card link cap-sing" href="#/cancionero">
+      <span class="cap-notes" aria-hidden="true">♪ ♫</span>
+      <span style="flex:1"><strong>Cancionero Ágape</strong>
+      <span class="muted small">Canciones con acordes para cada momento de la misa, en el tono que necesites, y los repertorios de cada celebración.</span></span>${icon("right")}
+    </a>
   </section>
 
   <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`;

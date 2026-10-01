@@ -454,3 +454,22 @@ export async function lightVela(text) {
 }
 export const prayVela = (id, on) => toggleMark(["velas", id], "prays", on);
 export const deleteVela = (id) => fb.deleteDoc(fb.doc(db, "velas", id));
+
+// ---------------------------------------------------------------------------
+// Cancionero: canciones y repertorios (los ven quienes tienen cuenta; los edita el equipo).
+// ---------------------------------------------------------------------------
+const watchCol = (name) => (cb, onErr) => {
+  if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
+  return fb.onSnapshot(fb.collection(db, name), (qs) => cb(snapRows(qs)), (e) => { console.warn(name + ":", e); onErr && onErr(e); });
+};
+const saveIn = (name) => async (id, data) => {
+  const ref = id ? fb.doc(db, name, id) : fb.doc(fb.collection(db, name));
+  await fb.setDoc(ref, { ...data, updatedBy: account.email, updatedAt: fb.serverTimestamp() });
+  return ref.id;
+};
+export const watchCanciones = watchCol("canciones");
+export const saveCancion = saveIn("canciones");
+export const deleteCancion = (id) => fb.deleteDoc(fb.doc(db, "canciones", id));
+export const watchRepertorios = watchCol("repertorios");
+export const saveRepertorio = saveIn("repertorios");
+export const deleteRepertorio = (id) => fb.deleteDoc(fb.doc(db, "repertorios", id));
