@@ -53,6 +53,7 @@ function coordShell(body) {
     <nav class="admin-side" aria-label="Gestión">
       <a href="#/admin/portada" aria-current="page">${icon("sparkle")} Portada</a>
       <a href="#/agenda">${icon("grid")} Agenda</a>
+      <a href="#/acompanar">${icon("check")} Acompañar</a>
       <a href="#/muro">${icon("chat")} Muro y chat</a>
       <div class="side-extra"><a href="#/">${icon("out")} Salir de Gestión</a></div>
     </nav>
@@ -73,6 +74,7 @@ function shell(page, body) {
       ${link("resumen", "#/admin", "Resumen", "grid")}
       ${cloudOn ? link("dirigentes", "#/admin/dirigentes", "Dirigentes", "users") : ""}
       ${cloudOn ? link("portada", "#/admin/portada", "Portada", "sparkle") : ""}
+      ${cloudOn ? `<a href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
       ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
       ${link("materiales", "#/admin/materiales", "Materiales", "book")}
       ${link("oracion", "#/admin/oracion", "Oración", "flame")}

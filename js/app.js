@@ -14,6 +14,9 @@ import * as portada from "./portada.js";
 import * as capilla from "./capilla.js";
 import * as cancionero from "./cancionero.js";
 import * as AV from "./avatares.js";
+import * as dinamicas from "./dinamicas.js";
+import * as acompanar from "./acompanar.js";
+import * as desafio from "./desafio.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -57,6 +60,12 @@ const routes = [
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
+  [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
+  [/^\/acompanar$/, () => acompanar.viewMain(), "comunidad"],
+  [/^\/acompanar\/(asistencia|jovenes|honor)$/, (t) => acompanar.viewMain(t), "comunidad"],
+  [/^\/acompanar\/joven\/([^/?]+)$/, (id) => acompanar.viewJoven(id), "comunidad"],
+  [/^\/pasaporte$/, () => acompanar.viewMine(), "perfil"],
+  [/^\/dinamicas\/([^/?]+)$/, (id) => dinamicas.viewOne(id), "materiales"],
   [/^\/cancionero\/misa\/([^/?]+)$/, (id) => cancionero.viewMisa(id), "oracion"],
   [/^\/cancionero\/([^/?]+)(?:\?misa=([^&]+))?$/, (id, m) => cancionero.viewSong(id, m), "oracion"],
   [/^\/constancia$/, viewCertificate, "itinerario"],
@@ -177,7 +186,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => { wall.homeHighlight(); agenda.homeNext(); });
+  onAfterRender(() => { wall.homeHighlight(); agenda.homeNext(); acompanar.homeCards(); desafio.homeCard(); });
   const c = S.content();
   const course = S.activeCourse();
   const st = S.courseState(course);
@@ -241,6 +250,16 @@ function viewHome() {
     <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
     <span class="muted small">Revista principal, guía de coordinación y revistas de cada etapa.</span></span>${icon("right")}
   </a>
+  ${cloud.enabled && cloud.state().isGuide ? `<a class="card link camino-banner" href="#/acompanar" style="margin-top:16px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("check")}</span>
+    <span style="flex:1"><span class="eyebrow">Para los guías</span><strong>Acompañar</strong>
+    <span class="muted small">Pasa lista, mira quién necesita un llamado y entrega sellos del pasaporte.</span></span>${icon("right")}</a>`
+    : cloud.enabled && cloud.state().ready ? `<a class="card link camino-banner" href="#/pasaporte" style="margin-top:16px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("award")}</span>
+    <span style="flex:1"><span class="eyebrow">Mi camino en Ágape</span><strong>Mi pasaporte</strong>
+    <span class="muted small">Tus encuentros, tu racha y los sellos que vas ganando.</span></span>${icon("right")}</a>` : ""}
+  <div id="desafioSlot"></div>
+  <div id="acHomeSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
   <div id="wallSlot"></div>
   <div id="installSlot"></div>
@@ -915,7 +934,8 @@ function viewMaterials() {
     ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
       row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),
     ]],
-    ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", guides.map(guide)],
+    ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
+      row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
       `<a class="fi-row" href="presentaciones/mes-de-maria.pdf" download><span class="fi-ico">${icon("dl")}</span><span class="fi-txt"><b>Mes de María en PDF</b><small>Tamaño carta, una página por día</small></span>${icon("dl")}</a>`,
       row("#/encuentros", "print", "Revistas Camino Ágape", "Se imprimen completas o solo el encuentro de la semana"),
@@ -1204,6 +1224,10 @@ function viewAccount() {
       <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
     </form>
     <section class="card av-card" id="avCard">${avPicker()}</section>
+    <div class="row-wrap" style="justify-content:center;margin-top:14px">
+      <a class="btn btn-soft" href="#/pasaporte">${icon("award")} Mi pasaporte</a>
+      ${st.isGuide ? `<a class="btn btn-soft" href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
+    </div>
     <div class="row-wrap" style="justify-content:center;margin-top:16px">
       ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>` : ""}
       <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
@@ -1312,6 +1336,9 @@ chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+desafio.setup({ actions, render: () => render(), cloud });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

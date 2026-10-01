@@ -39,6 +39,8 @@ export function state() {
     isAdmin: !!(account && account.active !== false && account.role === "admin"),
     // Equipo: administradores y coordinadores (moderan muro y chat, editan Agenda y Portada)
     isStaff: !!(account && account.active !== false && STAFF.includes(account.role)),
+    // Guías: quienes acompañan a los jóvenes (equipo + dirigentes).
+    isGuide: !!(account && account.active !== false && ["admin", "coordinador", "dirigente"].includes(account.role)),
     role: account ? account.role : "",
     ready: status === "ready",
   };
@@ -342,14 +344,17 @@ export async function latestWall() {
 function author() {
   return { authorUid: user.uid, authorName: shortName(account.name), authorRole: account.role, authorAvatar: account.avatar || "" };
 }
-export async function createPost({ type, title, body, pinned }) {
+export async function createPost({ type, title, body, pinned, options }) {
   const ref = fb.doc(wallCol());
-  await fb.setDoc(ref, {
+  const data = {
     type, title, body, ...author(), pinned: !!pinned, closed: false, hidden: false,
     likes: {}, reports: {}, replyCount: 0, createdAt: fb.serverTimestamp(), lastActivity: fb.serverTimestamp(),
-  });
+  };
+  if (type === "encuesta") { data.options = options; data.votes = {}; }
+  await fb.setDoc(ref, data);
   return ref.id;
 }
+export const votePoll = (pid, i) => fb.updateDoc(fb.doc(db, "wall", pid), { [`votes.${user.uid}`]: i });
 export const updatePost = (pid, data) => fb.updateDoc(fb.doc(db, "wall", pid), data);
 // Al borrar una publicación se borran también sus respuestas.
 export async function deletePost(pid) {
@@ -573,4 +578,48 @@ export async function getArchivo() {
 }
 export async function saveArchivo(data) {
   await fb.setDoc(fb.doc(db, "content", "archivo"), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
+}
+
+// ---------------------------------------------------------------------------
+// Banco de dinámicas (lo ven quienes tienen cuenta; lo alimentan los guías).
+// ---------------------------------------------------------------------------
+export const watchDinamicas = watchCol("dinamicas");
+export const saveDinamica = saveIn("dinamicas");
+export const deleteDinamica = (id) => fb.deleteDoc(fb.doc(db, "dinamicas", id));
+
+// ---------------------------------------------------------------------------
+// Acompañamiento: jóvenes, sesiones (asistencia), cumpleaños y cuadro de honor.
+// Los jóvenes no necesitan cuenta; si la tienen, el equipo la vincula para que vean su pasaporte.
+// ---------------------------------------------------------------------------
+export const watchJovenes = watchCol("jovenes");
+export const watchSesiones = watchCol("sesiones");
+export const saveJoven = saveIn("jovenes");
+export const patchJoven = (id, data) => fb.updateDoc(fb.doc(db, "jovenes", id), data);
+export const deleteJoven = (id) => fb.deleteDoc(fb.doc(db, "jovenes", id));
+export const saveSesion = (fecha, data) => fb.setDoc(fb.doc(db, "sesiones", fecha), { ...data, by: account.email, at: fb.serverTimestamp() });
+export const deleteSesion = (fecha) => fb.deleteDoc(fb.doc(db, "sesiones", fecha));
+export async function myJoven() {
+  if (!enabled || !db || !user) return null;
+  try { const qs = await withTimeout(fb.getDocs(fb.query(fb.collection(db, "jovenes"), fb.where("uid", "==", user.uid))), 6000); return snapRows(qs)[0] || null; }
+  catch { return null; }
+}
+async function getContent(name) {
+  if (!enabled || !db) return null;
+  try { const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", name)), 6000); return snap.exists() ? safeJSON(snap.data().json, null) : null; } catch { return null; }
+}
+const setContent = (name, data) => fb.setDoc(fb.doc(db, "content", name), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
+export const getCumples = () => getContent("cumples");
+export const saveCumples = (d) => setContent("cumples", d);
+export const getHonor = () => getContent("honor");
+export const saveHonor = (d) => setContent("honor", d);
+export const getDesafio = () => getContent("desafio");
+export const saveDesafio = (d) => setContent("desafio", d);
+// Desafío de la semana: quién lo cumplió (cada uno marca el suyo).
+export async function listDesafio(key) {
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "desafios", key, "hechos")), 6000)); } catch { return []; }
+}
+export async function markDesafio(key, on) {
+  const ref = fb.doc(db, "desafios", key, "hechos", user.uid);
+  if (on) await fb.setDoc(ref, { n: shortName(account.name), a: account.avatar || "", at: fb.serverTimestamp() });
+  else await fb.deleteDoc(ref);
 }

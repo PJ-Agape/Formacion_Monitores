@@ -17,6 +17,8 @@ service cloud.firestore {
     function isAdmin() { return isMember() && me().role == 'admin'; }
     // Equipo: administradores y coordinadores (Agenda, Portada y moderación de muro y chat).
     function isStaff() { return isMember() && me().role in ['admin', 'coordinador']; }
+    // Guías: quienes acompañan a los jóvenes (equipo y dirigentes).
+    function isGuide() { return isMember() && me().role in ['admin', 'coordinador', 'dirigente']; }
     function validRole(r) { return r in ['admin', 'coordinador', 'dirigente', 'aspirante']; }
     // Cuentas protegidas: siempre administradoras y activas.
     function protectedEmail(e) { return e in ['iperezconus84@gmail.com']; }
@@ -30,6 +32,10 @@ service cloud.firestore {
     match /content/portada {
       allow write: if isStaff();
     }
+    // Cuadro de honor y desafío de la semana: los publica el equipo. Cumpleaños: los actualizan los guías.
+    match /content/honor { allow write: if isStaff(); }
+    match /content/desafio { allow write: if isStaff(); }
+    match /content/cumples { allow write: if isGuide(); }
 
     // Invitaciones: el documento se llama como el correo invitado (en minúsculas).
     match /invites/{email} {
@@ -103,7 +109,9 @@ service cloud.firestore {
       allow read: if resource.data.hidden == false || isStaff();
       allow create: if isMember() && asAuthor(request.resource.data)
         && validText(request.resource.data.title, 140) && request.resource.data.body is string && request.resource.data.body.size() <= 4000
-        && request.resource.data.type in ['anuncio', 'tema', 'pregunta', 'logro']
+        && request.resource.data.type in ['anuncio', 'tema', 'pregunta', 'logro', 'encuesta']
+        && (request.resource.data.type != 'encuesta' || (request.resource.data.options is list
+            && request.resource.data.options.size() >= 2 && request.resource.data.options.size() <= 6 && request.resource.data.votes.size() == 0))
         && (isStaff() || (request.resource.data.type == 'pregunta' && request.resource.data.pinned == false)
           // Felicitación automática: solo por una constancia propia, una por constancia.
           || (request.resource.data.type == 'logro' && request.resource.data.pinned == false
@@ -114,6 +122,12 @@ service cloud.firestore {
       allow update: if isStaff()
         || (isMember() && resource.data.hidden == false && (
           markUpdate()
+          // votar en una encuesta: cada uno su propio voto, mientras esté abierta
+          || (resource.data.type == 'encuesta' && resource.data.closed == false && changed().hasOnly(['votes'])
+              && request.resource.data.votes.diff(resource.data.votes).affectedKeys().hasOnly([request.auth.uid])
+              && (!(request.auth.uid in request.resource.data.votes)
+                  || (request.resource.data.votes[request.auth.uid] is int && request.resource.data.votes[request.auth.uid] >= 0
+                      && request.resource.data.votes[request.auth.uid] < resource.data.options.size())))
           // al responder o borrar una respuesta se actualiza el contador
           || (changed().hasOnly(['replyCount', 'lastActivity'])
               && (request.resource.data.replyCount - resource.data.replyCount) in [1, -1]
@@ -227,6 +241,40 @@ service cloud.firestore {
         && uid == request.auth.uid && request.resource.data.at == request.time
         && request.resource.data.keys().hasOnly(['name', 'avatar', 'role', 'at']);
       allow delete: if (signedIn() && uid == request.auth.uid) || isStaff();
+    }
+
+    // Banco de dinámicas: lo ve la comunidad con cuenta; lo alimentan los guías.
+    match /dinamicas/{id} {
+      allow read: if isMember();
+      allow create, update: if isGuide() && validText(request.resource.data.title, 80)
+        && request.resource.data.pasos is string && request.resource.data.pasos.size() <= 4000;
+      allow delete: if isStaff() || (isGuide() && resource.data.authorUid == request.auth.uid);
+    }
+
+    // Acompañamiento: lista de jóvenes y asistencia. Solo los guías; cada joven con cuenta ve su pasaporte
+    // y puede cambiar su lema, el color de portada y su avatar. Vincular cuentas es del equipo.
+    match /jovenes/{id} {
+      allow read: if isGuide() || (signedIn() && resource.data.uid == request.auth.uid);
+      allow create: if isGuide() && validText(request.resource.data.nombre, 80)
+        && request.resource.data.etapa in ['ingreso', 'madurez', 'aspirante', 'equipo']
+        && (isStaff() || request.resource.data.get('uid', '') == '');
+      allow update: if (isGuide() && validText(request.resource.data.nombre, 80)
+          && request.resource.data.etapa in ['ingreso', 'madurez', 'aspirante', 'equipo']
+          && (isStaff() || request.resource.data.get('uid', '') == resource.data.get('uid', '')))
+        || (signedIn() && resource.data.uid == request.auth.uid && changed().hasOnly(['lema', 'portada', 'avatar'])
+          && request.resource.data.get('lema', '') is string && request.resource.data.get('lema', '').size() <= 60);
+      allow delete: if isStaff();
+    }
+    match /sesiones/{fecha} {
+      allow read, create, update: if isGuide();
+      allow delete: if isStaff();
+    }
+
+    // Desafío de la semana: cada uno marca que lo cumplió.
+    match /desafios/{key}/hechos/{uid} {
+      allow read: if isMember();
+      allow create, update: if isMember() && uid == request.auth.uid && request.resource.data.keys().hasOnly(['n', 'a', 'at']);
+      allow delete: if isMember() && uid == request.auth.uid;
     }
 
     // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.

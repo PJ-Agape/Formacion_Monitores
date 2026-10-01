@@ -15,9 +15,10 @@ const TYPES = {
   tema: { label: "Tema", chip: "accent", icon: "chat" },
   pregunta: { label: "Pregunta", chip: "ok", icon: "search" },
   logro: { label: "Logro", chip: "ok", icon: "award" },
+  encuesta: { label: "Encuesta", chip: "accent", icon: "grid" },
 };
 const isNews = (p) => p.type === "anuncio" || p.type === "logro";
-const FILTERS = [["todo", "Todo"], ["anuncio", "Anuncios"], ["tema", "Temas"], ["pregunta", "Preguntas"]];
+const FILTERS = [["todo", "Todo"], ["anuncio", "Anuncios"], ["encuesta", "Encuestas"], ["tema", "Temas"], ["pregunta", "Preguntas"]];
 let filter = "todo";
 let posts = null, loadError = false, flagged = null;
 
@@ -124,9 +125,14 @@ export function viewWall() {
   <form class="card wall-compose" id="wallCompose" style="margin-top:16px">
     <div class="row-wrap" style="gap:8px">
       ${canTopic ? `<div class="seg" role="radiogroup" aria-label="Tipo de publicación">
-        ${["anuncio", "tema", "pregunta"].map((t, i) => `<label><input type="radio" name="type" value="${t}" ${i === 1 ? "checked" : ""}><span>${TYPES[t].label}</span></label>`).join("")}
+        ${["anuncio", "tema", "pregunta", "encuesta"].map((t, i) => `<label><input type="radio" name="type" value="${t}" ${i === 1 ? "checked" : ""}><span>${TYPES[t].label}</span></label>`).join("")}
       </div>` : `<input type="hidden" name="type" value="pregunta"><strong>Propón una pregunta o un tema</strong>`}
     </div>
+    ${canTopic ? `<div class="poll-opts" id="pollOpts" hidden>
+      <span class="xs muted">Opciones (de 2 a 6). El título es la pregunta de la encuesta.</span>
+      ${[1, 2, 3].map((n) => `<input class="input" name="opt" maxlength="80" placeholder="Opción ${n}">`).join("")}
+      <button type="button" class="btn btn-sm btn-ghost" data-action="pollAddOpt">${icon("plus")} Agregar opción</button>
+    </div>` : ""}
     <input class="input" name="title" maxlength="140" required placeholder="${canTopic ? "Título" : "¿Qué te gustaría preguntar o conversar?"}" autocomplete="off">
     <textarea class="textarea" name="body" maxlength="4000" placeholder="Cuéntanos un poco más (opcional)"></textarea>
     <div class="row-wrap">
@@ -169,6 +175,24 @@ function paintList() {
   box.innerHTML = list.map(postCard).join("");
 }
 
+// ---------- Encuestas ----------
+function pollHTML(p) {
+  const opts = p.options || [], votes = p.votes || {}, me = ctx.cloud.myUid();
+  const counts = opts.map((_, i) => Object.values(votes).filter((v) => v === i).length);
+  const total = counts.reduce((a, b) => a + b, 0), mine = me in votes ? votes[me] : -1;
+  const showRes = mine >= 0 || p.closed || !st().ready;
+  return `<div class="poll" role="group" aria-label="Encuesta">
+    ${opts.map((o, i) => {
+      const pct = total ? Math.round((counts[i] / total) * 100) : 0;
+      return showRes
+        ? `<button class="poll-o res ${mine === i ? "mine" : ""}" ${p.closed || !st().ready ? "disabled" : ""} data-action="pollVote" data-pid="${esc(p.id)}" data-i="${i}">
+            <i style="width:${pct}%"></i><span>${mine === i ? "✓ " : ""}${esc(o)}</span><b>${pct}%</b></button>`
+        : `<button class="poll-o" data-action="pollVote" data-pid="${esc(p.id)}" data-i="${i}"><span>${esc(o)}</span></button>`;
+    }).join("")}
+    <span class="xs muted">${total} voto${total === 1 ? "" : "s"}${p.closed ? " · encuesta cerrada" : mine >= 0 ? " · puedes cambiar tu voto" : st().ready ? " · toca una opción para votar" : ""}</span>
+  </div>`;
+}
+
 function logroCard(p) {
   return `<article class="card wall-post logro ${p.hidden ? "is-hidden" : ""}">
     <div class="wall-head"><span class="chip ok">${icon("award")} Logro</span>${modBadges(p)}<span class="spacer"></span>${menu(p, "post", p.id)}</div>
@@ -198,6 +222,7 @@ function postCard(p) {
     </div>
     ${talk ? `<a class="wall-title" href="#/muro/${encodeURIComponent(p.id)}"><h3>${esc(p.title)}</h3></a>` : `<h3 class="wall-title">${esc(p.title)}</h3>`}
     ${p.body ? `<div class="wall-body"><p>${text(talk ? excerpt : p.body)}</p></div>` : ""}
+    ${p.type === "encuesta" ? pollHTML(p) : ""}
     <div class="wall-foot">
       ${byline(p)}<span class="spacer"></span>
       ${st().ready ? likeBtn(p, `wall/${p.id}`) : count(p.likes) ? `<span class="wall-like static">${heart()} ${count(p.likes)}</span>` : ""}
@@ -241,6 +266,7 @@ function paintPost() {
     </div>
     <h1 class="wall-h1">${esc(p.title)}</h1>
     ${p.body ? `<div class="wall-body"><p>${text(p.body)}</p></div>` : ""}
+    ${p.type === "encuesta" ? pollHTML(p) : ""}
     <div class="wall-foot">${byline(p)}<span class="spacer"></span>${st().ready ? likeBtn(p, `wall/${p.id}`) : ""}</div>
   </article>
 
@@ -356,6 +382,21 @@ function registerActions() {
     form.querySelector("textarea, input").focus();
   };
   A.wallEditCancel = () => ctx.render();
+  A.pollAddOpt = () => {
+    const box = $("#pollOpts"), n = box.querySelectorAll("input[name=opt]").length;
+    if (n >= 6) { toast("Máximo 6 opciones", ""); return; }
+    box.querySelector("[data-action=pollAddOpt]").insertAdjacentHTML("beforebegin", `<input class="input" name="opt" maxlength="80" placeholder="Opción ${n + 1}">`);
+  };
+  A.pollVote = (el) => {
+    if (!need()) return;
+    ctx.cloud.votePoll(el.dataset.pid, +el.dataset.i).catch(fail);
+  };
+  document.addEventListener("change", (e) => {
+    if (e.target.name === "type" && e.target.closest("#wallCompose")) {
+      const box = $("#pollOpts"); if (box) box.hidden = e.target.value !== "encuesta";
+      const t = e.target.form.querySelector("[name=title]"); if (t) t.placeholder = e.target.value === "encuesta" ? "¿Cuál es la pregunta?" : "Título";
+    }
+  });
 
   document.addEventListener("submit", async (e) => {
     const f = e.target;
@@ -367,8 +408,11 @@ function registerActions() {
       if (!title) return;
       const btn = f.querySelector("[type=submit]"); btn.disabled = true;
       try {
-        await ctx.cloud.createPost({ type: String(d.get("type") || "pregunta"), title, body: String(d.get("body") || "").trim(), pinned: !!d.get("pinned") && st().isStaff });
-        f.reset(); toast("Publicado en el muro");
+        const type = String(d.get("type") || "pregunta");
+        const options = type === "encuesta" ? d.getAll("opt").map((x) => String(x).trim()).filter(Boolean).slice(0, 6) : null;
+        if (type === "encuesta" && options.length < 2) { toast("Una encuesta necesita al menos 2 opciones", ""); btn.disabled = false; return; }
+        await ctx.cloud.createPost({ type, title, body: String(d.get("body") || "").trim(), pinned: !!d.get("pinned") && st().isStaff, options });
+        f.reset(); const po = $("#pollOpts"); if (po) po.hidden = true; toast("Publicado en el muro");
       } catch (err) { fail(err); }
       btn.disabled = false;
     }
