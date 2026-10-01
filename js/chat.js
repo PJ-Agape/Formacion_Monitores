@@ -3,12 +3,15 @@
 
 import { esc, icon, toast, initials } from "./util.js";
 import { illus } from "./ilustraciones.js";
+import { avatar } from "./avatares.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
 const $ = (s, r = document) => r.querySelector(s);
 const st = () => ctx.cloud.state();
-let msgs = null, current = null;
+let msgs = null, current = null, online = [], replyTo = null, openedAt = 0;
+const seenBuzz = new Set();
+const ONLINE_MS = 150000; // se considera en línea si dio señales en los últimos 2,5 minutos
 const SALA_ILLUS = { general: "comunidad", coordinacion: "mesa", dirigentes: "equipo", aspirantes: "camino" };
 const SALA_COLOR = { general: "#8ad2fa", coordinacion: "#ffba03", dirigentes: "#1351a4", aspirantes: "#ef591c" };
 
@@ -79,11 +82,15 @@ export function viewRoom(key) {
       <p class="muted" style="margin-top:8px">Si crees que deberías estar, pídelo al equipo coordinador.</p>
       <a class="btn btn-primary" style="margin-top:14px" href="#/chat">Ver mis salas</a></div>`;
   }
-  if (current !== key) { current = key; msgs = null; }
+  if (current !== key) { current = key; msgs = null; online = []; replyTo = null; seenBuzz.clear(); }
   if (!g) ctx.onAfterRender(() => {
-    const stop = ctx.cloud.watchChat(key, (rows) => { msgs = rows; paint(); }, () => { msgs = msgs || []; paint(true); });
-    ctx.onLeave(stop);
-    paint();
+    openedAt = Date.now();
+    const stop = ctx.cloud.watchChat(key, (rows) => { msgs = rows; checkBuzz(); paint(); }, () => { msgs = msgs || []; paint(true); });
+    const stopP = ctx.cloud.watchPresence(key, (rows) => { online = rows; paintOnline(); });
+    const leave = ctx.cloud.joinRoom(key);
+    const tick = setInterval(paintOnline, 30000);
+    ctx.onLeave(() => { stop(); stopP(); leave(); clearInterval(tick); });
+    paint(); paintOnline(); paintReply();
     $("#chatText")?.focus({ preventScroll: true });
   });
   return `
@@ -92,8 +99,10 @@ export function viewRoom(key) {
     <span class="chat-head-dot"></span>
     <div style="flex:1;min-width:0"><h1>${esc(sala.name)}</h1><span class="xs muted">${esc(sala.desc)}</span></div>
   </div>
+  ${g ? "" : `<div class="chat-online" id="chatOnline" aria-label="En línea en esta sala"></div>`}
   ${g || `<div class="chat-box card">
     <div class="chat-list" id="chatList" aria-live="polite"><div class="muted small" style="text-align:center;padding:30px">Cargando…</div></div>
+    <div class="chat-replybar" id="chatReply" hidden></div>
     <form class="chat-compose" id="chatForm" data-sala="${esc(key)}">
       <textarea id="chatText" class="textarea" rows="1" maxlength="1500" placeholder="Escribe un mensaje…" aria-label="Mensaje"></textarea>
       <button class="btn btn-primary" type="submit" aria-label="Enviar">${icon("send")}</button>
@@ -114,30 +123,105 @@ function paint(err) {
     return;
   }
   let lastDay = "", lastAuthor = "";
+  const onl = onlineNow();
   box.innerHTML = msgs.map((m) => {
     const day = dayOf(m.createdAt);
     const sep = day !== lastDay ? `<div class="chat-day"><span>${esc(day)}</span></div>` : "";
     if (sep) lastAuthor = "";
     lastDay = day;
+    if (m.kind === "buzz") {
+      lastAuthor = "";
+      return `${sep}<div class="chat-sys" id="msg-${esc(m.id)}"><span>📳 <b>${esc(m.authorName)}</b> ${esc(m.text)}</span>
+        ${m.authorUid === me || admin ? `<button class="chat-sys-x" data-action="chatDelete" data-id="${esc(m.id)}" aria-label="Borrar">${icon("x")}</button>` : ""}</div>`;
+    }
     const mine = m.authorUid === me;
     const cont = lastAuthor === m.authorUid;
     lastAuthor = m.authorUid;
+    const staff = ctx.cloud.isStaffRole(m.authorRole);
     const reps = Object.keys(m.reports || {}).length;
     const myRep = !!(m.reports && m.reports[me]);
-    const opts = [];
+    const reacts = Object.values(m.reactions || {}).reduce((o, e) => ((o[e] = (o[e] || 0) + 1), o), {});
+    const myReact = (m.reactions || {})[me] || "";
+    const opts = [`<div class="chat-react-row" role="group" aria-label="Reaccionar">${ctx.cloud.REACTIONS.map((e) => `<button class="${myReact === e ? "on" : ""}" data-action="chatReact" data-id="${esc(m.id)}" data-e="${e}" aria-label="Reaccionar ${e}">${e}</button>`).join("")}</div>`,
+      `<button data-action="chatReply" data-id="${esc(m.id)}">${icon("undo")} Responder</button>`];
+    if (!mine && onl.some((p) => p.id === m.authorUid)) opts.push(`<button data-action="chatBuzz" data-uid="${esc(m.authorUid)}" data-name="${esc(m.authorName)}">📳 Enviar zumbido</button>`);
     if (mine || admin) opts.push(`<button data-action="chatDelete" data-id="${esc(m.id)}">${icon("trash")} Borrar</button>`);
     if (!mine) opts.push(`<button data-action="chatReport" data-id="${esc(m.id)}" data-on="${myRep ? 0 : 1}">${icon("x")} ${myRep ? "Quitar mi reporte" : "Reportar"}</button>`);
-    return `${sep}<div class="chat-msg ${mine ? "mine" : ""} ${cont ? "cont" : ""}">
-      ${!mine && !cont ? `<span class="avatar ${ctx.cloud.isStaffRole(m.authorRole) ? "staff" : ""}">${esc(initials(m.authorName))}</span>` : `<span class="avatar-space"></span>`}
-      <div class="chat-bubble">
-        ${!mine && !cont ? `<b class="chat-name">${esc(m.authorName)}${ctx.cloud.isStaffRole(m.authorRole) ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}</b>` : ""}
-        <div class="chat-text">${linkify(m.text)}</div>
-        <span class="chat-meta">${when(m.createdAt)}${admin && reps ? ` · <span class="chip danger xs-chip">Reportado ${reps}</span>` : ""}</span>
+    return `${sep}<div class="chat-msg ${mine ? "mine" : ""} ${cont ? "cont" : ""}" id="msg-${esc(m.id)}">
+      ${!mine && !cont ? avatar(m.authorAvatar, m.authorName, staff ? "staff" : "") : `<span class="avatar-space"></span>`}
+      <div class="chat-col">
+        <div class="chat-bubble">
+          ${!mine && !cont ? `<b class="chat-name">${esc(m.authorName)}${staff ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}</b>` : ""}
+          ${m.replyTo ? `<button class="chat-quote" data-action="chatJump" data-id="${esc(m.replyTo.id)}"><b>${esc(m.replyTo.name)}</b><span>${esc(m.replyTo.text)}</span></button>` : ""}
+          <div class="chat-text">${linkify(m.text)}</div>
+          <span class="chat-meta">${when(m.createdAt)}${admin && reps ? ` · <span class="chip danger xs-chip">Reportado ${reps}</span>` : ""}</span>
+        </div>
+        ${Object.keys(reacts).length ? `<div class="chat-reacts">${Object.entries(reacts).map(([e, n]) => `<button class="${myReact === e ? "on" : ""}" data-action="chatReact" data-id="${esc(m.id)}" data-e="${e}" aria-label="${e} ${n}">${e}${n > 1 ? ` <b>${n}</b>` : ""}</button>`).join("")}</div>` : ""}
       </div>
       <details class="wall-menu chat-menu"><summary class="icon-btn" aria-label="Opciones del mensaje"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></summary><div class="wall-menu-list">${opts.join("")}</div></details>
     </div>`;
   }).join("");
   if (nearBottom || !box.dataset.ready) { box.scrollTop = box.scrollHeight; box.dataset.ready = "1"; }
+}
+
+// ---------- En línea ----------
+function onlineNow() {
+  const now = Date.now();
+  return online.filter((p) => { const t = p.at && p.at.toMillis ? p.at.toMillis() : now; return now - t < ONLINE_MS; })
+    .sort((a, b) => (a.id === ctx.cloud.myUid()) - (b.id === ctx.cloud.myUid()) || String(a.name).localeCompare(String(b.name), "es"));
+}
+function paintOnline() {
+  const box = $("#chatOnline"); if (!box) return;
+  const list = onlineNow(), me = ctx.cloud.myUid();
+  box.innerHTML = `<span class="chat-online-n"><i></i>${list.length} en línea</span>
+    <div class="chat-online-list">${list.map((p) => p.id === me
+      ? `<span class="chat-pres me" title="Tú">${avatar(p.avatar, p.name)}<small>Tú</small></span>`
+      : `<details class="chat-pres"><summary title="${esc(p.name)}">${avatar(p.avatar, p.name)}<small>${esc(String(p.name).split(" ")[0])}</small></summary>
+          <div class="wall-menu-list chat-pres-menu"><b>${esc(p.name)}</b>
+            <button data-action="chatBuzz" data-uid="${esc(p.id)}" data-name="${esc(p.name)}">📳 Enviar zumbido</button>
+            <button data-action="chatMention" data-name="${esc(p.name)}">@ Mencionar</button></div></details>`).join("")}</div>`;
+}
+function paintReply() {
+  const bar = $("#chatReply"); if (!bar) return;
+  bar.hidden = !replyTo;
+  bar.innerHTML = replyTo ? `<div><small>Respondiendo a <b>${esc(replyTo.name)}</b></small><span>${esc(replyTo.text)}</span></div>
+    <button class="icon-btn" data-action="chatReplyX" aria-label="Cancelar respuesta">${icon("x")}</button>` : "";
+}
+
+// ---------- Zumbido ----------
+let audio = null;
+function buzzEffect(from) {
+  try { navigator.vibrate && navigator.vibrate([180, 80, 180, 80, 320]); } catch {}
+  const box = document.querySelector(".chat-box");
+  if (box) { box.classList.remove("buzz"); void box.offsetWidth; box.classList.add("buzz"); setTimeout(() => box.classList.remove("buzz"), 900); }
+  try {
+    audio = audio || new (window.AudioContext || window.webkitAudioContext)();
+    const t = audio.currentTime;
+    [0, 0.18, 0.36].forEach((d) => {
+      const o = audio.createOscillator(), g = audio.createGain();
+      o.type = "square"; o.frequency.setValueAtTime(140, t + d); o.connect(g); g.connect(audio.destination);
+      g.gain.setValueAtTime(0.0001, t + d); g.gain.exponentialRampToValueAtTime(0.06, t + d + 0.02); g.gain.exponentialRampToValueAtTime(0.0001, t + d + 0.14);
+      o.start(t + d); o.stop(t + d + 0.16);
+    });
+  } catch {}
+  toast(`📳 ¡${from} te envió un zumbido!`);
+}
+function checkBuzz() {
+  const me = ctx.cloud.myUid();
+  (msgs || []).forEach((m) => {
+    if (m.kind !== "buzz" || seenBuzz.has(m.id)) return;
+    seenBuzz.add(m.id);
+    const t = m.createdAt && m.createdAt.toMillis ? m.createdAt.toMillis() : Date.now();
+    if (m.buzzTo === me && m.authorUid !== me && t > openedAt - 5000) buzzEffect(m.authorName);
+  });
+}
+const BUZZ_WAIT = 30000;
+function canBuzz(uid) {
+  let log = {}; try { log = JSON.parse(sessionStorage.getItem("agape_buzz") || "{}"); } catch {}
+  const left = BUZZ_WAIT - (Date.now() - (log[uid] || 0));
+  if (left > 0) return Math.ceil(left / 1000);
+  log[uid] = Date.now(); try { sessionStorage.setItem("agape_buzz", JSON.stringify(log)); } catch {}
+  return 0;
 }
 
 function registerActions() {
@@ -147,6 +231,35 @@ function registerActions() {
     close(el);
     if (!confirm("¿Borrar este mensaje para todos?")) return;
     ctx.cloud.deleteChat(current, el.dataset.id).catch(() => toast("No se pudo borrar", ""));
+  };
+  A.chatReact = (el) => {
+    close(el);
+    const m = (msgs || []).find((x) => x.id === el.dataset.id); if (!m) return;
+    const mine = (m.reactions || {})[ctx.cloud.myUid()];
+    ctx.cloud.reactChat(current, m.id, mine === el.dataset.e ? null : el.dataset.e).catch(() => toast("No se pudo guardar", ""));
+  };
+  A.chatReply = (el) => {
+    close(el);
+    const m = (msgs || []).find((x) => x.id === el.dataset.id); if (!m) return;
+    replyTo = { id: m.id, name: m.authorName, text: m.text.length > 120 ? m.text.slice(0, 118) + "…" : m.text };
+    paintReply(); $("#chatText")?.focus();
+  };
+  A.chatReplyX = () => { replyTo = null; paintReply(); };
+  A.chatJump = (el) => {
+    const t = document.getElementById("msg-" + el.dataset.id);
+    if (!t) { toast("Ese mensaje ya no está en la conversación", ""); return; }
+    t.scrollIntoView({ behavior: "smooth", block: "center" }); t.classList.add("flash"); setTimeout(() => t.classList.remove("flash"), 1400);
+  };
+  A.chatBuzz = (el) => {
+    close(el);
+    const wait = canBuzz(el.dataset.uid);
+    if (wait) { toast(`Espera ${wait} s para volver a enviarle un zumbido`, ""); return; }
+    ctx.cloud.sendBuzz(current, { uid: el.dataset.uid, name: el.dataset.name }).then(() => toast(`📳 Zumbido enviado a ${el.dataset.name}`)).catch(() => toast("No se pudo enviar", ""));
+  };
+  A.chatMention = (el) => {
+    close(el);
+    const ta = $("#chatText"); if (!ta) return;
+    ta.value = (ta.value ? ta.value.replace(/\s*$/, " ") : "") + "@" + el.dataset.name.split(" ")[0] + " "; ta.focus();
   };
   A.chatReport = (el) => {
     close(el);
@@ -159,9 +272,19 @@ function registerActions() {
     const text = ta.value.trim();
     if (!text) return;
     ta.value = ""; ta.style.height = "";
-    try { await ctx.cloud.sendChat(form.dataset.sala, text); const b = $("#chatList"); if (b) b.scrollTop = b.scrollHeight; }
-    catch (e) { console.warn(e); toast("No se pudo enviar. Revisa tu conexión.", ""); if (!ta.value) ta.value = text; }
+    const rt = replyTo; replyTo = null; paintReply();
+    try { await ctx.cloud.sendChat(form.dataset.sala, text, rt); const b = $("#chatList"); if (b) b.scrollTop = b.scrollHeight; }
+    catch (e) { console.warn(e); toast("No se pudo enviar. Revisa tu conexión.", ""); if (!ta.value) ta.value = text; replyTo = rt; paintReply(); }
   };
+  // El menú de quien está en línea se ubica bajo su avatar (la fila tiene desplazamiento horizontal).
+  document.addEventListener("toggle", (e) => {
+    const d = e.target;
+    if (!d.classList || !d.classList.contains("chat-pres") || !d.open) return;
+    document.querySelectorAll(".chat-pres[open]").forEach((x) => { if (x !== d) x.open = false; });
+    const r = d.querySelector("summary").getBoundingClientRect(), m = d.querySelector(".chat-pres-menu");
+    m.style.left = Math.max(8, Math.min(r.left, innerWidth - 210)) + "px"; m.style.top = r.bottom + 4 + "px";
+  }, true);
+  document.addEventListener("click", (e) => { if (!e.target.closest(".chat-pres")) document.querySelectorAll(".chat-pres[open]").forEach((x) => (x.open = false)); });
   document.addEventListener("submit", (e) => { if (e.target.id === "chatForm") { e.preventDefault(); send(e.target); } });
   document.addEventListener("keydown", (e) => {
     if (e.target.id === "chatText" && e.key === "Enter" && !e.shiftKey && !e.isComposing && matchMedia("(pointer: fine)").matches) {

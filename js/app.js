@@ -13,6 +13,7 @@ import * as agenda from "./agenda.js";
 import * as portada from "./portada.js";
 import * as capilla from "./capilla.js";
 import * as cancionero from "./cancionero.js";
+import * as AV from "./avatares.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -145,7 +146,7 @@ function renderChrome(section) {
   $("#profileChip").innerHTML = inAdmin
     ? `<span class="avatar">${icon("gear")}</span><span class="name">Gestión</span>`
     : guest ? `<span class="avatar">${icon("users")}</span><span class="name">Ingresar</span>`
-    : `<span class="avatar">${esc(initials(p.name))}</span><span class="name">${esc(p.name || "Mi perfil")}</span>`;
+    : `${cloud.enabled && AV.isValid((cloud.state().account || {}).avatar) ? `<span class="chip-av">${AV.svg(cloud.state().account.avatar)}</span>` : `<span class="avatar">${esc(initials(p.name))}</span>`}<span class="name">${esc(p.name || "Mi perfil")}</span>`;
   $("#profileChip").setAttribute("href", inAdmin ? "#/admin" : "#/perfil");
 }
 
@@ -1202,6 +1203,7 @@ function viewAccount() {
       <p class="xs muted">Tu nombre aparecerá en la constancia. Tu avance se guarda en tu cuenta; tu cuaderno es privado y solo tú puedes leerlo.</p>
       <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
     </form>
+    <section class="card av-card" id="avCard">${avPicker()}</section>
     <div class="row-wrap" style="justify-content:center;margin-top:16px">
       ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>` : ""}
       <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
@@ -1209,6 +1211,32 @@ function viewAccount() {
     <div id="installSlot" style="margin-top:14px"></div>
   </div>`;
 }
+// Selector de avatar (Mi cuenta)
+let avDraft = null;
+function avPicker() {
+  const a = cloud.state().account || {};
+  if (!avDraft) avDraft = AV.parse(a.avatar) || AV.parse(AV.randomKey());
+  const key = AV.keyOf(avDraft), saved = a.avatar === key;
+  const swatch = (k, colors) => colors.map((c, i) => `<button class="av-sw ${avDraft[k] === i ? "on" : ""}" style="--c:${c}" data-action="avSet" data-k="${k}" data-v="${i}" aria-label="${AV.OPTS[k].label} ${i + 1}"></button>`).join("");
+  const mini = (k) => Array.from({ length: AV.OPTS[k].n }, (_, i) => `<button class="av-mini ${avDraft[k] === i ? "on" : ""}" data-action="avSet" data-k="${k}" data-v="${i}" title="${esc(AV.OPTS[k].names[i])}">${AV.svg(AV.keyOf({ ...avDraft, [k]: i }))}</button>`).join("");
+  return `<div class="av-head"><div class="av-big">${AV.svg(key)}</div>
+      <div style="flex:1;min-width:180px"><h3>Mi avatar</h3><p class="muted small">Aparece junto a tu nombre en el chat, el muro y la lista de quienes están en línea.</p>
+        <div class="row-wrap" style="margin-top:10px"><button class="btn btn-sm btn-ghost" data-action="avRandom">🎲 Al azar</button>
+        <button class="btn btn-sm ${saved ? "btn-soft" : "btn-primary"}" data-action="avSave" ${saved ? "disabled" : ""}>${saved ? "Guardado ✓" : "Guardar avatar"}</button></div></div></div>
+    <div class="av-row"><span>${AV.OPTS.h.label}</span><div>${mini("h")}</div></div>
+    <div class="av-row"><span>${AV.OPTS.c.label}</span><div>${swatch("c", AV.HAIRC)}</div></div>
+    <div class="av-row"><span>${AV.OPTS.s.label}</span><div>${swatch("s", AV.SKIN)}</div></div>
+    <div class="av-row"><span>${AV.OPTS.f.label}</span><div>${mini("f")}</div></div>
+    <div class="av-row"><span>${AV.OPTS.x.label}</span><div>${mini("x")}</div></div>
+    <div class="av-row"><span>${AV.OPTS.b.label}</span><div>${swatch("b", AV.BG)}</div></div>`;
+}
+const repaintAv = () => { const c = $("#avCard"); if (c) c.innerHTML = avPicker(); };
+actions.avSet = (el) => { avDraft = { ...avDraft, [el.dataset.k]: +el.dataset.v }; repaintAv(); };
+actions.avRandom = () => { avDraft = AV.parse(AV.randomKey()); repaintAv(); };
+actions.avSave = async () => {
+  try { await cloud.updateMyProfile({ avatar: AV.keyOf(avDraft) }); toast("¡Avatar guardado!"); render(); }
+  catch { toast("No se pudo guardar. Revisa tu conexión.", ""); }
+};
 document.addEventListener("submit", async (e) => {
   if (e.target.id !== "accountForm") return;
   e.preventDefault();

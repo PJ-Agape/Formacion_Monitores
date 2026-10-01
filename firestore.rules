@@ -53,7 +53,8 @@ service cloud.firestore {
         );
       // Cada uno puede actualizar su nombre, parroquia y última conexión; nunca su rol ni su estado.
       allow update: if (isMember() && request.auth.uid == uid
-          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'parish', 'lastSeen']))
+          && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['name', 'parish', 'lastSeen', 'avatar'])
+          && (!('avatar' in request.resource.data) || (request.resource.data.avatar is string && request.resource.data.avatar.size() <= 20)))
         || (isAdmin() && validRole(request.resource.data.role)
             && (!protectedEmail(resource.data.email) || (request.resource.data.role == 'admin' && request.resource.data.active == true)));
       allow delete: if isAdmin() && !protectedEmail(resource.data.email);
@@ -147,8 +148,20 @@ service cloud.firestore {
         && request.resource.data.authorName is string && request.resource.data.authorName.size() <= 60
         && validText(request.resource.data.text, 1500)
         && request.resource.data.reports.size() == 0 && request.resource.data.createdAt == request.time
-        && request.resource.data.keys().hasOnly(['text', 'authorUid', 'authorName', 'authorRole', 'reports', 'createdAt']);
-      allow update: if inSala(sala) && changed().hasOnly(['reports']) && onlyMyKey('reports');
+        && request.resource.data.keys().hasOnly(['text', 'authorUid', 'authorName', 'authorRole', 'authorAvatar', 'reports', 'reactions', 'replyTo', 'kind', 'buzzTo', 'buzzToName', 'createdAt'])
+        && (!('authorAvatar' in request.resource.data) || (request.resource.data.authorAvatar is string && request.resource.data.authorAvatar.size() <= 20))
+        && (!('reactions' in request.resource.data) || request.resource.data.reactions.size() == 0)
+        && (!('replyTo' in request.resource.data) || (request.resource.data.replyTo is map && request.resource.data.replyTo.keys().hasOnly(['id', 'name', 'text'])))
+        && (!('kind' in request.resource.data) || (request.resource.data.kind == 'buzz' && request.resource.data.buzzTo is string));
+      // Reportar o reaccionar: cada uno cambia solo su propia marca.
+      allow update: if inSala(sala) && (
+        (changed().hasOnly(['reports']) && onlyMyKey('reports'))
+        || (changed().hasOnly(['reactions']) && request.resource.data.reactions is map
+            && ('reactions' in resource.data
+                ? request.resource.data.reactions.diff(resource.data.reactions).affectedKeys().hasOnly([request.auth.uid])
+                : request.resource.data.reactions.keys().hasOnly([request.auth.uid]))
+            && (!(request.auth.uid in request.resource.data.reactions)
+                || request.resource.data.reactions[request.auth.uid] in ['❤️', '🙏', '😂', '👍', '😮', '🔥'])));
       allow delete: if isStaff() || (inSala(sala) && resource.data.authorUid == request.auth.uid);
     }
 
@@ -177,6 +190,15 @@ service cloud.firestore {
       allow read: if isMember();
       allow create, update: if isStaff() && validText(request.resource.data.name, 120);
       allow delete: if isStaff();
+    }
+
+    // Quién está en línea en cada sala (cada uno escribe solo su propia presencia).
+    match /chat/{sala}/presence/{uid} {
+      allow read: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala);
+      allow create, update: if sala in ['general', 'coordinacion', 'dirigentes', 'aspirantes'] && inSala(sala)
+        && uid == request.auth.uid && request.resource.data.at == request.time
+        && request.resource.data.keys().hasOnly(['name', 'avatar', 'role', 'at']);
+      allow delete: if (signedIn() && uid == request.auth.uid) || isStaff();
     }
 
     // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.

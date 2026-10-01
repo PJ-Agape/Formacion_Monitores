@@ -324,7 +324,7 @@ export async function latestWall() {
   try { return snapRows(await withTimeout(fb.getDocs(visibleQuery(wallCol())), 6000)); } catch { return []; }
 }
 function author() {
-  return { authorUid: user.uid, authorName: shortName(account.name), authorRole: account.role };
+  return { authorUid: user.uid, authorName: shortName(account.name), authorRole: account.role, authorAvatar: account.avatar || "" };
 }
 export async function createPost({ type, title, body, pinned }) {
   const ref = fb.doc(wallCol());
@@ -397,10 +397,36 @@ export async function lastChat(sala) {
     return snapRows(qs)[0] || null;
   } catch { return null; }
 }
-export async function sendChat(sala, text) {
+export async function sendChat(sala, text, replyTo) {
+  const data = { text, ...author(), reports: {}, reactions: {}, createdAt: fb.serverTimestamp() };
+  if (replyTo && replyTo.id) data.replyTo = { id: String(replyTo.id), name: String(replyTo.name || "").slice(0, 60), text: String(replyTo.text || "").slice(0, 140) };
+  await fb.setDoc(fb.doc(fb.collection(db, "chat", sala, "msgs")), data);
+}
+// Zumbido: queda como mensaje visible en la sala («X le envió un zumbido a Y»).
+export async function sendBuzz(sala, to) {
   await fb.setDoc(fb.doc(fb.collection(db, "chat", sala, "msgs")), {
-    text, ...author(), reports: {}, createdAt: fb.serverTimestamp(),
+    text: "le envió un zumbido a " + String(to.name || "").slice(0, 60), kind: "buzz", buzzTo: to.uid, buzzToName: String(to.name || "").slice(0, 60),
+    ...author(), reports: {}, reactions: {}, createdAt: fb.serverTimestamp(),
   });
+}
+export const REACTIONS = ["❤️", "🙏", "😂", "👍", "😮", "🔥"];
+export const reactChat = (sala, id, emoji) => fb.updateDoc(fb.doc(db, "chat", sala, "msgs", id), { [`reactions.${user.uid}`]: emoji ? emoji : fb.deleteField() });
+// Presencia: quién tiene la sala abierta. Se renueva cada minuto; al salir se borra.
+export function joinRoom(sala) {
+  if (!enabled || !db || !user || !account) return () => {};
+  const ref = fb.doc(db, "chat", sala, "presence", user.uid);
+  const beat = () => fb.setDoc(ref, { name: shortName(account.name), avatar: account.avatar || "", role: account.role, at: fb.serverTimestamp() }).catch(() => {});
+  beat();
+  const t = setInterval(beat, 60000);
+  const vis = () => { if (document.visibilityState === "visible") beat(); };
+  document.addEventListener("visibilitychange", vis);
+  const leave = () => { clearInterval(t); document.removeEventListener("visibilitychange", vis); window.removeEventListener("pagehide", leave); fb.deleteDoc(ref).catch(() => {}); };
+  window.addEventListener("pagehide", leave);
+  return leave;
+}
+export function watchPresence(sala, cb) {
+  if (!enabled || !db) return () => {};
+  return fb.onSnapshot(fb.collection(db, "chat", sala, "presence"), (qs) => cb(snapRows(qs)), (e) => console.warn("Presencia:", e));
 }
 export const deleteChat = (sala, id) => fb.deleteDoc(fb.doc(db, "chat", sala, "msgs", id));
 export const reportChat = (sala, id, on) => toggleMark(["chat", sala, "msgs", id], "reports", on);

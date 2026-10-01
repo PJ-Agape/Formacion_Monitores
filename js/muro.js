@@ -4,6 +4,7 @@
 
 import { esc, icon, toast, initials } from "./util.js";
 import { tabs as chatTabs } from "./chat.js";
+import { avatar } from "./avatares.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -48,7 +49,7 @@ function sortPosts(list) {
 function byline(x) {
   const staff = x.authorRole === "admin" || x.authorRole === "coordinador";
   return `<span class="wall-by">
-    <span class="avatar ${staff ? "staff" : ""}">${esc(initials(x.authorName))}</span>
+    ${avatar(x.authorAvatar, x.authorName, staff ? "staff" : "")}
     <span><b>${esc(x.authorName || "Dirigente")}</b>${staff ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}<br>
     <span class="xs muted">${when(x.createdAt)}${x.editedAt ? " · editado" : ""}</span></span></span>`;
 }
