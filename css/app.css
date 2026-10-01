@@ -1758,3 +1758,15 @@ body.cap-quiet { overflow: hidden; }
 .lib-simple a:hover b { text-decoration: underline; text-underline-offset: 3px; }
 @media (max-width: 640px) { .fi-grid { grid-template-columns: 1fr; } }
 .fi-lib .lib-item { border: 0; box-shadow: none; background: none; padding: 0; margin: 0; border-radius: 0; }
+.fi-years { display: grid; gap: 14px; }
+.fi-year { display: flex; gap: 12px; align-items: flex-start; }
+.fi-y { flex: 0 0 auto; font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; background: var(--fi); color: #fff6e5; border: 2px solid #0b2566; border-radius: 12px; padding: 6px 9px; box-shadow: 2px 2px 0 #0b2566; }
+.fi-y-items { flex: 1; min-width: 0; }
+.fi-y-items .fi-row { padding-top: 4px; }
+.fi-y-items > .fi-row-wrap + .fi-row-wrap .fi-row, .fi-y-items > .fi-revs + .fi-row-wrap .fi-row { border-top: 2px dashed rgba(11,37,102,.18); padding-top: 10px; }
+.fi-y-items > .fi-row:first-child, .fi-y-items > .fi-row-wrap:first-child .fi-row { border-top: 0; }
+.fi-revs { display: flex; flex-wrap: wrap; gap: 6px; margin: 2px 0 6px; }
+.fi-revs .chip { text-decoration: none; font-size: .75rem; }
+.fi-row-wrap { display: flex; align-items: center; gap: 6px; }
+.fi-row-wrap .fi-row { flex: 1; }
+.fi-del { width: 30px; height: 30px; }

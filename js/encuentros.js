@@ -8,7 +8,14 @@ import { esc, icon } from "./util.js";
 import { illus, illusFor } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, cloud }
-let data = null, loading = null;
+let data = null;
+const cache = {};
+// Ediciones del Camino Ágape. Al cerrar un año, su programa se guarda en data/archivo/encuentros-AAAA.json
+// y se agrega aquí sin «actual»; la edición nueva queda en data/encuentros.json.
+export const EDICIONES = [
+  { year: 2027, actual: true, ciclo: "Ciclo B", rango: "marzo a noviembre de 2027" },
+];
+const baseOf = (year) => (year ? `#/archivo/${year}` : "#/encuentros");
 let sel = { rev: null, n: 0 }; // encuentro visible en la app (0 = portada e introducción)
 
 export function setup(c) {
@@ -35,10 +42,12 @@ function paintSel() {
   if (nav) nav.outerHTML = navHTML(data, sel.n);
 }
 
-async function load() {
-  if (data) return data;
-  if (!loading) loading = fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json()).then((d) => (data = d));
-  return loading;
+async function load(year) {
+  const ed = year && EDICIONES.find((e) => e.year === +year && !e.actual);
+  const key = ed ? String(ed.year) : "actual";
+  if (year && !ed) return null;
+  if (!cache[key]) cache[key] = fetch(ed ? `data/archivo/encuentros-${ed.year}.json` : "data/encuentros.json", { cache: "no-cache" }).then((r) => r.json());
+  return cache[key];
 }
 
 // Colores: cada revista tiene el suyo; las etapas se distinguen por color.
@@ -77,12 +86,15 @@ const STEP_ICONS = ["☺", "✦", "✚", "◎", "↗", "☕"];
 // ---------------------------------------------------------------------------
 // Portada de la sección  (#/encuentros)
 // ---------------------------------------------------------------------------
-export async function viewHub() {
-  const d = await load();
+export async function viewHub(year) {
+  const d = await load(year);
+  if (!d) return null;
+  data = d;
+  const base = baseOf(year);
   const card = (k) => {
     const r = REVISTAS[k];
     const locked = k === "coordinacion" && !canSeeGuide();
-    return `<a class="card link mag-card" href="#/encuentros/${k}" style="${zvars(r)}">
+    return `<a class="card link mag-card" href="${base}/${k}" style="${zvars(r)}">
       <span class="z-thumb" aria-hidden="true"><span class="z-thumb-in zine" data-rev="${k}" style="${zvars(r)}">${cover(d, k)}</span></span>
       <span class="mag-card-body"><span class="eyebrow">${esc(r.kicker)}</span><h3>${esc(r.name)}</h3>
       <span class="muted small">${esc(r.for)}</span>${locked ? `<span class="chip" style="margin-top:8px">${icon("lock")} Con tu cuenta</span>` : ""}</span>
@@ -92,6 +104,7 @@ export async function viewHub() {
   let next = d.encuentros.filter((e) => (dateOf(e.fecha) || 0) >= today).slice(0, 4);
   if (!next.length) next = d.encuentros.slice(-4);
   return `
+  ${year ? `<div class="note" style="margin-bottom:10px">${icon("book")} Estás viendo una <b>edición archivada</b>. <a href="#/encuentros">Ir a la edición actual</a></div>` : ""}
   <header class="page-head"><span class="eyebrow">${esc(d.ciclo)}</span><h1>Camino <em>Ágape</em></h1>
     <p>${esc(d.subtitle)}. ${esc(d.claim)}</p></header>
   <div class="grid grid-2" style="margin-top:18px">${card("principal")}${card("coordinacion")}</div>
@@ -108,19 +121,21 @@ export async function viewHub() {
 // ---------------------------------------------------------------------------
 // Una revista  (#/encuentros/:k)
 // ---------------------------------------------------------------------------
-export async function viewRevista(k) {
-  const d = await load();
+export async function viewRevista(k, year) {
+  const d = await load(year);
   const r = REVISTAS[k];
-  if (!r) return null;
+  if (!r || !d) return null;
+  data = d;
+  const base = baseOf(year);
   if (k === "coordinacion" && !canSeeGuide()) {
-    return `<a class="btn btn-sm btn-ghost" href="#/encuentros">${icon("arrowL")} Camino Ágape</a>
+    return `<a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino Ágape${year ? " " + esc(year) : ""}</a>
       <div class="card" style="text-align:center;padding:32px;margin-top:14px">
       <div class="tile-ico tile-brand" style="margin:0 auto 12px">${icon("lock")}</div>
       <h2 class="display">La guía de coordinación es para el equipo</h2>
       <p class="muted" style="margin-top:8px">Ingresa con la cuenta con que te invitaron para verla.</p>
       <button class="btn btn-primary" style="margin-top:16px" data-action="signIn">Ingresar</button></div>`;
   }
-  if (sel.rev !== k) sel = { rev: k, n: 0 };
+  if (sel.rev !== (year || "") + k) sel = { rev: (year || "") + k, n: 0 };
   const paged = k !== "principal";
   const front = cover(d, k) + (k === "principal" ? principalPages(d) : k === "coordinacion" ? guideIntro(d) : stageIntro(d, k));
   const body = paged ? d.tramos.map((t) => {
@@ -130,7 +145,7 @@ export async function viewRevista(k) {
   const back = k === "coordinacion" ? "" : backPage(d);
   return `
   <div class="row-wrap no-print" style="margin-bottom:12px">
-    <a class="btn btn-sm btn-ghost" href="#/encuentros">${icon("arrowL")} Camino Ágape</a><span class="spacer"></span>
+    <a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino Ágape${year ? " " + esc(year) : ""}</a><span class="spacer"></span>
     ${paged ? `<button class="btn btn-sm btn-soft" data-action="magPrint" data-scope="one">${icon("print")} Solo este encuentro</button>` : ""}
     <button class="btn btn-sm btn-primary" data-action="magPrint" data-scope="all">${icon("dl")} Revista completa (PDF)</button>
   </div>

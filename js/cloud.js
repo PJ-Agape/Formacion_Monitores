@@ -473,3 +473,15 @@ export const deleteCancion = (id) => fb.deleteDoc(fb.doc(db, "canciones", id));
 export const watchRepertorios = watchCol("repertorios");
 export const saveRepertorio = saveIn("repertorios");
 export const deleteRepertorio = (id) => fb.deleteDoc(fb.doc(db, "repertorios", id));
+
+// Archivo de revistas de años anteriores (content/archivo): lo lee cualquiera, lo edita un administrador.
+export async function getArchivo() {
+  if (!enabled || !db) return null;
+  try {
+    const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", "archivo")), 6000);
+    return snap.exists() ? safeJSON(snap.data().json, { items: [] }) : { items: [] };
+  } catch { return null; }
+}
+export async function saveArchivo(data) {
+  await fb.setDoc(fb.doc(db, "content", "archivo"), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
+}

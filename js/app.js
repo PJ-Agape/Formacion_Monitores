@@ -47,6 +47,8 @@ const routes = [
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
   [/^\/encuentros$/, () => camino.viewHub(), "comunidad"],
   [/^\/encuentros\/([a-z]+)$/, (k) => camino.viewRevista(k), "comunidad"],
+  [/^\/archivo\/(\d{4})$/, async (y) => (await camino.viewHub(y)) ?? viewNotFound(), "materiales"],
+  [/^\/archivo\/(\d{4})\/([a-z]+)$/, async (y, k) => (await camino.viewRevista(k, y)) ?? viewNotFound(), "materiales"],
   [/^\/comunidad$/, viewCommunity, "comunidad"],
   [/^\/itinerario$/, viewItinerary, "itinerario"],
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
@@ -903,9 +905,7 @@ function viewMaterials() {
   };
   const guides = (m.cards || []).filter((c) => c.type !== "action"), prints = (m.cards || []).filter((c) => c.type === "action");
   const FILES = [
-    ["revistas", "Revistas", "#1351a4", "Encuentros semanales del Camino Ágape.", [
-      row("#/encuentros", "route", "Revistas Camino Ágape", "Principal, guía de coordinación e Ingreso, Madurez y Aspirante"),
-    ]],
+    ["revistas", "Revistas", "#1351a4", "Las revistas del Camino Ágape, archivadas año tras año.", [archivoHTML()], null],
     ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
       row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
@@ -923,18 +923,80 @@ function viewMaterials() {
     ]],
   ].filter((f) => f[4].length);
   const nav = [...FILES.map(([k, t]) => [k, t]), ["biblioteca", "Biblioteca"]];
+  onAfterRender(() => loadArchivo().then((ch) => { const b = $("#fiArchivo"); if (ch && b) b.outerHTML = archivoHTML(); }));
   return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(m.title)}</h1><p>${esc(m.desc)}</p></header>
     <nav class="cap-nav" aria-label="Ficheros">${nav.map(([k, t]) => `<a href="#" data-action="fiGo" data-k="${k}">${esc(t)}</a>`).join("")}</nav>
-    <div class="fi-grid">${FILES.map(([k, t, col, d, items], i) => `
+    <div class="fi-grid">${FILES.map(([k, t, col, d, items, count], i) => `
       <section class="fichero" id="fi-${k}" style="--fi:${col}">
         <span class="fi-tab">Fichero ${String(i + 1).padStart(2, "0")}</span>
-        <header class="fi-head"><h2>${esc(t)}</h2><span class="fi-count">${items.length}</span></header>
+        <header class="fi-head"><h2>${esc(t)}</h2>${count === null ? "" : `<span class="fi-count">${items.length}</span>`}</header>
         <p class="fi-desc">${esc(d)}</p>
         <div class="fi-list">${items.join("")}</div>
       </section>`).join("")}
     </div>
     ${libraryHTML(lib, FILES.length + 1)}`;
 }
+// Revistas por año: las ediciones del Camino Ágape (en la app) y lo que el equipo archiva con enlace.
+let archivo = null;
+try { archivo = JSON.parse(localStorage.getItem("agape_archivo") || "null"); } catch {}
+async function loadArchivo() {
+  const a = cloud.getArchivo ? await cloud.getArchivo() : null;
+  if (!a) return false;
+  const ch = JSON.stringify(a) !== JSON.stringify(archivo);
+  archivo = a; try { localStorage.setItem("agape_archivo", JSON.stringify(a)); } catch {}
+  return ch;
+}
+const REV_SHORT = [["principal", "Principal"], ["coordinacion", "Coordinación"], ["ingreso", "Ingreso"], ["madurez", "Madurez"], ["aspirante", "Aspirante"]];
+function archivoHTML() {
+  const admin = cloud.enabled && cloud.state().isAdmin;
+  const years = new Map();
+  camino.EDICIONES.forEach((e) => { const y = years.get(e.year) || { year: e.year, items: [] }; y.items.push({ ed: e }); years.set(e.year, y); });
+  ((archivo && archivo.items) || []).forEach((it, i) => { const y = years.get(+it.year) || { year: +it.year, items: [] }; y.items.push({ link: it, i }); years.set(+it.year, y); });
+  const list = [...years.values()].sort((a, b) => b.year - a.year);
+  return `<div id="fiArchivo" class="fi-years">
+    ${list.map((y) => `<div class="fi-year"><span class="fi-y">${y.year}</span><div class="fi-y-items">${y.items.map((x) => x.ed ? `
+      <a class="fi-row" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}"><span class="fi-txt"><b>Camino Ágape ${x.ed.year} · ${esc(x.ed.ciclo)}</b>
+        <small>${x.ed.actual ? "Edición actual · " : ""}${esc(x.ed.rango)}</small></span>${icon("right")}</a>
+      <div class="fi-revs">${REV_SHORT.map(([k, l]) => `<a class="chip" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}/${k}">${l}</a>`).join("")}</div>`
+      : `<div class="fi-row-wrap"><a class="fi-row" href="${esc(x.link.url)}" target="_blank" rel="noopener"><span class="fi-txt"><b>${esc(x.link.title)}</b>${x.link.note ? `<small>${esc(x.link.note)}</small>` : ""}</span>${icon("arrowR")}</a>
+        ${admin ? `<button class="icon-btn fi-del" data-action="arcDel" data-i="${x.i}" aria-label="Quitar del archivo">${icon("x")}</button>` : ""}</div>`).join("")}</div></div>`).join("")}
+    ${admin ? `<button class="btn btn-sm btn-ghost" style="margin-top:10px" data-action="arcNew">${icon("plus")} Archivar una revista</button>` : ""}
+  </div>`;
+}
+actions.arcNew = () => {
+  let d = document.getElementById("arcDlg");
+  if (!d) { d = document.createElement("dialog"); d.id = "arcDlg"; d.className = "sheet"; document.body.appendChild(d); }
+  d.innerHTML = `<form method="dialog" id="arcForm">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Materiales · Revistas</span><h2>Archivar una revista</h2></div>
+      <button type="button" class="icon-btn" data-action="arcClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:12px">
+      <div class="ag-form-row">
+        <div class="field"><label>Año</label><input class="input" type="number" name="year" min="1990" max="2100" required value="${new Date().getFullYear()}"></div>
+        <div class="field"><label>Título</label><input class="input" name="title" required maxlength="120" placeholder="Revista Madurez 2026 (impresa)"></div>
+      </div>
+      <div class="field"><label>Enlace</label><input class="input" name="url" required maxlength="500" placeholder="https://drive.google.com/…"><span class="xs muted">Un PDF o una carpeta de Drive con permiso de lectura para quien tenga el enlace.</span></div>
+      <div class="field"><label>Nota (opcional)</label><input class="input" name="note" maxlength="140" placeholder="Encuentros de marzo a noviembre"></div>
+    </div>
+    <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="arcClose">Cancelar</button><button class="btn btn-primary" type="submit">Archivar</button></div>
+  </form>`;
+  d.showModal();
+};
+actions.arcClose = () => document.getElementById("arcDlg")?.close();
+actions.arcDel = async (el) => {
+  if (!confirm("¿Quitar esta revista del archivo? El archivo original no se borra.")) return;
+  const items = [...((archivo && archivo.items) || [])]; items.splice(+el.dataset.i, 1);
+  try { await cloud.saveArchivo({ items }); archivo = { items }; render(); toast("Quitada del archivo"); } catch { toast("No se pudo guardar", ""); }
+};
+document.addEventListener("submit", async (e) => {
+  if (e.target.id !== "arcForm") return;
+  e.preventDefault();
+  const f = new FormData(e.target);
+  const it = { year: +f.get("year"), title: String(f.get("title") || "").trim(), url: String(f.get("url") || "").trim(), note: String(f.get("note") || "").trim() };
+  if (!/^https?:\/\//.test(it.url)) { toast("El enlace debe empezar con https://", ""); return; }
+  const items = [...((archivo && archivo.items) || []), it];
+  try { await cloud.saveArchivo({ items }); archivo = { items }; document.getElementById("arcDlg")?.close(); render(); toast("Revista archivada"); }
+  catch { toast("No se pudo guardar. Revisa tu conexión.", ""); }
+});
 actions.fiGo = (el) => document.getElementById("fi-" + el.dataset.k)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 
 // ---------------------------------------------------------------------------
