@@ -52,28 +52,28 @@
    "kicker": "Caminar con la Iglesia",
    "title": "El año del grupo",
    "body": [
-    "El año del grupo comienza en marzo, en plena Cuaresma, y termina con la fiesta de Cristo Rey, en noviembre. Son 34 encuentros repartidos en cinco tramos, cada uno con su propio tono. En cada encuentro, el Evangelio del domingo ilumina el tema propio de cada etapa."
+    "El año del grupo comienza en marzo, en plena Cuaresma, y termina con la fiesta de Cristo Rey, en noviembre. Son 34 encuentros repartidos en cinco tramos que siguen el año litúrgico: Cuaresma, Tiempo de Pascua y Tiempo Ordinario. En cada encuentro, el Evangelio del domingo ilumina el tema propio de cada etapa."
    ],
    "items": [
     {
      "title": "Cuaresma",
-     "text": "7 – 21 mar 2027. Comenzar el año: llegar, mirar la propia historia y dejarse amar."
+     "text": "7 – 21 mar 2027. Comenzar el año: llegar, mirar la propia historia y dejarse amar. Termina con el Domingo de Ramos."
     },
     {
-     "title": "Pascua",
+     "title": "Tiempo de Pascua",
      "text": "4 abr – 16 may 2027. Jesús vivo: alegría, amistad y envío. Culmina en Pentecostés."
     },
     {
-     "title": "Iglesia y sacramentos",
-     "text": "23 may – 27 jun 2027. Dios es comunidad: la parroquia, la Eucaristía, lo pequeño que crece."
+     "title": "Tiempo Ordinario · junio",
+     "text": "23 may – 27 jun 2027. Comienza con la Santísima Trinidad y el Corpus Christi. Iglesia y sacramentos: Dios es comunidad, la parroquia, la Eucaristía, lo pequeño que crece."
     },
     {
-     "title": "Mes de la Solidaridad",
-     "text": "18 jul – 29 ago 2027. El pan que se comparte: con San Alberto Hurtado, salimos al encuentro de los más necesitados de Yungay."
+     "title": "Tiempo Ordinario · julio y agosto",
+     "text": "18 jul – 29 ago 2027. Mes de la Solidaridad. El pan que se comparte: con San Alberto Hurtado, salimos al encuentro de los más necesitados de Yungay."
     },
     {
-     "title": "Tramo final y Mes de María",
-     "text": "5 sep – 21 nov 2027. Mi lugar en la comunidad, el discernimiento y el paso de etapa."
+     "title": "Tiempo Ordinario · septiembre a noviembre",
+     "text": "5 sep – 21 nov 2027. Mes de María y cierre del año: mi lugar en la comunidad, el discernimiento y el paso de etapa. Termina con Jesucristo, Rey del Universo."
     }
    ]
   },
@@ -4123,31 +4123,31 @@
    "key": "cuaresma",
    "name": "Cuaresma",
    "fechas": "7 – 21 mar 2027",
-   "tono": "Comenzar el año: llegar, mirar la propia historia y dejarse amar."
+   "tono": "Comenzar el año: llegar, mirar la propia historia y dejarse amar. Termina con el Domingo de Ramos."
   },
   {
    "key": "pascua",
-   "name": "Pascua",
+   "name": "Tiempo de Pascua",
    "fechas": "4 abr – 16 may 2027",
    "tono": "Jesús vivo: alegría, amistad y envío. Culmina en Pentecostés."
   },
   {
    "key": "junio",
-   "name": "Iglesia y sacramentos",
+   "name": "Tiempo Ordinario · junio",
    "fechas": "23 may – 27 jun 2027",
-   "tono": "Dios es comunidad: la parroquia, la Eucaristía, lo pequeño que crece."
+   "tono": "Comienza con la Santísima Trinidad y el Corpus Christi. Iglesia y sacramentos: Dios es comunidad, la parroquia, la Eucaristía, lo pequeño que crece."
   },
   {
    "key": "agosto",
-   "name": "Mes de la Solidaridad",
+   "name": "Tiempo Ordinario · julio y agosto",
    "fechas": "18 jul – 29 ago 2027",
-   "tono": "El pan que se comparte: con San Alberto Hurtado, salimos al encuentro de los más necesitados de Yungay."
+   "tono": "Mes de la Solidaridad. El pan que se comparte: con San Alberto Hurtado, salimos al encuentro de los más necesitados de Yungay."
   },
   {
    "key": "primavera",
-   "name": "Tramo final y Mes de María",
+   "name": "Tiempo Ordinario · septiembre a noviembre",
    "fechas": "5 sep – 21 nov 2027",
-   "tono": "Mi lugar en la comunidad, el discernimiento y el paso de etapa."
+   "tono": "Mes de María y cierre del año: mi lugar en la comunidad, el discernimiento y el paso de etapa. Termina con Jesucristo, Rey del Universo."
   }
  ],
  "pausas": [
