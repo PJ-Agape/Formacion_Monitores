@@ -22,6 +22,7 @@ import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
 import * as cuenta from "./cuenta.js";
+import * as difusion from "./difusion.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -67,6 +68,7 @@ const routes = [
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
+  [/^\/difusion$/, () => difusion.view(), "difusion"],
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
@@ -128,7 +130,7 @@ function helpFab(section) {
   b.href = `#/ayuda?t=${t}`;
 }
 // Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
-const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
+const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio", difusion: "envio" };
 function decorate(v, section) {
   const hero = v.querySelector(".hero");
   if (hero && !hero.querySelector(".z-illus")) {
@@ -338,6 +340,10 @@ function viewHome() {
     <span class="tile-ico tile-brand" style="margin:0">${icon("award")}</span>
     <span style="flex:1"><span class="eyebrow">Mi camino en Ágape</span><strong>Mi pasaporte</strong>
     <span class="muted small">Tus encuentros, tu racha y los sellos que vas ganando.</span></span>${icon("right")}</a>` : ""}
+  ${!cloud.enabled || cloud.state().ready ? `<a class="card link camino-banner" href="#/difusion" style="margin-top:16px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("send")}</span>
+    <span style="flex:1"><span class="eyebrow">Para compartir</span><strong>Estudio de difusión</strong>
+    <span class="muted small">Marco para tu foto de perfil, historias, invitaciones y stickers de Ágape.</span></span>${icon("right")}</a>` : ""}
   <div id="desafioSlot"></div>
   <div id="acHomeSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
@@ -1433,6 +1439,7 @@ familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+difusion.setup({ actions, onAfterRender });
 viva.setup({ actions, render: () => render(), onLeave, S });
 camJ.setup({ actions, render: () => render(), cloud, S });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
