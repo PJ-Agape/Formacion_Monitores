@@ -36,6 +36,8 @@ service cloud.firestore {
     match /content/honor { allow write: if isStaff(); }
     match /content/desafio { allow write: if isStaff(); }
     match /content/cumples { allow write: if isGuide(); }
+    // Página para familias: la editan administradores y coordinadores.
+    match /content/familias { allow write: if isStaff(); }
 
     // Invitaciones: el documento se llama como el correo invitado (en minúsculas).
     match /invites/{email} {

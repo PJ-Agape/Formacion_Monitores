@@ -612,6 +612,8 @@ export const getCumples = () => getContent("cumples");
 export const saveCumples = (d) => setContent("cumples", d);
 export const getHonor = () => getContent("honor");
 export const saveHonor = (d) => setContent("honor", d);
+export const getFamilias = () => getContent("familias");
+export const saveFamilias = (d) => setContent("familias", d);
 export const getDesafio = () => getContent("desafio");
 export const saveDesafio = (d) => setContent("desafio", d);
 // Desafío de la semana: quién lo cumplió (cada uno marca el suyo).

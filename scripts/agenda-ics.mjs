@@ -13,7 +13,7 @@ const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "
 const TYPES = { encuentro: "Encuentro", actividad: "Actividad", liturgia: "Liturgia", equipo: "Equipo", otro: "Otro" };
 
 // --- Firestore (lectura pública de la colección agenda) ---
-const val = (v) => v == null ? undefined : "arrayValue" in v ? (v.arrayValue.values || []).map(val) : "stringValue" in v ? v.stringValue : "booleanValue" in v ? v.booleanValue
+const val = (v) => v == null ? undefined : "mapValue" in v ? Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, val(x)])) : "nullValue" in v ? null : "arrayValue" in v ? (v.arrayValue.values || []).map(val) : "stringValue" in v ? v.stringValue : "booleanValue" in v ? v.booleanValue
   : "integerValue" in v ? +v.integerValue : "doubleValue" in v ? v.doubleValue : "timestampValue" in v ? v.timestampValue : undefined;
 async function agenda() {
   const rows = [];
@@ -62,9 +62,11 @@ const nextDay = (s) => { const [y, m, d] = s.split("-").map(Number); const x = n
 const hm = (t) => (/^\d{1,2}:\d{2}$/.test(t || "") ? t.padStart(5, "0").replace(":", "") + "00" : null);
 const stamp = (iso) => (iso ? new Date(iso) : new Date()).toISOString().replace(/[-:]/g, "").replace(/\.\d+Z$/, "Z");
 
-function vevent(e) {
+function vevent(e, fam = false) {
   const s = hm(e.start), en = hm(e.end) || s;
-  const desc = [e.desc, e.audience ? `Para: ${e.audience}` : "", "Agenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda"].filter(Boolean).join("\n\n");
+  const desc = fam
+    ? [e.desc, e.auth && e.auth.req ? "Requiere autorización de papás o apoderados: descárgala en la página para familias." : "", "Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitores/familias/"].filter(Boolean).join("\n\n")
+    : [e.desc, e.audience ? `Para: ${e.audience}` : "", "Agenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda"].filter(Boolean).join("\n\n");
   return ["BEGIN:VEVENT", `UID:${e.id}@pj-agape`, `DTSTAMP:${stamp(e.updated)}`,
     s ? `DTSTART;TZID=${TZ}:${ymd(e.date)}T${s}` : `DTSTART;VALUE=DATE:${ymd(e.date)}`,
     s ? `DTEND;TZID=${TZ}:${ymd(e.date)}T${en > s ? en : s}` : `DTEND;VALUE=DATE:${nextDay(e.date)}`,
@@ -80,13 +82,18 @@ const VTZ = ["BEGIN:VTIMEZONE", `TZID:${TZ}`, "X-LIC-LOCATION:America/Santiago",
   "END:VTIMEZONE"];
 
 const own = await agenda();
-const all = [...own, ...camino()].sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")));
-const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Pastoral Juvenil Agape//Agenda//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
-  "X-WR-CALNAME:Agenda Ágape", "X-WR-CALDESC:Agenda oficial de la Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", `X-WR-TIMEZONE:${TZ}`,
-  "REFRESH-INTERVAL;VALUE=DURATION:PT1H", "X-PUBLISHED-TTL:PT1H", ...VTZ, ...all.flatMap(vevent), "END:VCALENDAR"];
-const ics = lines.map(fold).join("\r\n") + "\r\n";
-const prev = existsSync(OUT) ? readFileSync(OUT, "utf8") : "";
-// Sin cambios en los eventos: no reescribir (evita commits innecesarios por el DTSTAMP)
-const strip = (t) => t.replace(/^DTSTAMP:.*$/gm, "");
-if (strip(prev) !== strip(ics)) { writeFileSync(OUT, ics); console.log(`agenda.ics: ${own.length} eventos de la Agenda + Camino Ágape (${all.length} en total)`); }
-else console.log("agenda.ics sin cambios");
+const byDate = (a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || ""));
+function write(out, list, name, desc, fam) {
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Pastoral Juvenil Agape//Agenda//ES", "CALSCALE:GREGORIAN", "METHOD:PUBLISH",
+    `X-WR-CALNAME:${name}`, `X-WR-CALDESC:${desc}`, `X-WR-TIMEZONE:${TZ}`,
+    "REFRESH-INTERVAL;VALUE=DURATION:PT1H", "X-PUBLISHED-TTL:PT1H", ...VTZ, ...list.flatMap((e) => vevent(e, fam)), "END:VCALENDAR"];
+  const ics = lines.map(fold).join("\r\n") + "\r\n";
+  const prev = existsSync(out) ? readFileSync(out, "utf8") : "";
+  // Sin cambios en los eventos: no reescribir (evita commits innecesarios por el DTSTAMP)
+  const strip = (t) => t.replace(/^DTSTAMP:.*$/gm, "");
+  if (strip(prev) !== strip(ics)) { writeFileSync(out, ics); console.log(`${out}: ${list.length} eventos`); }
+  else console.log(`${out} sin cambios`);
+}
+write(OUT, [...own, ...camino()].sort(byDate), "Agenda Ágape", "Agenda oficial de la Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", false);
+// Calendario para familias: solo los eventos marcados «Visible para familias».
+write(process.argv[3] || "familias.ics", own.filter((e) => e.familias === true).sort(byDate), "Ágape · Familias", "Actividades de la Pastoral Juvenil Ágape para las familias · Parroquia San Miguel de Yungay", true);

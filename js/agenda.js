@@ -6,6 +6,7 @@
 import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS } from "./ilustraciones.js";
 import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
+import * as autz from "./autorizacion.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -137,7 +138,7 @@ function paintList() {
     return `<article class="ag-ev${open ? " open" : ""}" style="--c:${t.color}">
       <button class="ag-ev-head" data-action="agOpen" data-id="${esc(e.id)}" aria-expanded="${open}">
         <span class="ag-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>
-        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}</span><strong>${esc(e.title)}</strong>
+        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}${e.familias ? " · 🏠" : ""}${autz.hasAuth(e) ? " · ✍️ Autorización" : ""}</span><strong>${esc(e.title)}</strong>
           <span class="muted small">${[e.start ? `${esc(e.start)}${e.end ? `–${esc(e.end)}` : ""}` : "", esc(e.place || e.audience || "")].filter(Boolean).join(" · ")}</span></span>
       </button>
       ${open ? `<div class="ag-ev-body">
@@ -147,6 +148,7 @@ function paintList() {
         ${e.place ? `<p class="small"><b>Lugar:</b> ${esc(e.place)}</p>` : ""}
         <div class="row-wrap" style="margin-top:8px">
           <button class="btn btn-sm btn-ghost" data-action="agIcs" data-id="${esc(e.id)}">${icon("dl")} Agregar a mi calendario</button>
+          ${autz.hasAuth(e) ? `<button class="btn btn-sm btn-gold" data-action="agAuthPdf" data-id="${esc(e.id)}">✍️ Autorización (PDF)</button>` : ""}
           ${admin && !e.camino ? `<button class="btn btn-sm btn-soft" data-action="agEdit" data-id="${esc(e.baseId || e.id)}">${icon("edit")} Editar${e.baseId ? " la serie" : ""}</button>
             ${e.baseId ? `<button class="btn btn-sm btn-ghost" data-action="agSkip" data-id="${esc(e.baseId)}" data-date="${esc(e.date)}">${icon("x")} Saltar esta fecha</button>` : ""}
             <button class="btn btn-sm btn-danger" data-action="agDel" data-id="${esc(e.baseId || e.id)}" data-rep="${e.baseId ? 1 : 0}">${icon("trash")} Borrar${e.baseId ? " la serie" : ""}</button>` : ""}
@@ -188,6 +190,7 @@ function openForm(ev) {
       </div>
       <div class="field"><label>Lugar</label><input class="input" name="place" maxlength="120" value="${esc(e.place || "")}" placeholder="Ej: Salón parroquial"></div>
       <div class="field"><label>Detalle</label><textarea class="textarea" name="desc" maxlength="1500" placeholder="Qué traer, a qué hora termina, a quién consultar…">${esc(e.desc || "")}</textarea></div>
+      ${autz.formHTML(ev)}
       <fieldset class="p-dates ag-feat-box">
         <label class="row" style="gap:8px;font-weight:800"><input type="checkbox" name="feat" id="agFeat" ${e.feat ? "checked" : ""}> ${icon("sparkle")} Destacar en Inicio</label>
         <span class="xs muted">Aparece como diapositiva en el carrusel de bienvenida entre las fechas que elijas.</span>
@@ -287,6 +290,19 @@ function registerActions() {
     if (!confirm(el.dataset.rep === "1" ? "¿Borrar TODAS las fechas de este evento que se repite? Para quitar solo una, usa «Saltar esta fecha»." : "¿Borrar este evento de la agenda?")) return;
     try { await ctx.cloud.deleteEvent(el.dataset.id); openId = null; toast("Evento borrado"); } catch { toast("No se pudo borrar", ""); }
   };
+  A.agAuthPdf = async (el) => {
+    const e = all().find((x) => x.id === el.dataset.id); if (!e) return;
+    const base = e.baseId ? (events || []).find((x) => x.id === e.baseId) : null;
+    const ev = base ? { ...base, date: e.date, auth: { ...base.auth, salidaF: e.date, regresoF: base.auth.regresoF && base.auth.salidaF ? shiftIso(e.date, Math.round((parse(base.auth.regresoF) - parse(base.auth.salidaF)) / 86400000)) : e.date } } : e;
+    toast("Preparando la autorización…");
+    try { await autz.download(ev); } catch (err) { console.warn(err); toast("No se pudo crear el PDF", ""); }
+  };
+  A.agAuthPreview = async () => {
+    const form = document.getElementById("agForm"); if (!form) return;
+    const f = new FormData(form);
+    const ev = { title: String(f.get("title") || "Actividad").trim() || "Actividad", date: String(f.get("date") || ""), start: String(f.get("start") || ""), end: String(f.get("end") || ""), place: String(f.get("place") || ""), auth: autz.fromForm(f) || { req: true } };
+    try { await autz.download(ev); } catch (err) { console.warn(err); toast("No se pudo crear el PDF", ""); }
+  };
   A.agIcs = (el) => {
     const e = all().find((x) => x.id === el.dataset.id); if (!e) return;
     const base = e.baseId && (events || []).find((x) => x.id === e.baseId);
@@ -294,6 +310,7 @@ function registerActions() {
   };
   document.addEventListener("change", (e) => {
     if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); }
+    if (e.target.id === "agAuth") { const o = $("#agAuthOpts"); if (o) o.hidden = !e.target.checked; const fam = $("#agFam"); if (e.target.checked && fam) fam.checked = true; }
     if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
     if (e.target.id === "agRepeat") { const o = $("#agUntilBox"); if (o) o.hidden = !e.target.value; }
   });
@@ -306,6 +323,9 @@ function registerActions() {
     data.repeat = REPEATS[String(f.get("repeat") || "")] ? String(f.get("repeat") || "") : "";
     data.until = data.repeat ? String(f.get("until") || "") : "";
     if (data.until && data.until < data.date) { toast("«Hasta» es anterior a la fecha del evento", ""); return; }
+    data.familias = f.get("familias") === "on";
+    data.auth = autz.fromForm(f);
+    if (data.auth && !data.auth.salidaF) data.auth.salidaF = data.date;
     data.feat = f.get("feat") === "on";
     for (const k of ["featFrom", "featTo", "featHand", "featIllus"]) data[k] = data.feat ? String(f.get(k) || "").trim() : "";
     if (data.feat && !data.featFrom) data.featFrom = todayIso();

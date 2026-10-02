@@ -3,6 +3,7 @@
 
 import * as S from "./store.js";
 import * as portada from "./portada.js";
+import * as familiasAdmin from "./familias-admin.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -20,7 +21,7 @@ export async function renderAdmin(sub, _api) {
   if (cloudOn) {
     const st = api.cloud.state();
     if (!st.ready) return cloudGate(st);
-    if (!st.isAdmin && st.isStaff) return coordShell(portada.adminView());
+    if (!st.isAdmin && st.isStaff) return coordShell(sub.startsWith("familias") ? "familias" : "portada", sub.startsWith("familias") ? familiasAdmin.adminView() : portada.adminView());
     if (!st.isAdmin) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
       <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
       <h1 class="display" style="font-size:1.6rem">Solo para administradores</h1>
@@ -36,6 +37,7 @@ export async function renderAdmin(sub, _api) {
     case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
     case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
     case "portada": body = portada.adminView(); break;
+    case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
     case "comunidad": body = communityView(draft); break;
@@ -47,18 +49,19 @@ export async function renderAdmin(sub, _api) {
 }
 
 // Coordinadores: Gestión reducida a la Portada (la Agenda y la moderación se hacen en sus propias páginas).
-function coordShell(body) {
+function coordShell(page, body) {
   return `
   <div class="admin-shell">
     <nav class="admin-side" aria-label="Gestión">
-      <a href="#/admin/portada" aria-current="page">${icon("sparkle")} Portada</a>
+      <a href="#/admin/portada" ${page === "portada" ? 'aria-current="page"' : ""}>${icon("sparkle")} Portada</a>
+      <a href="#/admin/familias" ${page === "familias" ? 'aria-current="page"' : ""}>${icon("users")} Familias</a>
       <a href="#/agenda">${icon("grid")} Agenda</a>
       <a href="#/acompanar">${icon("check")} Acompañar</a>
       <a href="#/muro">${icon("chat")} Muro y chat</a>
       <div class="side-extra"><a href="#/">${icon("out")} Salir de Gestión</a></div>
     </nav>
     <div class="stack" style="--gap:18px;min-width:0">
-      <div class="note">Tu cuenta es de <b>coordinación</b>: editas la Portada y la Agenda, y moderas el muro y el chat. Cuentas, roles y contenido del curso los maneja un administrador.</div>
+      <div class="note">Tu cuenta es de <b>coordinación</b>: editas la Portada, la página para familias y la Agenda, y moderas el muro y el chat. Cuentas, roles y contenido del curso los maneja un administrador.</div>
       ${body}
     </div>
   </div>`;
@@ -74,6 +77,7 @@ function shell(page, body) {
       ${link("resumen", "#/admin", "Resumen", "grid")}
       ${cloudOn ? link("dirigentes", "#/admin/dirigentes", "Dirigentes", "users") : ""}
       ${cloudOn ? link("portada", "#/admin/portada", "Portada", "sparkle") : ""}
+      ${cloudOn ? link("familias", "#/admin/familias", "Familias", "users") : ""}
       ${cloudOn ? `<a href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
       ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
       ${link("materiales", "#/admin/materiales", "Materiales", "book")}
