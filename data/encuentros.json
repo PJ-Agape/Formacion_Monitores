@@ -4154,7 +4154,13 @@
   {
    "cuando": "oct 2026 – feb 2027",
    "que": "Antes de empezar",
-   "texto": "El equipo realiza el curso de formación «El Arte de Encontrarnos» y prepara el año."
+   "texto": "En estos meses no hay encuentros: nos estamos preparando para el año siguiente. El equipo realiza el curso de formación «El Arte de Encontrarnos» y prepara el año."
+  },
+  {
+   "cuando": "29 nov 2026 – 10 ene 2027",
+   "que": "Adviento y Navidad",
+   "liturgico": true,
+   "texto": "En estos meses nos estamos preparando para el año siguiente. Te invitamos a vivir el Adviento y la Navidad en la parroquia: la novena, el pesebre y la Misa de Nochebuena."
   },
   {
    "cuando": "Semana Santa · 25 – 28 mar 2027",
@@ -4170,6 +4176,12 @@
    "cuando": "19 sep 2027",
    "que": "Fiestas Patrias",
    "texto": "Sin encuentro."
+  },
+  {
+   "cuando": "desde el 28 nov 2027",
+   "que": "Adviento y Navidad",
+   "liturgico": true,
+   "texto": "Terminado el año del grupo, en estos meses nos preparamos para el año siguiente. Vivamos el Adviento y la Navidad en la parroquia. ¡Nos vemos en marzo!"
   }
  ],
  "papa": {

@@ -54,6 +54,16 @@ function semana(c) {
   }
   return best && best.e;
 }
+// Fuera del año de encuentros (Adviento, Navidad y verano): el texto de esa pausa.
+function fuera(c) {
+  if (!c || !(c.encuentros || []).length) return "";
+  const dt = (e) => { const m = String(e.fecha).match(/(\d+) de (\w+) de (\d{4})/); return m ? new Date(+m[3], MESES.indexOf(m[2]), +m[1]) : null; };
+  const first = dt(c.encuentros[0]), last = dt(c.encuentros[c.encuentros.length - 1]), t = parse(today);
+  const lit = (c.pausas || []).filter((p) => p.liturgico);
+  if (first && t < new Date(first.getTime() - 6 * 86400000)) return (lit[0] && lit[0].texto) || "El grupo retoma sus encuentros en marzo.";
+  if (last && t > new Date(last.getTime() + 6 * 86400000)) return (lit[1] && lit[1].texto) || "El grupo retoma sus encuentros en marzo.";
+  return "";
+}
 let EVS = [];
 function proximas(list) {
   const to = shift(today, 120);
@@ -124,6 +134,9 @@ async function main() {
     ${C.carta.titulo ? `<h2>${esc(C.carta.titulo)}</h2>` : ""}<div class="fam-carta-t">${esc(C.carta.texto).replace(/\n/g, "<br>")}</div>
     ${C.carta.firma ? `<p class="fam-firma">${esc(C.carta.firma)}</p>` : ""}</section>` : ""}
 
+  ${!sem && fuera(cam) ? `<section class="fam-sec fam-semana"><div><span class="fam-k">Camino Ágape</span>
+      <h2>En estos meses nos estamos preparando para el año siguiente.</h2>
+      <p>${esc(fuera(cam))}</p></div>${illus("familia")}</section>` : ""}
   ${sem ? `<section class="fam-sec fam-semana">
     <div><span class="fam-k">Esta semana conversamos sobre</span>
       <h2>${esc(sem.tema)}</h2>

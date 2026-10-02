@@ -79,12 +79,21 @@ export async function view(nArg) {
     return `${head}
       <section class="card mc-wait"><div><span class="eyebrow">Muy pronto</span>
         <h2>El Camino ${esc(String(first.date.getFullYear()))} empieza el ${esc(longD(first.date))}</h2>
+        <p class="mc-prep">En estos meses nos estamos preparando para el año siguiente.</p>
         <p class="muted">Faltan <b>${days}</b> días. Cada semana se abrirá aquí el encuentro de tu etapa: el tema, el Evangelio, una frase para llevar, preguntas para pensar y el desafío de la semana.</p></div>
         ${illus(E.ill)}</section>
       <h2 class="mc-h2">Así será el año</h2>
-      <div class="mc-tramos">${(d.tramos || []).map((t) => `<div class="mc-tramo"><b>${esc(t.name)}</b><span class="xs">${esc(t.fechas)}</span><p class="small">${esc(t.tono)}</p></div>`).join("")}</div>`;
+      ${tramosHTML(d)}`;
   }
 
+  // Terminado el año: Adviento y Navidad, preparando el año siguiente
+  const last = list[list.length - 1];
+  const ended = cur === list.length - 1 && new Date() > shift(last.date, 6);
+  const endCard = ended ? (() => { const p = (d.pausas || []).filter((x) => x.liturgico).pop();
+    return `<section class="card mc-wait"><div><span class="eyebrow">${esc(p ? p.que : "Adviento y Navidad")} · ${esc(p ? p.cuando : "")}</span>
+      <h2>Terminó el Camino ${esc(String(last.date.getFullYear()))}</h2>
+      <p class="mc-prep">En estos meses nos estamos preparando para el año siguiente.</p>
+      <p class="muted">${esc(p ? p.texto : "")} Puedes volver a mirar todos los encuentros del año.</p></div>${illus("familia")}</section>`; })() : "";
   const e = list[Math.max(0, sel)] || list[cur];
   const idx = list.indexOf(e);
   const open = idx <= cur, isCur = idx === cur;
@@ -118,11 +127,23 @@ export async function view(nArg) {
     return `<a class="mc-dot ${o ? "open" : "lock"} ${v ? "done" : ""} ${i === idx ? "sel" : ""}" ${o ? `href="#/mi-camino/${y.n}"` : ""} title="${esc(`Encuentro ${y.n}: ${y.tema}`)}">
       <b>${y.n}</b><span>${o ? esc(((y.etapas || {})[et] || {}).titulo || y.tema) : esc(`${y.date.getDate()} ${MESES[y.date.getMonth()].slice(0, 3)}`)}</span>${v ? "✓" : o ? "" : icon("lock")}</a>`;
   }).join("")}</div>`;
-  return `${head}${progress}${card}
+  return `${head}${progress}${nArg == null ? endCard : ""}${card}
     <div class="row-wrap" style="margin-top:12px">${idx > 0 ? `<a class="btn btn-ghost btn-sm" href="#/mi-camino/${list[idx - 1].n}">${icon("left")} Anterior</a>` : ""}
       ${idx < cur ? `<a class="btn btn-ghost btn-sm" href="#/mi-camino/${list[idx + 1].n}">Siguiente ${icon("right")}</a>` : ""}
       ${!isCur ? `<a class="btn btn-soft btn-sm" href="#/mi-camino">Ir a esta semana</a>` : ""}</div>
-    ${tl}`;
+    ${tl}
+    <h2 class="mc-h2">Los tiempos del año</h2>${tramosHTML(d)}`;
+}
+
+// Los tiempos del año: los tramos con encuentro y, antes y después, Adviento y Navidad (sin encuentros).
+function tramosHTML(d) {
+  const lit = (d.pausas || []).filter((p) => p.liturgico);
+  const box = (name, fechas, texto, pausa) => `<div class="mc-tramo${pausa ? " pausa" : ""}"><b>${esc(name)}</b><span class="xs">${esc(fechas)}</span><p class="small">${esc(texto)}</p>${pausa ? `<span class="chip">Sin encuentros</span>` : ""}</div>`;
+  return `<div class="mc-tramos">${[
+    lit[0] ? box(lit[0].que, lit[0].cuando, lit[0].texto, true) : "",
+    ...(d.tramos || []).map((t) => box(t.name, t.fechas, t.tono, false)),
+    lit[1] ? box(lit[1].que, lit[1].cuando, lit[1].texto, true) : "",
+  ].join("")}</div>`;
 }
 
 // Tarjeta de Inicio para jóvenes
