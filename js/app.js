@@ -250,11 +250,14 @@ function viewHome() {
     <span class="spacer"></span>${icon("right")}
   </a>` : ""}
 
-  <a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
+  ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
+    <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
+    <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : `<a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
     <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
     <span class="muted small">Revista principal, guía de coordinación y revistas de cada etapa.</span></span>${icon("right")}
-  </a>
+  </a>`}
   ${cloud.enabled && cloud.state().isGuide ? `<a class="card link camino-banner" href="#/acompanar" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("check")}</span>
     <span style="flex:1"><span class="eyebrow">Para los guías</span><strong>Acompañar</strong>
@@ -1208,6 +1211,7 @@ function viewLogin(kind = "curso") {
     <div class="card" style="text-align:center;padding:28px">
       ${msg || `<button class="btn btn-primary btn-block google-btn" data-action="signIn">${googleIcon()} Continuar con Google</button>
         <p class="xs muted" style="margin-top:12px">Solo pueden ingresar quienes fueron invitados por el equipo coordinador.</p>`}
+      <p class="small" style="margin-top:14px">¿Aún no eres dirigente? <a href="presentaciones/se-puente.html" target="_blank" rel="noopener"><b>Mira «Sé puente»</b></a></p>
     </div>
   </div>`;
 }
