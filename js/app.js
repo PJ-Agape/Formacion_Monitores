@@ -91,7 +91,9 @@ export async function render() {
     location.replace("#/perfil"); return;
   }
   // Con cuentas: el curso pide iniciar sesión; el resto de la app queda abierto.
-  if (cloud.enabled && section === "itinerario" && !cloud.state().ready) fn = viewLogin;
+  // Formación, Materiales y revistas del Camino Ágape: solo para cuentas invitadas.
+  const recursos = section === "materiales" || /^\/encuentros(\/|$)/.test(path);
+  if (cloud.enabled && (section === "itinerario" || recursos) && !cloud.state().ready) fn = () => viewLogin(recursos ? "recursos" : "curso");
   document.body.classList.toggle("is-admin", section === "admin");
   applyTheme();
   renderChrome(section);
@@ -1181,8 +1183,9 @@ function viewNotFound() {
 // ---------------------------------------------------------------------------
 // CUENTAS (cuando Firebase está configurado)
 // ---------------------------------------------------------------------------
-function viewLogin() {
+function viewLogin(kind = "curso") {
   const st = cloud.state();
+  const R = kind === "recursos";
   const msg = {
     "not-invited": `<h2 class="display">Tu correo aún no está invitado</h2>
       <p class="muted" style="margin-top:8px">Entraste como <b>${esc(st.user?.email || "")}</b>. Pide al equipo coordinador que te invite con ese correo y vuelve a intentarlo.</p>
@@ -1198,13 +1201,13 @@ function viewLogin() {
   return `<div class="welcome">
     <section class="hero" style="margin-bottom:18px;text-align:center">
       <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo Ágape Joven PJ">
-      <span class="eyebrow">Curso de formación de dirigentes</span>
-      <h1>Tu camino de <em>formación</em></h1>
-      <p class="lead">Ingresa con tu cuenta de Google para avanzar a tu ritmo, guardar tu cuaderno y recibir tu constancia. Tu avance te sigue en cualquier dispositivo.</p>
+      <span class="eyebrow">${R ? "Materiales y revistas" : "Curso de formación de dirigentes"}</span>
+      <h1>${R ? `Recursos para <em>dirigentes</em>` : `Tu camino de <em>formación</em>`}</h1>
+      <p class="lead">${R ? "Las revistas del Camino Ágape, las presentaciones, las guías y el banco de dinámicas son para quienes tienen cuenta. Ingresa con tu cuenta de Google para verlos." : "Ingresa con tu cuenta de Google para avanzar a tu ritmo, guardar tu cuaderno y recibir tu constancia. Tu avance te sigue en cualquier dispositivo."}</p>
     </section>
     <div class="card" style="text-align:center;padding:28px">
       ${msg || `<button class="btn btn-primary btn-block google-btn" data-action="signIn">${googleIcon()} Continuar con Google</button>
-        <p class="xs muted" style="margin-top:12px">Solo pueden ingresar dirigentes invitados por el equipo coordinador.</p>`}
+        <p class="xs muted" style="margin-top:12px">Solo pueden ingresar quienes fueron invitados por el equipo coordinador.</p>`}
     </div>
   </div>`;
 }
