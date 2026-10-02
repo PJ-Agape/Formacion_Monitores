@@ -8,7 +8,9 @@ import { esc, icon, toast } from "./util.js";
 import { nextOn } from "./repeat.js";
 
 const $ = (s, r = document) => r.querySelector(s);
-const BASE = () => location.href.split("#")[0];
+// Los códigos QR siempre llevan al sitio oficial (también desde el sitio de prueba).
+const LIVE = "https://pj-agape.github.io/Formacion_Monitores/";
+const BASE = () => (/pj-agape\.github\.io$/.test(location.hostname) ? location.href.split("#")[0] : LIVE);
 const URLS = {
   app: () => BASE(),
   puente: () => new URL("presentaciones/se-puente.html", BASE()).href,
