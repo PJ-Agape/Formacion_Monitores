@@ -31,6 +31,24 @@ function saveBest(courseId, key, r) {
 // Construcción de las láminas
 // ---------------------------------------------------------------------------
 const THEMES = ["cream", "sun", "white", "sky", "coral", "cream", "white", "sky"];
+// Ilustración de cada lámina según de qué habla (sin repetir dentro de la unidad mientras se pueda)
+const KW = [
+  [/bautis/i, "bautismo"], [/emaús|caminar|camino/i, "camino"], [/escuch/i, "escuchar"], [/oraci|rezar|reza |silencio/i, "oracion"], [/maría|virgen/i, "maria"],
+  [/juego|jugar|juga|lúdic|dinámica/i, "juego"], [/digital|redes sociales|celular|pantalla|internet|whatsapp/i, "celular"], [/equipo|coordinador/i, "equipo"],
+  [/niñ|pequeñ/i, "ninos"], [/descans|agotad|cansanc|autocuidado|cuidarte/i, "descanso"], [/herid|dolor|duelo|sufr|pérdida|llor/i, "levantate"],
+  [/eucarist|misa|partir el pan/i, "eucaristia"], [/palabra de dios|biblia|evangelio|escritura/i, "biblia"], [/famili|papás|padres|apoderad/i, "familia"],
+  [/perd[oó]n|reconcili/i, "amigos"], [/amig/i, "amigos"], [/testimonio|luz/i, "luz"], [/semilla|crecer|proceso/i, "semilla"], [/env[ií]o|misión|enviad/i, "envio"],
+  [/espíritu/i, "espiritu"], [/pregunt|duda/i, "pregunta"], [/acog|bienven|llegan|nuevo/i, "acogida"], [/emoci|sentimient|corazón/i, "corazon"],
+  [/crisis|tormenta|conflict/i, "tormenta"], [/pastor|oveja/i, "pastor"], [/planific|preparar|organiz|método|pasos/i, "pizarra"], [/servi/i, "servir"],
+  [/decisi|elegi|discern/i, "eleccion"], [/protec|segur|límite/i, "acogida"], [/comunidad|grupo/i, "comunidad"], [/amor|amar|ama /i, "amar"],
+];
+const FALLBACK = ["corazon", "camino", "equipo", "semilla", "luz", "amigos", "comunidad", "escuchar", "futuro", "tesoro"];
+function pickIll(text, used) {
+  const t = plain(text || "");
+  const hits = KW.filter(([re]) => re.test(t)).map(([, k]) => k);
+  const k = hits.find((x) => !used.has(x)) || FALLBACK.find((x) => !used.has(x)) || hits[0] || "corazon";
+  used.add(k); return k;
+}
 const ILL = ["corazon", "camino", "escuchar", "equipo", "acogida", "amigos", "semilla", "luz", "levantate", "biblia", "servir", "pastor"];
 function blocks(body) {
   return String(body || "").split(/\n\s*\n/).map((b) => {
@@ -88,6 +106,12 @@ function build(course, ph, pi, se, ex) {
   if (se.activity) add("mission");
   if (se.prayer) add("prayer");
   add("end");
+  // ilustraciones: el título pesa más que el cuerpo
+  const used = new Set();
+  const txt = (x) => x.type === "read" || x.type === "list" ? `${x.sec.title} ${x.sec.title} ${(x.items || []).join(" ")}`
+    : x.type === "flip" ? `${x.sec.title} ${x.cards.map((c) => c.front + " " + c.back).join(" ")}`
+    : x.a ? JSON.stringify(x.a) : "";
+  for (const x of S) if (["read", "list", "flip", "cards", "quiz", "vf", "pairs", "order"].includes(x.type)) x.ill = pickIll(txt(x), used);
   return S;
 }
 
@@ -172,6 +196,11 @@ function slideTheme(s, i) {
 const deco = (i) => { const k = i % 3; return `<div class="uv-deco" aria-hidden="true"><i class="b1 k${k}"></i><i class="b2 k${k}"></i><i class="b3 k${k}"></i></div>`; };
 
 function slideHTML(s, i) {
+  const html = slideBody(s, i);
+  if (!s.ill || s.type === "read") return html;
+  return html.replace(/(<span class="uv-label">[\s\S]*?<\/span>)(<h2 class="uv-mid">[\s\S]*?<\/h2>)/, `<div class="uv-head"><div>$1$2</div><div class="uv-sticker" aria-hidden="true">${illus(s.ill)}</div></div>`);
+}
+function slideBody(s, i) {
   const se = G.se, ph = G.ph;
   switch (s.type) {
     case "cover": return `<div class="uv-cover"><div>
@@ -184,9 +213,10 @@ function slideHTML(s, i) {
     case "goal": return `<div class="uv-split"><div><span class="uv-label">Tu meta de hoy</span><h2 class="uv-big">🎯 Al terminar podrás…</h2>
         <p class="uv-bubble">${rich(se.objective)}</p></div>
         <div>${se.intro ? `<span class="uv-hand">para empezar</span><p class="uv-note">${rich(se.intro)}</p>` : ""}</div></div>`;
-    case "read": return `<div class="uv-read"><span class="uv-label">${esc(s.sec.title)}${s.part ? " · sigue" : ""}</span>
+    case "read": return `<div class="uv-read has-ill"><div class="uv-col"><span class="uv-label">${esc(s.sec.title)}${s.part ? " · sigue" : ""}</span>
         ${s.part ? "" : `<h2 class="uv-big">${esc(s.sec.title)}</h2>`}
-        <div class="uv-text">${s.items.map((p) => `<p>${rich(p)}</p>`).join("")}</div></div>`;
+        <div class="uv-text">${s.items.map((p) => `<p>${rich(p)}</p>`).join("")}</div></div>
+        <div class="uv-ill uv-side-ill">${illus(s.ill || "corazon")}</div></div>`;
     case "list": return `<div class="uv-read"><span class="uv-label">${esc(s.sec.title)}</span><h2 class="uv-mid">${s.lead ? rich(s.lead.replace(/:\s*$/, "")) : "Tócalos uno a uno"}</h2>${s.lead ? `<p class="xs uv-help">Tócalos uno a uno.</p>` : ""}
         <ul class="uv-reveal">${s.items.map((l, k) => `<li><button data-action="uvReveal" data-id="${i}-${k}"><span class="n">${k + 1}</span><span class="t">${rich(l)}</span></button></li>`).join("")}</ul></div>`;
     case "flip": return cardsHTML(i, s.sec.title, s.lead ? plain(s.lead).replace(/:\s*$/, "") : "Da vuelta cada tarjeta", s.cards, "flip", s.lead ? "Da vuelta cada tarjeta." : "");

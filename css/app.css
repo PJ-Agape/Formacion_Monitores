@@ -2117,3 +2117,20 @@ body.uv-open .app-header, body.uv-open .bottom-nav, body.uv-open .app-footer, bo
 .uv-end-btns .btn { max-width: 100%; white-space: normal; text-align: center; }
 .uv-card:not(.on) .b, .uv-card.on .f { pointer-events: none; }
 .uv-card:focus-visible { outline: 3px solid #ef591c; outline-offset: 4px; border-radius: 22px; }
+/* Ilustraciones en las láminas de la unidad */
+.uv-read.has-ill { grid-template-columns: minmax(0, 1fr) minmax(0, 290px); gap: clamp(20px, 3vw, 40px); align-items: center; }
+.uv-col { display: grid; min-width: 0; }
+.uv-side-ill { rotate: -1.5deg; }
+.uv-s:nth-child(even) .uv-side-ill { rotate: 2deg; background: #fff1c7; }
+.uv-s:nth-child(3n) .uv-side-ill { background: #e1f3fd; }
+.uv-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 18px; }
+.uv-head > div:first-child { display: grid; min-width: 0; flex: 1; }
+.uv-sticker { flex: 0 0 auto; width: clamp(120px, 15vw, 190px); margin-bottom: 14px; background: #fff; border: 3px solid #0b2566; border-radius: 22px; box-shadow: 4px 4px 0 #0b2566; padding: 4px; rotate: 3deg; color: #0b2566; --il-bg: #fff6e5; }
+.uv-s:nth-child(odd) .uv-sticker { rotate: -3deg; background: #fff1c7; }
+.uv-sticker .z-illus { width: 100%; height: auto; display: block; }
+@media (max-width: 760px) {
+  .uv-read.has-ill { grid-template-columns: 1fr; gap: 14px; }
+  .uv-side-ill { order: -1; max-width: 170px; padding: 4px; border-radius: 20px; box-shadow: 4px 4px 0 #0b2566; }
+  .uv-sticker { width: 92px; border-radius: 16px; margin-bottom: 12px; }
+  .uv-head { gap: 10px; }
+}
