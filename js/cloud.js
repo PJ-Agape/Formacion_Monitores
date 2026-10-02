@@ -99,6 +99,7 @@ async function handleUser(u) {
       await withTimeout(fb.setDoc(uref, {
         email, name: (invite && invite.name) || u.displayName || email, parish: (invite && invite.parish) || "",
         role: invite ? invite.role : "admin", active: true, createdAt: fb.serverTimestamp(), lastSeen: fb.serverTimestamp(),
+        ...(invite && invite.consent ? { consent: invite.consent } : {}),
       }));
       snap = await withTimeout(fb.getDoc(uref));
     }
@@ -299,9 +300,11 @@ export async function adminData() {
     invites: invites.filter((i) => !used.has(i.id)),
   };
 }
-export async function invite({ email, name, parish, role }) {
+export async function invite({ email, name, parish, role, consent }) {
   email = lower(email);
-  await fb.setDoc(fb.doc(db, "invites", email), { name, parish: parish || "", role, createdAt: fb.serverTimestamp(), createdBy: account.email });
+  const data = { name, parish: parish || "", role, createdAt: fb.serverTimestamp(), createdBy: account.email };
+  if (consent) data.consent = { ...consent, registradoPor: account.email };
+  await fb.setDoc(fb.doc(db, "invites", email), data);
 }
 export const deleteInvite = (email) => fb.deleteDoc(fb.doc(db, "invites", lower(email)));
 export const updateUser = (uid, data) => fb.updateDoc(fb.doc(db, "users", uid), data);
@@ -614,8 +617,15 @@ async function getContent(name) {
   try { const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", name)), 6000); return snap.exists() ? safeJSON(snap.data().json, null) : null; } catch { return null; }
 }
 const setContent = (name, data) => fb.setDoc(fb.doc(db, "content", name), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
-export const getCumples = () => getContent("cumples");
-export const saveCumples = (d) => setContent("cumples", d);
+// Cumpleaños: solo para quienes tienen cuenta (ya no en la zona pública «content»).
+export async function getCumples() {
+  if (!enabled || !db) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "privado", "cumples")), 6000); return s.exists() ? safeJSON(s.data().json, null) : null; } catch { return null; }
+}
+export async function saveCumples(d) {
+  await fb.setDoc(fb.doc(db, "privado", "cumples"), { json: JSON.stringify(d), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
+  fb.deleteDoc(fb.doc(db, "content", "cumples")).catch(() => {}); // borra la copia pública antigua
+}
 export const getHonor = () => getContent("honor");
 export const saveHonor = (d) => setContent("honor", d);
 export const getFamilias = () => getContent("familias");

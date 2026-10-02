@@ -296,7 +296,7 @@ function paintPost() {
 // ---------------------------------------------------------------------------
 export async function homeHighlight() {
   const slot = $("#wallSlot");
-  if (!slot || !ctx.cloud.enabled) return;
+  if (!slot || !ctx.cloud.enabled || !ctx.cloud.state().ready) return;
   const rows = (await ctx.cloud.latestWall()).filter((p) => !p.hidden);
   const s = $("#wallSlot");
   if (!s || !rows.length) return;

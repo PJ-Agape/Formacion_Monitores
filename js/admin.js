@@ -487,7 +487,7 @@ async function peopleView() {
     <h3>Invitaciones pendientes · ${data.invites.length}</h3>
     <p class="muted small" style="margin-top:4px">Aún no han ingresado. Envíales el enlace de la app para que entren con ese correo de Google.</p>
     <div class="stack" style="--gap:6px;margin-top:12px">${data.invites.map((i) => `
-      <div class="tree-item"><div class="t"><strong>${esc(i.name || i.id)}</strong><span>${esc(i.id)} · ${esc(api.cloud.roleLabel(i.role))}${i.parish ? " · " + esc(i.parish) : ""}</span></div>
+      <div class="tree-item"><div class="t"><strong>${esc(i.name || i.id)}</strong><span>${esc(i.id)} · ${esc(api.cloud.roleLabel(i.role))}${i.parish ? " · " + esc(i.parish) : ""}${consentChip(i)}</span></div>
         <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
         ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
   </div>` : ""}`;
@@ -505,7 +505,7 @@ async function personView(uid) {
     <div style="flex:1;min-width:220px">
       <h1 class="display" style="font-size:1.8rem">${esc(u.name)}</h1>
       <p class="muted small" style="margin-top:4px">${esc(u.email)}${u.parish ? " · " + esc(u.parish) : ""}</p>
-      <div class="row-wrap" style="margin-top:10px"><span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>${api.cloud.isProtected(u.email) ? ` <span class="chip">${icon("lock")} Cuenta protegida</span>` : ""}
+      <div class="row-wrap" style="margin-top:10px"><span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>${api.cloud.isProtected(u.email) ? ` <span class="chip">${icon("lock")} Cuenta protegida</span>` : ""}${consentChip(u)}
         ${u.active === false ? `<span class="chip">En pausa</span>` : `<span class="chip ok">Activa</span>`}
         <span class="chip">Última actividad: ${ago(u.progress?.updatedAt || u.lastSeen)}</span></div>
     </div>
@@ -603,8 +603,21 @@ const SPECS = {
     return f;
   },
   box: () => [["title", "Título de la sección", "text"], ["desc", "Descripción", "textarea"]],
-  invite: () => [["email", "Correo de Google", "text", null, "nombre@gmail.com"], ["name", "Nombre y apellido", "text"], ["parish", "Capilla o parroquia", "text"],
-    ["role", "Rol", "select", [["ingreso", "Joven · Ingreso (Mi Camino)"], ["madurez", "Joven · Madurez (Mi Camino)"], ["aspirante", "Aspirante (Mi Camino, curso y sala Aspirantes)"], ["dirigente", "Dirigente (hace el curso)"], ["coordinador", "Coordinador (agenda, portada y moderación)"], ["admin", "Administrador (gestión completa)"]]]],
+  invite: (o) => [["email", "Correo de Google", "text", null, "nombre@gmail.com"], ["name", "Nombre y apellido", "text"], ["parish", "Capilla o parroquia", "text"],
+    ["role", "Rol", "select", [["ingreso", "Joven · Ingreso (Mi Camino)"], ["madurez", "Joven · Madurez (Mi Camino)"], ["aspirante", "Aspirante (Mi Camino, curso y sala Aspirantes)"], ["dirigente", "Dirigente (hace el curso)"], ["coordinador", "Coordinador (agenda, portada y moderación)"], ["admin", "Administrador (gestión completa)"]]],
+    ...(YOUTH.includes(o.role) ? [
+      ["", "Consentimiento de la familia", "heading"],
+      ["", "Antes de crear la cuenta de un joven, su papá, mamá o apoderado/a firma el consentimiento. Guárdalo en el fichero en papel; aquí solo queda registrado.", "note"],
+      ["", "Descargar el consentimiento (PDF)", "button", "aConsentPdf"],
+      ["consent.mayor", "Es mayor de 18 años (no necesita consentimiento de su familia)", "check"],
+      ...(o.consent && o.consent.mayor ? [] : [
+        ["consent.ok", "Recibí el consentimiento firmado", "check"],
+        ["consent.fecha", "Fecha de la firma", "date"],
+        ["consent.honor", "Autorizó: cuadro de honor", "check"],
+        ["consent.cumple", "Autorizó: cumpleaños visible en la app", "check"],
+        ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
+      ]),
+    ] : [])],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
   identity: () => [["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
   methods: () => [["icon", "Emoji", "text", null, "🏡"], ["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
@@ -614,6 +627,15 @@ const SPECS = {
     ["responsibility", "Responsabilidad", "textarea"], ["functions", "Tareas principales", "list", null, "Tarea"]],
 };
 
+const YOUTH = ["ingreso", "madurez", "aspirante"];
+// Registro del consentimiento de la familia (solo fecha y lo autorizado; el papel queda en el fichero).
+function consentChip(u) {
+  const c = u && u.consent; if (!c) return YOUTH.includes(u && u.role) ? ` <span class="chip danger">Sin consentimiento registrado</span>` : "";
+  if (c.mayor) return ` <span class="chip">Mayor de edad</span>`;
+  const f = c.fecha ? c.fecha.split("-").reverse().join("/") : "";
+  const ok = [c.honor && "honor", c.cumple && "cumpleaños", c.fotos && "fotos"].filter(Boolean).join(", ");
+  return ` <span class="chip ok" title="Registrado por ${esc(c.registradoPor || "")}">✓ Consentimiento ${esc(f)}${ok ? " · " + esc(ok) : ""}</span>`;
+}
 let E = null; // { title, spec, specArgs, obj, onSave, isNew }
 function openEditor({ title, spec, specArg, obj, onSave, onDelete }) {
   E = { title, spec, specArg, obj: clone(obj), onSave, onDelete };
@@ -642,6 +664,10 @@ function fieldHTML([key, label, type, opts, ph, hint]) {
   const v = key ? getPath(E.obj, key) : null;
   const id = "f_" + key.replace(/\./g, "_");
   if (type === "heading") return `<h3 class="ed-heading">${label}</h3>`;
+  if (type === "note") return `<p class="small muted">${esc(label)}</p>`;
+  if (type === "button") return `<button type="button" class="btn btn-sm btn-ghost" data-action="${esc(opts)}" style="justify-self:start">${icon("dl")} ${esc(label)}</button>`;
+  if (type === "check") return `<label class="row" style="gap:8px;align-items:flex-start"><input type="checkbox" id="${id}" data-fc="${key}" ${v ? "checked" : ""} style="margin-top:3px"> <span>${esc(label)}</span></label>`;
+  if (type === "date") return `<div class="field"><label for="${id}">${label}</label><input class="input" type="date" id="${id}" data-f="${key}" value="${esc(v ?? "")}"></div>`;
   if (type === "objlist") {
     const arr = Array.isArray(v) ? v : [];
     return `<div class="stack" style="--gap:10px"><h3 class="ed-heading">${label}</h3>${hint ? `<span class="hint xs muted">${hint}</span>` : ""}
@@ -702,6 +728,7 @@ document.addEventListener("change", (e) => {
   const t = e.target;
   if (t.dataset.correct != null) E.obj.questions[+t.dataset.correct].correct = +t.value;
   if (t.dataset.rerender) { setPath(E.obj, t.dataset.f, t.value); renderEditor(); }
+  if (t.dataset.fc) { setPath(E.obj, t.dataset.fc, t.checked); if (t.dataset.fc === "consent.mayor") renderEditor(); }
 });
 
 // ---------------------------------------------------------------------------
@@ -765,12 +792,18 @@ function bindActions() {
   A.aPeopleRefresh = async () => { await loadPeople(true); api.render(); toast("Datos actualizados"); };
   A.aPeopleCsv = () => peopleCsv();
   A.aInvite = () => openEditor({
-    title: "Invitar a una persona", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente" },
+    title: "Invitar a una persona", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente", consent: {} },
     onSave: (o) => {
       const email = String(o.email || "").trim().toLowerCase();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast("Escribe un correo válido", ""); return false; }
       if (!String(o.name || "").trim()) { toast("Escribe el nombre", ""); return false; }
-      api.cloud.invite({ email, name: o.name.trim(), parish: (o.parish || "").trim(), role: o.role })
+      let consent = null;
+      if (YOUTH.includes(o.role)) {
+        const c = o.consent || {};
+        if (!c.mayor && (!c.ok || !/^\d{4}-\d{2}-\d{2}$/.test(c.fecha || ""))) { toast("Primero registra el consentimiento firmado y su fecha", "", 4500); return false; }
+        consent = c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos };
+      }
+      api.cloud.invite({ email, name: o.name.trim(), parish: (o.parish || "").trim(), role: o.role, consent })
         .then(async () => { await loadPeople(true); api.render(); toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim()); })
         .catch((e) => toast("No se pudo invitar: " + (e.code || e.message), "", 5000));
     },
@@ -779,6 +812,12 @@ function bindActions() {
     const url = location.origin + location.pathname;
     const msg = `¡Hola${name ? " " + name.split(" ")[0] : ""}! Te invitamos al curso de formación de dirigentes de la Pastoral Juvenil Ágape. Entra aquí y elige «Continuar con Google» con tu correo ${email}: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
+  };
+  A.aConsentPdf = async () => {
+    const o = (E && E.obj) || {};
+    const et = { ingreso: "Ingreso", madurez: "Madurez", aspirante: "Aspirante" }[o.role] || "";
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: o.name || "", etapa: et, correo: o.email || "" }); }
+    catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
   };
   A.aInviteShare = (el) => shareInvite(el.dataset.email, el.dataset.name);
   A.aInviteDelete = async (el) => {

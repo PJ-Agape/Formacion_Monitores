@@ -36,6 +36,11 @@ service cloud.firestore {
     match /content/honor { allow write: if isStaff(); }
     match /content/desafio { allow write: if isStaff(); }
     match /content/cumples { allow write: if isGuide(); }
+    // Datos que no deben ser públicos (cumpleaños): solo cuentas activas; los actualizan los guías.
+    match /privado/{docId} {
+      allow read: if isMember();
+      allow write: if isGuide();
+    }
     // Página para familias: la editan administradores y coordinadores.
     match /content/familias { allow write: if isStaff(); }
 
@@ -43,7 +48,11 @@ service cloud.firestore {
     match /invites/{email} {
       allow get: if signedIn() && myEmail() == email;
       allow read, delete: if isAdmin();
-      allow create, update: if isAdmin() && validRole(request.resource.data.role);
+      // Jóvenes: no se puede invitar sin registrar el consentimiento de su familia (o que es mayor de edad).
+      allow create, update: if isAdmin() && validRole(request.resource.data.role)
+        && (!(request.resource.data.role in ['ingreso', 'madurez', 'aspirante'])
+            || (request.resource.data.consent is map
+                && (request.resource.data.consent.get('mayor', false) == true || request.resource.data.consent.get('fecha', '') is string && request.resource.data.consent.get('fecha', '').size() == 10)));
     }
 
     // Cuentas. Cada persona crea la suya al entrar por primera vez, solo si fue invitada
@@ -107,8 +116,9 @@ service cloud.firestore {
     }
     function validText(t, max) { return t is string && t.size() > 0 && t.size() <= max; }
 
+    // El muro lo leen solo quienes tienen cuenta (los jóvenes escriben ahí).
     match /wall/{postId} {
-      allow read: if resource.data.hidden == false || isStaff();
+      allow read: if isMember() && (resource.data.hidden == false || isStaff());
       allow create: if isMember() && asAuthor(request.resource.data)
         && validText(request.resource.data.title, 140) && request.resource.data.body is string && request.resource.data.body.size() <= 4000
         && request.resource.data.type in ['anuncio', 'tema', 'pregunta', 'logro', 'encuesta']
@@ -141,7 +151,7 @@ service cloud.firestore {
 
       match /replies/{replyId} {
         function post() { return get(/databases/$(database)/documents/wall/$(postId)).data; }
-        allow read: if (resource.data.hidden == false && post().hidden == false) || isStaff();
+        allow read: if isMember() && ((resource.data.hidden == false && post().hidden == false) || isStaff());
         allow create: if isMember() && asAuthor(request.resource.data) && validText(request.resource.data.body, 2000)
           && post().hidden == false && post().closed == false && post().type != 'anuncio';
         allow update: if isStaff()
