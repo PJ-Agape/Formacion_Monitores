@@ -1,0 +1,1663 @@
+{
+ "_info": "Actividades interactivas de cada unidad del curso. 'after' indica dónde va: 'inicio', el número de sección (0, 1, 2…) o 'final'. Tipos: quiz, vf, pairs, order, cards.",
+ "curso-dirigentes-agape": {
+  "1.1": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "El servicio de dirigente nace de una buena idea personal o de una necesidad de la parroquia.",
+       "v": false,
+       "why": "Nace del bautismo: todo bautizado está llamado a anunciar a Jesús con su vida."
+      },
+      {
+       "t": "Tu primera tarea como dirigente es cuidar tu propia relación con Jesús.",
+       "v": true,
+       "why": "Nadie puede dar lo que no tiene."
+      },
+      {
+       "t": "Para ser dirigente hay que no tener dudas ni fragilidades.",
+       "v": false,
+       "why": "El dirigente es un joven creyente con preguntas y fragilidades como cualquiera."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "order",
+     "title": "Ordena lo que pasa en el camino de Emaús",
+     "items": [
+      "Jesús se acerca y camina a su ritmo",
+      "Pregunta y escucha su tristeza",
+      "Ilumina lo que viven con la Palabra",
+      "Se queda con ellos y parte el pan",
+      "Ellos vuelven corriendo a la comunidad"
+     ],
+     "feedback": "Primero la presencia y la escucha; la Palabra llega después. Esos son los verbos del dirigente."
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une lo que el dirigente ES con lo que NO es",
+     "pairs": [
+      [
+       "Hermano mayor",
+       "No un jefe"
+      ],
+      [
+       "Testigo",
+       "No un experto"
+      ],
+      [
+       "Servidor",
+       "No un protagonista"
+      ],
+      [
+       "Parte de un equipo",
+       "No un llanero solitario"
+      ],
+      [
+       "Acompañante de la fe",
+       "No un psicólogo"
+      ]
+     ],
+     "feedback": "La cercanía sana tiene límites claros que cuidan al joven y al dirigente."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Un joven que acompañaste te cuenta que ahora participa en el coro y ya no te busca tanto. ¿Cómo lo lees?",
+     "options": [
+      "Algo hice mal: debería seguir contando conmigo para todo.",
+      "Mi servicio dio fruto: fui puente, no destino.",
+      "Tengo que convencerlo de que vuelva solo a mi grupo."
+     ],
+     "correct": 1,
+     "feedback": "Cuando un joven encuentra su propio lugar en la Iglesia y ya no te necesita tanto, tu servicio dio fruto.",
+     "hint": "Recuerda la imagen del puente: ¿es el puente el destino?"
+    }
+   ]
+  },
+  "1.2": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Mirar con los ojos de Jesús es no ver los problemas de un joven.",
+       "v": false,
+       "why": "No es ser ingenuo ni negar los problemas: es partir de la dignidad de la persona antes que de sus errores."
+      },
+      {
+       "t": "Según CV 112-115, lo primero que todo joven necesita escuchar es que Dios lo ama.",
+       "v": true,
+       "why": "Es la primera verdad que el papa dirige a cada joven: Dios te ama."
+      },
+      {
+       "t": "El amor de Dios por un joven depende de sus logros en el grupo.",
+       "v": false,
+       "why": "Es un amor que no lleva cuenta de sus errores ni depende de sus logros."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "pairs",
+     "title": "Une cada rasgo con lo que implica",
+     "pairs": [
+      [
+       "Adolescencia",
+       "Etapa de cambios intensos"
+      ],
+      [
+       "Mundo digital",
+       "Parte de su vida, no un accesorio"
+      ],
+      [
+       "Heridas",
+       "Fracasos, conflictos o rechazo vividos"
+      ],
+      [
+       "Búsqueda",
+       "De sentido, autenticidad y comunidad"
+      ]
+     ],
+     "feedback": "Conocer estos rasgos te ayuda a no tomar como algo personal ciertas reacciones y a tener paciencia con los procesos."
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Benja interrumpe todo el rato durante el tema y ya tiene al grupo cansado. ¿Cuál es tu primer paso?",
+     "options": [
+      "Pedirle que se retire para que el resto pueda avanzar.",
+      "Ignorarlo hasta que se canse de interrumpir.",
+      "Preguntarte qué necesidad hay detrás: quizás busca una atención que no recibe."
+     ],
+     "correct": 2,
+     "feedback": "Antes de juzgar, pregúntate qué estará viviendo. Quien interrumpe puede estar buscando atención porque en su casa nadie lo mira.",
+     "hint": "El texto propone una pregunta que cambia nuestra actitud antes de juzgar."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Hay una joven a la que nadie le pide nada y casi no habla. Estás preparando el próximo encuentro. ¿Qué haces?",
+     "options": [
+      "Le confías una tarea pequeña y luego reconoces en público su aporte.",
+      "Esperas a que ella se ofrezca cuando se sienta lista.",
+      "Le pides que hable primero en la dinámica para que se suelte."
+     ],
+     "correct": 0,
+     "feedback": "Confiar tareas a quienes nadie les confía nada y reconocer sus aportes cuida la llama que sigue ardiendo. Muchas veces alguien cree en sí porque otro creyó primero.",
+     "hint": "Piensa en los gestos concretos para «cuidar brasas»."
+    }
+   ]
+  },
+  "1.3": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "pairs",
+     "title": "Une cada idea con su significado",
+     "pairs": [
+      [
+       "Oír",
+       "Percibir sonidos"
+      ],
+      [
+       "Escuchar",
+       "Acoger a la persona que habla"
+      ],
+      [
+       "Quitarse las sandalias",
+       "Respeto ante la tierra sagrada del otro"
+      ],
+      [
+       "CV 292",
+       "Dedicar tiempo sin condiciones"
+      ],
+      [
+       "CV 294",
+       "Escuchar hacia dónde quiere ir de verdad"
+      ]
+     ],
+     "feedback": "Escuchar es más que oír: es acoger a la persona con su historia, sus emociones y sus deseos más profundos."
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Un joven te cuenta que sus papás pelearon fuerte y respondes: «no es para tanto, ya se te va a pasar». ¿Qué obstáculo aparece?",
+     "options": [
+      "Minimizar",
+      "Hablar de uno mismo",
+      "Las distracciones"
+     ],
+     "correct": 0,
+     "feedback": "«No es para tanto» resta importancia a lo que el otro siente. Repetido, le enseña al joven que no vale la pena abrirse.",
+     "hint": "Fíjate en qué le pasa a lo que el joven siente con esa frase."
+    },
+    {
+     "after": 2,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "«¿Estás bien?» es una buena pregunta abierta para que el joven se explaye.",
+       "v": false,
+       "why": "Se responde con sí o no. Es mejor preguntar «¿cómo has estado?» o «¿cómo te sentiste?»."
+      },
+      {
+       "t": "Muchas veces lo más importante se dice después de un silencio.",
+       "v": true,
+       "why": "Por eso la escucha activa deja pausas y no se apura en llenarlas."
+      },
+      {
+       "t": "Parafrasear es devolver con tus palabras lo que entendiste.",
+       "v": true,
+       "why": "Por ejemplo: «o sea, te dolió que no te invitaran»."
+      }
+     ]
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Hace semanas que un joven te cuenta que se siente muy triste y que no sabe qué hacer. ¿Qué haces?",
+     "options": [
+      "Lo sigues escuchando tú solo; si se lo cuentas a alguien, perderá la confianza.",
+      "Le dices «esto me supera, busquemos ayuda juntos» y lo conversas con el equipo coordinador.",
+      "Le recomiendas que se distraiga y no piense tanto en eso."
+     ],
+     "correct": 1,
+     "feedback": "Tu acompañamiento es fraterno: no reemplaza a un sacerdote, a un profesional de la salud mental ni a la familia. No tienes que cargar con todo.",
+     "hint": "Un buen acompañante reconoce sus límites."
+    }
+   ]
+  },
+  "1.4": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Según Hechos 2,42-47, ¿por qué la gente se acercaba a la primera comunidad?",
+     "options": [
+      "Porque organizaba muchas actividades.",
+      "Porque tenía líderes muy preparados.",
+      "Porque veía algo atractivo en cómo se trataban."
+     ],
+     "correct": 2,
+     "feedback": "Primero la vida de comunidad, después el crecimiento. Los jóvenes perciben enseguida si entre los dirigentes hay cariño o rivalidad.",
+     "hint": "Fíjate en el orden que destaca el texto: ¿qué viene primero?"
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "En una pastoral sinodal, todos tienen que servir para todo.",
+       "v": false,
+       "why": "Se reconocen los carismas: no todos sirven para todo, y está bien."
+      },
+      {
+       "t": "Evaluar lo hecho significa encontrar quién tuvo la culpa.",
+       "v": false,
+       "why": "Se revisa con honestidad y sin buscar culpables."
+      },
+      {
+       "t": "Una pastoral centrada en una o dos personas deja un vacío cuando ellas se van.",
+       "v": true,
+       "why": "Además, quienes deciden todo terminan agotándose."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada rol de Ágape con su tarea",
+     "pairs": [
+      [
+       "Asesores",
+       "Custodian la identidad; puente con parroquia"
+      ],
+      [
+       "Coordinadores",
+       "En dupla: calendario y reuniones"
+      ],
+      [
+       "Animadores",
+       "Rostro visible y motor del grupo"
+      ],
+      [
+       "Dirigentes",
+       "Base que acompaña a los jóvenes"
+      ]
+     ],
+     "feedback": "Roles claros hacen posible caminar juntos. Y la rotación permite que otros crezcan y que el servicio no se vuelva posesión."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Un compañero te comenta molesto que otra dirigente siempre llega tarde a preparar los encuentros. ¿Qué le sugieres?",
+     "options": [
+      "Comentarlo con el resto del equipo para que todos estén al tanto.",
+      "Llamarle la atención en la próxima reunión, delante de los jóvenes.",
+      "Hablar con ella de frente y en privado, preguntando también cómo está."
+     ],
+     "correct": 2,
+     "feedback": "Un equipo sano habla de frente y no a espaldas, corrige en privado y se preocupa por la persona, no solo por la tarea.",
+     "hint": "Piensa en «corregir en privado» y en preguntar por el otro."
+    }
+   ]
+  },
+  "2.1": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Un grupo de Ágape se define por la cantidad de actividades que hace.",
+       "v": false,
+       "why": "Se define por la calidad de sus vínculos: la pregunta clave es «¿cómo nos vamos a tratar?»."
+      },
+      {
+       "t": "Según CV 217, crear «hogar» es, en definitiva, crear familia.",
+       "v": true,
+       "why": "Vínculos que van más allá de lo útil o funcional."
+      },
+      {
+       "t": "Los vínculos de un hogar se logran de una vez, sin tener que volver a empezar.",
+       "v": false,
+       "why": "Se construyen con paciencia, perdón y volviendo a empezar muchas veces."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "En una ronda para compartir, a Javiera le toca hablar, pero se queda callada y mira al suelo. ¿Qué haces?",
+     "options": [
+      "Insistes con cariño hasta que diga algo, para que no quede fuera.",
+      "La saltas en todas las rondas que vengan para no incomodarla.",
+      "Le recuerdas con calma que puede decir «paso» y sigues la ronda."
+     ],
+     "correct": 2,
+     "feedback": "Un acuerdo básico es que nadie está obligado a hablar. Respetarlo también construye confianza.",
+     "hint": "Revisa los acuerdos de convivencia de ejemplo."
+    },
+    {
+     "after": 2,
+     "type": "order",
+     "title": "Ordena cómo responder cuando alguien rompe la confianza",
+     "items": [
+      "Actuar pronto y con calma, sin enojo",
+      "Proteger primero a quien fue herido",
+      "Recordar el acuerdo al grupo, sin exponer a nadie",
+      "Conversar en privado con quien rompió el acuerdo",
+      "Escuchar qué le pasó y ayudarlo a reparar"
+     ],
+     "feedback": "La meta no es castigar, sino restaurar el ambiente. Muchas veces quien se burla lo hace por nervios o inseguridad."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "¿Cuál de estas acciones de un dirigente falta a la confidencialidad?",
+     "options": [
+      "Publicar fotos del grupo sin pedir permiso.",
+      "Avisar a coordinadores y asesores si un joven cuenta que está en peligro.",
+      "No comentar con otros lo que se compartió en el grupo."
+     ],
+     "correct": 0,
+     "feedback": "Publicar fotos sin permiso falta a la confianza. En cambio, si hay riesgo para la vida o la integridad, avisar es lo correcto.",
+     "hint": "Una de las opciones es justamente la excepción que debes conocer."
+    }
+   ]
+  },
+  "2.2": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "En la parábola del Padre bueno (Lc 15,20), ¿qué hace el padre al ver al hijo a lo lejos?",
+     "options": [
+      "Lo espera en la casa hasta que pida perdón.",
+      "Le pide explicaciones antes de dejarlo entrar.",
+      "Corre, lo abraza y lo besa sin pedirle explicaciones."
+     ],
+     "correct": 2,
+     "feedback": "Esa es la acogida cristiana: el que llega no tiene que ganarse el cariño; lo recibe primero.",
+     "hint": "Piensa en quién da el primer paso en la parábola."
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Llega por primera vez Tomás, muy tímido, a un grupo donde todos se conocen. ¿Qué haces?",
+     "options": [
+      "Le pides a un joven del grupo que lo acompañe como padrino las primeras semanas.",
+      "Lo pones al centro para que cuente su vida y todos lo conozcan.",
+      "Lo dejas adaptarse solo, como les pasó a todos."
+     ],
+     "correct": 0,
+     "feedback": "Un padrino o madrina facilita mucho ese paso. Preséntalo breve y con calidez, sin ponerlo en el centro de la atención.",
+     "hint": "Busca la opción que lo acompaña sin exponerlo."
+    },
+    {
+     "after": 3,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Si un joven deja de venir, es mejor no escribirle para no presionarlo.",
+       "v": false,
+       "why": "Un mensaje sencillo, sin culpas ni presión, le muestra que su ausencia se notó."
+      },
+      {
+       "t": "Un registro sencillo de asistencia ayuda a detectar a quienes se están alejando.",
+       "v": true,
+       "why": "Así se puede llegar a tiempo, porque a veces detrás de una ausencia hay un problema."
+      },
+      {
+       "t": "La acogida termina cuando el joven cruza la puerta.",
+       "v": false,
+       "why": "El Buen Pastor conoce a sus ovejas y nota cuando falta una."
+      }
+     ]
+    },
+    {
+     "after": "final",
+     "type": "pairs",
+     "title": "Une cada práctica con su sentido",
+     "pairs": [
+      [
+       "Llegar antes",
+       "Recibir y no estar ordenando sillas"
+      ],
+      [
+       "Saludar por el nombre",
+       "Decir «aquí te esperábamos»"
+      ],
+      [
+       "Padrino o madrina",
+       "Acompaña al nuevo las primeras semanas"
+      ],
+      [
+       "Evitar bromas internas",
+       "Que el nuevo no quede fuera"
+      ],
+      [
+       "Registro de asistencia",
+       "Notar a tiempo quién se aleja"
+      ]
+     ],
+     "feedback": "Son gestos pequeños, pero comunican algo enorme: cada joven es esperado."
+    }
+   ]
+  },
+  "2.3": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Según CV 203, los jóvenes mismos son agentes de la pastoral juvenil.",
+       "v": true,
+       "why": "Acompañados y guiados, pero libres para encontrar caminos nuevos."
+      },
+      {
+       "t": "Para esta unidad, los jóvenes son solo el futuro de la Iglesia.",
+       "v": false,
+       "why": "No son solo el futuro: son su presente."
+      },
+      {
+       "t": "Pablo le escribe a Timoteo que nadie lo menosprecie por ser joven.",
+       "v": true,
+       "why": "Y lo anima a ser, en cambio, un ejemplo (1 Tim 4,12)."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "order",
+     "title": "Ordena la escena del lavatorio de pies (Jn 13)",
+     "items": [
+      "Jesús se levanta de la mesa",
+      "Se ata una toalla",
+      "Lava los pies de sus discípulos",
+      "Pedro se resiste, pero Jesús insiste",
+      "«Les he dado ejemplo para que hagan lo mismo»"
+     ],
+     "feedback": "El Maestro toma el lugar del sirviente. Servir no es un peso: es una forma de parecernos a Jesús."
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Quieres que Martina prepare la oración inicial del próximo encuentro. ¿Cómo se lo pides?",
+     "options": [
+      "«Martina, ¿puedes ver lo de la oración?»",
+      "«¿Preparas la oración inicial con una canción y una lectura? Si quieres, la revisamos antes».",
+      "«Mejor la preparo yo y tú solo la lees»."
+     ],
+     "correct": 1,
+     "feedback": "Una tarea clara y del tamaño adecuado, con acompañamiento sin reemplazar, ayuda a que el joven crezca.",
+     "hint": "Delegar no es «tirar la pelota» ni hacerlo por el otro."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Según la unidad, ¿qué le pasa a la pastoral juvenil que se encierra en sí misma?",
+     "options": [
+      "Se vuelve más ordenada.",
+      "Se apaga.",
+      "Se fortalece como grupo."
+     ],
+     "correct": 1,
+     "feedback": "La que se encierra se apaga; la que sale a servir en la parroquia, a adultos mayores o en misiones, se renueva.",
+     "hint": "El texto contrasta encerrarse con salir a servir."
+    }
+   ]
+  },
+  "2.4": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "order",
+     "title": "Ordena el encuentro de Jesús con Zaqueo",
+     "items": [
+      "Zaqueo se sube a un árbol para ver a Jesús",
+      "Jesús se detiene y levanta la mirada",
+      "Lo llama por su nombre",
+      "La gente murmura",
+      "Zaqueo cambia su vida"
+     ],
+     "feedback": "Jesús no esperó a que Zaqueo cambiara para acercarse: fue su cercanía la que lo transformó."
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "La exclusión en un grupo juvenil suele ser explícita y fácil de ver.",
+       "v": false,
+       "why": "Rara vez es explícita: suele ser silenciosa."
+      },
+      {
+       "t": "Según CV 231, los buenos líderes juveniles saben incorporar a todos.",
+       "v": true,
+       "why": "Incluidos los más pobres, frágiles y limitados."
+      },
+      {
+       "t": "Quien no sabe las oraciones puede quedar al margen sin que nadie lo note.",
+       "v": true,
+       "why": "Por eso conviene explicar lo básico sin dar por hecho que todos lo saben."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Preparaste una dinámica de carreras y llega Antonia, que usa silla de ruedas. ¿Qué haces?",
+     "options": [
+      "Le pides que anote los puntajes mientras el resto corre.",
+      "Le preguntas qué le acomoda y adaptas la dinámica para que todos participen.",
+      "Haces la dinámica igual; ella puede mirar esta vez."
+     ],
+     "correct": 1,
+     "feedback": "Preguntar antes qué le acomoda y adaptar las dinámicas son formas concretas de planificar la inclusión.",
+     "hint": "Primero pregúntale a ella; luego piensa en la dinámica."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Un joven del grupo reclama: «¿por qué invitan a ese si no es de aquí?». ¿Qué respondes?",
+     "options": [
+      "Sostienes con firmeza que en Ágape hay lugar para todos, y cuidas la convivencia.",
+      "Le das la razón para evitar conflictos en el grupo.",
+      "Le pides al joven nuevo que mejor no vuelva por un tiempo."
+     ],
+     "correct": 0,
+     "feedback": "Como en Jericó, incluir puede provocar murmuraciones. La persona siempre tiene un lugar: la firmeza y la ternura no se oponen.",
+     "hint": "Recuerda la reacción de la multitud en Jericó y lo que hizo Jesús."
+    }
+   ]
+  },
+  "3.1": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "En Marcos 1, Jesús sana al leproso solo con una palabra, sin tocarlo.",
+       "v": false,
+       "why": "Jesús, conmovido, extendió la mano y lo tocó, aunque eso significaba quedar impuro."
+      },
+      {
+       "t": "La palabra «conmovido» evoca las entrañas: una emoción que sacude por dentro.",
+       "v": true,
+       "why": "Así lo explica la unidad: la compasión nace de dejarse afectar por el dolor del otro."
+      },
+      {
+       "t": "Además de sanar, Jesús ayudó al leproso a volver a sentirse persona.",
+       "v": true,
+       "why": "El gesto de tocarlo restituye su dignidad, no solo su salud."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Catalina, que siempre opinaba, lleva tres reuniones callada y con el celular en la mano. ¿Qué haces?",
+     "options": [
+      "Le pides delante de todos que guarde el celular y participe.",
+      "Concluyes que tiene un problema grave y avisas a su familia.",
+      "Te acercas al final, en un lugar adecuado, y le preguntas con delicadeza cómo está."
+     ],
+     "correct": 2,
+     "feedback": "Ninguna señal por sí sola indica un problema: es una invitación a acercarse y preguntar con delicadeza, en el momento y lugar adecuados.",
+     "hint": "Las señales no son un diagnóstico: son una invitación a acercarse."
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada actitud con su descripción",
+     "pairs": [
+      [
+       "Empatía",
+       "Comprender desde el punto de vista del otro"
+      ],
+      [
+       "Lástima",
+       "Mirar al otro desde arriba"
+      ],
+      [
+       "Simpatía",
+       "Sentir lo mismo y quedar atrapado"
+      ],
+      [
+       "Compasión cristiana",
+       "Dejarse afectar y responder con un gesto"
+      ]
+     ],
+     "feedback": "La empatía acompaña sin invadir, y la compasión al estilo de Jesús siempre termina en un gesto que restituye dignidad."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Según la unidad, ¿qué debe guiar una expresión física de afecto hacia un joven?",
+     "options": [
+      "Lo que la otra persona necesita y acepta, siempre con prudencia y respeto.",
+      "Las ganas de demostrar cariño que tenga el dirigente.",
+      "Lo que se acostumbre hacer en el grupo, sin preguntar."
+     ],
+     "correct": 0,
+     "feedback": "Las orientaciones de la Iglesia chilena piden que el contacto responda a lo que el otro necesita y acepta, nunca a la propia satisfacción.",
+     "hint": "Piensa en quién debe estar al centro: tú o el joven."
+    }
+   ]
+  },
+  "3.2": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "¿Por qué Jesús le pregunta a Bartimeo «¿Qué quieres que haga por ti?», si era evidente que era ciego?",
+     "options": [
+      "Porque no se había dado cuenta de que era ciego.",
+      "Para que Bartimeo pusiera en palabras su propio deseo y fuera protagonista.",
+      "Para probar si Bartimeo tenía suficiente fe."
+     ],
+     "correct": 1,
+     "feedback": "Nombrar lo que sentimos y deseamos es un paso de libertad: al decirlo, Bartimeo se hace protagonista de su sanación.",
+     "hint": "Fíjate en lo que pasa cuando alguien nombra su propio deseo."
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Sentir rabia o tristeza es pecado.",
+       "v": false,
+       "why": "Las emociones son reacciones humanas; lo que hacemos con ellas sí tiene consecuencias."
+      },
+      {
+       "t": "Jesús lloró, se indignó en el templo y sintió angustia en Getsemaní.",
+       "v": true,
+       "why": "El mismo Jesús vivió emociones intensas, también la alegría en el Espíritu."
+      },
+      {
+       "t": "Decirle a Dios «estoy enojado» es una falta de respeto en la oración.",
+       "v": false,
+       "why": "Los Salmos están llenos de lamento y súplica: decirle a Dios lo que sentimos es orar de verdad."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada herramienta con su uso",
+     "pairs": [
+      [
+       "Termómetro emocional",
+       "Ubicarse en una escala del 1 al 10"
+      ],
+      [
+       "Tarjetas de emociones",
+       "Ampliar el vocabulario emocional"
+      ],
+      [
+       "Escribir antes de hablar",
+       "Ayudar a los más tímidos"
+      ],
+      [
+       "Preguntas abiertas",
+       "Lo mejor y lo más difícil de la semana"
+      ],
+      [
+       "Salmo 23",
+       "Orar la confianza"
+      ]
+     ],
+     "feedback": "Son herramientas sencillas, y siempre con libertad: cualquiera puede decir «paso»."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "En la ronda, Tomás cuenta que hace semanas está muy triste y no logra manejarlo. ¿Qué haces?",
+     "options": [
+      "Le agradeces la confianza, lo acompañas con calma y avisas a tus coordinadores y asesores.",
+      "Intentas resolverlo ahí mismo con todo el grupo.",
+      "Le dices que es un mal día y pasas al siguiente."
+     ],
+     "correct": 0,
+     "feedback": "No se trata de resolverlo en el grupo ni de minimizarlo. Agradece, acompaña y avisa: no tienes que cargar solo con esto.",
+     "hint": "Tu rol es acompañar y buscar apoyo, no ser su terapeuta."
+    }
+   ]
+  },
+  "3.3": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "En Juan 9, Jesús sana al ciego usando barro y mandándolo a lavarse a Siloé.",
+       "v": true,
+       "why": "Elige un gesto que el ciego puede sentir, aunque podría haberlo sanado con una palabra."
+      },
+      {
+       "t": "En la liturgia, Dios asume signos del mundo humano como la luz, el agua o el pan.",
+       "v": true,
+       "why": "Así lo explica el Catecismo (CEC 1145-1152)."
+      },
+      {
+       "t": "Los signos son un adorno opcional que distrae de la oración verdadera.",
+       "v": false,
+       "why": "Somos cuerpo y espíritu: los signos ayudan a orar con todo el ser, y los sacramentos son su expresión más alta."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Preparas una oración y un compañero propone usar velas, piedras, agua, semillas y papel, todo junto. ¿Qué le sugieres?",
+     "options": [
+      "Sumar además música y un video para que no se aburran.",
+      "Elegir un solo signo sencillo, explicarlo en pocas palabras y dejar espacio al silencio.",
+      "No usar ningún signo para no complicarse."
+     ],
+     "correct": 1,
+     "feedback": "Un buen símbolo es sencillo, se explica en pocas palabras y deja espacio al silencio. Demasiados elementos llenan la oración.",
+     "hint": "Menos puede ser más."
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada paso de la lectio con su pregunta",
+     "pairs": [
+      [
+       "Lectura",
+       "¿Qué dice el texto?"
+      ],
+      [
+       "Meditación",
+       "¿Qué me dice a mí?"
+      ],
+      [
+       "Oración",
+       "¿Qué le digo a Dios?"
+      ],
+      [
+       "Contemplación",
+       "Quedarme en silencio con Él"
+      ],
+      [
+       "Acción",
+       "¿A qué me compromete?"
+      ]
+     ],
+     "feedback": "Cada paso tiene su pregunta. Así la Palabra pasa del texto a la vida."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "En la oración, alguien propone que cada uno lea en voz alta lo que escribió sobre sus faltas. ¿Qué haces?",
+     "options": [
+      "Aceptas, porque compartir siempre une al grupo.",
+      "Lo dejas, pero solo para los que son más abiertos.",
+      "Lo cambias: cada uno lo guarda en una caja o lo deja ante la cruz, sin exponerse."
+     ],
+     "correct": 2,
+     "feedback": "Ningún signo debe exponer a nadie a la vergüenza. Se puede participar con el cuerpo y el signo, sin obligar a leer algo íntimo.",
+     "hint": "Revisa los cuidados al preparar un momento de oración."
+    }
+   ]
+  },
+  "3.4": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Ante el dolor de Marta y María, ¿qué hace Jesús primero?",
+     "options": [
+      "Les explica por qué Lázaro tuvo que morir.",
+      "Se conmueve, pregunta dónde lo pusieron y llora con ellas.",
+      "Les pide que dejen de reprocharle."
+     ],
+     "correct": 1,
+     "feedback": "Aunque sabía que lo resucitaría, se tomó el tiempo de llorar. Ante el dolor, la presencia va antes que cualquier respuesta.",
+     "hint": "La gente comentó: «¡Cómo lo amaba!»."
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Ayuda o no ayuda?",
+     "items": [
+      {
+       "t": "Decir «te entiendo perfectamente» ayuda, porque muestra cercanía.",
+       "v": false,
+       "why": "Nadie vive un duelo igual. Mejor: «No sé qué decir, pero no estás solo»."
+      },
+      {
+       "t": "Escribirle días después del funeral es un gesto que suele ayudar.",
+       "v": true,
+       "why": "Los gestos concretos y recordar fechas difíciles muestran que sigues ahí."
+      },
+      {
+       "t": "«Hay gente que está peor» ayuda a poner el dolor en perspectiva.",
+       "v": false,
+       "why": "Es una de las frases a evitar: minimiza lo que la persona está sintiendo."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "A Javier se le murió su abuela hace poco. En la reunión bromea como siempre. ¿Cómo lo acompaña el grupo?",
+     "options": [
+      "Lo incluyen con naturalidad, sin forzarlo a hablar ni hacer como si nada hubiera pasado.",
+      "Le dedican la reunión entera para que cuente cómo está.",
+      "No mencionan el tema, porque si bromea es que ya está bien."
+     ],
+     "correct": 0,
+     "feedback": "No hay una forma correcta de sufrir: algunos se refugian en el humor. El grupo apoya respetando ritmos e incluyendo sin poner en el centro.",
+     "hint": "Ni forzar ni ignorar: busca el punto medio."
+    },
+    {
+     "after": 3,
+     "type": "cards",
+     "title": "Cuándo pedir ayuda",
+     "subtitle": "Da vuelta cada tarjeta",
+     "cards": [
+      {
+       "front": "La mayoría de los duelos",
+       "back": "Siguen su curso con el apoyo de la familia y los amigos. Tu presencia ya es un gran aporte."
+      },
+      {
+       "front": "Si ves señales de alerta",
+       "back": "Conversa con tus coordinadores y asesores, y procuren que la familia esté informada."
+      },
+      {
+       "front": "Si es grave o urgente",
+       "back": "No esperes: pide ayuda de inmediato a coordinadores y familia. Ante una emergencia, llama al 131 (SAMU)."
+      },
+      {
+       "front": "No estás solo",
+       "back": "Acompañar no es reemplazar la ayuda profesional. Cuidar a otros también es saber pedir apoyo."
+      }
+     ]
+    }
+   ]
+  },
+  "4.1": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "La parábola del Padre bueno termina en una fiesta.",
+       "v": true,
+       "why": "«Comamos y celebremos»: la reconciliación termina en celebración."
+      },
+      {
+       "t": "El primer signo de Jesús en Caná fue para que no se acabara la alegría de una fiesta.",
+       "v": true,
+       "why": "Así lo recuerda la unidad: Dios celebra."
+      },
+      {
+       "t": "Un cristiano siempre serio transmite mejor la imagen de Dios.",
+       "v": false,
+       "why": "La alegría es un fruto de la fe; un cristiano amargado transmite una imagen equivocada de Dios."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Un dirigente hace reír al grupo imitando la forma de hablar de un joven nuevo. ¿Qué haces?",
+     "options": [
+      "Nada, el humor ayuda a que el grupo se una.",
+      "Le pides después que cambie: el humor sano se ríe con alguien, no de alguien.",
+      "Te sumas para que el joven nuevo no se sienta aparte."
+     ],
+     "correct": 1,
+     "feedback": "El humor hace más creíble al dirigente, pero el humor sano nunca se ríe de alguien, sino con alguien.",
+     "hint": "Piensa en cómo se siente el joven nuevo."
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada situación con la función del juego",
+     "pairs": [
+      [
+       "Llegan cansados del colegio",
+       "Bajar las tensiones del día"
+      ],
+      [
+       "Hay tres jóvenes nuevos",
+       "Integrar y mezclar"
+      ],
+      [
+       "Quieres conversar después",
+       "Generar una experiencia común"
+      ],
+      [
+       "Adolescentes inquietos",
+       "Descargar energía"
+      ],
+      [
+       "Ves quién ayuda y quién lidera",
+       "Revelar actitudes"
+      ]
+     ],
+     "feedback": "El juego no es relleno: cada dinámica puede tener un propósito claro."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "En un juego de competencia, dos equipos empiezan a gritarse y empujarse. ¿Qué haces?",
+     "options": [
+      "Dejas que siga, porque es parte de la emoción del juego.",
+      "Subes el premio para que se concentren en ganar.",
+      "Detienes el juego a tiempo y conversan lo que pasó."
+     ],
+     "correct": 2,
+     "feedback": "La competencia no debe volverse rivalidad agresiva. Si un juego sale mal, detenerlo a tiempo también es una lección.",
+     "hint": "Revisa los cuidados necesarios."
+    }
+   ]
+  },
+  "4.2": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "En Juan 6, ¿con qué comienza el milagro de la multiplicación?",
+     "options": [
+      "Con el gesto de un muchacho que compartió sus cinco panes y dos pescados.",
+      "Con los discípulos comprando pan para todos.",
+      "Con la multitud organizándose en grupos para pedir."
+     ],
+     "correct": 0,
+     "feedback": "Jesús toma lo poco que ese joven ofrece, da gracias y alcanza para todos. En el Reino, lo que se comparte se multiplica.",
+     "hint": "Andrés preguntó: ¿qué es esto para tanta gente?"
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "La competencia es mala en sí y hay que eliminarla del grupo.",
+       "v": false,
+       "why": "Puede motivar y desafiar. El problema es cuando todo se vuelve competencia."
+      },
+      {
+       "t": "Si todo es competencia, se refuerza la idea de que valgo solo si gano.",
+       "v": true,
+       "why": "Y de que el otro es un rival, no un hermano."
+      },
+      {
+       "t": "En lo cooperativo, el más lento también cuenta para lograr la meta.",
+       "v": true,
+       "why": "Cada uno aporta algo distinto y la meta se logra juntos."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada clave con un ejemplo",
+     "pairs": [
+      [
+       "Meta común",
+       "Cruzar el «río» con pocas «piedras»"
+      ],
+      [
+       "Roles complementarios",
+       "Cada uno tiene una pista distinta"
+      ],
+      [
+       "Reglas que protejan",
+       "Si uno queda atrás, todos esperan"
+      ],
+      [
+       "Conversar después",
+       "¿Quién quedó afuera?"
+      ]
+     ],
+     "feedback": "Así se diseña una dinámica en que el grupo gana solo si todos llegan."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Antes de un juego de carreras, notas que Ignacio, con una lesión en la pierna, se ve incómodo. ¿Qué haces?",
+     "options": [
+      "Esperas a ver si se cansa y lo sacas a mitad del juego.",
+      "Adaptas las reglas antes de empezar para que pueda participar de verdad.",
+      "Lo mandas a mirar, porque así no se lastima."
+     ],
+     "correct": 1,
+     "feedback": "Las reglas se adaptan antes de empezar, no a mitad del juego. Y un rol alternativo nunca debe ser una exclusión disfrazada.",
+     "hint": "Fíjate en el momento en que conviene adaptar."
+    }
+   ]
+  },
+  "4.3": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "En el camino de Emaús, ¿qué hace Jesús antes de explicar las Escrituras?",
+     "options": [
+      "Les reprocha a los discípulos su falta de fe.",
+      "Les cuenta todo lo que pasó en Jerusalén.",
+      "Les pregunta qué vienen conversando y deja que cuenten lo vivido."
+     ],
+     "correct": 2,
+     "feedback": "Jesús parte de la experiencia de los discípulos. Así la Palabra llega como luz sobre lo que ya están viviendo.",
+     "hint": "Jesús escucha primero."
+    },
+    {
+     "after": 1,
+     "type": "pairs",
+     "title": "Une cada paso con un ejemplo",
+     "pairs": [
+      [
+       "Vivir",
+       "Un juego sobre confiar en el otro"
+      ],
+      [
+       "Conversar",
+       "¿Dónde veo esto en mi vida?"
+      ],
+      [
+       "Iluminar",
+       "Leer un texto del Evangelio"
+      ],
+      [
+       "Actuar",
+       "Un compromiso pequeño para la semana"
+      ]
+     ],
+     "feedback": "Vida, Palabra y vida de nuevo: cada paso tiene su lugar en el encuentro."
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Vas a preparar el encuentro del sábado y tienes muchas ideas sueltas. ¿Por dónde empiezas?",
+     "options": [
+      "Escribiendo el objetivo en una frase: «que los jóvenes descubran…».",
+      "Eligiendo primero el juego más entretenido.",
+      "Improvisando el día del encuentro según el ánimo del grupo."
+     ],
+     "correct": 0,
+     "feedback": "Todo lo demás debe servir a ese objetivo. Luego prepara materiales con anticipación y reparte roles.",
+     "hint": "¿Qué le da dirección a todo lo demás?"
+    },
+    {
+     "after": 3,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "La evaluación del encuentro sirve para encontrar al culpable de lo que salió mal.",
+       "v": false,
+       "why": "La evaluación no busca culpables, sino aprender."
+      },
+      {
+       "t": "Al evaluar conviene preguntarse quién participó poco o necesita seguimiento.",
+       "v": true,
+       "why": "Es una de las preguntas propuestas para los diez minutos de evaluación."
+      },
+      {
+       "t": "Las reuniones quincenales de Ágape sirven para revisar el camino y programar.",
+       "v": true,
+       "why": "Existen justamente para eso."
+      }
+     ]
+    }
+   ]
+  },
+  "4.4": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "¿Qué proceso muestra el regreso de los setenta y dos en Lucas 10?",
+     "options": [
+      "Planificar, ejecutar y evaluar resultados.",
+      "Vivir, contar, releer con Jesús y dar gracias.",
+      "Escuchar una charla, memorizarla y repetirla."
+     ],
+     "correct": 1,
+     "feedback": "Los discípulos cuentan lo vivido, Jesús los ayuda a mirar más hondo y todo termina en acción de gracias. Eso es discernir.",
+     "hint": "Termina en gozo y alabanza."
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Discernir es solo para grandes decisiones, como la vocación o la carrera.",
+       "v": false,
+       "why": "Se practica en lo pequeño: ¿qué me dio paz hoy?, ¿qué me inquietó?"
+      },
+      {
+       "t": "Discernir es distinguir qué viene de Dios y qué nos aleja de Él.",
+       "v": true,
+       "why": "En medio de lo que vivimos y sentimos."
+      },
+      {
+       "t": "El discernimiento es un don que se pide y se cultiva con oración y diálogo.",
+       "v": true,
+       "why": "Así lo presenta Gaudete et exsultate 166-175."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Termina una salida a la playa muy entretenida y todos quieren irse. ¿Qué haces?",
+     "options": [
+      "Los dejas ir: lo importante es que lo pasaron bien.",
+      "Das una charla larga sobre la creación.",
+      "Tomas unos minutos para cosechar lo vivido con preguntas breves."
+     ],
+     "correct": 2,
+     "feedback": "Sin un momento para cosechar, la salida queda en paseo. Unas preguntas sencillas la convierten en experiencia formativa.",
+     "hint": "Recuerda: «el juego queda en juego»."
+    },
+    {
+     "after": 3,
+     "type": "order",
+     "title": "Ordena los pasos del examen del día",
+     "items": [
+      "Agradecer por lo bueno del día",
+      "Pedir luz al Espíritu Santo",
+      "Revisar dónde sentí a Dios y dónde me alejé",
+      "Pedir perdón por lo que no estuvo bien",
+      "Confiar a Dios el día siguiente"
+     ],
+     "feedback": "Cinco minutos antes de dormir. Si lo practicas tú, podrás enseñarlo con autenticidad."
+    }
+   ]
+  },
+  "5.1": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "En Marcos 6, Jesús les pide a los apóstoles seguir trabajando porque hay mucha gente.",
+       "v": false,
+       "why": "Al contrario: los invita a ir solos a un lugar apartado y descansar un poco."
+      },
+      {
+       "t": "Jesús mismo se retiraba a orar a lugares apartados, muchas veces de madrugada.",
+       "v": true,
+       "why": "Jesús vivía lo que pedía: buscaba tiempos de oración a solas con el Padre."
+      },
+      {
+       "t": "Descansar y orar le quita tiempo a la misión.",
+       "v": false,
+       "why": "El descanso y la oración no son pérdida de tiempo para la misión: son su condición."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Tu dupla lleva semanas respondiendo de mal humor en el grupo y te dice que su oración «se secó». ¿Qué es lo más adecuado?",
+     "options": [
+      "Pensar que perdió la vocación y sugerirle que deje el grupo.",
+      "No decir nada: todos tenemos semanas malas.",
+      "Verlo como una alerta: conversar con él y con el equipo para reorganizar."
+     ],
+     "correct": 2,
+     "feedback": "Reconocer señales de agotamiento no es un fracaso: es una alerta para detenerse, conversar con el equipo y reorganizar.",
+     "hint": "Revisa qué dice la unidad que hay que hacer cuando aparecen varias señales."
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada situación con un límite sano",
+     "pairs": [
+      [
+       "Ya estás al límite y te piden otra tarea",
+       "Decir que no y proponer a otra persona"
+      ],
+      [
+       "Te escriben del grupo a toda hora",
+       "Definir horarios para responder"
+      ],
+      [
+       "Te acuestas tarde por el servicio",
+       "Proteger tus horas de sueño"
+      ],
+      [
+       "Llevas meses sin parar",
+       "Tomar pausas reales"
+      ]
+     ],
+     "feedback": "Poner límites cuida tu servicio para que dure: un dirigente descansado acompaña mejor que uno que hace mucho pero está vacío."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Según la unidad, ¿qué le pasa al servicio cuando falta la oración?",
+     "options": [
+      "Se vuelve más eficaz, porque queda más tiempo.",
+      "Se reduce a activismo: solo hacer cosas.",
+      "No cambia nada si las actividades salen bien."
+     ],
+     "correct": 1,
+     "feedback": "La oración es una relación viva con Dios (CEC 2559). Sin ella, el servicio se reduce a activismo.",
+     "hint": "Piensa en la oración como relación con Dios, no como una tarea más."
+    }
+   ]
+  },
+  "5.2": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "¿Qué enseña el relato de Aarón y Jur sosteniendo los brazos de Moisés?",
+     "options": [
+      "Que un buen líder nunca debe mostrar cansancio.",
+      "Que la victoria dependía solo del esfuerzo de Moisés.",
+      "Que aceptar ayuda no es vergonzoso: fue la condición de la victoria."
+     ],
+     "correct": 2,
+     "feedback": "El gran líder de Israel no pudo solo. En un equipo, todos necesitamos alguna vez que otros nos sostengan los brazos.",
+     "hint": "Fíjate en qué pasaba cuando a Moisés se le cansaban los brazos."
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Jetró felicita a Moisés por atender él solo al pueblo de la mañana a la noche.",
+       "v": false,
+       "why": "Jetró le dice con franqueza que eso no está bien: se va a agotar él y el pueblo."
+      },
+      {
+       "t": "Jetró aconseja elegir personas capaces y repartir responsabilidades.",
+       "v": true,
+       "why": "Es uno de los primeros consejos de «organización» de la Biblia."
+      },
+      {
+       "t": "En Ágape, las duplas de coordinación buscan que nadie cargue solo.",
+       "v": true,
+       "why": "Los roles, las duplas y las reuniones periódicas buscan repartir cargas y compartir decisiones."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Una compañera del equipo anda con mucha carga esta semana. ¿Qué apoyo refleja mejor la unidad?",
+     "options": [
+      "Ofrecer algo concreto: «yo me encargo de los materiales esta semana».",
+      "Decirle: «avísame si necesitas algo».",
+      "Esperar a que ella lo pida en la próxima reunión."
+     ],
+     "correct": 0,
+     "feedback": "La ayuda concreta alivia de verdad. Un «avísame si necesitas algo» genérico deja la carga en quien ya está cansado.",
+     "hint": "¿Cuál de las opciones le quita una tarea concreta de encima?"
+    },
+    {
+     "after": 3,
+     "type": "order",
+     "title": "Ordena el camino de Mateo 18 ante un conflicto",
+     "items": [
+      "Hablar con la persona a solas",
+      "Si no te escucha, buscar a uno o dos más",
+      "Si aún no, llevar el asunto a la comunidad",
+      "Una vez resuelto, perdonar y dar vuelta la página"
+     ],
+     "feedback": "Primero a solas y con honestidad; luego, si hace falta, con mediación. La reconciliación entre dirigentes también es testimonio."
+    }
+   ]
+  },
+  "5.3": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "En Marcos 10, Jesús se indigna con los discípulos que intentan alejar a los niños.",
+       "v": true,
+       "why": "Jesús dice: dejen que los niños vengan a mí, no se lo impidan."
+      },
+      {
+       "t": "Jesús abraza y bendice a los niños que le traen.",
+       "v": true,
+       "why": "Los pone en el centro: los acoge, los abraza y los bendice."
+      },
+      {
+       "t": "Cuidar a niños y jóvenes es, sobre todo, un trámite administrativo.",
+       "v": false,
+       "why": "No es un trámite: es parte esencial del Evangelio."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "¿A quiénes se dirigen las orientaciones de Integridad en el Servicio Eclesial (ISE)?",
+     "options": [
+      "Solo a obispos y sacerdotes.",
+      "Solo a quienes reciben un sueldo de la Iglesia.",
+      "A todos los que sirven en la Iglesia, también laicos voluntarios como tú."
+     ],
+     "correct": 2,
+     "feedback": "El ISE incluye a obispos, sacerdotes, diáconos, consagrados y laicos, con servicio voluntario o remunerado. Eso te incluye.",
+     "hint": "Piensa si un dirigente voluntario de Ágape queda dentro o fuera."
+    },
+    {
+     "after": 2,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Después de un paseo tienes fotos muy divertidas del grupo. ¿Qué haces con ellas?",
+     "options": [
+      "Pedir permiso y publicarlas solo en canales oficiales, sin exponer a nadie.",
+      "Subirlas a tu cuenta personal: son recuerdos tuyos.",
+      "Publicar las más chistosas, aunque alguien salga mal."
+     ],
+     "correct": 0,
+     "feedback": "Las fotos se publican con permiso y solo en canales oficiales. Así se cuida la dignidad de cada joven.",
+     "hint": "Recuerda los criterios del ISE sobre fotos y comunicación digital."
+    },
+    {
+     "after": 3,
+     "type": "pairs",
+     "title": "Une cada momento con la respuesta adecuada",
+     "pairs": [
+      [
+       "Te pide que no se lo cuentes a nadie",
+       "Explicar que para protegerlo pedirás ayuda"
+      ],
+      [
+       "Te dan ganas de preguntar detalles",
+       "Escuchar con calma, sin interrogar"
+      ],
+      [
+       "Se siente culpable de lo que pasó",
+       "Decirle que no tiene la culpa"
+      ],
+      [
+       "Quieres enfrentar al presunto agresor",
+       "No confrontar: informar a coordinadores"
+      ],
+      [
+       "Hay peligro inmediato",
+       "Llamar al 133 (Carabineros)"
+      ]
+     ],
+     "feedback": "Escuchar sin juzgar, no prometer secreto e informar de inmediato a coordinadores y asesores protege al joven y evita revictimizarlo."
+    }
+   ]
+  },
+  "5.4": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "¿Cómo responde Dios cuando Elías, agotado, le dice «¡Basta ya, Señor!»?",
+     "options": [
+      "Le envía un ángel con pan y agua y lo deja dormir; después lo invita a seguir.",
+      "Lo reta por su falta de fe.",
+      "Le pide que se levante y siga caminando de inmediato."
+     ],
+     "correct": 0,
+     "feedback": "El modo de Dios: primero cuidar lo básico, acompañar y dar tiempo. La fe no reemplaza el cuidado de la salud; lo incluye.",
+     "hint": "En el relato, Dios no da un sermón."
+    },
+    {
+     "after": 1,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Tristeza por unos días o problemas con amigos se acompañan con escucha, cercanía y oración.",
+       "v": true,
+       "why": "Son situaciones cotidianas (verde): tu cercanía como dirigente es lo que corresponde."
+      },
+      {
+       "t": "Aislarse por mucho tiempo o tener cambios bruscos de conducta son señales de alerta.",
+       "v": true,
+       "why": "Es amarillo: conversa con coordinadores y asesores, y procuren que la familia esté al tanto."
+      },
+      {
+       "t": "Ante una situación roja, lo mejor es esperar unos días antes de avisar.",
+       "v": false,
+       "why": "En rojo se actúa de inmediato: no dejar sola a la persona y avisar a los responsables y a la familia."
+      }
+     ]
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada red con lo que ofrece",
+     "pairs": [
+      [
+       "*4141",
+       "Apoyo en crisis de salud mental, 24 h"
+      ],
+      [
+       "600 360 7777",
+       "Salud Responde: orientación en salud"
+      ],
+      [
+       "131",
+       "SAMU: emergencias médicas"
+      ],
+      [
+       "133",
+       "Carabineros: peligro inmediato"
+      ],
+      [
+       "CESFAM",
+       "Puerta de entrada a la salud mental"
+      ]
+     ],
+     "feedback": "Tengan estos contactos anotados y acordados como equipo antes de necesitarlos."
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Ya avisaste a tus asesores sobre un joven que pasa por un momento difícil. ¿Qué haces ahora?",
+     "options": [
+      "Alejarte: el tema ya está en manos de otros.",
+      "Recomendarle algo que a ti te sirvió para sentirte mejor.",
+      "Seguir acompañando con cercanía, grupo y oración, y conversar con tus asesores lo que te dejó."
+     ],
+     "correct": 2,
+     "feedback": "Derivar no es sacarse el problema de encima. Sigues acompañando en lo que te corresponde, sin diagnosticar, y te cuidas tú también.",
+     "hint": "Derivar no significa desaparecer, ni tampoco hacer de profesional."
+    }
+   ]
+  },
+  "5.5": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Jesús espera a que los discípulos dejen de tener miedo para enviarlos.",
+       "v": false,
+       "why": "Los envía con el Espíritu para que el miedo no tenga la última palabra."
+      },
+      {
+       "t": "Jesús resucitado les desea la paz, les muestra sus heridas y sopla sobre ellos el Espíritu.",
+       "v": true,
+       "why": "Así lo narra Juan 20,19-23."
+      },
+      {
+       "t": "Para servir como dirigente necesitas ser perfecto y no tener dudas.",
+       "v": false,
+       "why": "Tu servicio depende de que te dejes enviar por Él, no de ser perfecto."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "quiz",
+     "label": "Pregunta rápida",
+     "q": "Según el papa León XIV en Tor Vergata, ¿cuándo la amistad puede cambiar el mundo?",
+     "options": [
+      "Cuando se tienen muchos seguidores en redes.",
+      "Cuando se vive en Cristo y se vuelve camino de paz.",
+      "Cuando se evita a quienes piensan distinto."
+     ],
+     "correct": 1,
+     "feedback": "El papa advirtió sobre las relaciones superficiales y dijo que la amistad vivida en Cristo puede cambiar el mundo y ser camino de paz.",
+     "hint": "El papa advirtió sobre lo que a veces promueven las redes y los algoritmos."
+    },
+    {
+     "after": 2,
+     "type": "pairs",
+     "title": "Une cada módulo con lo que descubriste",
+     "pairs": [
+      [
+       "Módulo 1",
+       "Identidad como puente y escucha"
+      ],
+      [
+       "Módulo 2",
+       "El grupo como hogar acogedor"
+      ],
+      [
+       "Módulo 3",
+       "Compasión y acompañar en el dolor"
+      ],
+      [
+       "Módulo 4",
+       "Alegría, método y discernimiento"
+      ],
+      [
+       "Módulo 5",
+       "Cuidado, ambientes seguros y límites"
+      ]
+     ],
+     "feedback": "Haz memoria antes de comprometerte: ¿qué te sorprendió?, ¿qué cambió en tu forma de servir?, ¿qué te queda pendiente?"
+    },
+    {
+     "after": 3,
+     "type": "quiz",
+     "label": "¿Qué harías?",
+     "q": "Estás escribiendo la parte de tu compromiso «con el equipo». ¿Cuál encaja mejor?",
+     "options": [
+      "«Rezaré diez minutos cada día con el Evangelio».",
+      "«Seré el dirigente perfecto y nunca fallaré».",
+      "«Abriré nuestras reuniones preguntando cómo llega cada uno»."
+     ],
+     "correct": 2,
+     "feedback": "Un compromiso es un paso concreto y libre, no una promesa heroica. Con el equipo apunta al cuidado mutuo y la comunión.",
+     "hint": "Una opción es más bien «con Dios» y otra es una promesa heroica."
+    }
+   ]
+  }
+ },
+ "discernimiento-espiritual": {
+  "1.1": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "El silencio cristiano es un vacío donde no pasa nada.",
+       "v": false,
+       "why": "No es ausencia: es la presencia viva de Dios que habla al corazón sereno."
+      },
+      {
+       "t": "Jesús buscaba lugares apartados para orar al Padre.",
+       "v": true,
+       "why": "Jesús mismo se regalaba esos espacios de silencio."
+      },
+      {
+       "t": "Para entrar en la oración hace falta, primero, detenerse.",
+       "v": true,
+       "why": "La oración es una relación viva con Dios (CEC 2558-2565), y empieza por detenerse."
+      }
+     ]
+    },
+    {
+     "after": 1,
+     "type": "order",
+     "title": "Ordena los pasos del ejercicio de silencio",
+     "items": [
+      "Buscar un lugar tranquilo y dejar el celular en silencio",
+      "Respirar despacio durante un minuto",
+      "Leer Mateo 6,6 dos veces, lentamente",
+      "Quedarse cinco minutos en silencio, repitiendo «Padre»",
+      "Terminar dando gracias"
+     ],
+     "feedback": "Primero apagar el ruido, luego serenarse, escuchar la Palabra, permanecer en silencio y agradecer."
+    }
+   ]
+  }
+ }
+}

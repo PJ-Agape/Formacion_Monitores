@@ -18,6 +18,7 @@ import * as AV from "./avatares.js";
 import * as dinamicas from "./dinamicas.js";
 import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
+import * as viva from "./unidad-viva.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -57,6 +58,7 @@ const routes = [
   [/^\/comunidad$/, viewCommunity, "comunidad"],
   [/^\/itinerario$/, viewItinerary, "itinerario"],
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
+  [/^\/vivir\/(\d+)\/([^/?]+)(?:\?s=\d+)?$/, async (p, id) => (await viva.view(p, id)) ?? null, "itinerario"],
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
@@ -181,7 +183,7 @@ function nextLink(course, st) {
   if (st.complete) return { href: "#/constancia", label: "Ver mi constancia" };
   if (!st.next) return { href: "#/itinerario", label: "Ver itinerario" };
   if (st.next.type === "session") {
-    return { href: `#/unidad/${st.next.phase}/${encodeURIComponent(st.next.session.id)}`, label: st.readSessions ? "Continuar donde quedé" : "Comenzar el curso" };
+    return { href: `#/vivir/${st.next.phase}/${encodeURIComponent(st.next.session.id)}`, label: st.readSessions ? "Continuar donde quedé" : "Comenzar el curso" };
   }
   return { href: "#/itinerario", quiz: st.next.phase, label: `Rendir evaluación del módulo ${course.phases[st.next.phase].phaseNum}` };
 }
@@ -482,7 +484,7 @@ function phaseBlock(course, ph, i, st) {
         ${ph.intro ? `<p class="muted small phase-intro">${rich(ph.intro)}</p>` : ""}
         ${ph.sessions.map((se) => {
           const read = st.p.read[S.sessionKey(i, se)];
-          return `<a class="session-row ${read ? "read" : ""}" href="#/unidad/${i}/${encodeURIComponent(se.id)}" data-search="${esc(plain(unitText(se)).toLowerCase())}">
+          return `<a class="session-row ${read ? "read" : ""}" href="#/vivir/${i}/${encodeURIComponent(se.id)}" data-search="${esc(plain(unitText(se)).toLowerCase())}">
             <span class="session-num">${read ? icon("check") : esc(se.id)}</span>
             <span style="min-width:0;flex:1"><h4>${esc(se.title)}</h4><p>${esc(plain(se.objective))}</p></span>
             <span class="xs muted nowrap">${esc(se.time || "")}</span>
@@ -594,6 +596,8 @@ function viewEncounter(phaseIdx, sid) {
     </div>
   </header>
 
+  <a class="uv-banner no-print" href="#/vivir/${i}/${encodeURIComponent(se.id)}"><span class="uv-banner-ico">▶</span>
+    <span><b>Vivir la unidad en modo interactivo</b><small>Láminas, tarjetas, desafíos y puntos. Este texto queda como complemento para leer con calma.</small></span>${icon("arrowR")}</a>
   <div class="enc-layout" style="margin-top:24px">
     <article class="unit">
       <div class="note accent objective"><b>Objetivo de aprendizaje.</b> ${rich(se.objective)}</div>
@@ -1341,6 +1345,7 @@ familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+viva.setup({ actions, render: () => render(), onLeave, S });
 desafio.setup({ actions, render: () => render(), cloud });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
