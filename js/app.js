@@ -20,6 +20,7 @@ import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
+import * as ayuda from "./ayuda.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -64,6 +65,7 @@ const routes = [
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
+  [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
@@ -113,6 +115,16 @@ export async function render() {
   lastPath = path;
   updateInstallSlot();
   afterRender.splice(0).forEach((f) => f());
+  ayuda.afterRender();
+  helpFab(section);
+}
+// Botón flotante «?»: abre la Ayuda en el tema de la sección donde estás.
+function helpFab(section) {
+  let b = document.getElementById("helpFab");
+  if (section === "ayuda" || section === "admin" && !cloud.state().isStaff) { if (b) b.remove(); return; }
+  if (!b) { b = document.createElement("a"); b.id = "helpFab"; b.className = "help-fab"; b.setAttribute("aria-label", "Ayuda"); b.title = "Ayuda: ¿cómo hago…?"; b.textContent = "?"; document.body.appendChild(b); }
+  const t = { muro: "muro", agenda: "agenda", oracion: "oracion", itinerario: "itinerario", comunidad: "comunidad", camino: "camino", admin: "admin" }[section] || "inicio";
+  b.href = `#/ayuda?t=${t}`;
 }
 // Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
 const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
@@ -1300,6 +1312,7 @@ function viewAccount() {
     <div class="row-wrap" style="justify-content:center;margin-top:16px">
       ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>
         <button class="btn btn-soft" data-action="vaOpen">${icon("eye")} Ver como…</button>` : ""}
+      <a class="btn btn-soft" href="#/ayuda">? Ayuda</a>
       <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
     </div>
     <div id="installSlot" style="margin-top:14px"></div>
@@ -1411,6 +1424,7 @@ dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 viva.setup({ actions, render: () => render(), onLeave, S });
 camJ.setup({ actions, render: () => render(), cloud, S });
+ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
