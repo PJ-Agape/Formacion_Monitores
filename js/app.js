@@ -83,6 +83,7 @@ const routes = [
 let lastPath = null;
 export async function render() {
   if (!S.content()) return; // aún cargando: el arranque dibuja apenas termina
+  S.setPreviewOpen(cloud.enabled && !!cloud.viewingAs());
   const path = decodeURIComponent(location.hash.replace(/^#/, "")) || "/";
   let match = null, fn = viewNotFound, section = "";
   for (const [re, f, sec] of routes) {
@@ -162,7 +163,41 @@ function navFor() {
   if (s.ready && s.role === "aspirante") return [NAV[0], CAMINO_NAV, NAV[1], NAV[2], NAV[4], NAV[6]];
   return NAV;
 }
+// Franja «Ver como…» (solo equipo): recuerda que es una vista de prueba y cómo volver.
+const VER_COMO = [["visitante", "Visitante sin cuenta"], ["ingreso", "Joven · Ingreso"], ["madurez", "Joven · Madurez"], ["aspirante", "Aspirante"], ["dirigente", "Dirigente"], ["coordinador", "Coordinador"]];
+function viewAsBar() {
+  let bar = document.getElementById("viewAsBar");
+  const va = cloud.enabled && cloud.viewingAs();
+  if (!va) { if (bar) bar.remove(); document.body.classList.remove("has-va"); return; }
+  if (!bar) { bar = document.createElement("div"); bar.id = "viewAsBar"; bar.className = "va-bar"; document.body.prepend(bar); }
+  document.body.classList.add("has-va");
+  const lab = (VER_COMO.find((x) => x[0] === va) || [va, va])[1];
+  bar.innerHTML = `<span>${icon("eye")} Estás viendo la app como <b>${esc(lab)}</b>. Tus permisos no cambian: lo que hagas se guarda como tú.</span>
+    <span class="va-btns"><button class="btn btn-sm btn-ghost" data-action="vaOpen">Cambiar</button><button class="btn btn-sm btn-gold" data-action="vaSet" data-r="">Volver a mi vista</button></span>`;
+}
+function vaDialog() {
+  let d = document.getElementById("vaDlg");
+  if (!d) { d = document.createElement("dialog"); d.id = "vaDlg"; d.className = "sheet"; document.body.appendChild(d); }
+  const cur = cloud.viewingAs(), coord = cloud.realRole() === "coordinador";
+  d.innerHTML = `<div class="sheet-head"><div style="flex:1"><span class="eyebrow">Para guiar a alguien</span><h2>Ver la app como…</h2></div>
+      <button type="button" class="icon-btn" data-action="vaClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:12px">
+      <p class="small muted">Cambia el menú y las secciones para que veas lo mismo que esa persona. No cambia tus permisos ni los datos: si publicas o editas algo, queda a tu nombre.</p>
+      <div class="va-opts">${VER_COMO.filter(([k]) => !(coord && k === "coordinador")).map(([k, l]) => `<button class="btn ${cur === k ? "btn-primary" : "btn-soft"}" data-action="vaSet" data-r="${k}">${esc(l)}</button>`).join("")}</div>
+      ${cur ? `<button class="btn btn-ghost" data-action="vaSet" data-r="">Volver a mi vista</button>` : ""}
+    </div>`;
+  d.showModal();
+}
+actions.vaOpen = () => vaDialog();
+actions.vaClose = () => document.getElementById("vaDlg")?.close();
+actions.vaSet = (el) => {
+  document.getElementById("vaDlg")?.close();
+  cloud.setViewAs(el.dataset.r || "");
+  toast(el.dataset.r ? "Vista de prueba activada" : "Volviste a tu vista");
+  location.hash = "#/";
+};
 function renderChrome(section) {
+  viewAsBar();
   const cur = (k) => (k === section ? 'aria-current="page"' : "");
   const NAV = navFor();
   $("#topNav").innerHTML = NAV.map(([k, h, l]) => `<a href="${h}" ${cur(k)}>${l}</a>`).join("");
@@ -1263,7 +1298,8 @@ function viewAccount() {
       ${st.isGuide ? `<a class="btn btn-soft" href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
     </div>
     <div class="row-wrap" style="justify-content:center;margin-top:16px">
-      ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>` : ""}
+      ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>
+        <button class="btn btn-soft" data-action="vaOpen">${icon("eye")} Ver como…</button>` : ""}
       <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
     </div>
     <div id="installSlot" style="margin-top:14px"></div>

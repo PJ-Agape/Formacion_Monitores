@@ -176,12 +176,15 @@ export function resetProgress(courseId) {
   const all = allProgress(); delete all[courseId]; write(K.progress, all); synced("progress");
 }
 
+// «Ver como…»: mientras el equipo mira la app como otro perfil, todos los módulos se pueden recorrer.
+let PREVIEW_OPEN = false;
+export const setPreviewOpen = (v) => { PREVIEW_OPEN = !!v; };
 // Estado derivado útil para las vistas
 export function courseState(course) {
   const p = progress(course.id);
   const phases = course.phases.map((ph, i) => {
     const done = !!p.phases[i];
-    const open = i === 0 || !!p.phases[i - 1];
+    const open = PREVIEW_OPEN || i === 0 || !!p.phases[i - 1];
     const read = ph.sessions.filter((s) => p.read[sessionKey(i, s)]).length;
     return { done, open, read, total: ph.sessions.length, score: p.scores[i] };
   });

@@ -37,9 +37,28 @@ const emit = () => listeners.forEach((f) => { try { f(); } catch {} });
 const withTimeout = (p, ms = 8000) => Promise.race([p, new Promise((_, rej) => setTimeout(() => rej(new Error("timeout")), ms))]);
 const lower = (e) => String(e || "").trim().toLowerCase();
 
+// «Ver como…»: el equipo puede mirar la app como otro perfil para guiar a alguien.
+// Cambia solo lo que se muestra (menú, secciones, bloqueos); sus permisos reales no cambian.
+const VA_KEY = "agape_ver_como";
+let viewAs = (() => { try { return sessionStorage.getItem(VA_KEY) || ""; } catch { return ""; } })();
+const realStaff = () => !!(account && account.active !== false && STAFF.includes(account.role));
+export const viewingAs = () => (status === "ready" && realStaff() && viewAs ? viewAs : "");
+export function setViewAs(r) {
+  viewAs = r || "";
+  try { r ? sessionStorage.setItem(VA_KEY, r) : sessionStorage.removeItem(VA_KEY); } catch {}
+  emit();
+}
+export const realRole = () => (account ? account.role : "");
 export function state() {
+  const va = viewingAs();
+  if (va === "visitante") return { enabled, status: "guest", user: null, account: null, error: "", isAdmin: false, isStaff: false, isGuide: false, role: "", isJoven: false, ready: false, viewAs: va };
+  const real = account;
+  const account2 = va ? { ...real, role: va } : real;
+  return realState(account2, va);
+}
+function realState(account, va) {
   return {
-    enabled, status, user, account, error: lastError,
+    enabled, status, user, account, error: lastError, viewAs: va || "",
     isAdmin: !!(account && account.active !== false && account.role === "admin"),
     // Equipo: administradores y coordinadores (moderan muro y chat, editan Agenda y Portada)
     isStaff: !!(account && account.active !== false && STAFF.includes(account.role)),

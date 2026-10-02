@@ -2178,3 +2178,12 @@ body.uv-open .app-header, body.uv-open .bottom-nav, body.uv-open .app-footer, bo
 .mc-tramo.pausa { background: var(--surface-2); border-style: dashed; }
 .mc-tramo .chip { justify-self: start; }
 .mc-tramo { align-content: start; }
+
+/* «Ver como…» */
+.va-bar { position: sticky; top: env(safe-area-inset-top, 0px); z-index: 90; display: flex; flex-wrap: wrap; gap: 8px 14px; align-items: center; justify-content: space-between;
+  padding: 8px 16px; background: #ffba03; color: #0b2566; border-bottom: 2.5px solid #0b2566; font-size: .88rem; font-weight: 600; }
+.va-bar svg { vertical-align: -3px; }
+.va-btns { display: flex; gap: 8px; }
+.va-bar .btn-gold { background: #0b2566; color: #fff6e5; }
+.va-opts { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 8px; }
+body.uv-open .va-bar { display: none; }

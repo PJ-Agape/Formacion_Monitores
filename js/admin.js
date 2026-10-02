@@ -58,7 +58,7 @@ function coordShell(page, body) {
       <a href="#/agenda">${icon("grid")} Agenda</a>
       <a href="#/acompanar">${icon("check")} Acompañar</a>
       <a href="#/muro">${icon("chat")} Muro y chat</a>
-      <div class="side-extra"><a href="#/">${icon("out")} Salir de Gestión</a></div>
+      <div class="side-extra"><a href="#" data-action="vaOpen">${icon("eye")} Ver la app como…</a><a href="#/">${icon("out")} Salir de Gestión</a></div>
     </nav>
     <div class="stack" style="--gap:18px;min-width:0">
       <div class="note">Tu cuenta es de <b>coordinación</b>: editas la Portada, la página para familias y la Agenda, y moderas el muro y el chat. Cuentas, roles y contenido del curso los maneja un administrador.</div>
@@ -86,7 +86,8 @@ function shell(page, body) {
       ${link("publicar", "#/admin/publicar", "Publicar", "send", dirty ? '<span class="count">!</span>' : "")}
       ${cloudOn ? "" : link("ajustes", "#/admin/ajustes", "Ajustes", "gear")}
       <div class="side-extra">
-        <a href="#" data-action="aPreview">${icon("eye")} Vista previa</a>
+        <a href="#" data-action="vaOpen">${icon("eye")} Ver la app como…</a>
+        <a href="#" data-action="aPreview">${icon("eye")} Vista previa del borrador</a>
         <a href="#" data-action="aLogout">${icon("out")} Salir de Gestión</a>
       </div>
     </nav>
