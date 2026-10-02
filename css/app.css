@@ -2115,3 +2115,5 @@ body.uv-open .app-header, body.uv-open .bottom-nav, body.uv-open .app-footer, bo
 @media (prefers-reduced-motion: reduce) { .uv-s, .uv-card .f, .uv-card .b { transition: none; } }
 .uv-read > .btn, .uv-split .btn { justify-self: start; }
 .uv-end-btns .btn { max-width: 100%; white-space: normal; text-align: center; }
+.uv-card:not(.on) .b, .uv-card.on .f { pointer-events: none; }
+.uv-card:focus-visible { outline: 3px solid #ef591c; outline-offset: 4px; border-radius: 22px; }

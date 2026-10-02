@@ -238,8 +238,8 @@ function endHTML() {
 }
 function cardsHTML(i, title, sub, cards, kind, help = "") {
   return `<div class="uv-read"><span class="uv-label">${esc(title)}</span><h2 class="uv-mid">${esc(sub)}</h2>${help ? `<p class="xs uv-help">${esc(help)}</p>` : ""}
-    <div class="uv-cards n${Math.min(cards.length, 6)}">${cards.map((c, k) => `<button class="uv-card" data-action="uvFlip" data-id="${i}-${k}" data-kind="${kind}">
-      <span class="f">${rich(c.front)}<small>toca para ver</small></span><span class="b">${rich(c.back)}${c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener" class="uv-src">Leer el documento ↗</a>` : ""}</span></button>`).join("")}</div></div>`;
+    <div class="uv-cards n${Math.min(cards.length, 6)}">${cards.map((c, k) => `<div class="uv-card" role="button" tabindex="0" data-action="uvFlip" data-id="${i}-${k}" data-kind="${kind}">
+      <span class="f">${rich(c.front)}<small>toca para ver</small></span><span class="b">${rich(c.back)}${c.url ? `<a href="${esc(c.url)}" target="_blank" rel="noopener" class="uv-src">Leer el documento ↗</a>` : ""}</span></div>`).join("")}</div></div>`;
 }
 function quizHTML(i, a) {
   return `<div class="uv-read"><span class="uv-label">${esc(a.label || "¿Qué harías?")}</span><h2 class="uv-mid">${rich(a.q)}</h2>
@@ -291,6 +291,7 @@ function enter(i) {
 }
 function go(d) { if (!G) return; const i = Math.max(0, Math.min(G.slides.length - 1, G.cur + d)); if (i !== G.cur) enter(i); }
 function onKey(e) {
+  if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("uv-card")) { e.preventDefault(); e.target.click(); return; }
   if (!G || e.altKey || e.ctrlKey || e.metaKey || /input|textarea|select/i.test(e.target.tagName)) return;
   if (e.key === "ArrowRight" || e.key === "PageDown") { e.preventDefault(); go(1); }
   else if (e.key === "ArrowLeft" || e.key === "PageUp") { e.preventDefault(); go(-1); }
@@ -337,7 +338,9 @@ function registerActions() {
   A.uvGo = (el) => go(+el.dataset.d);
   A.uvReveal = (el) => { el.classList.add("on"); };
   A.uvFlip = (el, e) => {
-    if (e && e.target.closest("a")) return;
+    // El enlace «Leer el documento» va dentro de la tarjeta: el clic global cancela la navegación, así que se abre aquí.
+    const link = e && e.target.closest("a[href]");
+    if (link) { window.open(link.href, "_blank", "noopener"); return; }
     el.classList.toggle("on");
     const pts = el.dataset.kind === "church" ? POINTS.church : el.dataset.kind === "cards" ? POINTS.cards : POINTS.flip;
     if (el.classList.contains("on")) gain("f" + el.dataset.id, pts, el);
