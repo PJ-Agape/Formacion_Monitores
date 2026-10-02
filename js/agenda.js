@@ -138,7 +138,7 @@ function paintList() {
     return `<article class="ag-ev${open ? " open" : ""}" style="--c:${t.color}">
       <button class="ag-ev-head" data-action="agOpen" data-id="${esc(e.id)}" aria-expanded="${open}">
         <span class="ag-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>
-        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}${e.familias ? " · 🏠" : ""}${autz.hasAuth(e) ? " · ✍️ Autorización" : ""}</span><strong>${esc(e.title)}</strong>
+        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}${e.familias ? " · 🏠" : ""}${e.count ? " · ⏳" : ""}${autz.hasAuth(e) ? " · ✍️ Autorización" : ""}</span><strong>${esc(e.title)}</strong>
           <span class="muted small">${[e.start ? `${esc(e.start)}${e.end ? `–${esc(e.end)}` : ""}` : "", esc(e.place || e.audience || "")].filter(Boolean).join(" · ")}</span></span>
       </button>
       ${open ? `<div class="ag-ev-body">
@@ -190,6 +190,11 @@ function openForm(ev) {
       </div>
       <div class="field"><label>Lugar</label><input class="input" name="place" maxlength="120" value="${esc(e.place || "")}" placeholder="Ej: Salón parroquial"></div>
       <div class="field"><label>Detalle</label><textarea class="textarea" name="desc" maxlength="1500" placeholder="Qué traer, a qué hora termina, a quién consultar…">${esc(e.desc || "")}</textarea></div>
+      <fieldset class="p-dates ag-feat-box">
+        <label class="row" style="gap:8px;font-weight:800"><input type="checkbox" name="count" id="agCount" ${e.count ? "checked" : ""}> ⏳ Mostrar cuenta regresiva en Inicio</label>
+        <span class="xs muted">Días, horas, minutos y segundos hasta la fecha y hora de este evento. Si es visible para familias, también aparece en su página.</span>
+        <div class="field" id="agCountOpts" style="margin-top:10px" ${e.count ? "" : "hidden"}><label>Mostrarla desde</label><input class="input" type="date" name="countFrom" value="${esc(e.countFrom || todayIso())}"><span class="xs muted">Desaparece sola al terminar el día del evento.</span></div>
+      </fieldset>
       ${autz.formHTML(ev)}
       <fieldset class="p-dates ag-feat-box">
         <label class="row" style="gap:8px;font-weight:800"><input type="checkbox" name="feat" id="agFeat" ${e.feat ? "checked" : ""}> ${icon("sparkle")} Destacar en Inicio</label>
@@ -310,6 +315,7 @@ function registerActions() {
   };
   document.addEventListener("change", (e) => {
     if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); }
+    if (e.target.id === "agCount") { const o = $("#agCountOpts"); if (o) o.hidden = !e.target.checked; }
     if (e.target.id === "agAuth") { const o = $("#agAuthOpts"); if (o) o.hidden = !e.target.checked; const fam = $("#agFam"); if (e.target.checked && fam) fam.checked = true; }
     if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
     if (e.target.id === "agRepeat") { const o = $("#agUntilBox"); if (o) o.hidden = !e.target.value; }
@@ -324,6 +330,8 @@ function registerActions() {
     data.until = data.repeat ? String(f.get("until") || "") : "";
     if (data.until && data.until < data.date) { toast("«Hasta» es anterior a la fecha del evento", ""); return; }
     data.familias = f.get("familias") === "on";
+    data.count = f.get("count") === "on";
+    data.countFrom = data.count ? String(f.get("countFrom") || "") : "";
     data.auth = autz.fromForm(f);
     if (data.auth && !data.auth.salidaF) data.auth.salidaF = data.date;
     data.feat = f.get("feat") === "on";

@@ -8,6 +8,7 @@ import { illus } from "./ilustraciones.js";
 import { occurrences, isRepeat, describe as repeatText } from "./repeat.js";
 import { merge } from "./familias-contenido.js";
 import * as autz from "./autorizacion.js";
+import * as cuenta from "./cuenta.js";
 
 const $ = (s) => document.querySelector(s);
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -130,6 +131,7 @@ async function main() {
     <div class="fam-hero-ill">${illus("familia")}</div>
   </section>
 
+  ${(() => { const c = cuenta.pick(evs); return c ? cuenta.html(c) : ""; })()}
   ${carta ? `<section class="fam-sec fam-carta"><span class="fam-k alt">Carta a las familias</span>
     ${C.carta.titulo ? `<h2>${esc(C.carta.titulo)}</h2>` : ""}<div class="fam-carta-t">${esc(C.carta.texto).replace(/\n/g, "<br>")}</div>
     ${C.carta.firma ? `<p class="fam-firma">${esc(C.carta.firma)}</p>` : ""}</section>` : ""}
@@ -175,6 +177,7 @@ async function main() {
   <section class="fam-sec fam-contacto" id="contacto">
     <span class="fam-k alt">Contacto</span><h2>Conversemos.</h2>${contactHTML(C.contacto)}
   </section>`;
+  cuenta.start();
 }
 
 document.addEventListener("click", async (e) => {

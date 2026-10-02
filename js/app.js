@@ -21,6 +21,7 @@ import * as desafio from "./desafio.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
+import * as cuenta from "./cuenta.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -294,14 +295,24 @@ function viewHome() {
   }));
   onAfterRender(startCarousel);
 
+  onAfterRender(async () => {
+    const e = cuenta.pick(await cloud.listAgenda());
+    const slot = document.getElementById("countSlot");
+    if (e && slot) { slot.innerHTML = cuenta.html(e, { href: `#/agenda/${e.when}` }); cuenta.start(); }
+  });
   return `
   ${carousel()}
+  <div id="countSlot"></div>
 
   <div class="grid grid-4" style="margin-top:20px">
+    ${cloud.enabled && cloud.state().isJoven ? `${tile("#/mi-camino", "route", "Mi Camino", "El encuentro de tu etapa de esta semana.")}
+    ${tile("#/agenda", "grid", "Agenda", "Lo que viene en el grupo.")}
+    ${tile("#/muro", "chat", "Muro y chat", "Lo que conversa el grupo.")}
+    ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}` : `
     ${tile("#/comunidad", "users", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
     ${tile("#/itinerario", "route", "Formación", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
     ${tile("#/materiales", "book", "Materiales", c.materials.title)}
-    ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}
+    ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}`}
   </div>
 
   ${st.complete ? `
