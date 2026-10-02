@@ -141,7 +141,8 @@ function paint(err) {
     box.innerHTML = `<div class="chat-empty">${illus("amigos")}<p class="muted">Todavía no hay mensajes. ¡Rompe el hielo!</p></div>`;
     return;
   }
-  let lastDay = "", lastAuthor = "";
+  let lastDay = "", lastAuthor = "", lastT = 0;
+  const ms = (t) => (t && t.toMillis ? t.toMillis() : t && t.seconds ? t.seconds * 1000 : +new Date(t || 0)) || 0;
   const onl = onlineNow();
   box.innerHTML = msgs.map((m) => {
     const day = dayOf(m.createdAt);
@@ -154,8 +155,10 @@ function paint(err) {
         ${m.authorUid === me || admin ? `<button class="chat-sys-x" data-action="chatDelete" data-id="${esc(m.id)}" aria-label="Borrar">${icon("x")}</button>` : ""}</div>`;
     }
     const mine = m.authorUid === me;
-    const cont = lastAuthor === m.authorUid;
-    lastAuthor = m.authorUid;
+    // Se agrupan los mensajes seguidos de la misma persona, salvo que pasen más de 5 minutos
+    const t = ms(m.createdAt);
+    const cont = lastAuthor === m.authorUid && (!t || !lastT || t - lastT < 5 * 60000);
+    lastAuthor = m.authorUid; lastT = t;
     const staff = ctx.cloud.isStaffRole(m.authorRole);
     const reps = Object.keys(m.reports || {}).length;
     const myRep = !!(m.reports && m.reports[me]);
@@ -170,7 +173,7 @@ function paint(err) {
       ${!mine && !cont ? avatar(m.authorAvatar, m.authorName, staff ? "staff" : "") : `<span class="avatar-space"></span>`}
       <div class="chat-col">
         <div class="chat-bubble">
-          ${!mine && !cont ? `<b class="chat-name">${esc(m.authorName)}${staff ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}</b>` : ""}
+          ${!cont ? `<b class="chat-name">${mine ? "Tú" : esc(m.authorName || "Dirigente")}${staff ? ` <span class="chip warn xs-chip">Equipo</span>` : ""}</b>` : ""}
           ${m.replyTo ? `<button class="chat-quote" data-action="chatJump" data-id="${esc(m.replyTo.id)}"><b>${esc(m.replyTo.name)}</b><span>${esc(m.replyTo.text)}</span></button>` : ""}
           <div class="chat-text">${linkify(m.text)}</div>
           <span class="chat-meta">${when(m.createdAt)}${admin && reps ? ` · <span class="chip danger xs-chip">Reportado ${reps}</span>` : ""}</span>
