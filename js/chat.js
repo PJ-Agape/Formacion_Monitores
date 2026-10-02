@@ -17,7 +17,7 @@ const SALA_COLOR = { general: "#8ad2fa", coordinacion: "#ffba03", dirigentes: "#
 const COLORS = ["#8ad2fa", "#ffba03", "#ef591c", "#1351a4", "#fde0d2", "#9be3b0"];
 const colorOf = (s) => s.color || SALA_COLOR[s.key] || "#8ad2fa";
 const illusOf = (s) => (s.illus && SCENE_KEYS.includes(s.illus) ? s.illus : SALA_ILLUS[s.key] || "amigos");
-const ROLE_NAMES = { admin: "Administradores", coordinador: "Coordinadores", dirigente: "Dirigentes", aspirante: "Aspirantes" };
+const ROLE_NAMES = { admin: "Administradores", coordinador: "Coordinadores", dirigente: "Dirigentes", aspirante: "Aspirantes", ingreso: "Jóvenes de Ingreso", madurez: "Jóvenes de Madurez" };
 function accessText(s) {
   if (!s.custom) return "";
   if (s.access === "all") return "Todos los que tienen cuenta";

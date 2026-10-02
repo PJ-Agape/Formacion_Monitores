@@ -19,7 +19,7 @@ service cloud.firestore {
     function isStaff() { return isMember() && me().role in ['admin', 'coordinador']; }
     // Guías: quienes acompañan a los jóvenes (equipo y dirigentes).
     function isGuide() { return isMember() && me().role in ['admin', 'coordinador', 'dirigente']; }
-    function validRole(r) { return r in ['admin', 'coordinador', 'dirigente', 'aspirante']; }
+    function validRole(r) { return r in ['admin', 'coordinador', 'dirigente', 'aspirante', 'ingreso', 'madurez']; }
     // Cuentas protegidas: siempre administradoras y activas.
     function protectedEmail(e) { return e in ['iperezconus84@gmail.com']; }
 
@@ -169,7 +169,7 @@ service cloud.firestore {
     }
     function inSala(sala) {
       return isMember() && (builtIn(sala)
-        ? (sala == 'general' || isStaff() || sala in me().get('salas', me().role == 'aspirante' ? ['aspirantes'] : ['dirigentes']))
+        ? (sala == 'general' || isStaff() || sala in me().get('salas', me().role == 'aspirante' ? ['aspirantes'] : (me().role in ['ingreso', 'madurez'] ? [] : ['dirigentes'])))
         : inCustom(sala));
     }
     function openSala(sala) { return builtIn(sala) || salaDoc(sala).get('archived', false) != true; }

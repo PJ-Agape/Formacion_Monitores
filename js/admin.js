@@ -604,7 +604,7 @@ const SPECS = {
   },
   box: () => [["title", "Título de la sección", "text"], ["desc", "Descripción", "textarea"]],
   invite: () => [["email", "Correo de Google", "text", null, "nombre@gmail.com"], ["name", "Nombre y apellido", "text"], ["parish", "Capilla o parroquia", "text"],
-    ["role", "Rol", "select", [["dirigente", "Dirigente (hace el curso)"], ["aspirante", "Aspirante (sala Aspirantes)"], ["coordinador", "Coordinador (agenda, portada y moderación)"], ["admin", "Administrador (gestión completa)"]]]],
+    ["role", "Rol", "select", [["ingreso", "Joven · Ingreso (Mi Camino)"], ["madurez", "Joven · Madurez (Mi Camino)"], ["aspirante", "Aspirante (Mi Camino, curso y sala Aspirantes)"], ["dirigente", "Dirigente (hace el curso)"], ["coordinador", "Coordinador (agenda, portada y moderación)"], ["admin", "Administrador (gestión completa)"]]]],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
   identity: () => [["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
   methods: () => [["icon", "Emoji", "text", null, "🏡"], ["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],

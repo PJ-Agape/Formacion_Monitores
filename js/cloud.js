@@ -13,8 +13,12 @@ export const ROLES = [
   { key: "admin", label: "Administrador", short: "Admin", desc: "Todo: Gestión completa, cuentas, roles, contenido del curso y seguimiento." },
   { key: "coordinador", label: "Coordinador", short: "Coordinación", desc: "Agenda, Portada de Inicio y moderación del muro y del chat. No cambia roles ni el curso." },
   { key: "dirigente", label: "Dirigente", short: "Dirigente", desc: "Hace el curso, participa en el muro y en sus salas de chat." },
-  { key: "aspirante", label: "Aspirante", short: "Aspirante", desc: "Como dirigente, pero entra por defecto a la sala Aspirantes." },
+  { key: "aspirante", label: "Aspirante", short: "Aspirante", desc: "Se prepara para ser dirigente: Mi Camino (revista Aspirante), el curso y la sala Aspirantes." },
+  { key: "ingreso", label: "Joven · Ingreso", short: "Ingreso", desc: "Joven del grupo: Mi Camino con la revista de Ingreso, agenda, muro, sala general y capilla." },
+  { key: "madurez", label: "Joven · Madurez", short: "Madurez", desc: "Joven del grupo: Mi Camino con la revista de Madurez, agenda, muro, sala general y capilla." },
 ];
+export const JOVEN = ["ingreso", "madurez"];
+export const isJovenRole = (r) => JOVEN.includes(r);
 export const STAFF = ["admin", "coordinador"];
 export const roleLabel = (r) => (ROLES.find((x) => x.key === r) || ROLES[2]).label;
 export const isStaffRole = (r) => STAFF.includes(r);
@@ -42,6 +46,8 @@ export function state() {
     // Guías: quienes acompañan a los jóvenes (equipo + dirigentes).
     isGuide: !!(account && account.active !== false && ["admin", "coordinador", "dirigente"].includes(account.role)),
     role: account ? account.role : "",
+    // Jóvenes del grupo (Ingreso y Madurez): ven su espacio, no las herramientas del equipo.
+    isJoven: !!(account && account.active !== false && ["ingreso", "madurez"].includes(account.role)),
     ready: status === "ready",
   };
 }
@@ -401,7 +407,7 @@ export const SALAS = [
   { key: "dirigentes", name: "Dirigentes", desc: "Los dirigentes del grupo." },
   { key: "aspirantes", name: "Aspirantes", desc: "Quienes disciernen servir como dirigentes, con sus acompañantes." },
 ];
-export const defaultSalas = (role) => (STAFF.includes(role) ? ["coordinacion", "dirigentes", "aspirantes"] : role === "aspirante" ? ["aspirantes"] : ["dirigentes"]);
+export const defaultSalas = (role) => (STAFF.includes(role) ? ["coordinacion", "dirigentes", "aspirantes"] : role === "aspirante" ? ["aspirantes"] : JOVEN.includes(role) ? [] : ["dirigentes"]);
 // Salas creadas por el equipo (colección «salas»). Cada una dice quiénes entran:
 // todos («all»), ciertos roles («roles») o personas elegidas («people», mínimo 3).
 let custom = null;

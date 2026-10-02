@@ -52,7 +52,7 @@ async function paint() {
   if (st().ready) done = await ctx.cloud.listDesafio(cur.key); else done = [];
   const me = ctx.cloud.myUid(), mine = (done || []).some((d) => d.id === me);
   const role = st().account && st().account.role;
-  const pref = role === "aspirante" ? "aspirante" : null;
+  const pref = ["aspirante", "ingreso", "madurez"].includes(role) ? role : null;
   const items = pref && cur.items.some((i) => i.etapa === pref) ? cur.items.filter((i) => i.etapa === pref) : cur.items;
   const s = document.getElementById("desafioSlot"); if (!s) return;
   s.innerHTML = `<section class="card desafio">

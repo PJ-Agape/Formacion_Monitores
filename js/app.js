@@ -19,6 +19,7 @@ import * as dinamicas from "./dinamicas.js";
 import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
 import * as viva from "./unidad-viva.js";
+import * as camJ from "./mi-camino.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -62,6 +63,8 @@ const routes = [
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
+  [/^\/mi-camino$/, () => camJ.view(), "camino"],
+  [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
   [/^\/acompanar$/, () => acompanar.viewMain(), "comunidad"],
@@ -93,6 +96,8 @@ export async function render() {
   // Con cuentas: el curso pide iniciar sesión; el resto de la app queda abierto.
   // Formación, Materiales y revistas del Camino Ágape: solo para cuentas invitadas.
   const recursos = section === "materiales" || /^\/encuentros(\/|$)/.test(path);
+  // Jóvenes de Ingreso y Madurez: las secciones del equipo quedan fuera de su espacio.
+  if (cloud.enabled && cloud.state().isJoven && (section === "itinerario" || section === "comunidad" || recursos)) fn = viewSoloEquipo;
   if (cloud.enabled && (section === "itinerario" || recursos) && !cloud.state().ready) fn = () => viewLogin(recursos ? "recursos" : "curso");
   document.body.classList.toggle("is-admin", section === "admin");
   applyTheme();
@@ -109,7 +114,7 @@ export async function render() {
   afterRender.splice(0).forEach((f) => f());
 }
 // Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
-const HEAD_ILLUS = { agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
+const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio" };
 function decorate(v, section) {
   const hero = v.querySelector(".hero");
   if (hero && !hero.querySelector(".z-illus")) {
@@ -149,8 +154,17 @@ const NAV = [
   ["materiales", "#/materiales", "Materiales", "book", "top"],
   ["oracion", "#/oracion", "Capilla", "flame"],
 ];
+// Menú según el rol: los jóvenes ven su espacio; aspirantes suman el curso; el equipo, todo.
+const CAMINO_NAV = ["camino", "#/mi-camino", "Mi Camino", "route"];
+function navFor() {
+  const s = cloud.enabled ? cloud.state() : {};
+  if (s.isJoven) return [NAV[0], CAMINO_NAV, NAV[1], NAV[2], NAV[6]];
+  if (s.ready && s.role === "aspirante") return [NAV[0], CAMINO_NAV, NAV[1], NAV[2], NAV[4], NAV[6]];
+  return NAV;
+}
 function renderChrome(section) {
   const cur = (k) => (k === section ? 'aria-current="page"' : "");
+  const NAV = navFor();
   $("#topNav").innerHTML = NAV.map(([k, h, l]) => `<a href="${h}" ${cur(k)}>${l}</a>`).join("");
   $("#bottomNav").innerHTML = NAV.filter((n) => n[4] !== "top").map(([k, h, l, ic]) =>
     `<a href="${h}" ${cur(k)}><span class="ico-wrap">${icon(ic)}</span>${l}</a>`).join("");
@@ -191,7 +205,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => { wall.homeHighlight(); agenda.homeNext(); acompanar.homeCards(); desafio.homeCard(); });
+  onAfterRender(() => { wall.homeHighlight(); agenda.homeNext(); acompanar.homeCards(); desafio.homeCard(); camJ.homeCard(); });
   const c = S.content();
   const course = S.activeCourse();
   const st = S.courseState(course);
@@ -250,7 +264,7 @@ function viewHome() {
     <span class="spacer"></span>${icon("right")}
   </a>` : ""}
 
-  ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
+  ${cloud.enabled && (cloud.state().isJoven || (cloud.state().ready && cloud.state().role === "aspirante")) ? `<div id="mcSlot"></div>` : cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
     <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
     <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : `<a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
@@ -1186,6 +1200,13 @@ function viewNotFound() {
 // ---------------------------------------------------------------------------
 // CUENTAS (cuando Firebase está configurado)
 // ---------------------------------------------------------------------------
+function viewSoloEquipo() {
+  return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
+    ${illus("camino", "")}
+    <h1 class="display" style="font-size:1.6rem;margin-top:10px">Esto es para el equipo de dirigentes</h1>
+    <p class="muted" style="margin-top:8px">Tu espacio está en <b>Mi Camino</b>: el encuentro de tu etapa de cada semana, tu desafío y tu pasaporte.</p>
+    <a class="btn btn-primary" style="margin-top:16px" href="#/mi-camino">Ir a Mi Camino</a></div>`;
+}
 function viewLogin(kind = "curso") {
   const st = cloud.state();
   const R = kind === "recursos";
@@ -1353,6 +1374,7 @@ cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, clou
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 viva.setup({ actions, render: () => render(), onLeave, S });
+camJ.setup({ actions, render: () => render(), cloud, S });
 desafio.setup({ actions, render: () => render(), cloud });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
