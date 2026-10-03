@@ -21,10 +21,10 @@ export async function ready() {
 function svgFor(key, color, bg, pop, outline, bare) {
   let s = illus(key);
   if (!s) return "";
-  if (bare) { s = s.replace(/<path d="M\d+ 168 q30 -3 60 0[^"]*"[^>]*\/>/g, ""); if (!outline) s = s.replace(/stroke-width="2.6"/, 'stroke-width="3.4"'); }
+  if (bare) { s = s.replace(/<path d="M\d+ 168 q30 -3 60 0[^"]*"[^>]*\/>/g, ""); if (!outline) s = s.replace(/stroke-width="[0-9.]+"/, 'stroke-width="3.6"'); }
   s = s.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" ')
     .replace(/var\(--il-bg,\s*#fff\)/g, bg).replace(/var\(--il-pop,\s*#ffba03\)/g, pop).replace(/currentColor/g, color);
-  if (outline) s = s.replace(/stroke-width="2.6"/, `stroke-width="${outline}"`).replace(/stroke="[^"]*"/, `stroke="${outline ? "#ffffff" : color}"`);
+  if (outline) s = s.replace(/stroke-width="[0-9.]+"/, `stroke-width="${outline}"`).replace(/stroke="[^"]*"/, `stroke="${outline ? "#ffffff" : color}"`);
   return s;
 }
 // Carga previa de ilustraciones (clave|color|fondo|acento|contorno) para dibujar sin esperas.

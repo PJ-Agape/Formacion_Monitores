@@ -9,32 +9,42 @@ const FILL = 'fill="currentColor" stroke="none"';
 const POP = 'fill="var(--il-pop, #ffba03)" stroke="currentColor"';
 
 // Monito: x = centro, y = pies. arms: down | up | out | pray | give | wave | hold | hug
+// Cuerpo «relleno»: cabeza grande, torso redondeado y brazos y piernas como tubos con contorno.
 function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip = 1 } = {}) {
-  const k = (v) => +(v * s).toFixed(1);
   const X = (dx) => +(x + dx * s * flip).toFixed(1), Y = (dy) => +(y - dy * s).toFixed(1);
-  const hy = Y(62), r = k(10);
-  let out = C(X(0), hy, r, 'fill="var(--il-bg, #fff)"');
-  if (face === "smile") out += P(`M${X(-4)} ${Y(59)} Q${X(0)} ${Y(55)} ${X(4)} ${Y(59)}`) + C(X(-3.5), Y(64), 0.9, FILL) + C(X(3.5), Y(64), 0.9, FILL);
-  if (face === "calm") out += P(`M${X(-5)} ${Y(64)} q2 1.5 4 0 M${X(1)} ${Y(64)} q2 1.5 4 0 M${X(-3)} ${Y(58)} Q${X(0)} ${Y(56)} ${X(3)} ${Y(58)}`);
-  if (face === "wow") out += C(X(0), Y(58), 1.8) + C(X(-3.5), Y(64), 0.9, FILL) + C(X(3.5), Y(64), 0.9, FILL);
-  if (face === "worry") out += P(`M${X(-4)} ${Y(57)} Q${X(0)} ${Y(60)} ${X(4)} ${Y(57)}`) + C(X(-3.5), Y(64), 0.9, FILL) + C(X(3.5), Y(64), 0.9, FILL);
-  out += P(`M${X(0)} ${Y(52)} L${X(0)} ${Y(22)}`);
-  out += legs === "walk" ? P(`M${X(-12)} ${Y(0)} L${X(-4)} ${Y(12)} L${X(0)} ${Y(22)} L${X(8)} ${Y(10)} L${X(14)} ${Y(2)}`)
-    : legs === "kneel" ? P(`M${X(0)} ${Y(22)} L${X(12)} ${Y(12)} L${X(12)} ${Y(0)} M${X(0)} ${Y(22)} L${X(-4)} ${Y(8)} L${X(-16)} ${Y(4)}`)
-    : legs === "sit" ? P(`M${X(0)} ${Y(22)} L${X(16)} ${Y(22)} L${X(18)} ${Y(4)}`)
-    : legs === "jump" ? P(`M${X(-10)} ${Y(8)} L${X(0)} ${Y(22)} L${X(10)} ${Y(8)}`)
-    : P(`M${X(-9)} ${Y(0)} L${X(0)} ${Y(22)} L${X(9)} ${Y(0)}`);
-  const A = {
-    down: `M${X(-12)} ${Y(28)} L${X(0)} ${Y(44)} L${X(12)} ${Y(28)}`,
-    up: `M${X(-16)} ${Y(70)} L${X(0)} ${Y(44)} L${X(16)} ${Y(70)}`,
-    out: `M${X(-20)} ${Y(46)} L${X(0)} ${Y(44)} L${X(20)} ${Y(46)}`,
-    pray: `M${X(0)} ${Y(44)} L${X(-6)} ${Y(36)} L${X(1)} ${Y(49)} M${X(0)} ${Y(44)} L${X(6)} ${Y(36)} L${X(1)} ${Y(49)}`,
-    give: `M${X(0)} ${Y(44)} L${X(14)} ${Y(38)} L${X(24)} ${Y(42)} M${X(0)} ${Y(44)} L${X(12)} ${Y(34)} L${X(22)} ${Y(38)}`,
-    wave: `M${X(-12)} ${Y(28)} L${X(0)} ${Y(44)} L${X(14)} ${Y(56)} L${X(18)} ${Y(70)}`,
-    hold: `M${X(-14)} ${Y(34)} L${X(0)} ${Y(44)} L${X(14)} ${Y(34)}`,
-    hug: `M${X(-18)} ${Y(40)} L${X(0)} ${Y(44)} L${X(18)} ${Y(40)}`,
+  const k = (v) => +(v * s).toFixed(2);
+  const tube = (d) => P(d, `stroke-width="${k(9.5)}"`) + P(d, `stroke="var(--il-bg, #fff)" stroke-width="${k(4.6)}"`);
+  const L = {
+    stand: `M${X(-4)} ${Y(21)} L${X(-7)} ${Y(4)} M${X(4)} ${Y(21)} L${X(7)} ${Y(4)}`,
+    walk: `M${X(-3)} ${Y(21)} L${X(-7)} ${Y(12)} L${X(-14)} ${Y(4)} M${X(3)} ${Y(21)} L${X(9)} ${Y(11)} L${X(14)} ${Y(4)}`,
+    kneel: `M${X(2)} ${Y(21)} L${X(13)} ${Y(13)} L${X(13)} ${Y(4)} M${X(-2)} ${Y(21)} L${X(-5)} ${Y(9)} L${X(-16)} ${Y(5)}`,
+    sit: `M${X(0)} ${Y(21)} L${X(16)} ${Y(21)} L${X(18)} ${Y(4)}`,
+    jump: `M${X(-4)} ${Y(21)} L${X(-12)} ${Y(10)} M${X(4)} ${Y(21)} L${X(12)} ${Y(10)}`,
   };
-  out += P(A[arms] || A.down);
+  const A = {
+    down: `M${X(-8)} ${Y(41)} L${X(-14)} ${Y(27)} M${X(8)} ${Y(41)} L${X(14)} ${Y(27)}`,
+    up: `M${X(-8)} ${Y(42)} L${X(-18)} ${Y(66)} M${X(8)} ${Y(42)} L${X(18)} ${Y(66)}`,
+    out: `M${X(-8)} ${Y(42)} L${X(-23)} ${Y(44)} M${X(8)} ${Y(42)} L${X(23)} ${Y(44)}`,
+    pray: `M${X(-8)} ${Y(41)} L${X(-4)} ${Y(34)} M${X(8)} ${Y(41)} L${X(4)} ${Y(34)}`,
+    give: `M${X(6)} ${Y(41)} L${X(15)} ${Y(37)} L${X(25)} ${Y(41)} M${X(-5)} ${Y(40)} L${X(11)} ${Y(32)} L${X(22)} ${Y(36)}`,
+    wave: `M${X(-8)} ${Y(41)} L${X(-14)} ${Y(27)} M${X(8)} ${Y(42)} L${X(16)} ${Y(54)} L${X(19)} ${Y(68)}`,
+    hold: `M${X(-8)} ${Y(41)} L${X(-14)} ${Y(32)} M${X(8)} ${Y(41)} L${X(14)} ${Y(32)}`,
+    hug: `M${X(-8)} ${Y(42)} L${X(-21)} ${Y(39)} M${X(8)} ${Y(42)} L${X(21)} ${Y(39)}`,
+  };
+  const front = arms === "pray" || arms === "give";
+  let out = tube(L[legs] || L.stand);
+  if (!front) out += tube(A[arms] || A.down);
+  // torso redondeado
+  out += P(`M${X(-9.5)} ${Y(43)} Q${X(-10)} ${Y(49)} ${X(0)} ${Y(49)} Q${X(10)} ${Y(49)} ${X(9.5)} ${Y(43)} L${X(9)} ${Y(25)} Q${X(9)} ${Y(18)} ${X(0)} ${Y(18)} Q${X(-9)} ${Y(18)} ${X(-9)} ${Y(25)} Z`, 'fill="var(--il-bg, #fff)"');
+  if (front) out += tube(A[arms]);
+  if (arms === "pray") out += P(`M${X(0)} ${Y(48)} C${X(-5)} ${Y(44)} ${X(-5)} ${Y(34)} ${X(0)} ${Y(32)} C${X(5)} ${Y(34)} ${X(5)} ${Y(44)} ${X(0)} ${Y(48)} Z M${X(0)} ${Y(46)} L${X(0)} ${Y(34)}`, 'fill="var(--il-bg, #fff)" stroke-width="2.4"');
+  // cabeza y cara
+  out += C(X(0), Y(61), k(13), 'fill="var(--il-bg, #fff)"');
+  const eyes = C(X(-4.5), Y(63), k(1.5), FILL) + C(X(4.5), Y(63), k(1.5), FILL);
+  if (face === "smile") out += eyes + P(`M${X(-5)} ${Y(57.5)} Q${X(0)} ${Y(53)} ${X(5)} ${Y(57.5)}`);
+  if (face === "calm") out += P(`M${X(-6.5)} ${Y(63)} q2.2 -2 4.4 0 M${X(2.1)} ${Y(63)} q2.2 -2 4.4 0 M${X(-4)} ${Y(57)} Q${X(0)} ${Y(54)} ${X(4)} ${Y(57)}`);
+  if (face === "wow") out += eyes + C(X(0), Y(55.5), k(2.4));
+  if (face === "worry") out += eyes + P(`M${X(-5)} ${Y(54.5)} Q${X(0)} ${Y(58.5)} ${X(5)} ${Y(54.5)}`);
   return out;
 }
 const ground = (x1 = 10, x2 = 230, y = 168) => P(`M${x1} ${y} q30 -3 60 0 t60 0 t60 0 t40 0`);
@@ -61,7 +71,7 @@ const SCENES = {
   luz: () => fig(96, 168, { arms: "give" }) + P("M128 118 l0 -10 l14 0 l0 10 l-3 18 l-8 0 Z", 'fill="var(--il-bg,#fff)"') + flame(135, 130, .7) + P("M150 110 l20 -8 M152 124 l24 0 M150 138 l20 8 M128 100 l-6 -14 M142 100 l6 -14", 'stroke-width="2"') + ground(),
   trigo: () => P("M120 168 L120 70", 'stroke-width="3"') + [0, 1, 2, 3, 4].map((i) => P(`M120 ${80 + i * 14} q-14 -4 -16 -16 q12 2 16 12 M120 ${80 + i * 14} q14 -4 16 -16 q-12 2 -16 12`, POP)).join("") + P("M60 168 q10 -26 30 -30 M60 168 q-6 -18 -20 -22", 'stroke-width="2.5"') + ground(),
   ramos: () => fig(70, 168, { arms: "up" }) + fig(170, 168, { arms: "up", flip: -1 }) + P("M54 98 q-16 -40 6 -64 M54 98 q-6 -30 18 -50", 'stroke-width="2.5"') + P("M186 98 q16 -40 -6 -64 M186 98 q6 -30 -18 -50", 'stroke-width="2.5"') + [0, 1, 2, 3].map((i) => P(`M${48 - i * 2} ${80 - i * 12} l-10 -4 M${190 + i * 2} ${80 - i * 12} l10 -4`, 'stroke-width="2"')).join("") + P("M100 110 L120 90 L140 110", 'stroke-width="2"') + ground(),
-  duda: () => fig(80, 168, { arms: "hold", face: "worry" }) + fig(165, 168, { arms: "out" }) + P("M60 70 q0 -18 14 -18 q14 0 12 14 q-2 8 -10 10 l0 8 M76 92 l0 2", 'stroke-width="3"') + P("M160 98 q4 -8 10 0", 'stroke-width="2"') + heart(165, 78, 7) + ground(),
+  duda: () => fig(80, 168, { arms: "hold", face: "worry" }) + fig(165, 168, { arms: "out" }) + P("M60 70 q0 -18 14 -18 q14 0 12 14 q-2 8 -10 10 l0 8 M76 92 l0 2", 'stroke-width="3"') + heart(165, 78, 7) + ground(),
   mesa: () => P("M40 130 L200 130 M60 130 L60 168 M180 130 L180 168", 'stroke-width="3"') + fig(80, 128, { arms: "hold", s: .75 }) + fig(160, 128, { arms: "hold", s: .75 }) + fig(120, 128, { arms: "give", s: .8 }) + bread(120, 126, 12) + C(96, 124, 6, 'fill="var(--il-bg,#fff)"') + sparkle(120, 50, 5),
   pastor: () => fig(70, 168, { arms: "hold" }) + P("M84 168 L84 90 q0 -14 12 -12 q8 2 6 12", 'stroke-width="3"') + sheep(140, 166) + sheep(190, 160) + sheep(165, 138) + ground(),
   vid: () => P("M30 60 C 80 40, 150 80, 210 50", 'stroke-width="3.5"') + [50, 90, 130, 170].map((x, i) => P(`M${x} ${56 + (i % 2) * 8} q-6 16 4 26`) + [0, 1, 2, 3, 4, 5].map((j) => C(x + 4 + (j % 3) * 7 - 7, 88 + Math.floor(j / 3) * 7 + (i % 2) * 8, 4, POP)).join("") + P(`M${x + 8} ${54 + (i % 2) * 8} q12 -12 20 0 q-8 10 -20 0`, 'fill="var(--il-bg,#fff)"')).join("") + fig(120, 172, { arms: "up", s: .7 }),
@@ -114,8 +124,7 @@ export function illus(key, cls = "") {
   const f = SCENES[key];
   if (!f) return "";
   const id = "rough" + (++uid);
-  return `<svg class="z-illus ${cls}" viewBox="0 0 240 180" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linecap="round" stroke-linejoin="round">
-    <defs><filter id="${id}"><feTurbulence type="fractalNoise" baseFrequency="0.035" numOctaves="2" seed="${uid % 9}"/><feDisplacementMap in="SourceGraphic" scale="2.2"/></filter></defs>
-    <g filter="url(#${id})">${f()}</g></svg>`;
+  return `<svg class="z-illus ${cls}" viewBox="0 0 240 180" aria-hidden="true" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+    <g data-k="${id}">${f()}</g></svg>`;
 }
 export const illusFor = (e, cls) => illus(BY_N[e.n] || "camino", cls);
