@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-01": {
-   "titulo": "Jueves de la 26.ª semana del Tiempo Ordinario",
-   "cita": "Lc 10,1-12",
-   "frase": "La cosecha es abundante, pero los trabajadores son pocos."
-  },
   "2026-10-02": {
    "titulo": "Santos Ángeles Custodios",
    "cita": "Mt 18,1-5.10",
@@ -55,6 +50,11 @@
    "titulo": "28.º domingo del Tiempo Ordinario",
    "cita": "Mt 22,1-14",
    "frase": "Envió entonces a sus servidores para avisar a los invitados, pero estos se negaron a ir."
+  },
+  "2026-10-12": {
+   "titulo": "Lunes de la 28.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,29-32",
+   "frase": "Pide un signo y no le será dado otro que el de Jonás."
   }
  }
 }
