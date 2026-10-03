@@ -2322,7 +2322,7 @@ a.cd-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #ef591
 
 /* Devocionario de la capilla */
 .cap-horas { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; margin-bottom: 14px; }
-.cap-hora { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; }
+.cap-horas .cap-hora { display: flex; flex-direction: column; align-items: flex-start; gap: 2px; padding: 12px 14px; }
 .cap-pr summary svg { flex-shrink: 0; margin-left: 8px; }
 .cap-hora b { font-family: var(--font-display); font-size: 1.05rem; }
 @media (max-width: 520px) { .cap-horas { grid-template-columns: 1fr; } }

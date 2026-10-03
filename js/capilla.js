@@ -93,7 +93,7 @@ function devocionarioHTML() {
       ${o.note ? `<p class="cap-pr-note">${esc(o.note)}</p>` : ""}
       ${o.x ? `<p class="cap-prayer">${prayerHTML(o.x)}</p>` : ""}
       ${o.url ? `<a class="btn btn-sm btn-soft" href="${o.url}" target="_blank" rel="noopener">${icon("book")} Rezarla en Vatican News</a>` : ""}
-      ${o.go ? `<a class="btn btn-sm btn-ghost" href="#/oracion" data-action="capGo" data-k="${o.go.replace("cap-", "")}">${icon("right")} Ir a los misterios de hoy</a>` : ""}
+      ${o.go ? `<button type="button" class="btn btn-sm btn-gold" data-action="capRosario">${icon("right")} Rezarlo con el rosario virtual</button>` : ""}
     </div></details>`;
   return `<div class="cap-horas">${HORAS.map(([t, d, u]) => `<a class="card link cap-hora" href="${u}" target="_blank" rel="noopener"><b>${t}</b><span class="muted small">${d} · audio</span></a>`).join("")}</div>
     <label class="cap-dsearch"><span class="sr-only">Buscar una oración</span>${icon("search")}<input class="input" type="search" id="capDq" placeholder="Buscar una oración…" autocomplete="off"></label>
