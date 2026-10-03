@@ -3,7 +3,7 @@
 // velas de la comunidad, la Palabra, María (misterios del día) y oraciones.
 
 import { esc, rich, icon, toast } from "./util.js";
-import { ORACIONES, HORAS } from "./devocionario.js";
+import { ORACIONES } from "./devocionario.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -95,8 +95,7 @@ function devocionarioHTML() {
       ${o.url ? `<a class="btn btn-sm btn-soft" href="${o.url}" target="_blank" rel="noopener">${icon("book")} Rezarla en Vatican News</a>` : ""}
       ${o.go ? `<button type="button" class="btn btn-sm btn-gold" data-action="capRosario">${icon("right")} Rezarlo con el rosario virtual</button>` : ""}
     </div></details>`;
-  return `<div class="cap-horas">${HORAS.map(([t, d, u]) => `<a class="card link cap-hora" href="${u}" target="_blank" rel="noopener"><b>${t}</b><span class="muted small">${d} · audio</span></a>`).join("")}</div>
-    <label class="cap-dsearch"><span class="sr-only">Buscar una oración</span>${icon("search")}<input class="input" type="search" id="capDq" placeholder="Buscar una oración…" autocomplete="off"></label>
+  return `<label class="cap-dsearch"><span class="sr-only">Buscar una oración</span>${icon("search")}<input class="input" type="search" id="capDq" placeholder="Buscar una oración…" autocomplete="off"></label>
     <div class="cap-classic" id="capDev">${ORACIONES.map(item).join("")}</div>
     <p class="muted small cap-dnone" id="capDnone" hidden>No encontramos esa oración.</p>
     <p class="muted small" style="margin-top:12px">En el orden del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;

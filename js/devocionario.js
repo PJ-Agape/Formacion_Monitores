@@ -4,13 +4,6 @@
 
 const VN = "https://www.vaticannews.va/es/oraciones/";
 
-// Liturgia de las Horas en audio (latín), de Vatican News
-export const HORAS = [
-  ["Laudes", "Oración de la mañana", VN + "laudes.html"],
-  ["Vísperas", "Oración de la tarde", VN + "vesperae.html"],
-  ["Completas", "Antes de dormir", VN + "completorium.html"],
-];
-
 // t: título · x: texto (V./R. marcan versículo y respuesta) · note: cuándo se reza · url: se abre en Vatican News · go: lleva a otro rincón
 export const ORACIONES = [
   { t: "Acordaos", x: "Acordaos, ¡oh piadosísima Virgen María!, que jamás se ha oído decir que ninguno de los que han acudido a vuestra protección, implorando vuestro auxilio y reclamando vuestro socorro, haya sido abandonado de Vos.\nAnimado con esta confianza, a Vos también acudo, oh Madre, Virgen de las vírgenes, y aunque gimiendo bajo el peso de mis pecados, me atrevo a comparecer ante vuestra presencia soberana.\nNo desechéis, oh Madre de Dios, mis humildes súplicas, antes bien, escuchadlas y acogedlas benignamente.\nAmén." },
