@@ -11,9 +11,10 @@ const POP = 'fill="var(--il-pop, #ffba03)" stroke="currentColor"';
 // Monito: x = centro, y = pies. arms: down | up | out | pray | give | wave | hold | hug
 // Cuerpo «relleno»: cabeza grande, torso redondeado y brazos y piernas como tubos con contorno.
 function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip = 1 } = {}) {
+  s *= 1.22; // monitos protagonistas: más grandes que el resto de la escena
   const X = (dx) => +(x + dx * s * flip).toFixed(1), Y = (dy) => +(y - dy * s).toFixed(1);
   const k = (v) => +(v * s).toFixed(2);
-  const tube = (d) => P(d, `stroke-width="${k(9.5)}"`) + P(d, `stroke="var(--il-bg, #fff)" stroke-width="${k(4.6)}"`);
+  const tube = (d) => P(d, `stroke-width="${k(10.5)}"`) + P(d, `stroke="var(--il-bg, #fff)" stroke-width="${k(5.6)}"`);
   const L = {
     stand: `M${X(-4)} ${Y(21)} L${X(-7)} ${Y(4)} M${X(4)} ${Y(21)} L${X(7)} ${Y(4)}`,
     walk: `M${X(-3)} ${Y(21)} L${X(-7)} ${Y(12)} L${X(-14)} ${Y(4)} M${X(3)} ${Y(21)} L${X(9)} ${Y(11)} L${X(14)} ${Y(4)}`,
@@ -39,12 +40,13 @@ function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip 
   if (front) out += tube(A[arms]);
   if (arms === "pray") out += P(`M${X(0)} ${Y(48)} C${X(-5)} ${Y(44)} ${X(-5)} ${Y(34)} ${X(0)} ${Y(32)} C${X(5)} ${Y(34)} ${X(5)} ${Y(44)} ${X(0)} ${Y(48)} Z M${X(0)} ${Y(46)} L${X(0)} ${Y(34)}`, 'fill="var(--il-bg, #fff)" stroke-width="2.4"');
   // cabeza y cara
-  out += C(X(0), Y(61), k(13), 'fill="var(--il-bg, #fff)"');
-  const eyes = C(X(-4.5), Y(63), k(1.5), FILL) + C(X(4.5), Y(63), k(1.5), FILL);
-  if (face === "smile") out += eyes + P(`M${X(-5)} ${Y(57.5)} Q${X(0)} ${Y(53)} ${X(5)} ${Y(57.5)}`);
-  if (face === "calm") out += P(`M${X(-6.5)} ${Y(63)} q2.2 -2 4.4 0 M${X(2.1)} ${Y(63)} q2.2 -2 4.4 0 M${X(-4)} ${Y(57)} Q${X(0)} ${Y(54)} ${X(4)} ${Y(57)}`);
-  if (face === "wow") out += eyes + C(X(0), Y(55.5), k(2.4));
-  if (face === "worry") out += eyes + P(`M${X(-5)} ${Y(54.5)} Q${X(0)} ${Y(58.5)} ${X(5)} ${Y(54.5)}`);
+  out += C(X(0), Y(62), k(15.5), 'fill="var(--il-bg, #fff)"');
+  const eyes = C(X(-5), Y(64), k(1.7), FILL) + C(X(5), Y(64), k(1.7), FILL);
+  out += C(X(-8.5), Y(59), k(2.2), 'fill="#ef591c" stroke="none" opacity=".28"') + C(X(8.5), Y(59), k(2.2), 'fill="#ef591c" stroke="none" opacity=".28"');
+  if (face === "smile") out += eyes + P(`M${X(-5.5)} ${Y(58.5)} Q${X(0)} ${Y(53.5)} ${X(5.5)} ${Y(58.5)}`);
+  if (face === "calm") out += P(`M${X(-7.5)} ${Y(64)} q2.5 -2.4 5 0 M${X(2.5)} ${Y(64)} q2.5 -2.4 5 0 M${X(-4.5)} ${Y(57.5)} Q${X(0)} ${Y(54)} ${X(4.5)} ${Y(57.5)}`);
+  if (face === "wow") out += eyes + C(X(0), Y(56), k(2.8));
+  if (face === "worry") out += eyes + P(`M${X(-5.5)} ${Y(55)} Q${X(0)} ${Y(59.5)} ${X(5.5)} ${Y(55)}`);
   return out;
 }
 const ground = (x1 = 10, x2 = 230, y = 168) => P(`M${x1} ${y} q30 -3 60 0 t60 0 t60 0 t40 0`);
@@ -71,13 +73,13 @@ const SCENES = {
   luz: () => fig(96, 168, { arms: "give" }) + P("M128 118 l0 -10 l14 0 l0 10 l-3 18 l-8 0 Z", 'fill="var(--il-bg,#fff)"') + flame(135, 130, .7) + P("M150 110 l20 -8 M152 124 l24 0 M150 138 l20 8 M128 100 l-6 -14 M142 100 l6 -14", 'stroke-width="2"') + ground(),
   trigo: () => P("M120 168 L120 70", 'stroke-width="3"') + [0, 1, 2, 3, 4].map((i) => P(`M120 ${80 + i * 14} q-14 -4 -16 -16 q12 2 16 12 M120 ${80 + i * 14} q14 -4 16 -16 q-12 2 -16 12`, POP)).join("") + P("M60 168 q10 -26 30 -30 M60 168 q-6 -18 -20 -22", 'stroke-width="2.5"') + ground(),
   ramos: () => fig(70, 168, { arms: "up" }) + fig(170, 168, { arms: "up", flip: -1 }) + P("M54 98 q-16 -40 6 -64 M54 98 q-6 -30 18 -50", 'stroke-width="2.5"') + P("M186 98 q16 -40 -6 -64 M186 98 q6 -30 -18 -50", 'stroke-width="2.5"') + [0, 1, 2, 3].map((i) => P(`M${48 - i * 2} ${80 - i * 12} l-10 -4 M${190 + i * 2} ${80 - i * 12} l10 -4`, 'stroke-width="2"')).join("") + P("M100 110 L120 90 L140 110", 'stroke-width="2"') + ground(),
-  duda: () => fig(80, 168, { arms: "hold", face: "worry" }) + fig(165, 168, { arms: "out" }) + P("M60 70 q0 -18 14 -18 q14 0 12 14 q-2 8 -10 10 l0 8 M76 92 l0 2", 'stroke-width="3"') + heart(165, 78, 7) + ground(),
-  mesa: () => P("M40 130 L200 130 M60 130 L60 168 M180 130 L180 168", 'stroke-width="3"') + fig(80, 128, { arms: "hold", s: .75 }) + fig(160, 128, { arms: "hold", s: .75 }) + fig(120, 128, { arms: "give", s: .8 }) + bread(120, 126, 12) + C(96, 124, 6, 'fill="var(--il-bg,#fff)"') + sparkle(120, 50, 5),
+  duda: () => fig(80, 168, { arms: "hold", face: "worry" }) + fig(165, 168, { arms: "out" }) + P("M60 44 q0 -18 14 -18 q14 0 12 14 q-2 8 -10 10 l0 8 M76 66 l0 2", 'stroke-width="3"') + heart(165, 56, 7) + ground(),
+  mesa: () => P("M40 130 L200 130 M60 130 L60 168 M180 130 L180 168", 'stroke-width="3"') + fig(80, 128, { arms: "hold", s: .75 }) + fig(160, 128, { arms: "hold", s: .75 }) + fig(120, 128, { arms: "give", s: .8 }) + bread(120, 126, 12) + C(96, 124, 6, 'fill="var(--il-bg,#fff)"') + sparkle(120, 30, 5),
   pastor: () => fig(70, 168, { arms: "hold" }) + P("M84 168 L84 90 q0 -14 12 -12 q8 2 6 12", 'stroke-width="3"') + sheep(140, 166) + sheep(190, 160) + sheep(165, 138) + ground(),
   vid: () => P("M30 60 C 80 40, 150 80, 210 50", 'stroke-width="3.5"') + [50, 90, 130, 170].map((x, i) => P(`M${x} ${56 + (i % 2) * 8} q-6 16 4 26`) + [0, 1, 2, 3, 4, 5].map((j) => C(x + 4 + (j % 3) * 7 - 7, 88 + Math.floor(j / 3) * 7 + (i % 2) * 8, 4, POP)).join("") + P(`M${x + 8} ${54 + (i % 2) * 8} q12 -12 20 0 q-8 10 -20 0`, 'fill="var(--il-bg,#fff)"')).join("") + fig(120, 172, { arms: "up", s: .7 }),
   amigos: () => fig(90, 168, { arms: "hug" }) + fig(150, 168, { arms: "hug", flip: -1 }) + heart(120, 60, 12) + ground(),
   envio: () => P("M20 168 L90 80 L130 128 L160 96 L230 168", 'fill="var(--il-bg,#fff)"') + fig(92, 80, { arms: "wave", s: .7 }) + P("M110 44 l40 -10 M112 30 l30 -18", 'stroke-width="2"') + sun(190, 40, 10),
-  espiritu: () => dove(130, 70) + [70, 120, 170].map((x) => fig(x, 168, { arms: "up", s: .85 }) + flame(x, 100, .45)).join(""),
+  espiritu: () => dove(130, 50) + [70, 120, 170].map((x) => fig(x, 168, { arms: "up", s: .85 }) + flame(x, 84, .45)).join(""),
   comunidad: () => [60, 100, 140, 180].map((x, i) => fig(x, 168, { arms: "out", s: .85, face: i % 2 ? "smile" : "calm" })).join("") + sun(120, 42, 12) + ground(),
   eucaristia: () => P("M100 90 L140 90 L132 128 L108 128 Z M120 128 L120 150 M104 152 L136 152", 'fill="var(--il-bg,#fff)"') + C(120, 70, 16, POP) + P("M112 70 L128 70 M120 62 L120 78", 'stroke-width="2"') + fig(60, 168, { arms: "pray", legs: "kneel", face: "calm" }) + fig(185, 168, { arms: "pray", legs: "kneel", face: "calm", flip: -1 }) + ground(),
   familia: () => P("M60 168 L60 96 L120 56 L180 96 L180 168", 'fill="var(--il-bg,#fff)"') + fig(100, 168, { arms: "hug", s: .8 }) + fig(140, 168, { arms: "hug", s: .8, flip: -1 }) + fig(120, 168, { arms: "up", s: .5 }) + heart(120, 84, 8),
@@ -100,9 +102,9 @@ const SCENES = {
   amar: () => fig(70, 168, { arms: "up" }) + fig(170, 168, { arms: "up", flip: -1 }) + heart(120, 70, 18) + P("M92 100 l12 -10 M148 100 l-12 -10", 'stroke-width="2"') + ground(),
   moneda: () => P("M100 60 q14 -10 30 0 l-4 14 l-22 0 Z", 'fill="var(--il-bg,#fff)"') + C(108, 100, 7, POP) + C(126, 112, 7, POP) + P("M80 150 L160 150 L152 168 L88 168 Z", 'fill="var(--il-bg,#fff)"') + fig(190, 168, { arms: "give", s: .8, flip: -1, face: "calm" }),
   futuro: () => sun(120, 110, 22) + P("M20 150 q50 -20 100 0 t100 0", 'stroke-width="3"') + fig(60, 150, { arms: "up", s: .6 }) + P("M150 60 q6 -10 12 0 M180 80 q6 -10 12 0", 'stroke-width="2"'),
-  rey: () => P("M90 110 L96 70 L110 90 L120 60 L130 90 L144 70 L150 110 Z", 'fill="var(--il-pop,#ffba03)" stroke="currentColor"') + fig(120, 176, { arms: "out", face: "calm", s: .9 }) + P("M70 176 L170 176", 'stroke-width="2"') + sparkle(60, 60) + sparkle(185, 56, 5),
+  rey: () => P("M92 90 L97 58 L109 74 L120 48 L131 74 L143 58 L148 90 Z", 'fill="var(--il-pop,#ffba03)" stroke="currentColor"') + fig(120, 176, { arms: "out", face: "calm", s: .9 }) + P("M70 176 L170 176", 'stroke-width="2"') + sparkle(60, 60) + sparkle(185, 56, 5),
   oracion: () => fig(110, 168, { arms: "pray", legs: "kneel", face: "calm" }) + candle(170, 168) + sparkle(60, 60, 5) + ground(),
-  santos: () => [60, 100, 140, 180].map((x, i) => fig(x, 168, { arms: i % 2 ? "up" : "out", s: .85, face: i === 1 ? "calm" : "smile" }) + P(`M${x - 11} ${168 - 66 * .85 - 11} a11 4 0 1 0 22 0 a11 4 0 1 0 -22 0`, 'stroke="var(--il-pop, #ffba03)" stroke-width="3"')).join("") + sparkle(30, 50, 6) + sparkle(210, 40, 7) + sparkle(120, 28, 5) + ground(),
+  santos: () => [60, 100, 140, 180].map((x, i) => fig(x, 168, { arms: i % 2 ? "up" : "out", s: .85, face: i === 1 ? "calm" : "smile" }) + P(`M${x - 11} ${+(168 - 81 * .85 * 1.22).toFixed(1)} a11 4 0 1 0 22 0 a11 4 0 1 0 -22 0`, 'stroke="var(--il-pop, #ffba03)" stroke-width="3"')).join("") + sparkle(30, 50, 6) + sparkle(210, 40, 7) + sparkle(120, 28, 5) + ground(),
   flores: () => fig(90, 168, { arms: "give" }) + [0, 1, 2].map((i) => P(`M${122 + i * 14} 132 l${-4 + i * 4} -30`, 'stroke-width="2.5"') + C(118 + i * 18, 98 - (i % 2) * 8, 7, POP) + C(118 + i * 18, 98 - (i % 2) * 8, 2.5, FILL)).join("") + P("M150 168 L150 80 q0 -16 14 -16 q14 0 14 16 L178 168 Z", 'fill="var(--il-bg,#fff)"') + fig(164, 150, { arms: "pray", s: .55, face: "calm" }) + sparkle(200, 50, 6) + ground(),
   bautismo: () => fig(150, 168, { arms: "pray", legs: "kneel", face: "calm" }) + fig(78, 168, { arms: "wave" }) + P("M96 92 q12 -18 30 -6 q-12 12 -30 6 Z", POP) + [[132, 92], [138, 102], [131, 110]].map(([x, y]) => drop(x, y)).join("") + wave(178).replace(/M0 178/, "M20 178") + sparkle(196, 70) + sparkle(60, 52, 5),
   uncion: () => fig(172, 168, { arms: "down", legs: "sit", face: "calm", flip: -1 }) + P("M140 146 L200 146 L200 168 M140 146 L140 168", 'stroke-width="2.5"') + fig(84, 168, { arms: "give" }) + P("M104 122 l8 0 l2 10 l-12 0 Z", 'fill="var(--il-bg,#fff)"') + drop(122, 112) + heart(170, 56, 8) + sparkle(60, 60, 5) + ground(),
