@@ -3,6 +3,7 @@
 // personas, dónde y qué materiales necesita. Los guías las agregan y editan.
 
 import { esc, icon, toast } from "./util.js";
+import { BANCO } from "./dinamicas-banco.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -64,11 +65,11 @@ const BASE = [
 ];
 
 // ---------------------------------------------------------------------------
-let items = null, q = "", tag = "", dur = "";
+let items = null, q = "", tag = "", dur = "", lastList = [];
 let favs = {};
 try { favs = JSON.parse(localStorage.getItem("agape_dinfavs") || "{}"); } catch {}
 const saveFavs = () => { try { localStorage.setItem("agape_dinfavs", JSON.stringify(favs)); } catch {} };
-const all = () => [...BASE, ...(items || [])].sort((a, b) => (favs[b.id] ? 1 : 0) - (favs[a.id] ? 1 : 0) || a.title.localeCompare(b.title, "es"));
+const all = () => [...BASE, ...BANCO, ...(items || [])].sort((a, b) => (favs[b.id] ? 1 : 0) - (favs[a.id] ? 1 : 0) || a.title.localeCompare(b.title, "es"));
 const byId = (id) => all().find((x) => x.id === id);
 let repaint = () => {};
 function watch() {
@@ -95,6 +96,8 @@ export function viewList() {
     </div>
     <div class="can-chips">${DUR.map(([k, l]) => `<button class="chip ${dur === k ? "accent" : ""}" data-action="dinDur" data-d="${k}">${esc(l)}</button>`).join("")}</div>
   </div>
+  <div class="row-wrap" style="margin:6px 0 10px"><span class="small muted" id="dinCount"></span><span class="spacer"></span>
+    <button class="btn btn-sm btn-ghost" data-action="dinRandom">🎲 Una al azar</button></div>
   <div id="dinList" class="din-list"></div>`;
 }
 function paintList() {
@@ -102,6 +105,8 @@ function paintList() {
   const s = q.trim().toLowerCase();
   const list = all().filter((d) => (!tag || (d.tags || []).includes(tag)) && (!dur || (+d.duracion || 0) <= +dur)
     && (!s || [d.title, d.objetivo, d.materiales, d.pasos, (d.tags || []).map((t) => (TAG[t] || {}).l).join(" ")].join(" ").toLowerCase().includes(s)));
+  const cnt = $("#dinCount"); if (cnt) cnt.textContent = `${list.length} ${list.length === 1 ? "dinámica" : "dinámicas"}`;
+  lastList = list;
   box.innerHTML = list.length ? list.map((d) => `<a class="card link din-item" href="#/dinamicas/${encodeURIComponent(d.id)}">
       <div class="din-top"><strong>${favs[d.id] ? "⭐ " : ""}${esc(d.title)}</strong>${d.duracion ? `<span class="din-dur">${esc(d.duracion)}′</span>` : ""}</div>
       <span class="muted small">${esc(d.objetivo || "")}</span>
@@ -166,6 +171,7 @@ function editor(d) {
 
 function registerActions() {
   const A = ctx.actions;
+  A.dinRandom = () => { const l = lastList.length ? lastList : all(); const d = l[Math.floor(Math.random() * l.length)]; if (d) location.hash = "#/dinamicas/" + encodeURIComponent(d.id); };
   A.dinTag = (el) => { tag = el.dataset.t; document.querySelectorAll("[data-action=dinTag]").forEach((b) => b.classList.toggle("accent", b.dataset.t === tag)); paintList(); };
   A.dinDur = (el) => { dur = el.dataset.d; document.querySelectorAll("[data-action=dinDur]").forEach((b) => b.classList.toggle("accent", b.dataset.d === dur)); paintList(); };
   A.dinFav = (el) => { const id = el.dataset.id; if (favs[id]) delete favs[id]; else favs[id] = 1; saveFavs(); paintOne(id); toast(favs[id] ? "⭐ Guardada en tus favoritas" : "Quitada de favoritas"); };
