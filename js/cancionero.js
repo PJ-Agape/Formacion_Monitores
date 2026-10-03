@@ -8,6 +8,7 @@ let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
 const $ = (s, r = document) => r.querySelector(s);
 const st = () => ctx.cloud.state();
+const canEdit = () => !!st().canSongs; // equipo + apostolado del cancionero
 
 export const MOMENTOS = [
   ["entrada", "Entrada"], ["perdon", "Perdón"], ["gloria", "Gloria"], ["salmo", "Salmo"], ["aleluya", "Aleluya"],
@@ -136,7 +137,7 @@ const gate = () => {
 // Lista  (#/cancionero)
 // ---------------------------------------------------------------------------
 export function viewList() {
-  const staff = st().isStaff;
+  const staff = canEdit();
   ctx.onAfterRender(() => { repaint = paintList; watchAll(); paintList(); });
   return `
   <header class="page-head"><span class="eyebrow">Para animar nuestras celebraciones</span><h1>Cancionero <em>Ágape</em></h1>
@@ -147,6 +148,11 @@ export function viewList() {
     <span class="spacer"></span><button class="btn btn-sm btn-ghost" data-action="canExport">${icon("dl")} Exportar</button>
     ${staff ? `<button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
   </nav>
+  <div class="can-wip">
+    <span class="can-wip-tag" aria-hidden="true">🚧</span>
+    <div><strong>En construcción</strong>
+      <p class="small">Lo vamos armando entre todos, canción por canción. ${canEdit() ? "Gracias por sumarte a este apostolado." : "¿Te gustaría ayudar a completarlo? Pídeselo al equipo."}</p></div>
+  </div>
   ${gate()}
   ${tab === "canciones" ? `
   <div class="can-tools">
@@ -170,7 +176,7 @@ function paintList() {
           <span class="can-moms">${(s.momentos || []).map((m) => `<span class="chip">${esc(MLABEL[m] || m)}</span>`).join("")}${s.builtin ? `<span class="chip warn">Original Ágape</span>` : ""}</span></span>
         ${icon("right")}</a>`).join("")
       : `<div class="card" style="text-align:center;padding:28px"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
-         ${st().isStaff ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNew">${icon("plus")} Agregar una canción</button>` : ""}</div>`;
+         ${canEdit() ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNew">${icon("plus")} Agregar una canción</button>` : ""}</div>`;
   }
   const mb = $("#canMisas");
   if (mb) {
@@ -180,7 +186,7 @@ function paintList() {
         <span class="can-date">${r.date ? `<b>${esc(r.date.slice(8, 10))}</b><small>${esc(new Date(r.date + "T12:00").toLocaleDateString("es-CL", { month: "short" }))}</small>` : "♪"}</span>
         <span class="can-main"><strong>${esc(r.name)}</strong><span class="muted small">${(r.slots || []).filter((x) => x.id).length} canciones${r.note ? ` · ${esc(r.note)}` : ""}</span></span>${icon("right")}</a>`).join("")
       : `<div class="card" style="text-align:center;padding:28px"><p class="muted">${misas === null ? "Cargando…" : "Aún no hay repertorios. Arma el de la próxima misa y todos lo tendrán en su teléfono."}</p>
-         ${st().isStaff ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNewMisa">${icon("plus")} Nueva celebración</button>` : ""}</div>`;
+         ${canEdit() ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNewMisa">${icon("plus")} Nueva celebración</button>` : ""}</div>`;
   }
 }
 
@@ -247,8 +253,8 @@ function paintSong(id) {
   <div class="row-wrap no-print" style="margin-top:10px">
     ${s.link && /^https?:\/\//.test(s.link) ? `<a class="btn btn-sm btn-ghost" href="${esc(s.link)}" target="_blank" rel="noopener">${icon("right")} Escucharla</a>` : ""}
     <button class="btn btn-sm btn-ghost" data-action="print">${icon("print")} Imprimir</button>
-    ${st().isStaff && !s.builtin ? `<span class="spacer"></span><button class="btn btn-sm btn-soft" data-action="canEdit" data-id="${esc(s.id)}">${icon("edit")} Editar</button>
-      <button class="btn btn-sm btn-danger" data-action="canDel" data-id="${esc(s.id)}">${icon("trash")} Borrar</button>` : ""}
+    ${canEdit() && !s.builtin ? `<span class="spacer"></span><button class="btn btn-sm btn-soft" data-action="canEdit" data-id="${esc(s.id)}">${icon("edit")} Editar</button>
+      ${st().isStaff ? `<button class="btn btn-sm btn-danger" data-action="canDel" data-id="${esc(s.id)}">${icon("trash")} Borrar</button>` : ""}` : ""}
   </div>`;
 }
 
@@ -273,8 +279,8 @@ function paintMisa(id) {
     ${slots.length ? `<button class="btn btn-primary" data-action="canProject" data-scope="misa" data-id="${esc(r.id)}">${icon("eye")} Proyectar toda la misa</button>
     <a class="btn btn-gold" href="#/cancionero/${encodeURIComponent(slots[0].id)}?misa=${encodeURIComponent(r.id)}">Empezar con ${esc(slotLabel(slots[0].m))} ${icon("arrowR")}</a>` : ""}
     <button class="btn btn-ghost" data-action="canExport" data-misa="${esc(r.id)}">${icon("dl")} Exportar</button>
-    ${st().isStaff ? `<span class="spacer"></span><button class="btn btn-sm btn-soft" data-action="canEditMisa" data-id="${esc(r.id)}">${icon("edit")} Editar</button>
-      <button class="btn btn-sm btn-danger" data-action="canDelMisa" data-id="${esc(r.id)}">${icon("trash")} Borrar</button>` : ""}
+    ${canEdit() ? `<span class="spacer"></span><button class="btn btn-sm btn-soft" data-action="canEditMisa" data-id="${esc(r.id)}">${icon("edit")} Editar</button>
+      ${st().isStaff ? `<button class="btn btn-sm btn-danger" data-action="canDelMisa" data-id="${esc(r.id)}">${icon("trash")} Borrar</button>` : ""}` : ""}
   </div>
   <ol class="can-setlist">${slots.map((x) => { const s = byId(x.id); return `<li>
       <span class="can-slot">${esc(slotLabel(x.m))}</span>

@@ -51,7 +51,7 @@ export function setViewAs(r) {
 export const realRole = () => (account ? account.role : "");
 export function state() {
   const va = viewingAs();
-  if (va === "visitante") return { enabled, status: "guest", user: null, account: null, error: "", isAdmin: false, isStaff: false, isGuide: false, role: "", isJoven: false, ready: false, viewAs: va };
+  if (va === "visitante") return { enabled, status: "guest", user: null, account: null, error: "", isAdmin: false, isStaff: false, isGuide: false, canSongs: false, role: "", isJoven: false, ready: false, viewAs: va };
   const real = account;
   const account2 = va ? { ...real, role: va } : real;
   return realState(account2, va);
@@ -67,6 +67,8 @@ function realState(account, va) {
     role: account ? account.role : "",
     // Jóvenes del grupo (Ingreso y Madurez): ven su espacio, no las herramientas del equipo.
     isJoven: !!(account && account.active !== false && ["ingreso", "madurez"].includes(account.role)),
+    // Apostolado del cancionero: además del equipo, quienes un administrador habilita.
+    canSongs: !!(account && account.active !== false && (STAFF.includes(account.role) || account.cantor === true)),
     ready: status === "ready",
   };
 }

@@ -233,16 +233,18 @@ service cloud.firestore {
       allow delete: if isStaff() || (isMember() && resource.data.authorUid == request.auth.uid);
     }
 
-    // Cancionero: lo ve la comunidad con cuenta (uso interno); lo editan coordinadores y administradores.
+    // Cancionero: lo ve la comunidad con cuenta (uso interno). Lo editan el equipo y quienes un
+    // administrador habilita para el apostolado del cancionero (users.cantor); borrar es solo del equipo.
+    function canSongs() { return isStaff() || (isMember() && me().get('cantor', false) == true); }
     match /canciones/{songId} {
       allow read: if isMember();
-      allow create, update: if isStaff() && validText(request.resource.data.title, 120)
+      allow create, update: if canSongs() && validText(request.resource.data.title, 120)
         && request.resource.data.body is string && request.resource.data.body.size() <= 20000;
       allow delete: if isStaff();
     }
     match /repertorios/{repId} {
       allow read: if isMember();
-      allow create, update: if isStaff() && validText(request.resource.data.name, 120);
+      allow create, update: if canSongs() && validText(request.resource.data.name, 120);
       allow delete: if isStaff();
     }
 

@@ -474,7 +474,7 @@ async function peopleView() {
       <tbody>
       ${list.length ? list.map(({ u, r }) => `<tr class="${u.active === false ? "paused" : ""}">
         <td><a href="#/admin/dirigentes/${esc(u.uid)}"><b>${esc(u.name || u.email)}</b></a>
-          <span class="sub">${esc(u.parish || "")}${u.role && u.role !== "dirigente" ? ` · <span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
+          <span class="sub">${esc(u.parish || "")}${u.role && u.role !== "dirigente" ? ` · <span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>` : ""}${u.cantor ? ` · <span class="chip" title="Apostolado del cancionero">🎵 Cancionero</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
         <td><div class="cell-bar"><div class="mini-bar"><i style="width:${t.units ? (r.units / t.units) * 100 : 0}%"></i></div><span>${r.units}/${t.units}</span></div></td>
         <td>${r.modules}/${t.modules}</td>
         <td>${ago(r.last)}</td>
@@ -515,6 +515,12 @@ async function personView(uid) {
         <select class="select" id="aRoleSel" data-uid="${esc(u.uid)}" style="width:auto">${api.cloud.ROLES.map((r) => `<option value="${r.key}" ${(u.role || "dirigente") === r.key ? "selected" : ""}>${esc(r.label)}</option>`).join("")}</select></label>
       <button class="btn btn-sm ${u.active === false ? "btn-soft" : "btn-danger"}" data-action="aUserActive" data-uid="${esc(u.uid)}" data-active="${u.active === false ? "1" : "0"}">${u.active === false ? "Reactivar cuenta" : "Poner en pausa"}</button>
     </div>` : ""}
+  </div>
+  <div class="card"><h3>Apostolado del cancionero</h3>
+    ${api.cloud.isStaffRole(u.role) ? `<p class="muted small" style="margin-top:4px">Como ${esc(api.cloud.roleLabel(u.role).toLowerCase())}, ya puede agregar y editar canciones y celebraciones.</p>`
+      : `<p class="muted small" style="margin-top:4px">Puede agregar y editar canciones y armar los repertorios de las misas. Borrar sigue siendo del equipo.</p>
+      <label class="chip ${u.cantor ? "accent" : ""}" style="cursor:pointer;padding:8px 12px;margin-top:12px">
+        <input type="checkbox" data-action="aUserCantor" data-uid="${esc(u.uid)}" ${u.cantor ? "checked" : ""}> 🎵 Ayuda a construir el cancionero</label>`}
   </div>
   ${(() => {
     const salas = Array.isArray(u.salas) ? u.salas : api.cloud.defaultSalas(u.role);
@@ -845,6 +851,14 @@ function bindActions() {
     if (el.checked) cur.add(el.dataset.sala); else cur.delete(el.dataset.sala);
     try { await api.cloud.updateUser(u.uid, { salas: [...cur] }); await loadPeople(true); api.render(); toast("Salas actualizadas"); }
     catch (e) { toast("No se pudo cambiar: " + (e.code || e.message), ""); }
+  };
+  A.aUserCantor = async (el) => {
+    const data = await loadPeople();
+    const u = data.users.find((x) => x.uid === el.dataset.uid);
+    if (!u) return;
+    const on = !u.cantor; el.checked = on;
+    try { await api.cloud.updateUser(u.uid, { cantor: on }); await loadPeople(true); api.render(); toast(on ? "Ya puede editar el cancionero 🎵" : "Ya no edita el cancionero"); }
+    catch (e) { el.checked = !on; toast("No se pudo cambiar: " + (e.code || e.message), ""); }
   };
   A.aUserActive = async (el) => {
     const on = el.dataset.active === "1";
