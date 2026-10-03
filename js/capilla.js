@@ -86,6 +86,13 @@ const CLASSIC = [
 // Devocionario completo (js/devocionario.js), en el orden de Vatican News
 const prayerHTML = (x) => esc(x).split("\n").map((l) => l === "" ? "<span class=\"cap-gap\"></span>"
   : /^[VR]\. /.test(l) ? `<span class="cap-vr"><b>${l[0]}.</b> ${l.slice(3)}</span>` : /^Oremos: /.test(l) ? `<span class="cap-vr"><b>Oremos:</b> ${l.slice(8)}</span>` : `${l}<br>`).join("");
+// Radios católicas: siempre enlazamos a la página oficial de cada una (no a señales de terceros).
+const RADIOS = [
+  { name: "Radio María Chile", where: "89.3 FM Santiago · a todo Chile por internet", url: "https://radiomaria.cl/" },
+  { name: "Radio El Sembrador", where: "104.7 FM Chillán · Diócesis de Chillán", url: "https://www.radioelsembrador.cl/" },
+  { name: "Radio Regina Coeli", where: "Los Ángeles · Diócesis Santa María de Los Ángeles", url: "https://reinadelcielo.cl/radio/" },
+];
+
 function devocionarioHTML() {
   const item = (o) => `<details class="card cap-pr" data-dq="${esc((o.t + " " + (o.x || "") + " " + (o.note || "")).toLowerCase())}">
     <summary><span>${esc(o.t)}</span>${icon("down")}</summary>
@@ -153,7 +160,7 @@ export function view() {
     ctx.onLeave(stop);
     paintVelas();
   });
-  const rincones = [["silencio", "Silencio"], ["velas", "Velas"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"]];
+  const rincones = [["silencio", "Silencio"], ["velas", "Velas"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]];
   return `
   <section class="cap-hero" style="--season:${s.hex}">
     <div class="cap-arch">
@@ -276,6 +283,16 @@ export function view() {
       <span style="flex:1"><strong>Cancionero Ágape</strong>
       <span class="muted small">Canciones con acordes para cada momento de la misa, en el tono que necesites, y los repertorios de cada celebración.</span></span>${icon("right")}
     </a>
+  </section>
+
+  <section class="cap-room" id="cap-radio">
+    <div class="cap-room-head"><span class="cap-num">08</span><h2>Radios <em>católicas</em></h2></div>
+    <p class="cap-lead">Para rezar, cantar y escuchar la Palabra durante el día. Se abren en la página de cada radio.</p>
+    <div class="cap-radios">${RADIOS.map((r) => `<a class="card link cap-radio" href="${r.url}" target="_blank" rel="noopener">
+        <span class="cap-radio-ico" aria-hidden="true">📻</span>
+        <span style="flex:1"><strong>${esc(r.name)}</strong><span class="muted small">${esc(r.where)}</span></span>
+        <span class="go">Escuchar en vivo ${icon("arrowR")}</span>
+      </a>`).join("")}</div>
   </section>
 
   <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`;

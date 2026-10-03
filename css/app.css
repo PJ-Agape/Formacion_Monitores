@@ -1694,6 +1694,12 @@ body.cap-quiet { overflow: hidden; }
 /* ===================== Cancionero ===================== */
 .card.link.cap-sing { display: flex; gap: 16px; align-items: center; background: #ffba03; }
 .cap-sing strong { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; }
+.cap-radios { display: grid; grid-template-columns: repeat(auto-fit, minmax(240px, 1fr)); gap: 12px; }
+.card.link.cap-radio { display: flex; flex-wrap: wrap; gap: 10px 14px; align-items: center; }
+.cap-radio strong { display: block; font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; }
+.cap-radio .muted { display: block; }
+.cap-radio-ico { font-size: 1.8rem; line-height: 1; }
+.cap-radio .go { width: 100%; }
 .cap-notes { font-size: 2rem; font-weight: 800; color: #0b2566; }
 .can-tools { display: grid; gap: 10px; margin: 14px 0; }
 .can-chips { display: flex; flex-wrap: wrap; gap: 6px; }
