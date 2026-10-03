@@ -510,19 +510,22 @@ function rosPaint() {
   else if (s.k === "sa") eyebrow = "Para terminar";
   else if (s.k !== "fin") eyebrow = "Introducción";
   if (s.k === "mys") extra = `<span class="ros-cite">${esc(ROS_CITES[set][s.d])}</span><p class="ros-txt">Contemplamos este misterio en silencio, junto a María. Puedes ofrecer esta decena por alguien.</p>`;
+  // Al llegar a la última Ave María (y luego al Gloria) aparece el botón de la oración que sigue.
+  const nk = steps[i + 1] && steps[i + 1].k, nextK = (s.k === "am" && s.i === s.of && nk === "gl") || (s.k === "gl" && nk === "oj") ? nk : "";
   const count = s.k === "am" ? `<span class="ros-count">${s.i} de ${s.of}${s.note ? " · " + esc(s.note) : ""}</span>` : "";
   const mystLine = s.d != null && s.k !== "mys" ? `<span class="ros-myl">${esc(my.items[s.d])}</span>` : "";
-  el.querySelector(".ros-center").innerHTML = `<div class="ros-c-in ${s.k === "mys" ? "is-mys" : ""} ${s.k === "fin" ? "is-fin" : ""}">
+  el.querySelector(".ros-center").innerHTML = `<div class="ros-c-in ${nextK ? "has-next" : ""} ${s.k === "mys" ? "is-mys" : ""} ${s.k === "fin" ? "is-fin" : ""}">
       ${eyebrow ? `<span class="ros-eb">${esc(eyebrow)}</span>` : ""}${mystLine}
       <strong class="ros-t">${esc(title)}</strong>${count}${extra}
       ${text ? `<p class="ros-txt">${esc(s.k === "fin" ? text : text.replace(/\n\n/g, "¶").replace(/\n/g, " ").replace(/¶/g, "\n\n")).replace(/\n/g, "<br>")}</p>` : ""}
+      ${nextK ? `<button class="ros-next-pr" data-action="rosNext">${esc(PR[nextK][0])} ${icon("right")}</button>` : ""}
     </div>`;
   el.querySelector(".ros-center").scrollTop = 0;
   const decade = s.d != null ? `Decena ${s.d + 1} de 5` : s.k === "fin" ? "Terminado" : s.k === "sa" ? "Salve" : "Inicio";
   el.querySelector("#rosProg").textContent = decade;
   el.querySelector("[data-action=rosPrev]").disabled = i === 0;
   const nb = el.querySelector("#rosNextBtn");
-  nb.innerHTML = s.k === "fin" ? `Volver a empezar ${icon("undo")}` : `Siguiente ${icon("right")}`;
+  nb.innerHTML = s.k === "fin" ? `Volver a empezar ${icon("undo")}` : `${nextK ? esc(PR[nextK][0]) : "Siguiente"} ${icon("right")}`;
   rosSave();
 }
 function rosMove(n) {

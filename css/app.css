@@ -1679,6 +1679,12 @@ body.cap-quiet { overflow: hidden; }
 .ros-count { font: 800 3.1cqw/1 var(--font-body); color: #0b2566; background: #ffba03; border-radius: 999px; padding: .9cqw 2.6cqw; }
 .ros-cite { font-family: var(--font-hand); font-weight: 700; font-size: 4.8cqw; color: #ffba03; line-height: 1; }
 .ros-txt { margin: 0; font-size: 3.4cqw; line-height: 1.42; text-wrap: pretty; color: rgba(255,246,229,.92); }
+.ros-next-pr { margin-top: 1.4cqw; display: inline-flex; align-items: center; gap: 1.4cqw; font: 800 4.2cqw/1 var(--font-body); color: #0b2566; background: #ffba03;
+  border: 2px solid #fff6e5; border-radius: 999px; padding: 2.2cqw 4.4cqw; cursor: pointer; box-shadow: 0 0 14px rgba(255,186,3,.55); animation: rosFade .4s ease .15s both; }
+.ros-c-in.has-next { gap: .8cqw; }
+.ros-c-in.has-next .ros-myl { display: none; }
+.ros-c-in.has-next .ros-txt { font-size: 3.2cqw; line-height: 1.36; }
+.ros-next-pr:hover { background: #ffc933; }
 .ros-ctl { width: var(--stage-w); min-width: min(100%, 320px); display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; }
 .ros-ctl .btn[disabled] { opacity: .35; pointer-events: none; }
 .ros-prog { font-size: .8rem; font-weight: 800; letter-spacing: .06em; opacity: .75; text-align: center; font-variant-numeric: tabular-nums; }
