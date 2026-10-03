@@ -3,6 +3,7 @@
 // velas de la comunidad, la Palabra, María (misterios del día) y oraciones.
 
 import { esc, rich, icon, toast } from "./util.js";
+import { ORACIONES, HORAS } from "./devocionario.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -72,7 +73,7 @@ const MYST = {
 const MYST_BY_DAY = ["gloriosos", "gozosos", "dolorosos", "gloriosos", "luminosos", "dolorosos", "gozosos"]; // dom..sáb
 const DAYNAME = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 
-// Oraciones de siempre
+// Oraciones base (las usa el Rosario virtual)
 const CLASSIC = [
   ["Padre nuestro", "Padre nuestro, que estás en el cielo,\nsantificado sea tu Nombre;\nvenga a nosotros tu reino;\nhágase tu voluntad en la tierra como en el cielo.\nDanos hoy nuestro pan de cada día;\nperdona nuestras ofensas,\ncomo también nosotros perdonamos a los que nos ofenden;\nno nos dejes caer en la tentación,\ny líbranos del mal.\nAmén."],
   ["Ave María", "Dios te salve, María, llena eres de gracia,\nel Señor es contigo.\nBendita tú eres entre todas las mujeres,\ny bendito es el fruto de tu vientre, Jesús.\nSanta María, Madre de Dios,\nruega por nosotros, pecadores,\nahora y en la hora de nuestra muerte.\nAmén."],
@@ -81,6 +82,25 @@ const CLASSIC = [
   ["Ángel de la guarda", "Ángel de mi guarda,\ndulce compañía,\nno me desampares\nni de noche ni de día.\nNo me dejes solo,\nque me perdería."],
   ["Salve", "Dios te salve, Reina y Madre de misericordia,\nvida, dulzura y esperanza nuestra.\nDios te salve.\nA ti llamamos los desterrados hijos de Eva;\na ti suspiramos, gimiendo y llorando\nen este valle de lágrimas.\nEa, pues, Señora, abogada nuestra,\nvuelve a nosotros esos tus ojos misericordiosos;\ny después de este destierro muéstranos a Jesús,\nfruto bendito de tu vientre.\n¡Oh clementísima, oh piadosa, oh dulce Virgen María!\nRuega por nosotros, santa Madre de Dios,\npara que seamos dignos de alcanzar\nlas promesas de nuestro Señor Jesucristo.\nAmén."],
 ];
+
+// Devocionario completo (js/devocionario.js), en el orden de Vatican News
+const prayerHTML = (x) => esc(x).split("\n").map((l) => l === "" ? "<span class=\"cap-gap\"></span>"
+  : /^[VR]\. /.test(l) ? `<span class="cap-vr"><b>${l[0]}.</b> ${l.slice(3)}</span>` : /^Oremos: /.test(l) ? `<span class="cap-vr"><b>Oremos:</b> ${l.slice(8)}</span>` : `${l}<br>`).join("");
+function devocionarioHTML() {
+  const item = (o) => `<details class="card cap-pr" data-dq="${esc((o.t + " " + (o.x || "") + " " + (o.note || "")).toLowerCase())}">
+    <summary><span>${esc(o.t)}</span>${icon("down")}</summary>
+    <div class="cap-pr-body">
+      ${o.note ? `<p class="cap-pr-note">${esc(o.note)}</p>` : ""}
+      ${o.x ? `<p class="cap-prayer">${prayerHTML(o.x)}</p>` : ""}
+      ${o.url ? `<a class="btn btn-sm btn-soft" href="${o.url}" target="_blank" rel="noopener">${icon("book")} Rezarla en Vatican News</a>` : ""}
+      ${o.go ? `<a class="btn btn-sm btn-ghost" href="#/oracion" data-action="capGo" data-k="${o.go.replace("cap-", "")}">${icon("right")} Ir a los misterios de hoy</a>` : ""}
+    </div></details>`;
+  return `<div class="cap-horas">${HORAS.map(([t, d, u]) => `<a class="card link cap-hora" href="${u}" target="_blank" rel="noopener"><b>${t}</b><span class="muted small">${d} · audio</span></a>`).join("")}</div>
+    <label class="cap-dsearch"><span class="sr-only">Buscar una oración</span>${icon("search")}<input class="input" type="search" id="capDq" placeholder="Buscar una oración…" autocomplete="off"></label>
+    <div class="cap-classic" id="capDev">${ORACIONES.map(item).join("")}</div>
+    <p class="muted small cap-dnone" id="capDnone" hidden>No encontramos esa oración.</p>
+    <p class="muted small" style="margin-top:12px">En el orden del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;
+}
 
 // ---------------------------------------------------------------------------
 // Dibujos
@@ -236,8 +256,8 @@ export function view() {
 
   <section class="cap-room" id="cap-siempre">
     <div class="cap-room-head"><span class="cap-num">05</span><h2>Oraciones de <em>siempre</em></h2></div>
-    <p class="cap-lead">Las que rezamos juntos en todo el mundo. Toca una para abrirla.</p>
-    <div class="cap-classic">${CLASSIC.map(([t, x]) => `<details class="card cap-pr"><summary><span>${esc(t)}</span>${icon("down")}</summary><p class="cap-prayer">${esc(x).replace(/\n/g, "<br>")}</p></details>`).join("")}</div>
+    <p class="cap-lead">El devocionario de la Iglesia: las oraciones que rezamos en todo el mundo. Toca una para abrirla.</p>
+    ${devocionarioHTML()}
   </section>
 
   <section class="cap-room" id="cap-nuestras">
@@ -537,6 +557,15 @@ function rosMove(n) {
 
 function registerActions() {
   const A = ctx.actions;
+  // Buscador del devocionario
+  document.addEventListener("input", (e) => {
+    if (e.target.id !== "capDq") return;
+    const fold = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
+    const q = fold(e.target.value.trim().toLowerCase());
+    let n = 0;
+    document.querySelectorAll("#capDev .cap-pr").forEach((d) => { const ok = !q || fold(d.dataset.dq).includes(q); d.hidden = !ok; if (ok) n++; });
+    const none = document.getElementById("capDnone"); if (none) none.hidden = n > 0;
+  });
   A.capRosario = (el) => openRosary(el.dataset.set);
   A.rosClose = () => closeRosary();
   A.rosNext = () => rosMove(1);
