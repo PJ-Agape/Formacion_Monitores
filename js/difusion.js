@@ -2,6 +2,7 @@
 // historias y grupos. Todo se dibuja en el teléfono: la foto de perfil nunca se sube.
 
 import * as E from "./estudio.js";
+import * as F from "./fondos.js";
 import * as cloud from "./cloud.js";
 import * as S from "./store.js";
 import { esc, icon, toast } from "./util.js";
@@ -22,7 +23,7 @@ const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "o
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
 let ctx = null;
-const st = { tab: "piezas", tpl: "frase", fmt: "historia", style: "cielo", qr: "app", ill: "corazon", title: "", hand: "", sub: "", kicker: "", ev: "", para: "", frame: "soy", zoom: 1, dx: 0, dy: 0, photo: null, phrase: 0 };
+const st = { tab: "piezas", tpl: "frase", fmt: "historia", style: "cielo", qr: "app", ill: "corazon", title: "", hand: "", sub: "", kicker: "", ev: "", para: "", frame: "soy", fondo: "amanecer", fsize: "celular", zoom: 1, dx: 0, dy: 0, photo: null, phrase: 0 };
 let events = [];
 
 export function setup(c) { ctx = c; registerActions(); }
@@ -47,11 +48,11 @@ export async function view() {
   return `<header class="page-head"><span class="eyebrow">Difusión</span><h1>Estudio de <em>difusión</em></h1>
     <p>Arma piezas con la identidad de Ágape para tus Estados, historias y grupos. Se hacen en tu teléfono y las descargas o compartes al tiro.</p></header>
     <div class="dif-tabs seg" role="tablist" aria-label="Qué quieres hacer">
-      ${[["piezas", "Historias y posts"], ["marco", "Marco de foto"], ["stickers", "Stickers"]].map(([k, l]) => `<label><input type="radio" name="difTab" value="${k}" ${st.tab === k ? "checked" : ""}><span>${l}</span></label>`).join("")}
+      ${[["piezas", "Historias y posts"], ["marco", "Marco de foto"], ["stickers", "Stickers"], ["fondos", "Fondos de pantalla"]].map(([k, l]) => `<label><input type="radio" name="difTab" value="${k}" ${st.tab === k ? "checked" : ""}><span>${l}</span></label>`).join("")}
     </div>
     <div id="difBody" style="margin-top:16px">${body()}</div>`;
 }
-function body() { return st.tab === "marco" ? marcoHTML() : st.tab === "stickers" ? stickersHTML() : piezasHTML(); }
+function body() { return st.tab === "marco" ? marcoHTML() : st.tab === "stickers" ? stickersHTML() : st.tab === "fondos" ? fondosHTML() : piezasHTML(); }
 
 // --- Historias, posts e invitaciones ---------------------------------------
 const TPLS = [["frase", "Frase de Ágape"], ["evento", "Actividad de la agenda"], ["cuenta", "Cuenta regresiva"], ["invita", "Invitación personal"]];
@@ -126,6 +127,19 @@ function stickersHTML() {
     <div class="dif-stk">${E.STICKERS.map(([k, t], i) => `<button type="button" data-action="difSticker" data-i="${i}" title="${esc(t)}"><canvas data-stk="${i}" width="512" height="512" aria-label="${esc(t)}"></canvas></button>`).join("")}</div>`;
 }
 
+// --- Fondos de pantalla ------------------------------------------------------
+function fondosHTML() {
+  const [tw, th] = st.fsize === "pc" ? [256, 144] : [135, 292];
+  return `<div class="dif-grid">
+    <div class="dif-prev ${st.fsize === "pc" ? "wide" : "tall"}"><canvas id="difCanvas" aria-label="Vista previa del fondo"></canvas></div>
+    <form class="card stack dif-form" onsubmit="return false">
+      <div class="field"><label>Para</label><div class="seg" role="radiogroup" aria-label="Para qué pantalla">${Object.entries(F.SIZES).map(([k, v]) => `<label><input type="radio" name="difFsize" value="${k}" ${st.fsize === k ? "checked" : ""}><span>${v[2]}</span></label>`).join("")}</div></div>
+      <div class="field"><label>Diseño</label><div class="dif-fondos ${st.fsize}">${F.FONDOS.map(([k, l]) => `<button type="button" aria-pressed="${st.fondo === k}" data-action="difFondo" data-v="${k}" title="${esc(l)}"><canvas data-fondo="${k}" width="${tw}" height="${th}" aria-label="${esc(l)}"></canvas></button>`).join("")}</div></div>
+      <p class="small muted">Sirven como fondo de pantalla, pantalla de bloqueo o protector de pantalla. En el celular, el logo queda bajo la hora.</p>
+      ${actionsHTML()}
+    </form></div>`;
+}
+
 // ---------------------------------------------------------------------------
 // Dibujo
 // ---------------------------------------------------------------------------
@@ -142,6 +156,16 @@ async function paint() {
     return;
   }
   const cv = $("#difCanvas"); if (!cv) return;
+  if (st.tab === "fondos") {
+    await F.ready(); if (id !== painting) return;
+    const [W, H] = F.SIZES[st.fsize];
+    cv.width = W; cv.height = H; F.fondo(cv.getContext("2d"), W, H, st.fondo);
+    for (const c of document.querySelectorAll("[data-fondo]")) {
+      if (id !== painting) return;
+      if (!c.dataset.done) { F.fondo(c.getContext("2d"), c.width, c.height, c.dataset.fondo); c.dataset.done = 1; await new Promise((r) => setTimeout(r)); }
+    }
+    return;
+  }
   if (st.tab === "marco") {
     await E.preload(E.framesIlls()); if (id !== painting) return;
     cv.width = cv.height = 1080;
@@ -157,6 +181,7 @@ async function paint() {
 
 function fileName() {
   if (st.tab === "marco") return `agape-marco-${st.frame}.png`;
+  if (st.tab === "fondos") return `agape-fondo-${st.fsize}-${st.fondo}.png`;
   return `agape-${st.tpl}-${st.fmt}.png`;
 }
 const toBlob = (cv) => new Promise((ok) => cv.toBlob(ok, "image/png"));
@@ -176,6 +201,7 @@ function registerActions() {
   const A = ctx.actions;
   A.difTab = (t) => { st.tab = t.value; $("#difBody").innerHTML = body(); paint(); };
   A.difStyle = (t) => { st.style = t.dataset.v; document.querySelectorAll(".dif-sw button").forEach((b) => b.setAttribute("aria-checked", String(b === t))); paint(); };
+  A.difFondo = (t) => { st.fondo = t.dataset.v; document.querySelectorAll(".dif-fondos button").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); paint(); };
   A.difFrame = (t) => { st.frame = t.dataset.v; document.querySelectorAll(".dif-frames button").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); paint(); };
   A.difSave = async () => { const cv = $("#difCanvas"); if (cv) save(await toBlob(cv), fileName()); };
   A.difShare = async () => { const cv = $("#difCanvas"); if (cv) share(await toBlob(cv), fileName()); };
@@ -184,6 +210,7 @@ function registerActions() {
   document.addEventListener("change", (e) => {
     const t = e.target;
     if (t.name === "difTab") return A.difTab(t);
+    if (t.name === "difFsize") { st.fsize = t.value; $("#difBody").innerHTML = body(); return paint(); }
     if (t.id === "difPhoto" && t.files[0]) return loadPhoto(t.files[0]);
     const k = t.dataset && t.dataset.dif; if (!k) return;
     onField(k, t.value, true);

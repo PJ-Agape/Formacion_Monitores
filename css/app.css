@@ -2315,6 +2315,14 @@ a.cd-card:hover { transform: translate(-2px, -2px); box-shadow: 8px 8px 0 #ef591
 .dif-sw { display: flex; flex-wrap: wrap; gap: 8px; }
 .dif-sw button { width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--ink); cursor: pointer; background: linear-gradient(135deg, var(--a) 55%, var(--b) 55%); }
 .dif-sw button[aria-checked="true"] { outline: 3px solid var(--accent-2, #ef591c); outline-offset: 2px; }
+.dif-prev.tall canvas { width: auto; max-width: 100%; height: min(70vh, 620px); }
+.dif-prev.wide canvas { max-width: 100%; }
+.dif-fondos { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
+.dif-fondos.pc { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.dif-fondos button { padding: 0; border: 0; background: none; cursor: pointer; border-radius: 10px; }
+.dif-fondos canvas { display: block; width: 100%; height: auto; border-radius: 10px; border: 1.5px solid var(--line-2); }
+.dif-fondos button[aria-pressed="true"] canvas { outline: 3px solid var(--accent-2, #ef591c); outline-offset: 2px; }
+.dif-fondos button:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .dif-frames { display: grid; grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 8px; }
 .dif-frames button { padding: 0; border: 0; background: none; cursor: pointer; border-radius: 50%; }
 .dif-frames canvas { display: block; width: 100%; height: auto; border-radius: 50%; }
