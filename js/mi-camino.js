@@ -6,6 +6,18 @@
 
 import { esc, icon, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
+import * as a11y from "./accesible.js";
+
+// Lectura fácil: lo esencial del encuentro en frases cortas
+const first = (t) => { const m = String(t || "").match(/^[^.!?]+[.!?]/); return m ? m[0] : String(t || ""); };
+function easyHTML(e, x, vivido) {
+  const dot = (t) => (/[.!?…»]$/.test(String(t).trim()) ? "" : ".");
+  const items = [`Hoy hablamos de: <b>${esc(e.tema)}</b>${dot(e.tema)}`];
+  if (x.intro) items.push(esc(first(x.intro)));
+  if (e.evangelio) items.push(`Leemos el Evangelio: ${esc(e.evangelio.ref)}.`);
+  if (vivido && x.desafio) items.push(`🎯 Tu desafío: ${esc(x.desafio)}${dot(x.desafio)}`);
+  return `<div class="mc-easy"><span class="eyebrow">En pocas palabras</span><ul>${items.map((t) => `<li>${t}</li>`).join("")}</ul></div>`;
+}
 
 let ctx = null; // { actions, render, cloud, S }
 export function setup(c) { ctx = c; registerActions(); }
@@ -109,6 +121,7 @@ export async function view(nArg) {
           <p class="mc-tema">Tema del grupo: <b>${esc(e.tema)}</b> · ${esc(e.domingo || "")}</p></div>
         <div class="mc-ill">${illus(E.ill)}</div>
       </div>
+      ${a11y.easy() ? easyHTML(e, x, vivido) : ""}
       ${x.intro ? `<p class="mc-intro">${esc(x.intro)}</p>` : ""}
       ${e.evangelio ? `<div class="mc-word"><span class="eyebrow">📖 Evangelio · ${esc(e.evangelio.ref)}</span><p>${esc(e.evangelio.resumen || "")}</p></div>` : ""}
       ${vivido ? `

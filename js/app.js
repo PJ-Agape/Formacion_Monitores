@@ -23,6 +23,7 @@ import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
 import * as cuenta from "./cuenta.js";
 import * as difusion from "./difusion.js";
+import * as a11y from "./accesible.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -69,6 +70,7 @@ const routes = [
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
   [/^\/difusion$/, () => difusion.view(), "difusion"],
+  [/^\/accesibilidad$/, () => a11y.viewPage(), "perfil"],
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
@@ -119,6 +121,7 @@ export async function render() {
   updateInstallSlot();
   afterRender.splice(0).forEach((f) => f());
   ayuda.afterRender();
+  a11y.afterRender();
   helpFab(section);
 }
 // Botón flotante «?»: abre la Ayuda en el tema de la sección donde estás.
@@ -1238,7 +1241,7 @@ function viewProfile() {
       <p class="xs muted">Tus datos y tu avance se guardan en este dispositivo. Tu nombre aparecerá en la constancia.</p>
       <button class="btn btn-primary btn-block" type="submit">${isNew ? "Comenzar" : "Guardar cambios"}</button>
     </form>
-    ${!isNew ? `<div id="installSlot" style="margin-top:14px"></div>
+    ${!isNew ? `${a11y.panelHTML()}<div id="installSlot" style="margin-top:14px"></div>
       <p class="xs muted" style="text-align:center;margin-top:18px">¿Eres del equipo coordinador? <a href="#/admin">Entrar a Gestión</a></p>` : ""}
   </div>`;
 }
@@ -1322,6 +1325,7 @@ function viewAccount() {
       <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
     </form>
     <section class="card av-card" id="avCard">${avPicker()}</section>
+    ${a11y.panelHTML()}
     <div class="row-wrap" style="justify-content:center;margin-top:14px">
       <a class="btn btn-soft" href="#/pasaporte">${icon("award")} Mi pasaporte</a>
       ${st.isGuide ? `<a class="btn btn-soft" href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
