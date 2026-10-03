@@ -89,7 +89,7 @@ const prayerHTML = (x) => esc(x).split("\n").map((l) => l === "" ? "<span class=
 // Radios católicas: siempre enlazamos a la página oficial de cada una (no a señales de terceros).
 const RADIOS = [
   { name: "Radio María Chile", where: "89.3 FM Santiago · a todo Chile por internet", url: "https://radiomaria.cl/" },
-  { name: "Radio El Sembrador", where: "104.7 FM Chillán · Diócesis de Chillán", url: "https://www.radioelsembrador.cl/" },
+  { name: "Radio El Sembrador", where: "104.7 FM Chillán · Diócesis de Chillán · en su Facebook", url: "https://www.facebook.com/ElSembrador1047/" },
   { name: "Radio Regina Coeli", where: "Los Ángeles · Diócesis Santa María de Los Ángeles", url: "https://reinadelcielo.cl/radio/" },
 ];
 
