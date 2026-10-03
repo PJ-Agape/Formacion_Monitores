@@ -155,7 +155,7 @@ export function view() {
     </article>
   </section>
 
-  <nav class="cap-nav" aria-label="Rincones de la capilla">${rincones.map(([k, l]) => `<a href="#" data-action="capGo" data-k="${k}">${esc(l)}</a>`).join("")}</nav>
+  <nav class="cap-nav" aria-label="Rincones de la capilla"><a href="#" class="cap-nav-ros" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rosario</a>${rincones.map(([k, l]) => `<a href="#" data-action="capGo" data-k="${k}">${esc(l)}</a>`).join("")}</nav>
 
   <section class="cap-room" id="cap-silencio">
     <div class="cap-room-head"><span class="cap-num">01</span><h2>Un minuto con <em>Jesús</em></h2></div>
@@ -212,6 +212,7 @@ export function view() {
         <span class="eyebrow">Hoy, ${esc(DAYNAME[now.getDay()])}, rezamos los</span>
         <strong class="cap-myst-name">${esc(my.name)}</strong>
         <ol>${my.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
+        <button class="btn btn-primary cap-ros-btn" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rezar el Rosario</button>
         <details class="cap-how"><summary>Cómo rezar el Rosario</summary>
           <ol class="small"><li>Haz la señal de la cruz y reza el Credo o un Padre nuestro.</li>
           <li>En cada misterio: anúncialo, reza un Padre nuestro, diez Ave María y un Gloria.</li>
@@ -375,8 +376,176 @@ function stopSilence(done) {
   document.body.classList.remove("cap-quiet");
 }
 
+// ---------------------------------------------------------------------------
+// Rosario virtual (popup): un rosario dibujado; en el centro se lee el misterio
+// y la oración de cada cuenta. Se avanza tocando el centro o «Siguiente».
+// ---------------------------------------------------------------------------
+const ROS_CITES = {
+  gozosos: ["Lc 1,26-38", "Lc 1,39-56", "Lc 2,1-20", "Lc 2,22-40", "Lc 2,41-52"],
+  luminosos: ["Mt 3,13-17", "Jn 2,1-11", "Mc 1,14-15", "Lc 9,28-36", "Lc 22,14-20"],
+  dolorosos: ["Mt 26,36-46", "Jn 19,1", "Mt 27,27-31", "Jn 19,16-17", "Lc 23,33-46"],
+  gloriosos: ["Lc 24,1-12", "Hch 1,6-11", "Hch 2,1-13", "Lc 1,46-55", "Ap 12,1"],
+};
+const ORD = ["Primer", "Segundo", "Tercer", "Cuarto", "Quinto"];
+const ADJ = { gozosos: "gozoso", luminosos: "luminoso", dolorosos: "doloroso", gloriosos: "glorioso" };
+const PR = {
+  cruz: ["Señal de la cruz", "Por la señal de la Santa Cruz,\nde nuestros enemigos líbranos, Señor, Dios nuestro.\nEn el nombre del Padre, y del Hijo, y del Espíritu Santo.\nAmén."],
+  credo: ["Credo", "Creo en Dios, Padre todopoderoso, Creador del cielo y de la tierra.\nCreo en Jesucristo, su único Hijo, nuestro Señor, que fue concebido por obra y gracia del Espíritu Santo, nació de Santa María Virgen, padeció bajo el poder de Poncio Pilato, fue crucificado, muerto y sepultado, descendió a los infiernos, al tercer día resucitó de entre los muertos, subió a los cielos y está sentado a la derecha de Dios, Padre todopoderoso. Desde allí ha de venir a juzgar a vivos y muertos.\nCreo en el Espíritu Santo, la santa Iglesia católica, la comunión de los santos, el perdón de los pecados, la resurrección de la carne y la vida eterna.\nAmén."],
+  pn: ["Padre nuestro", CLASSIC[0][1]],
+  am: ["Ave María", CLASSIC[1][1]],
+  gl: ["Gloria", CLASSIC[2][1]],
+  oj: ["Oh Jesús mío", "Oh Jesús mío, perdona nuestros pecados,\nlíbranos del fuego del infierno,\nlleva al cielo a todas las almas,\nespecialmente a las más necesitadas de tu misericordia."],
+  sa: ["Salve", CLASSIC[5][1]],
+  fin: ["¡Rezaste el Rosario!", "María lleva tus intenciones a Jesús.\n\nEn el nombre del Padre, y del Hijo, y del Espíritu Santo.\nAmén."],
+};
+
+function rosSteps(set) {
+  const S = [{ b: "cross", k: "cruz" }, { b: "cross", k: "credo" }, { b: "p0", k: "pn" }];
+  ["por la fe", "por la esperanza", "por la caridad"].forEach((n, i) => S.push({ b: "p" + (i + 1), k: "am", note: n, i: i + 1, of: 3 }));
+  S.push({ b: "p3", k: "gl" });
+  for (let d = 0; d < 5; d++) {
+    S.push({ b: "B" + d, k: "mys", d }, { b: "B" + d, k: "pn", d });
+    for (let i = 1; i <= 10; i++) S.push({ b: `d${d}-${i}`, k: "am", d, i, of: 10 });
+    S.push({ b: `d${d}-10`, k: "gl", d }, { b: `d${d}-10`, k: "oj", d });
+  }
+  S.push({ b: "medal", k: "sa" }, { b: "medal", k: "fin" });
+  return S;
+}
+
+const RW = 360, RH = 524, RCX = 180, RCY = 176, RR = 158;
+function rosarySVG() {
+  // Vuelta del rosario: la medalla abajo; las decenas suben por la derecha.
+  const loop = [];
+  for (let d = 0; d < 5; d++) { if (d) loop.push({ id: "B" + d, big: true }); for (let i = 1; i <= 10; i++) loop.push({ id: `d${d}-${i}` }); }
+  const gap = 3.4, total = loop.reduce((s, x) => s + (x.big ? 1.9 : 1), 0) + gap, u = 360 / total;
+  let acc = gap / 2;
+  const beads = loop.map((x) => {
+    const w = x.big ? 1.9 : 1, a = (90 - (acc + w / 2) * u) * Math.PI / 180; acc += w;
+    return { ...x, x: RCX + RR * Math.cos(a), y: RCY + RR * Math.sin(a) };
+  });
+  const my = RCY + RR;
+  const pend = [{ id: "B0", big: true, y: my + 34 }, { id: "p3", y: my + 60 }, { id: "p2", y: my + 80 }, { id: "p1", y: my + 100 }, { id: "p0", big: true, y: my + 128 }]
+    .map((b) => ({ ...b, x: RCX }));
+  const bead = (b) => `<g class="rb ${b.big ? "big" : ""}" data-b="${b.id}" role="button" tabindex="-1" aria-label="${b.big ? "Padre nuestro" : "Ave María"}">
+      <circle class="hit" cx="${b.x.toFixed(1)}" cy="${b.y.toFixed(1)}" r="${b.big ? 13 : 9}"/>
+      <circle class="dot" cx="${b.x.toFixed(1)}" cy="${b.y.toFixed(1)}" r="${b.big ? 9.5 : 6.4}"/></g>`;
+  const cy = my + 150;
+  return `<svg class="ros-svg" viewBox="0 0 ${RW} ${RH}" aria-hidden="false">
+    <defs><radialGradient id="rosGlow"><stop offset="0" stop-color="#ffba03" stop-opacity=".55"/><stop offset="1" stop-color="#ffba03" stop-opacity="0"/></radialGradient></defs>
+    <circle class="ros-chain" cx="${RCX}" cy="${RCY}" r="${RR}"/>
+    <path class="ros-chain" d="M${RCX} ${my} V${cy}"/>
+    ${beads.map(bead).join("")}${pend.map(bead).join("")}
+    <g class="rb medal" data-b="medal" role="button" tabindex="-1" aria-label="Medalla · Salve">
+      <ellipse class="hit" cx="${RCX}" cy="${my}" rx="17" ry="20"/>
+      <ellipse class="dot" cx="${RCX}" cy="${my}" rx="12.5" ry="15.5"/>
+      <text x="${RCX}" y="${my + 5.5}" text-anchor="middle">M</text></g>
+    <g class="rb cross" data-b="cross" role="button" tabindex="-1" aria-label="Cruz · Credo">
+      <rect class="hit" x="${RCX - 22}" y="${cy - 4}" width="44" height="58"/>
+      <path class="dot" d="M${RCX - 5} ${cy} h10 v12 h12 v10 h-12 v26 h-10 v-26 h-12 v-10 h12 Z"/></g>
+  </svg>`;
+}
+
+const rosaryIcon = () => `<svg width="1.15em" height="1.15em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="6"/><path d="M12 14.5v3M12 18v4M10 20h4"/><circle cx="12" cy="2.5" r=".6" fill="currentColor"/><circle cx="6" cy="8.5" r=".6" fill="currentColor"/><circle cx="18" cy="8.5" r=".6" fill="currentColor"/></svg>`;
+let ros = null; // { set, steps, i, el }
+const ROS_KEY = "agape_rosario_v1";
+function rosSave() { try { localStorage.setItem(ROS_KEY, JSON.stringify({ set: ros.set, i: ros.i, day: todayKey() })); } catch {} }
+function rosLoad(set) {
+  try { const s = JSON.parse(localStorage.getItem(ROS_KEY) || "null"); if (s && s.set === set && s.day === todayKey()) return +s.i || 0; } catch {}
+  return 0;
+}
+function openRosary(set) {
+  set = MYST[set] ? set : MYST_BY_DAY[new Date().getDay()];
+  closeRosary();
+  const el = document.createElement("div");
+  el.className = "ros-ov"; el.id = "rosOverlay";
+  el.setAttribute("role", "dialog"); el.setAttribute("aria-modal", "true"); el.setAttribute("aria-label", "Santo Rosario");
+  const today = MYST_BY_DAY[new Date().getDay()];
+  el.innerHTML = `<div class="ros-in">
+    <div class="ros-top">
+      <div><span class="ros-hand">reza con María</span><h2>Santo Rosario</h2></div>
+      <button class="ros-x" data-action="rosClose" aria-label="Cerrar el Rosario">${icon("x")}</button>
+    </div>
+    <div class="ros-sets" role="tablist" aria-label="Misterios">${Object.keys(MYST).map((k) =>
+      `<button role="tab" data-action="rosSet" data-set="${k}" aria-selected="${k === set}">${esc(MYST[k].name.replace("Misterios ", ""))}${k === today ? " · hoy" : ""}</button>`).join("")}</div>
+    <div class="ros-stage">
+      ${rosarySVG()}
+      <div class="ros-center" data-action="rosNext" aria-live="polite"></div>
+    </div>
+    <div class="ros-ctl">
+      <button class="btn btn-glass" data-action="rosPrev">${icon("left")} Anterior</button>
+      <span class="ros-prog" id="rosProg"></span>
+      <button class="btn btn-gold" data-action="rosNext" id="rosNextBtn">Siguiente ${icon("right")}</button>
+    </div>
+  </div>`;
+  document.body.appendChild(el);
+  document.body.classList.add("cap-quiet");
+  ros = { set, steps: rosSteps(set), i: rosLoad(set), el };
+  el.querySelectorAll(".rb").forEach((g) => g.addEventListener("click", (e) => {
+    e.stopPropagation();
+    const id = g.dataset.b, idx = ros.steps.findIndex((s) => s.b === id);
+    if (idx >= 0) { ros.i = idx; rosPaint(); }
+  }));
+  rosPaint();
+  el.querySelector("#rosNextBtn").focus();
+}
+function closeRosary() {
+  document.getElementById("rosOverlay")?.remove();
+  if (!document.getElementById("capOverlay")) document.body.classList.remove("cap-quiet");
+  ros = null;
+}
+function rosPaint() {
+  if (!ros) return;
+  const { steps, i, el, set } = ros, s = steps[i], my = MYST[set];
+  // Cuentas: rezadas, la actual y las que faltan.
+  const last = {}; steps.forEach((x, n) => { last[x.b] = n; });
+  el.querySelectorAll(".rb").forEach((g) => {
+    const id = g.dataset.b;
+    g.classList.toggle("now", s.b === id);
+    g.classList.toggle("done", last[id] < i || (s.k === "fin"));
+  });
+  const [title, text] = s.k === "mys" ? [my.items[s.d], ""] : PR[s.k];
+  let eyebrow = "", extra = "";
+  if (s.d != null) eyebrow = `${ORD[s.d]} misterio ${ADJ[set]}`;
+  else if (s.k === "credo" || s.k === "cruz") eyebrow = "Para comenzar";
+  else if (s.k === "sa") eyebrow = "Para terminar";
+  else if (s.k !== "fin") eyebrow = "Introducción";
+  if (s.k === "mys") extra = `<span class="ros-cite">${esc(ROS_CITES[set][s.d])}</span><p class="ros-txt">Contemplamos este misterio en silencio, junto a María. Puedes ofrecer esta decena por alguien.</p>`;
+  const count = s.k === "am" ? `<span class="ros-count">${s.i} de ${s.of}${s.note ? " · " + esc(s.note) : ""}</span>` : "";
+  const mystLine = s.d != null && s.k !== "mys" ? `<span class="ros-myl">${esc(my.items[s.d])}</span>` : "";
+  el.querySelector(".ros-center").innerHTML = `<div class="ros-c-in ${s.k === "mys" ? "is-mys" : ""} ${s.k === "fin" ? "is-fin" : ""}">
+      ${eyebrow ? `<span class="ros-eb">${esc(eyebrow)}</span>` : ""}${mystLine}
+      <strong class="ros-t">${esc(title)}</strong>${count}${extra}
+      ${text ? `<p class="ros-txt">${esc(s.k === "fin" ? text : text.replace(/\n\n/g, "¶").replace(/\n/g, " ").replace(/¶/g, "\n\n")).replace(/\n/g, "<br>")}</p>` : ""}
+    </div>`;
+  el.querySelector(".ros-center").scrollTop = 0;
+  const decade = s.d != null ? `Decena ${s.d + 1} de 5` : s.k === "fin" ? "Terminado" : s.k === "sa" ? "Salve" : "Inicio";
+  el.querySelector("#rosProg").textContent = decade;
+  el.querySelector("[data-action=rosPrev]").disabled = i === 0;
+  const nb = el.querySelector("#rosNextBtn");
+  nb.innerHTML = s.k === "fin" ? `Volver a empezar ${icon("undo")}` : `Siguiente ${icon("right")}`;
+  rosSave();
+}
+function rosMove(n) {
+  if (!ros) return;
+  if (n > 0 && ros.steps[ros.i].k === "fin") ros.i = 0;
+  else ros.i = Math.max(0, Math.min(ros.steps.length - 1, ros.i + n));
+  rosPaint();
+}
+
 function registerActions() {
   const A = ctx.actions;
+  A.capRosario = (el) => openRosary(el.dataset.set);
+  A.rosClose = () => closeRosary();
+  A.rosNext = () => rosMove(1);
+  A.rosPrev = () => rosMove(-1);
+  A.rosSet = (el) => { if (!ros || el.dataset.set === ros.set) return; ros.set = el.dataset.set; ros.steps = rosSteps(ros.set); ros.i = 0;
+    ros.el.querySelectorAll(".ros-sets button").forEach((b) => b.setAttribute("aria-selected", String(b.dataset.set === ros.set))); rosPaint(); };
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("rosOverlay")) return;
+    if (e.key === "Escape") { e.preventDefault(); closeRosary(); }
+    else if (e.key === "ArrowRight" || (e.key === " " && e.target === document.body)) { e.preventDefault(); rosMove(1); }
+    else if (e.key === "ArrowLeft") { e.preventDefault(); rosMove(-1); }
+  });
   A.capGo = (el) => { document.getElementById("cap-" + el.dataset.k)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); };
   A.capSilence = (el) => silence(+el.dataset.min || 1);
   A.capStop = () => stopSilence(false);

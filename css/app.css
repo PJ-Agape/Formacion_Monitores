@@ -1628,6 +1628,61 @@ body.cap-quiet { overflow: hidden; }
   .cap-silence .row-wrap { justify-content: center; }
 }
 .cap-vela-guest > div { min-width: 200px; }
+
+/* Rosario virtual */
+.cap-ros-btn { margin-top: 14px; }
+.cap-nav a.cap-nav-ros { background: #0b2566; color: #ffba03; display: inline-flex; align-items: center; gap: 6px; }
+.cap-nav a.cap-nav-ros:hover { background: #1351a4; }
+.ros-ov { position: fixed; inset: 0; z-index: 110; overflow-y: auto; overscroll-behavior: contain; color: #fff6e5;
+  background: radial-gradient(80% 55% at 50% 38%, #1351a4 0%, #0b2566 65%, #061541 100%); animation: capIn .45s ease;
+  padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px); }
+.ros-in { --stage-w: min(100%, 460px, calc((100dvh - 196px) * 360 / 524)); max-width: 520px; margin: 0 auto; display: flex; flex-direction: column; align-items: center; gap: 8px; min-height: 100%; }
+.ros-top { width: 100%; display: flex; justify-content: space-between; align-items: flex-start; gap: 12px; }
+.ros-top h2 { margin: 0; font-family: var(--font-display); font-weight: 800; font-size: 1.55rem; line-height: 1; color: #fff6e5; }
+.ros-hand { display: block; font-family: var(--font-hand); font-weight: 700; color: #ffba03; font-size: 1.35rem; line-height: 1; transform: rotate(-2deg); }
+.ros-x { flex: none; width: 42px; height: 42px; border-radius: 50%; display: grid; place-items: center; background: rgba(255,246,229,.12); color: #fff6e5; border: 2px solid rgba(255,246,229,.5); cursor: pointer; }
+.ros-x:hover { background: rgba(255,246,229,.24); }
+.ros-sets { width: 100%; display: flex; gap: 6px; overflow-x: auto; scrollbar-width: none; padding: 2px; }
+.ros-sets::-webkit-scrollbar { display: none; }
+.ros-sets button { flex: 0 0 auto; font: 700 .82rem/1 var(--font-body); padding: 8px 12px; border-radius: 999px; cursor: pointer;
+  background: transparent; color: #fff6e5; border: 1.5px solid rgba(255,246,229,.45); }
+.ros-sets button[aria-selected="true"] { background: #ffba03; color: #0b2566; border-color: #ffba03; }
+.ros-stage { position: relative; width: var(--stage-w); aspect-ratio: 360 / 524; container-type: inline-size; flex: none; }
+.ros-svg { position: absolute; inset: 0; width: 100%; height: 100%; overflow: visible; }
+.ros-chain { fill: none; stroke: rgba(255,246,229,.38); stroke-width: 1.6; }
+.rb { cursor: pointer; }
+.rb .hit { fill: transparent; stroke: none; }
+.rb .dot { fill: rgba(255,246,229,.16); stroke: #fff6e5; stroke-width: 1.8; transition: fill .3s, stroke .3s; }
+.rb.big .dot { stroke: #ffba03; stroke-width: 2.2; }
+.rb.done .dot { fill: #8ad2fa; stroke: #8ad2fa; }
+.rb.big.done .dot { fill: #ffba03; }
+.rb.now .dot { fill: #ffba03; stroke: #fff; stroke-width: 2.6; filter: drop-shadow(0 0 6px #ffba03) drop-shadow(0 0 12px rgba(255,186,3,.6)); }
+.rb.medal .dot { fill: #fff6e5; stroke: #ffba03; stroke-width: 2.4; }
+.rb.medal text { font: 800 15px var(--font-display); fill: #0b2566; pointer-events: none; }
+.rb.medal.now .dot { fill: #ffba03; }
+.rb.cross .dot { fill: #fff6e5; stroke: #ffba03; stroke-width: 2; }
+.rb.cross.now .dot { fill: #ffba03; stroke: #fff; }
+.rb.cross.done .dot { fill: #ffba03; }
+@media (prefers-reduced-motion: no-preference) { .rb.now .dot { animation: rosPulse 1.8s ease-in-out infinite; transform-box: fill-box; transform-origin: center; } }
+@keyframes rosPulse { 50% { transform: scale(1.18); } }
+/* Centro del rosario: misterio y oración de la cuenta actual */
+.ros-center { position: absolute; left: calc(62 / 360 * 100%); top: calc(58 / 524 * 100%); width: calc(236 / 360 * 100%); height: calc(236 / 524 * 100%);
+  overflow-y: auto; scrollbar-width: thin; scrollbar-color: rgba(255,246,229,.3) transparent; cursor: pointer; display: flex; border-radius: 18px;
+  -webkit-tap-highlight-color: transparent; }
+.ros-c-in { margin: auto; width: 100%; text-align: center; display: flex; flex-direction: column; align-items: center; gap: 1.2cqw; padding: 1cqw 0; animation: rosFade .35s ease; }
+@keyframes rosFade { from { opacity: 0; transform: translateY(4px); } }
+.ros-eb { font: 800 2.9cqw/1.2 var(--font-body); letter-spacing: .12em; text-transform: uppercase; color: #ffba03; }
+.ros-myl { font: 700 3.3cqw/1.25 var(--font-body); color: #8ad2fa; }
+.ros-t { font-family: var(--font-display); font-weight: 800; font-size: 5cqw; line-height: 1.08; color: #fff6e5; }
+.ros-c-in.is-mys .ros-t { font-size: 6.4cqw; }
+.ros-c-in.is-fin .ros-t { color: #ffba03; font-size: 6.6cqw; }
+.ros-count { font: 800 3.1cqw/1 var(--font-body); color: #0b2566; background: #ffba03; border-radius: 999px; padding: .9cqw 2.6cqw; }
+.ros-cite { font-family: var(--font-hand); font-weight: 700; font-size: 4.8cqw; color: #ffba03; line-height: 1; }
+.ros-txt { margin: 0; font-size: 3.4cqw; line-height: 1.42; text-wrap: pretty; color: rgba(255,246,229,.92); }
+.ros-ctl { width: var(--stage-w); min-width: min(100%, 320px); display: flex; align-items: center; justify-content: space-between; gap: 8px; margin-top: auto; padding-top: 4px; }
+.ros-ctl .btn[disabled] { opacity: .35; pointer-events: none; }
+.ros-prog { font-size: .8rem; font-weight: 800; letter-spacing: .06em; opacity: .75; text-align: center; font-variant-numeric: tabular-nums; }
+.ros-ov :focus-visible { outline: 3px solid #ffba03; outline-offset: 2px; }
 .cap-overlay .cap-candle.lit .glow { fill: #ffd25e; }
 
 /* ===================== Cancionero ===================== */
