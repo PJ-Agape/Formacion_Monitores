@@ -35,19 +35,17 @@ const del = (k) => { try { localStorage.removeItem(k); } catch {} };
 let published = null;
 
 export async function loadContent(fromCloud) {
-  if (fromCloud) {
-    const c = await fromCloud();
-    if (c && Array.isArray(c.courses)) { published = c; write(K.cache, c); return published; }
-  }
-  try {
-    const res = await fetch(CONFIG.contentUrl, { cache: "no-cache" });
-    if (!res.ok) throw new Error(res.status);
-    published = await res.json();
-    write(K.cache, published);
-  } catch (e) {
-    published = read(K.cache);
-    if (!published) throw e;
-  }
+  // Hay dos fuentes: lo publicado desde Gestión (nube) y data/contenido.json (el sitio).
+  // Gana la más nueva, para que una copia antigua en la nube no tape el contenido actualizado.
+  const [c, f] = await Promise.all([
+    fromCloud ? fromCloud().catch(() => null) : null,
+    fetch(CONFIG.contentUrl, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+  ]);
+  const ok = (x) => x && Array.isArray(x.courses);
+  const newer = (a, b) => String(a.updatedAt || "") > String(b.updatedAt || "") || (String(a.updatedAt || "") === String(b.updatedAt || "") && (Number(a.version) || 0) >= (Number(b.version) || 0));
+  published = ok(c) && ok(f) ? (newer(c, f) ? c : f) : ok(c) ? c : ok(f) ? f : read(K.cache);
+  if (!published) throw new Error("Sin contenido");
+  write(K.cache, published);
   return published;
 }
 
