@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-02": {
-   "titulo": "Santos Ángeles Custodios",
-   "cita": "Mt 18,1-5.10",
-   "frase": "Les aseguro que si ustedes no cambian o no se hacen como niños, no entrarán en el Reino de los Cielos."
-  },
   "2026-10-03": {
    "titulo": "Sábado de la 26.ª semana del Tiempo Ordinario",
    "cita": "Lc 10,17-24",
@@ -55,6 +50,11 @@
    "titulo": "Lunes de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,29-32",
    "frase": "Pide un signo y no le será dado otro que el de Jonás."
+  },
+  "2026-10-13": {
+   "titulo": "Martes de la 28.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,37-41",
+   "frase": "Purifican por fuera la copa y el plato, y por dentro están llenos de voracidad y perfidia."
   }
  }
 }
