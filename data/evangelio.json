@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-03": {
-   "titulo": "Sábado de la 26.ª semana del Tiempo Ordinario",
-   "cita": "Lc 10,17-24",
-   "frase": "¡Felices los ojos que ven lo que ustedes ven!"
-  },
   "2026-10-04": {
    "titulo": "27.º domingo del Tiempo Ordinario",
    "cita": "Mt 21,33-43",
@@ -55,6 +50,11 @@
    "titulo": "Martes de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,37-41",
    "frase": "Purifican por fuera la copa y el plato, y por dentro están llenos de voracidad y perfidia."
+  },
+  "2026-10-14": {
+   "titulo": "Miércoles de la 28.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,42-46",
+   "frase": "Maestro, cuando hablas así, nos insultas también a nosotros."
   }
  }
 }
