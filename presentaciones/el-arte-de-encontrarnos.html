@@ -430,6 +430,14 @@ body:has(.slide.bg-navy.is-active) { --cur: var(--navy); --hs: var(--gold); }
   .slide { transform: none !important; }
   .motes { display: none; }
 }
+
+/* Tonos mate para los fondos grandes: el amarillo y el naranja del logo cansan la vista en superficies extensas (se mantienen en detalles pequeños) */
+.bg-gold { --bg: #f3dc9f; }
+.blob[style*="--gold"] { background: #f1cd74 !important; }
+.blob[style*="--orange"] { background: #e48a68 !important; }
+.bg-orange { --bg: #b65a3b; }
+body:has(.slide.bg-gold.is-active) { --cur: #f3dc9f; }
+body:has(.slide.bg-orange.is-active) { --cur: #b65a3b; }
 </style>
 </head>
 <body>
