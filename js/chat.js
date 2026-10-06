@@ -118,14 +118,17 @@ export async function viewRoom(key) {
     <div style="flex:1;min-width:0"><h1>${esc(sala.name)}</h1><span class="xs muted">${esc(sala.desc || "")}${st().isStaff && sala.custom ? ` · 👥 ${esc(accessText(sala))}` : ""}</span></div>
     ${st().isStaff && sala.custom ? `<button class="icon-btn" data-action="salaEdit" data-id="${esc(sala.key)}" aria-label="Editar sala">${icon("edit")}</button>` : ""}
   </div>
-  ${g ? "" : `<div class="chat-online" id="chatOnline" aria-label="En línea en esta sala"></div>`}
-  ${g || `<div class="chat-box card">
+  ${g || `<div class="chat-layout">
+  <div class="chat-box card">
     <div class="chat-list" id="chatList" aria-live="polite"><div class="muted small" style="text-align:center;padding:30px">Cargando…</div></div>
     <div class="chat-replybar" id="chatReply" hidden></div>
     ${sala.archived ? `<div class="chat-arch">${icon("lock")} Sala archivada: se puede leer, pero ya no recibe mensajes.</div>` : `<form class="chat-compose" id="chatForm" data-sala="${esc(key)}">
+      <details class="chat-buzzpick"><summary class="btn btn-ghost" title="Enviar un zumbido" aria-label="Enviar un zumbido">📳</summary><div class="wall-menu-list" id="chatBuzzList"></div></details>
       <textarea id="chatText" class="textarea" rows="1" maxlength="1500" placeholder="Escribe un mensaje…" aria-label="Mensaje"></textarea>
       <button class="btn btn-primary" type="submit" aria-label="Enviar">${icon("send")}</button>
     </form>`}
+  </div>
+  <aside class="chat-online" id="chatOnline" aria-label="En línea en esta sala"></aside>
   </div>
   <p class="xs muted" style="margin-top:10px;text-align:center">Lo que escribes lo ven todos los integrantes de esta sala. Si algo no corresponde, repórtalo desde el menú del mensaje.</p>`}`;
 }
@@ -166,7 +169,7 @@ function paint(err) {
     const myReact = (m.reactions || {})[me] || "";
     const opts = [`<div class="chat-react-row" role="group" aria-label="Reaccionar">${ctx.cloud.REACTIONS.map((e) => `<button class="${myReact === e ? "on" : ""}" data-action="chatReact" data-id="${esc(m.id)}" data-e="${e}" aria-label="Reaccionar ${e}">${e}</button>`).join("")}</div>`,
       `<button data-action="chatReply" data-id="${esc(m.id)}">${icon("undo")} Responder</button>`];
-    if (!mine && onl.some((p) => p.id === m.authorUid)) opts.push(`<button data-action="chatBuzz" data-uid="${esc(m.authorUid)}" data-name="${esc(m.authorName)}">📳 Enviar zumbido</button>`);
+    if (!mine) opts.push(`<button data-action="chatBuzz" data-uid="${esc(m.authorUid)}" data-name="${esc(m.authorName)}">📳 Enviar zumbido${onl.some((p) => p.id === m.authorUid) ? "" : ` <small class="muted">(no está en línea)</small>`}</button>`);
     if (mine || admin) opts.push(`<button data-action="chatDelete" data-id="${esc(m.id)}">${icon("trash")} Borrar</button>`);
     if (!mine) opts.push(`<button data-action="chatReport" data-id="${esc(m.id)}" data-on="${myRep ? 0 : 1}">${icon("x")} ${myRep ? "Quitar mi reporte" : "Reportar"}</button>`);
     return `${sep}<div class="chat-msg ${mine ? "mine" : ""} ${cont ? "cont" : ""}" id="msg-${esc(m.id)}">
@@ -202,6 +205,12 @@ function paintOnline() {
           <div class="wall-menu-list chat-pres-menu"><b>${esc(p.name)}</b>
             <button data-action="chatBuzz" data-uid="${esc(p.id)}" data-name="${esc(p.name)}">📳 Enviar zumbido</button>
             <button data-action="chatMention" data-name="${esc(p.name)}">@ Mencionar</button></div></details>`).join("")}</div>`;
+  const bl = $("#chatBuzzList");
+  if (bl) {
+    const others = list.filter((p) => p.id !== me);
+    bl.innerHTML = `<b class="chat-buzz-t">📳 Zumbido a…</b>` + (others.length ? others.map((p) => `<button data-action="chatBuzz" data-uid="${esc(p.id)}" data-name="${esc(p.name)}">${avatar(p.avatar, p.name)} ${esc(p.name)}</button>`).join("")
+      : `<p class="small muted" style="padding:6px 10px;margin:0">No hay nadie más en línea en esta sala. El zumbido solo llega a quien la tiene abierta.</p>`);
+  }
 }
 function paintReply() {
   const bar = $("#chatReply"); if (!bar) return;
@@ -350,15 +359,28 @@ function registerActions() {
     try { await ctx.cloud.sendChat(form.dataset.sala, text, rt); const b = $("#chatList"); if (b) b.scrollTop = b.scrollHeight; }
     catch (e) { console.warn(e); toast("No se pudo enviar. Revisa tu conexión.", ""); if (!ta.value) ta.value = text; replyTo = rt; paintReply(); }
   };
-  // El menú de quien está en línea se ubica bajo su avatar (la fila tiene desplazamiento horizontal).
+  // Los menús del chat se ubican siempre dentro de la pantalla (no se cortan en los bordes).
   document.addEventListener("toggle", (e) => {
     const d = e.target;
+    if (d.classList && (d.classList.contains("chat-menu") || d.classList.contains("chat-buzzpick")) && d.open) {
+      document.querySelectorAll(".chat-menu[open], .chat-buzzpick[open]").forEach((x) => { if (x !== d) x.open = false; });
+      const r = d.querySelector("summary").getBoundingClientRect(), m = d.querySelector(".wall-menu-list");
+      m.style.position = "fixed"; m.style.right = "auto"; m.style.bottom = "auto";
+      const w = m.offsetWidth, h = m.offsetHeight;
+      m.style.left = Math.max(8, Math.min(r.right - w, innerWidth - w - 8)) + "px";
+      m.style.top = (r.bottom + h + 8 > innerHeight ? Math.max(8, r.top - h - 6) : r.bottom + 6) + "px";
+      return;
+    }
     if (!d.classList || !d.classList.contains("chat-pres") || !d.open) return;
     document.querySelectorAll(".chat-pres[open]").forEach((x) => { if (x !== d) x.open = false; });
     const r = d.querySelector("summary").getBoundingClientRect(), m = d.querySelector(".chat-pres-menu");
     m.style.left = Math.max(8, Math.min(r.left, innerWidth - 210)) + "px"; m.style.top = r.bottom + 4 + "px";
   }, true);
-  document.addEventListener("click", (e) => { if (!e.target.closest(".chat-pres")) document.querySelectorAll(".chat-pres[open]").forEach((x) => (x.open = false)); });
+  document.addEventListener("click", (e) => {
+    if (!e.target.closest(".chat-pres")) document.querySelectorAll(".chat-pres[open]").forEach((x) => (x.open = false));
+    if (!e.target.closest(".chat-menu, .chat-buzzpick")) document.querySelectorAll(".chat-menu[open], .chat-buzzpick[open]").forEach((x) => (x.open = false));
+  });
+  document.addEventListener("scroll", (e) => { if (e.target.id === "chatList" || e.target === document) document.querySelectorAll(".chat-menu[open], .chat-buzzpick[open]").forEach((x) => (x.open = false)); }, true);
   document.addEventListener("change", (e) => {
     if (e.target.name === "access" && e.target.closest("#salaForm")) {
       const f = e.target.form; f.querySelector(".sala-roles").hidden = e.target.value !== "roles"; f.querySelector(".sala-people").hidden = e.target.value !== "people";

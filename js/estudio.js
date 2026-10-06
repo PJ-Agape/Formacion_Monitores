@@ -29,7 +29,7 @@ function svgFor(key, color, bg, pop, outline, bare) {
 }
 // Carga previa de ilustraciones (clave|color|fondo|acento|contorno) para dibujar sin esperas.
 export async function preload(list) {
-  await Promise.all(list.map(async ([k, color = C.navy, bg = C.white, pop = C.sun, outline = 0, bare = 0]) => {
+  await Promise.all(list.filter(([k]) => typeof k === "string").map(async ([k, color = C.navy, bg = C.white, pop = C.sun, outline = 0, bare = 0]) => {
     const id = [k, color, bg, pop, outline, bare].join("|");
     if (IMG.has(id)) return;
     const svg = svgFor(k, color, bg, pop, outline, bare);
@@ -51,7 +51,18 @@ export function card(ctx, x, y, w, h, { r = 40, fill = C.white, border = C.navy,
   ctx.restore();
 }
 export const blob = (ctx, x, y, r, color) => { ctx.beginPath(); ctx.arc(x, y, r, 0, Math.PI * 2); ctx.fillStyle = color; ctx.fill(); };
+// Foto propia en lugar del dibujo: llena el recuadro (recorte centrado) con esquinas redondeadas.
+function photoBox(ctx, im, x, y, w, h, rot) {
+  const pw = im.naturalWidth || im.width, ph = im.naturalHeight || im.height, sc = Math.max(w / pw, h / ph);
+  ctx.save();
+  if (rot) { ctx.translate(x + w / 2, y + h / 2); ctx.rotate((rot * Math.PI) / 180); ctx.translate(-x - w / 2, -y - h / 2); }
+  rr(ctx, x, y, w, h, w * 0.06); ctx.clip();
+  ctx.drawImage(im, x + (w - pw * sc) / 2, y + (h - ph * sc) / 2, pw * sc, ph * sc);
+  ctx.restore();
+}
+export const isPhoto = (k) => !!k && typeof k === "object";
 export function ill(ctx, key, x, y, w, { color = C.navy, bg = C.white, pop = C.sun, outline = 0, rot = 0, bare = 0 } = {}) {
+  if (isPhoto(key)) return photoBox(ctx, key, x, y, w, (w * 180) / 240, rot);
   const im = IMG.get([key, color, bg, pop, outline, bare].join("|"));
   if (!im) return;
   const h = (w * 180) / 240;

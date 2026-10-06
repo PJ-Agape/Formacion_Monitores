@@ -68,7 +68,8 @@ function piezasHTML() {
       ${st.tpl === "invita" ? `<div class="field"><label>¿A quién invitas?</label><input class="input" data-dif="para" maxlength="24" value="${esc(st.para)}" placeholder="Su nombre (opcional)"></div>` : ""}
       <div class="field"><label>Formato</label>${sel("fmt", Object.entries(FORMATS).map(([k, v]) => [k, v[2]]), st.fmt)}</div>
       <div class="field"><label>Estilo</label><div class="dif-sw" role="radiogroup" aria-label="Estilo">${E.STYLES.map((x) => `<button type="button" role="radio" aria-checked="${st.style === x.id}" title="${esc(x.name)}" data-action="difStyle" data-v="${x.id}" style="--a:${x.bg};--b:${x.split || x.b1}"><span class="sr-only">${esc(x.name)}</span></button>`).join("")}</div></div>
-      <div class="field"><label>Dibujo</label>${sel("ill", ILLS.map((k) => [k, k[0].toUpperCase() + k.slice(1)]), st.ill)}</div>
+      <div class="field"><label>Dibujo o foto</label>${sel("ill", [...(st.photo ? [["__foto", "📷 Mi foto"]] : []), ...ILLS.map((k) => [k, k[0].toUpperCase() + k.slice(1)])], st.photo && st.ill === "__foto" ? "__foto" : st.ill)}
+        ${photoBtn()}</div>
       <details class="dif-more"><summary>Cambiar los textos</summary>
         <div class="stack" style="margin-top:10px">
           <div class="field"><label>Título <span class="muted">(lo que va entre *asteriscos* lleva marcador)</span></label><input class="input" data-dif="title" maxlength="60" value="${esc(st.title)}"></div>
@@ -79,6 +80,9 @@ function piezasHTML() {
       ${actionsHTML()}
     </form></div>`;
 }
+// Botón para usar una foto del dispositivo (se queda en el teléfono: no se sube a ninguna parte)
+const photoBtn = () => `<label class="btn btn-soft btn-sm dif-file" style="margin-top:8px">📷 ${st.photo ? "Cambiar foto" : "Usar una foto mía"}<input type="file" accept="image/*" id="difPhoto" class="sr-only"></label>
+  ${st.photo ? `<span class="xs muted" style="display:block;margin-top:4px">Tu foto se queda en tu dispositivo: no se sube a ninguna parte.</span>` : ""}`;
 const actionsHTML = () => `<div class="row-wrap" style="gap:8px">
   <button type="button" class="btn btn-primary" data-action="difShare">${icon("send")} Compartir</button>
   <button type="button" class="btn btn-ghost" data-action="difSave">${icon("dl")} Descargar</button></div>`;
@@ -102,7 +106,7 @@ function pieceData() {
   if (st.title) d.title = st.title;
   if (st.hand) d.hand = st.hand;
   if (st.sub) d.sub = st.sub;
-  d.ill = st.ill;
+  d.ill = st.ill === "__foto" && st.photo ? st.photo : st.ill === "__foto" ? "corazon" : st.ill;
   if (st.qr) { d.qr = URLS[st.qr](); d.qrLabel = st.qr === "familias" ? "Familias" : st.qr === "puente" ? "Mira esto" : "Súmate"; }
   return d;
 }
@@ -134,7 +138,8 @@ function fondosHTML() {
     <div class="dif-prev ${st.fsize === "pc" ? "wide" : "tall"}"><canvas id="difCanvas" aria-label="Vista previa del fondo"></canvas></div>
     <form class="card stack dif-form" onsubmit="return false">
       <div class="field"><label>Para</label><div class="seg" role="radiogroup" aria-label="Para qué pantalla">${Object.entries(F.SIZES).map(([k, v]) => `<label><input type="radio" name="difFsize" value="${k}" ${st.fsize === k ? "checked" : ""}><span>${v[2]}</span></label>`).join("")}</div></div>
-      <div class="field"><label>Diseño</label><div class="dif-fondos ${st.fsize}">${F.FONDOS.map(([k, l]) => `<button type="button" aria-pressed="${st.fondo === k}" data-action="difFondo" data-v="${k}" title="${esc(l)}"><canvas data-fondo="${k}" width="${tw}" height="${th}" aria-label="${esc(l)}"></canvas></button>`).join("")}</div></div>
+      <div class="field"><label>Diseño</label><div class="dif-fondos ${st.fsize}">${[...(st.photo ? [["foto", "Mi foto"]] : []), ...F.FONDOS].map(([k, l]) => `<button type="button" aria-pressed="${st.fondo === k}" data-action="difFondo" data-v="${k}" title="${esc(l)}"><canvas data-fondo="${k}" width="${tw}" height="${th}" aria-label="${esc(l)}"></canvas></button>`).join("")}</div></div>
+      ${photoBtn()}
       <p class="small muted">Sirven como fondo de pantalla, pantalla de bloqueo o protector de pantalla. En el celular, el logo queda bajo la hora.</p>
       ${actionsHTML()}
     </form></div>`;
@@ -159,10 +164,10 @@ async function paint() {
   if (st.tab === "fondos") {
     await F.ready(); if (id !== painting) return;
     const [W, H] = F.SIZES[st.fsize];
-    cv.width = W; cv.height = H; F.fondo(cv.getContext("2d"), W, H, st.fondo);
+    cv.width = W; cv.height = H; F.fondo(cv.getContext("2d"), W, H, st.fondo, st.photo);
     for (const c of document.querySelectorAll("[data-fondo]")) {
       if (id !== painting) return;
-      if (!c.dataset.done) { F.fondo(c.getContext("2d"), c.width, c.height, c.dataset.fondo); c.dataset.done = 1; await new Promise((r) => setTimeout(r)); }
+      if (!c.dataset.done) { F.fondo(c.getContext("2d"), c.width, c.height, c.dataset.fondo, st.photo); c.dataset.done = 1; await new Promise((r) => setTimeout(r)); }
     }
     return;
   }
@@ -235,7 +240,12 @@ function onField(k, v, changed) {
 }
 function loadPhoto(file) {
   const url = URL.createObjectURL(file), img = new Image();
-  img.onload = () => { st.photo = img; st.zoom = 1; st.dx = st.dy = 0; $("#difBody").innerHTML = body(); paint(); };
+  img.onload = () => {
+    st.photo = img; st.zoom = 1; st.dx = st.dy = 0;
+    if (st.tab === "piezas") st.ill = "__foto";
+    if (st.tab === "fondos") st.fondo = "foto";
+    $("#difBody").innerHTML = body(); paint();
+  };
   img.onerror = () => toast("No pude abrir esa imagen", "error");
   img.src = url;
 }

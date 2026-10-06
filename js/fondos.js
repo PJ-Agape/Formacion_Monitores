@@ -324,8 +324,16 @@ export const FONDOS = [
   ["rosario", "Rosario"], ["estrellas", "Estrellas"], ["zine", "Cuaderno"], ["corazones", "Corazones"], ["aros", "Aros"],
   ["camino", "Camino"], ["velas", "Velas"], ["diagonal", "Rayas"], ["burbujas", "Burbujas"], ["atardecer", "Atardecer"],
 ];
-export function fondo(ctx, W, H, id) {
+// Fondo con una foto del dispositivo: la foto llena la pantalla y el logo va en su lugar de siempre.
+function fotoFondo(ctx, W, H, im) {
+  const p = spot(W, H), pw = im.naturalWidth || im.width, ph = im.naturalHeight || im.height, sc = Math.max(W / pw, H / ph);
+  ctx.drawImage(im, (W - pw * sc) / 2, (H - ph * sc) / 2, pw * sc, ph * sc);
+  glow(ctx, p.x, p.y, p.r * 2.6, C.white, 0.45);
+  logo(ctx, p.x, p.y, p.r * 0.8);
+}
+export function fondo(ctx, W, H, id, photo = null) {
   ctx.save(); ctx.clearRect(0, 0, W, H);
-  (D[id] || D.amanecer)(ctx, W, H);
+  if (id === "foto" && photo) fotoFondo(ctx, W, H, photo);
+  else (D[id] || D.amanecer)(ctx, W, H);
   ctx.restore();
 }

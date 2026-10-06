@@ -2396,3 +2396,25 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .mc-easy { margin: 12px 0; padding: 14px 16px; border-radius: 16px; background: #fff1c7; border: 2px solid var(--ink); }
 .mc-easy ul { margin: 8px 0 0; padding-left: 1.1em; display: grid; gap: 6px; font-size: 1.08rem; }
 @media print { .a11y-fab, .a11y-say { display: none !important; } }
+/* Chat: panel de «en línea» al costado derecho en pantallas anchas; arriba en el celular */
+.chat-layout { display: flex; flex-direction: column; }
+.chat-layout .chat-online { order: -1; }
+@media (min-width: 900px) {
+  .chat-layout { display: grid; grid-template-columns: minmax(0, 1fr) 230px; gap: 16px; align-items: start; }
+  .chat-layout .chat-online { order: 0; margin: 0; flex-direction: column; align-items: stretch; gap: 10px; max-height: min(72vh, 680px); overflow-y: auto; position: sticky; top: calc(var(--header-h, 64px) + 12px); }
+  .chat-layout .chat-online-list { flex-direction: column; overflow: visible; gap: 4px; }
+  .chat-layout .chat-pres summary, .chat-layout .chat-pres.me { flex-direction: row; width: auto; gap: 8px; padding: 4px 6px; border-radius: 10px; }
+  .chat-layout .chat-pres summary:hover { background: var(--surface-2); }
+  .chat-layout .chat-pres small { max-width: none; font-size: .85rem; }
+}
+/* Menú de cada mensaje: compacto y siempre dentro de la pantalla */
+.chat-menu .wall-menu-list, .chat-buzzpick .wall-menu-list { min-width: 0; width: 214px; z-index: 40; }
+.chat-react-row { display: grid; grid-template-columns: repeat(6, 1fr); gap: 0; padding: 2px 2px 6px; }
+.chat-react-row button { font-size: 1.15rem; padding: 4px 0 !important; justify-content: center; }
+.chat-menu .wall-menu-list button { padding: 7px 9px; font-size: .85rem; }
+.chat-buzzpick { position: relative; flex: 0 0 auto; }
+.chat-buzzpick summary { list-style: none; height: 46px; width: 46px; padding: 0; display: grid; place-items: center; font-size: 1.2rem; }
+.chat-buzzpick summary::-webkit-details-marker { display: none; }
+.chat-buzzpick .wall-menu-list { width: 240px; max-height: 300px; overflow-y: auto; }
+.chat-buzzpick .avatar { width: 26px; height: 26px; font-size: .65rem; }
+.chat-buzz-t { display: block; padding: 6px 10px 2px; font-size: .85rem; }
