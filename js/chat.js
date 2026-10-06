@@ -4,6 +4,7 @@
 import { esc, icon, toast, initials } from "./util.js";
 import { illus, SCENE_KEYS } from "./ilustraciones.js";
 import { avatar } from "./avatares.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -248,10 +249,10 @@ function checkBuzz() {
 }
 const BUZZ_WAIT = 30000;
 function canBuzz(uid) {
-  let log = {}; try { log = JSON.parse(sessionStorage.getItem("agape_buzz") || "{}"); } catch {}
+  let log = {}; try { log = JSON.parse(sessionStorage.getItem(`${ID.prefijo}_buzz`) || "{}"); } catch {}
   const left = BUZZ_WAIT - (Date.now() - (log[uid] || 0));
   if (left > 0) return Math.ceil(left / 1000);
-  log[uid] = Date.now(); try { sessionStorage.setItem("agape_buzz", JSON.stringify(log)); } catch {}
+  log[uid] = Date.now(); try { sessionStorage.setItem(`${ID.prefijo}_buzz`, JSON.stringify(log)); } catch {}
   return 0;
 }
 

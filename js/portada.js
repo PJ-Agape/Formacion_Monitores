@@ -8,6 +8,7 @@
 import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS } from "./ilustraciones.js";
 import { isRepeat, nextOn, describe as repeatText } from "./repeat.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -28,8 +29,8 @@ const ILLUS_LABEL = (k) => k.charAt(0).toUpperCase() + k.slice(1);
 // Diapositivas de base (se pueden editar, ocultar o restaurar desde Gestión)
 // ---------------------------------------------------------------------------
 export const DEFAULTS = [
-  { key: "agape", label: "Qué es Ágape", theme: "sky", order: 10, logo: true, illus: "comunidad",
-    kicker: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", hand: "bienvenido a casa",
+  { key: "agape", label: `Qué es ${ID.corto}`, theme: "sky", order: 10, logo: true, illus: "comunidad",
+    kicker: `${ID.nombre} · ${ID.parroquia}`, hand: "bienvenido a casa",
     title: "Amor que *transforma*",
     text: "Somos jóvenes de la parroquia que caminan juntos para encontrarse con Jesús, formarse y servir. Aquí nadie es espectador: cada uno importa, con su historia y lo que aporta.",
     chips: ["Familiar y comunitario", "Intuitivo", "Activo"],
@@ -68,7 +69,7 @@ function fromEvent(ev) {
 // ---------------------------------------------------------------------------
 // Datos (con copia local para que Inicio aparezca al instante)
 // ---------------------------------------------------------------------------
-const CACHE = "agape_portada_v1";
+const CACHE = `${ID.prefijo}_portada_v1`;
 let over = {}, featured = [], loaded = false;
 try { const c = JSON.parse(localStorage.getItem(CACHE) || "null"); if (c) { over = c.over || {}; featured = c.featured || []; } } catch {}
 const saveCache = () => { try { localStorage.setItem(CACHE, JSON.stringify({ over, featured })); } catch {} };
@@ -120,7 +121,7 @@ export function slideHTML(x) {
         ${chips.length ? `<div class="car-chips">${chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
         <div class="actions">${btn(x.b1, true)}${btn(x.b2, false)}</div>
       </div>
-      ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">` : ""}
+      ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo ${ID.corto} Joven PJ, ${ID.parroquia}">` : ""}
       ${x.illus && SCENE_KEYS.includes(x.illus) ? illus(x.illus, "car-illus") : ""}
     </article>`;
 }

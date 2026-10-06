@@ -4,6 +4,7 @@
 import { esc, icon, toast } from "./util.js";
 import { DEF, merge } from "./familias-contenido.js";
 import qrcode from "./qrcode.mjs";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 let data = null, loaded = false;
@@ -30,7 +31,7 @@ export function adminView() {
     <section class="card stack" style="--gap:12px"><h3>Bienvenida y horarios</h3>
       <div class="field"><label>Quiénes somos (2 o 3 líneas)</label>${area("bienvenida", C.bienvenida, 3)}</div>
       <div class="field"><label>Cuándo y dónde nos reunimos</label>${area("horario", C.horario, 2, "Ej: Los sábados de 16:00 a 18:00 en el salón parroquial.")}</div>
-      <p class="xs muted">Las etapas (Ingreso, Madurez, Aspirante) se muestran solas desde el Camino Ágape.</p>
+      <p class="xs muted">Las etapas (Ingreso, Madurez, Aspirante) se muestran solas desde el Camino ${ID.corto}.</p>
     </section>
     <section class="card stack" style="--gap:12px"><h3>Carta a las familias <span class="chip">opcional</span></h3>
       <p class="small muted">Un saludo breve del equipo o del párroco. Se muestra arriba de todo hasta la fecha que elijas.</p>
@@ -52,7 +53,7 @@ export function adminView() {
       <div class="field"><label>Nombre</label>${inp("nombre", c.nombre)}</div>
       <div class="ag-form-row"><div class="field"><label>Teléfono</label>${inp("telefono", c.telefono, "+56 42 …")}</div><div class="field"><label>WhatsApp</label>${inp("whatsapp", c.whatsapp, "+56 9 …")}</div></div>
       <div class="ag-form-row"><div class="field"><label>Correo</label>${inp("correo", c.correo, "pastoral@…", "email")}</div><div class="field"><label>Dirección</label>${inp("direccion", c.direccion)}</div></div>
-      <div class="ag-form-row"><div class="field"><label>Instagram</label>${inp("instagram", c.instagram, "@pjagape")}</div><div class="field"><label>Facebook</label>${inp("facebook", c.facebook, "Enlace o nombre de la página")}</div></div>
+      <div class="ag-form-row"><div class="field"><label>Instagram</label>${inp("instagram", c.instagram, `@pj${ID.prefijo}`)}</div><div class="field"><label>Facebook</label>${inp("facebook", c.facebook, "Enlace o nombre de la página")}</div></div>
     </section>
     <div class="row-wrap"><button class="btn btn-primary" type="submit">${icon("check")} Guardar cambios</button>
       <button class="btn btn-ghost" type="button" data-action="famReset">Volver a los textos de ejemplo</button></div>

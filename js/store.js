@@ -4,19 +4,20 @@
 
 import { CONFIG } from "./config.js";
 import { clone } from "./util.js";
+import { ID } from "./identidad.js";
 
 const K = {
-  profile: "agape_candidate",
-  progress: "agape_progress_v2",
-  oldProgress: "agape_all_progress",
-  activeCourse: "agape_active_course_id",
-  draft: "agape_draft_content",
-  adminHash: "agape_admin_hash",
-  oldAdminPin: "agape_admin_pin",
-  mode: "agape_color_mode",
-  cache: "agape_content_cache",
-  notes: "agape_notes_v1",
-  owner: "agape_local_owner",
+  profile: `${ID.prefijo}_candidate`,
+  progress: `${ID.prefijo}_progress_v2`,
+  oldProgress: `${ID.prefijo}_all_progress`,
+  activeCourse: `${ID.prefijo}_active_course_id`,
+  draft: `${ID.prefijo}_draft_content`,
+  adminHash: `${ID.prefijo}_admin_hash`,
+  oldAdminPin: `${ID.prefijo}_admin_pin`,
+  mode: `${ID.prefijo}_color_mode`,
+  cache: `${ID.prefijo}_content_cache`,
+  notes: `${ID.prefijo}_notes_v1`,
+  owner: `${ID.prefijo}_local_owner`,
 };
 
 // Aviso a la nube cuando cambia el avance o el cuaderno (lo registra cloud.js).
@@ -49,10 +50,10 @@ export async function loadContent(fromCloud) {
   return published;
 }
 
-export const isPreview = () => sessionStorage.getItem("agape_preview") === "1" && !!read(K.draft);
+export const isPreview = () => sessionStorage.getItem(`${ID.prefijo}_preview`) === "1" && !!read(K.draft);
 export function setPreview(on) {
-  if (on) sessionStorage.setItem("agape_preview", "1");
-  else sessionStorage.removeItem("agape_preview");
+  if (on) sessionStorage.setItem(`${ID.prefijo}_preview`, "1");
+  else sessionStorage.removeItem(`${ID.prefijo}_preview`);
 }
 
 // Contenido que ven los dirigentes (o el borrador, si el admin está en vista previa).
@@ -81,14 +82,14 @@ export function draftIsDirty() {
 
 // Contenido editado con la versión anterior de la página (vivía solo en el navegador).
 export function legacyContent() {
-  const catalog = read("agape_courses_catalog");
-  const materials = read("agape_global_materials");
-  const devotional = read("agape_global_devotional");
+  const catalog = read(`${ID.prefijo}_courses_catalog`);
+  const materials = read(`${ID.prefijo}_global_materials`);
+  const devotional = read(`${ID.prefijo}_global_devotional`);
   if (!catalog && !materials && !devotional) return null;
   return { catalog, materials, devotional };
 }
 export function clearLegacy() {
-  ["agape_courses_catalog", "agape_global_materials", "agape_global_devotional"].forEach(del);
+  [`${ID.prefijo}_courses_catalog`, `${ID.prefijo}_global_materials`, `${ID.prefijo}_global_devotional`].forEach(del);
 }
 
 // ---------------- Perfil del dirigente ----------------
@@ -232,10 +233,10 @@ export function adminHash() {
 export const setAdminHash = (h) => write(K.adminHash, h);
 export const oldAdminPin = () => localStorage.getItem(K.oldAdminPin);
 export const clearOldAdminPin = () => del(K.oldAdminPin);
-export const isAdmin = () => sessionStorage.getItem("agape_admin") === "1";
+export const isAdmin = () => sessionStorage.getItem(`${ID.prefijo}_admin`) === "1";
 export function setAdmin(on) {
-  if (on) sessionStorage.setItem("agape_admin", "1");
-  else { sessionStorage.removeItem("agape_admin"); setPreview(false); }
+  if (on) sessionStorage.setItem(`${ID.prefijo}_admin`, "1");
+  else { sessionStorage.removeItem(`${ID.prefijo}_admin`); setPreview(false); }
 }
 
 // ---------------- Preferencias ----------------

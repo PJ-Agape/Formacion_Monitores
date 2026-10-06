@@ -1,6 +1,8 @@
 // Banco ampliado de dinámicas (100), con el mismo formato que las dinámicas base.
 // pasos: un paso por línea. Descritas con palabras propias de la pastoral.
 
+import { ID } from "./identidad.js";
+
 const D = (id, title, objetivo, tags, duracion, personas, lugar, materiales, pasos, variante) =>
   ({ id: "d-" + id, builtin: true, title, objetivo, tags, duracion, personas, lugar, materiales, pasos: pasos.join("\n"), variante });
 
@@ -159,7 +161,7 @@ export const BANCO = [
   D("figuras-cuerpo", "Letras con el cuerpo", "Coordinarse con humor.", ["equipo", "energizante"], 10, "Equipos de 4 a 6", "ambos",
     "Ninguno.",
     ["El animador dice una letra o palabra corta.", "Cada equipo la forma con sus cuerpos en el suelo o de pie.", "Se toma una foto (con permiso) de cada figura."],
-    "Formar la palabra ÁGAPE entre todos los equipos."),
+    `Formar la palabra ${ID.CORTO} entre todos los equipos.`),
   D("restaurant", "El restaurante", "Organizarse con roles distintos.", ["equipo", "liderazgo"], 25, "Equipos de 5 a 7", "interior",
     "Hojas, plumones y objetos de la sala.",
     ["Cada equipo inventa un restaurante: nombre, menú y quién hace qué.", "Presentan su restaurante en 2 minutos.", "Conversar: ¿qué rol tomaste? ¿Te sentiste cómodo?"],
@@ -365,7 +367,7 @@ export const BANCO = [
   D("noticias", "La noticia y el Evangelio", "Mirar la realidad desde la fe.", ["reflexion", "servicio"], 30, "Equipos de 4 a 6", "interior",
     "Noticias recientes impresas (cuidando que sean adecuadas para la edad).",
     ["Cada equipo lee una noticia.", "Buscan un texto del Evangelio que ilumine esa realidad.", "Proponen un gesto concreto que podrían hacer.", "Puesta en común."],
-    "Elegir noticias locales de Yungay y la región."),
+    `Elegir noticias locales de ${ID.comuna} y la región.`),
   D("vaso-medio", "El vaso medio lleno", "Aprender a mirar con esperanza.", ["reflexion"], 15, "Cualquier grupo", "interior",
     "Un vaso con agua hasta la mitad.",
     ["Mostrar el vaso: ¿está medio lleno o medio vacío?", "Cada uno cuenta una situación difícil y busca algo bueno en ella.", "Cerrar con Romanos 8,28."],

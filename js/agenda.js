@@ -7,6 +7,9 @@ import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS } from "./ilustraciones.js";
 import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
 import * as autz from "./autorizacion.js";
+import { ID } from "./identidad.js";
+// Prefijo de los encuentros del Camino en los títulos (se quita en las vistas compactas).
+const CAMINO_RE = new RegExp("^Camino " + ID.corto.replace(/[.*+?^${}()|[\]\\]/g, "\\$&") + " · ");
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -40,7 +43,7 @@ async function loadCamino() {
       return {
         id: "camino-" + e.n, camino: true, type: "encuentro",
         date: `${m[3]}-${pad(MESES.indexOf(m[2]) + 1)}-${pad(+m[1])}`,
-        title: `Camino Ágape · Encuentro ${e.n}: ${e.tema}`,
+        title: `Camino ${ID.corto} · Encuentro ${e.n}: ${e.tema}`,
         desc: `${e.domingo}. Evangelio: ${e.evangelio.ref}. El encuentro se realiza durante esta semana; el equipo confirma día y hora.`,
         audience: "Todas las etapas",
       };
@@ -77,11 +80,11 @@ export function viewAgenda(day) {
   });
   const admin = ctx.cloud.state().isStaff;
   return `
-  <header class="page-head"><span class="eyebrow">Ventana oficial del grupo</span><h1>Agenda <em>Ágape</em></h1>
+  <header class="page-head"><span class="eyebrow">Ventana oficial del grupo</span><h1>Agenda <em>${ID.corto}</em></h1>
     <p>Encuentros, celebraciones y actividades de la pastoral, siempre al día. Lo que está aquí es lo oficial.</p></header>
   <div class="row-wrap" style="margin:14px 0 4px">
     ${admin ? `<button class="btn btn-primary btn-sm" data-action="agNew">${icon("plus")} Nuevo evento</button>` : ""}
-    <label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar encuentros Camino Ágape</label>
+    <label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar encuentros Camino ${ID.corto}</label>
     <span class="spacer"></span><button class="btn btn-sm btn-gold" data-action="agSub">${icon("grid")} Suscribirme al calendario</button>
   </div>
   <div class="ag-layout">
@@ -119,7 +122,7 @@ function paint() {
     cells.push(`<button class="ag-day${out ? " out" : ""}${key === todayIso() ? " today" : ""}${key === selDay ? " sel" : ""}" data-action="agDay" data-day="${key}" aria-label="${esc(longDate(key))}${evs.length ? `, ${evs.length} evento${evs.length > 1 ? "s" : ""}` : ""}">
       <span class="ag-n">${d.getDate()}</span>
       <span class="ag-dots">${evs.slice(0, 3).map((e) => `<i style="background:${(TYPES[e.type] || TYPES.otro).color}" title="${esc(e.title)}"></i>`).join("")}${evs.length > 3 ? `<b>+${evs.length - 3}</b>` : ""}</span>
-      <span class="ag-titles">${evs.slice(0, 2).map((e) => `<span style="--c:${(TYPES[e.type] || TYPES.otro).color}">${esc(e.title.replace(/^Camino Ágape · /, ""))}</span>`).join("")}</span>
+      <span class="ag-titles">${evs.slice(0, 2).map((e) => `<span style="--c:${(TYPES[e.type] || TYPES.otro).color}">${esc(e.title.replace(CAMINO_RE, ""))}</span>`).join("")}</span>
     </button>`);
   }
   grid.innerHTML = DIAS.map((d) => `<span class="ag-dow">${d}</span>`).join("") + cells.join("");
@@ -222,15 +225,15 @@ function ics(e) {
   const t = (s) => s.replace(":", "") + "00";
   const esc2 = (s) => String(s || "").replace(/[\\,;]/g, (m) => "\\" + m).replace(/\n/g, "\\n");
   const next = new Date(parse(e.date)); next.setDate(next.getDate() + 1);
-  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", "PRODID:-//Pastoral Juvenil Agape//Agenda//ES", "BEGIN:VEVENT",
-    `UID:${e.id}@pj-agape`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
+  const lines = ["BEGIN:VCALENDAR", "VERSION:2.0", `PRODID:-//${ID.nombre}//Agenda//ES`, "BEGIN:VEVENT",
+    `UID:${e.id}@${ID.dominio}`, `DTSTAMP:${new Date().toISOString().replace(/[-:]/g, "").slice(0, 15)}Z`,
     e.start ? `DTSTART;TZID=America/Santiago:${d}T${t(e.start)}` : `DTSTART;VALUE=DATE:${d}`,
     e.start ? `DTEND;TZID=America/Santiago:${d}T${t(e.end || e.start)}` : `DTEND;VALUE=DATE:${iso(next).replace(/-/g, "")}`,
     rrule(e, !e.start), (e.exdates || []).length ? (e.start ? `EXDATE;TZID=America/Santiago:${e.exdates.map((x) => x.replace(/-/g, "") + "T" + t(e.start)).join(",")}` : `EXDATE;VALUE=DATE:${e.exdates.map((x) => x.replace(/-/g, "")).join(",")}`) : "",
     `SUMMARY:${esc2(e.title)}`, e.place ? `LOCATION:${esc2(e.place)}` : "", e.desc ? `DESCRIPTION:${esc2(e.desc)}` : "",
     "END:VEVENT", "END:VCALENDAR"].filter(Boolean);
   const blob = new Blob([lines.join("\r\n")], { type: "text/calendar" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `agape-${e.date}.ics`;
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `${ID.prefijo}-${e.date}.ics`;
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
@@ -244,8 +247,8 @@ export async function homeNext() {
   const list = [...expand(own.filter((e) => e.date), t, shiftIso(t, 120)), ...camino].filter((e) => e.date >= t).sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || ""))).slice(0, 3);
   if (!list.length || !document.getElementById("agendaSlot")) return;
   document.getElementById("agendaSlot").innerHTML = `<a class="card link ag-home" href="#/agenda">
-    <span class="eyebrow">${icon("grid")} Agenda Ágape</span>
-    <div class="ag-home-list">${list.map((e) => { const d = parse(e.date); return `<span class="ag-home-ev" style="--c:${(TYPES[e.type] || TYPES.otro).color}"><b>${d.getDate()} ${MESES[d.getMonth()].slice(0, 3)}</b>${esc(e.title.replace(/^Camino Ágape · /, ""))}${e.start ? ` · ${esc(e.start)}` : ""}</span>`; }).join("")}</div>
+    <span class="eyebrow">${icon("grid")} Agenda ${ID.corto}</span>
+    <div class="ag-home-list">${list.map((e) => { const d = parse(e.date); return `<span class="ag-home-ev" style="--c:${(TYPES[e.type] || TYPES.otro).color}"><b>${d.getDate()} ${MESES[d.getMonth()].slice(0, 3)}</b>${esc(e.title.replace(CAMINO_RE, ""))}${e.start ? ` · ${esc(e.start)}` : ""}</span>`; }).join("")}</div>
     <span class="go">Ver la agenda completa ${icon("arrowR")}</span></a>`;
 }
 
@@ -256,15 +259,15 @@ function subDialog() {
   const google = "https://calendar.google.com/calendar/render?cid=" + encodeURIComponent(webcal);
   let d = document.getElementById("agSubDlg");
   if (!d) { d = document.createElement("dialog"); d.id = "agSubDlg"; d.className = "sheet"; document.body.appendChild(d); }
-  d.innerHTML = `<div class="sheet-head"><div style="flex:1"><span class="eyebrow">Agenda Ágape</span><h2>Suscríbete al calendario</h2></div>
+  d.innerHTML = `<div class="sheet-head"><div style="flex:1"><span class="eyebrow">Agenda ${ID.corto}</span><h2>Suscríbete al calendario</h2></div>
       <button type="button" class="icon-btn" data-action="agSubClose" aria-label="Cerrar">${icon("x")}</button></div>
     <div class="sheet-body stack" style="--gap:14px">
-      <p>Se hace una sola vez. Desde ahí, los eventos de la Agenda y los encuentros del Camino Ágape aparecen solos en tu calendario, y se actualizan cuando el equipo los cambia.</p>
+      <p>Se hace una sola vez. Desde ahí, los eventos de la Agenda y los encuentros del Camino ${ID.corto} aparecen solos en tu calendario, y se actualizan cuando el equipo los cambia.</p>
       <a class="card link ag-sub-o" href="${google}" target="_blank" rel="noopener"><strong>Google Calendar</strong><span class="muted small">Se abre Google Calendar: toca «Agregar». En el celular, hazlo una vez desde el computador o desde calendar.google.com.</span></a>
       <a class="card link ag-sub-o" href="${webcal}"><strong>iPhone, iPad o Mac</strong><span class="muted small">Se abre Calendario: toca «Suscribirse».</span></a>
       <div class="card ag-sub-o"><strong>Outlook u otro calendario</strong><span class="muted small">Agrega un calendario «desde internet» con esta dirección:</span>
         <div class="row-wrap" style="margin-top:8px"><input class="input" id="agSubUrl" readonly value="${ICS_URL}" style="flex:1;min-width:200px"><button class="btn btn-sm btn-primary" data-action="agSubCopy">${icon("copy")} Copiar</button></div></div>
-      <div class="note small"><b>¿Lo quieres en la pantalla de inicio?</b> Agrega el widget de tu calendario: en Android, mantén presionado un espacio libre → Widgets → Google Calendar; en iPhone, mantén presionado → «+» → Calendario. Verás ahí las próximas fechas de Ágape.</div>
+      <div class="note small"><b>¿Lo quieres en la pantalla de inicio?</b> Agrega el widget de tu calendario: en Android, mantén presionado un espacio libre → Widgets → Google Calendar; en iPhone, mantén presionado → «+» → Calendario. Verás ahí las próximas fechas de ${ID.corto}.</div>
       <p class="xs muted">Tu calendario revisa los cambios cada algunas horas (Google puede tardar hasta un día). El calendario es de solo lectura: los eventos los crea el equipo coordinador en esta Agenda.</p>
     </div>`;
   d.showModal();

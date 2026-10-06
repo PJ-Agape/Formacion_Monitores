@@ -3,6 +3,7 @@
 // Las canciones originales de Ágape vienen incluidas; el equipo agrega las que canta la comunidad.
 
 import { esc, icon, toast } from "./util.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -105,7 +106,7 @@ const firstChord = (body) => { const m = /\[([^\]]+)\]/.exec(body || ""); return
 // ---------------------------------------------------------------------------
 // Preferencias de lectura (por dispositivo)
 // ---------------------------------------------------------------------------
-const PK = "agape_cancionero";
+const PK = `${ID.prefijo}_cancionero`;
 let prefs = { nota: "us", chords: true, size: 1, shift: {} };
 try { prefs = { ...prefs, ...JSON.parse(localStorage.getItem(PK) || "{}") }; } catch {}
 const savePrefs = () => { try { localStorage.setItem(PK, JSON.stringify(prefs)); } catch {} };
@@ -129,7 +130,7 @@ const gate = () => {
   if (s.ready) return "";
   return `<div class="card wall-join"><span class="tile-ico tile-brand" style="margin:0">${icon("book")}</span>
     <div style="flex:1"><strong>Las canciones de la comunidad son para quienes tienen cuenta</strong>
-    <p class="muted small">Aquí ves las canciones originales de Ágape. Ingresa para ver todo el cancionero y los repertorios de cada misa.</p></div>
+    <p class="muted small">Aquí ves las canciones originales de ${ID.corto}. Ingresa para ver todo el cancionero y los repertorios de cada misa.</p></div>
     ${s.enabled ? `<button class="btn btn-primary btn-sm" data-action="signIn">Ingresar</button>` : ""}</div>`;
 };
 
@@ -140,7 +141,7 @@ export function viewList() {
   const staff = canEdit();
   ctx.onAfterRender(() => { repaint = paintList; watchAll(); paintList(); });
   return `
-  <header class="page-head"><span class="eyebrow">Para animar nuestras celebraciones</span><h1>Cancionero <em>Ágape</em></h1>
+  <header class="page-head"><span class="eyebrow">Para animar nuestras celebraciones</span><h1>Cancionero <em>${ID.corto}</em></h1>
     <p>Canciones con acordes para cada momento de la misa, en el tono que necesites. Ideal para ensayar y para proyectar.</p></header>
   <nav class="wall-tabs row-wrap" aria-label="Cancionero">
     <button class="btn btn-sm ${tab === "canciones" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="canciones">${icon("book")} Canciones</button>
@@ -173,7 +174,7 @@ function paintList() {
     box.innerHTML = list.length ? list.map((s) => `<a class="card link can-item" href="#/cancionero/${encodeURIComponent(s.id)}">
         <span class="can-key">${esc(chordName(firstChord(s.body), prefs.shift[s.id] || 0, prefs.nota) || "♪")}</span>
         <span class="can-main"><strong>${esc(s.title)}</strong><span class="muted small">${esc(s.author || "")}</span>
-          <span class="can-moms">${(s.momentos || []).map((m) => `<span class="chip">${esc(MLABEL[m] || m)}</span>`).join("")}${s.builtin ? `<span class="chip warn">Original Ágape</span>` : ""}</span></span>
+          <span class="can-moms">${(s.momentos || []).map((m) => `<span class="chip">${esc(MLABEL[m] || m)}</span>`).join("")}${s.builtin ? `<span class="chip warn">Original ${ID.corto}</span>` : ""}</span></span>
         ${icon("right")}</a>`).join("")
       : `<div class="card" style="text-align:center;padding:28px"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
          ${canEdit() ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNew">${icon("plus")} Agregar una canción</button>` : ""}</div>`;
@@ -407,7 +408,7 @@ function exportSet(o) {
   const groups = MOMENTOS.map(([k, l]) => ({ l, list: items.filter((x) => (x.song.momentos || []).includes(k)) })).filter((g) => g.list.length);
   const loose = items.filter((x) => !(x.song.momentos || []).length);
   if (loose.length) groups.push({ l: "Otras", list: loose });
-  return { title: o.momento ? `Cancionero Ágape · ${MLABEL[o.momento]}` : "Cancionero Ágape", sub: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", items, groups };
+  return { title: o.momento ? `Cancionero ${ID.corto} · ${MLABEL[o.momento]}` : `Cancionero ${ID.corto}`, sub: `${ID.nombre} · ${ID.parroquia}`, items, groups };
 }
 const shiftOf = (o, s) => (o.tono ? prefs.shift[s.id] || 0 : 0);
 
@@ -502,7 +503,7 @@ async function exportPPTX(set) {
   toast("Preparando la presentación…");
   const P = await loadPptx();
   const pptx = new P();
-  pptx.layout = "LAYOUT_WIDE"; pptx.title = set.title; pptx.company = "Pastoral Juvenil Ágape";
+  pptx.layout = "LAYOUT_WIDE"; pptx.title = set.title; pptx.company = `${ID.nombre}`;
   const BG = "0B2566", CREAM = "FFF6E5", GOLD = "FFBA03";
   const cover = pptx.addSlide(); cover.background = { color: BG };
   cover.addText(set.title, { x: 0.6, y: 2.4, w: 12.1, h: 1.6, fontFace: "Arial", fontSize: 54, bold: true, color: CREAM, align: "center" });

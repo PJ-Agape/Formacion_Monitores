@@ -6,6 +6,7 @@
 
 import { esc, icon } from "./util.js";
 import { illus, illusFor } from "./ilustraciones.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, cloud }
 let data = null;
@@ -105,7 +106,7 @@ export async function viewHub(year) {
   if (!next.length) next = d.encuentros.slice(-4);
   return `
   ${year ? `<div class="note" style="margin-bottom:10px">${icon("book")} Estás viendo una <b>edición archivada</b>. <a href="#/encuentros">Ir a la edición actual</a></div>` : ""}
-  <header class="page-head"><span class="eyebrow">${esc(d.ciclo)}</span><h1>Camino <em>Ágape</em></h1>
+  <header class="page-head"><span class="eyebrow">${esc(d.ciclo)}</span><h1>Camino <em>${ID.corto}</em></h1>
     <p>${esc(d.subtitle)}. ${esc(d.claim)}</p></header>
   <div class="grid grid-2" style="margin-top:18px">${card("principal")}${card("coordinacion")}</div>
   <h2 class="mag-hub-sub">Revistas del joven</h2>
@@ -128,7 +129,7 @@ export async function viewRevista(k, year) {
   data = d;
   const base = baseOf(year);
   if (k === "coordinacion" && !canSeeGuide()) {
-    return `<a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino Ágape${year ? " " + esc(year) : ""}</a>
+    return `<a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino ${ID.corto}${year ? " " + esc(year) : ""}</a>
       <div class="card" style="text-align:center;padding:32px;margin-top:14px">
       <div class="tile-ico tile-brand" style="margin:0 auto 12px">${icon("lock")}</div>
       <h2 class="display">La guía de coordinación es para el equipo</h2>
@@ -145,7 +146,7 @@ export async function viewRevista(k, year) {
   const back = k === "coordinacion" ? "" : backPage(d);
   return `
   <div class="row-wrap no-print" style="margin-bottom:12px">
-    <a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino Ágape${year ? " " + esc(year) : ""}</a><span class="spacer"></span>
+    <a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino ${ID.corto}${year ? " " + esc(year) : ""}</a><span class="spacer"></span>
     ${paged ? `<button class="btn btn-sm btn-soft" data-action="magPrint" data-scope="one">${icon("print")} Solo este encuentro</button>` : ""}
     <button class="btn btn-sm btn-primary" data-action="magPrint" data-scope="all">${icon("dl")} Revista completa (PDF)</button>
   </div>
@@ -186,12 +187,12 @@ function cover(d, k) {
   const hand = st ? `tu revista · etapa ${r.n}` : k === "principal" ? "la revista principal" : "guía de coordinación";
   return `<section class="z-page z-cover">
       <i class="z-blob b1"></i><i class="z-blob b2"></i><i class="z-blob b3"></i>
-      <div class="z-cover-top"><span>Camino Ágape</span><img src="icons/logo-320.webp" alt="Logo Ágape Joven PJ" width="130" height="130"></div>
+      <div class="z-cover-top"><span>Camino ${ID.corto}</span><img src="icons/logo-320.webp" alt="Logo ${ID.corto} Joven PJ" width="130" height="130"></div>
       <span class="z-hand z-tilt">${esc(hand)}</span>
       <h1 class="z-mega">${esc(big)}</h1>
       <div class="z-cover-card"><b>${esc(st ? st.name : r.short)}</b><span>${esc(d.ciclo)}</span></div>
       ${illus({ principal: "equipo", coordinacion: "mesa", ingreso: "acogida", madurez: "camino", aspirante: "servir" }[k], "z-illus-cover")}
-      <p class="z-cover-foot">Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay</p>
+      <p class="z-cover-foot">${ID.nombre} · ${ID.parroquia}</p>
     </section>`;
 }
 function tramoPage(d, t, encs) {
@@ -286,7 +287,7 @@ function principalPages(d) {
 function churchCards(d) {
   const dio = d.diocesis;
   return `<h3 class="z-h">${esc(dio.nombre)} <small class="z-h-sub">${esc(dio.doc)}</small></h3>
-    <div class="z-cards z-cards-2">${dio.prioridades.map((p) => `<div class="z-card"><span class="z-card-n">${p.n}</span><h3>${esc(p.titulo)}</h3><p>${esc(p.texto)}</p><p class="z-agape"><b>En Ágape:</b> ${esc(p.agape)}</p></div>`).join("")}</div>
+    <div class="z-cards z-cards-2">${dio.prioridades.map((p) => `<div class="z-card"><span class="z-card-n">${p.n}</span><h3>${esc(p.titulo)}</h3><p>${esc(p.texto)}</p><p class="z-agape"><b>En ${esc(ID.corto)}:</b> ${esc(p.agape)}</p></div>`).join("")}</div>
     <p class="z-text z-small">${esc(dio.nota)}</p>`;
 }
 function popePage(d) {

@@ -1,9 +1,10 @@
 // Service worker: permite usar la app sin conexión.
 // Sube este número cuando cambies archivos de la app (html, css, js) para renovar la caché.
-const VERSION = "agape-v74";
+// El prefijo viene de parroquia.json: así dos parroquias en la misma cuenta de GitHub no se borran la caché.
+const VERSION = "agape-v75";
 const SHELL = [
   "./", "index.html", "css/app.css",
-  "js/app.js", "js/admin.js", "js/store.js", "js/util.js", "js/config.js", "js/cloud.js", "js/muro.js", "js/chat.js", "js/agenda.js", "js/encuentros.js", "js/ilustraciones.js", "js/portada.js", "js/capilla.js", "js/cancionero.js", "js/repeat.js", "js/avatares.js", "js/dinamicas.js", "js/acompanar.js", "js/desafio.js", "js/qrcode.mjs", "js/qrcode-utf8.mjs",
+  "js/app.js", "js/admin.js", "js/store.js", "js/util.js", "js/config.js", "js/identidad.js", "js/cloud.js", "js/muro.js", "js/chat.js", "js/agenda.js", "js/encuentros.js", "js/ilustraciones.js", "js/portada.js", "js/capilla.js", "js/cancionero.js", "js/repeat.js", "js/avatares.js", "js/dinamicas.js", "js/acompanar.js", "js/desafio.js", "js/qrcode.mjs", "js/qrcode-utf8.mjs",
   "fonts/fraunces-latin-wght-normal.woff2", "fonts/fraunces-latin-wght-italic.woff2", "fonts/plus-jakarta-sans-latin-wght-normal.woff2", "fonts/bricolage-grotesque-latin-standard-normal.woff2", "fonts/caveat-latin-700-normal.woff2",
   "icons/logo-160.webp", "icons/logo-320.webp", "icons/favicon-64.png", "icons/icon-192.png", "manifest.webmanifest", "data/contenido.json", "data/encuentros.json",
 ];
@@ -14,7 +15,7 @@ self.addEventListener("install", (e) => {
 
 self.addEventListener("activate", (e) => {
   e.waitUntil(
-    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSION).map((k) => caches.delete(k))))
+    caches.keys().then((keys) => Promise.all(keys.filter((k) => k !== VERSION && k.startsWith(VERSION.split("-v")[0] + "-v")).map((k) => caches.delete(k))))
       .then(() => self.clients.claim())
   );
 });

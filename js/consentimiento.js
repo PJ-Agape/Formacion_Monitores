@@ -2,13 +2,15 @@
 // La familia lo firma y el equipo lo guarda en el fichero en papel; en la app solo queda
 // registrado que se recibió, la fecha y qué autorizaron (honor, cumpleaños, fotos).
 
+import { ID } from "./identidad.js";
+
 const WIN = /[^\n\x20-\x7E\xA0-\xFF–—‘’“”•…€]/g;
 const clean = (s) => String(s || "").replace(/[«»]/g, (m) => (m === "«" ? "“" : "”")).replace(WIN, "");
 
 export async function pdfBytes({ nombre = "", etapa = "", correo = "" } = {}) {
   const { PDFDocument, StandardFonts, rgb } = await import("./vendor/pdf-lib.mjs");
   const doc = await PDFDocument.create();
-  doc.setTitle("Consentimiento · Cuenta en la app de Ágape"); doc.setAuthor("Pastoral Juvenil Ágape");
+  doc.setTitle(`Consentimiento · Cuenta en la app de ${ID.corto}`); doc.setAuthor(`${ID.nombre}`);
   const page = doc.addPage([612, 792]), form = doc.getForm();
   const F = await doc.embedFont(StandardFonts.Helvetica), B = await doc.embedFont(StandardFonts.HelveticaBold);
   const hex = (h) => rgb(parseInt(h.slice(1, 3), 16) / 255, parseInt(h.slice(3, 5), 16) / 255, parseInt(h.slice(5, 7), 16) / 255);
@@ -37,13 +39,13 @@ export async function pdfBytes({ nombre = "", etapa = "", correo = "" } = {}) {
   };
 
   try { const png = await fetch(new URL("../icons/icon-192.png", import.meta.url)).then((r) => (r.ok ? r.arrayBuffer() : null)); if (png) page.drawImage(await doc.embedPng(png), { x: M, y: y - 34, width: 42, height: 42 }); } catch {}
-  text("PASTORAL JUVENIL ÁGAPE", M + 52, y - 10, { f: B, size: 10 });
-  text("Parroquia San Miguel de Yungay · Diócesis San Bartolomé de Chillán", M + 52, y - 24, { size: 8.5, color: SOFT });
+  text(`${ID.NOMBRE}`, M + 52, y - 10, { f: B, size: 10 });
+  text(`${ID.parroquia} · ${ID.diocesis}`, M + 52, y - 24, { size: 8.5, color: SOFT });
   const tag = "CONSENTIMIENTO", tw = B.widthOfTextAtSize(tag, 9) + 20;
   page.drawRectangle({ x: 612 - M - tw, y: y - 22, width: tw, height: 20, color: SUN, borderColor: INK, borderWidth: 1 });
   text(tag, 612 - M - tw + 10, y - 15.5, { f: B, size: 9 });
   y -= 62;
-  text("Cuenta en la app de Ágape", M, y, { f: B, size: 20 }); y -= 18;
+  text(`Cuenta en la app de ${ID.corto}`, M, y, { f: B, size: 20 }); y -= 18;
   text("Para papás, mamás y apoderados", M, y, { f: B, size: 12, color: CORAL }); y -= 20;
 
   // Qué es y qué datos guarda
@@ -69,7 +71,7 @@ export async function pdfBytes({ nombre = "", etapa = "", correo = "" } = {}) {
   field("Parentesco", M, y, (W - G) / 2); field("Teléfono", M + (W - G) / 2 + G, y, (W - G) / 2); y -= 26;
 
   text("MARQUE LO QUE AUTORIZA", M, y, { f: B, size: 8, color: CORAL }); y -= 16;
-  y = check("Autorizo que mi hijo/a o pupilo/a tenga una cuenta en la app de Ágape, en las condiciones descritas arriba. (Necesario para crear la cuenta)", y, true) - 6;
+  y = check(`Autorizo que mi hijo/a o pupilo/a tenga una cuenta en la app de ${ID.corto}, en las condiciones descritas arriba. (Necesario para crear la cuenta)`, y, true) - 6;
   y = check("Puede aparecer con su nombre e inicial en el cuadro de honor del grupo (también visible en la página para familias).", y) - 6;
   y = check("Su cumpleaños (día y mes) puede mostrarse en la app a los demás miembros del grupo.", y) - 6;
   y = check("Puede aparecer en fotos de la pastoral, solo en sus canales oficiales.", y) - 36;
@@ -87,6 +89,6 @@ export async function download(info = {}) {
   const a = document.createElement("a");
   a.href = URL.createObjectURL(new Blob([bytes], { type: "application/pdf" }));
   const slug = String(info.nombre || "").normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "");
-  a.download = `consentimiento-app-agape${slug ? "-" + slug : ""}.pdf`;
+  a.download = `consentimiento-app-${ID.prefijo}${slug ? "-" + slug : ""}.pdf`;
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
 }

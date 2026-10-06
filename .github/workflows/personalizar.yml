@@ -1,0 +1,33 @@
+# Aplica la identidad de parroquia.json (y logo.png, si lo subes) a toda la app.
+# Corre sola cada vez que se guarda parroquia.json o logo.png en GitHub.
+# Si algo está mal escrito, la acción queda en rojo y explica qué corregir (pestaña Actions).
+name: Personalizar la app
+on:
+  push:
+    branches: [main]
+    paths: ["parroquia.json", "logo.png", "scripts/personalizar.mjs"]
+  workflow_dispatch:
+permissions:
+  contents: write
+concurrency: { group: personalizar, cancel-in-progress: false }
+jobs:
+  personalizar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Herramienta para los íconos (solo si hay logo.png)
+        run: if [ -f logo.png ]; then npm install --no-save --no-package-lock sharp@0.33; fi
+      - run: node scripts/personalizar.mjs
+      - name: Publicar si cambió
+        run: |
+          rm -rf node_modules
+          if [ -n "$(git status --porcelain)" ]; then
+            git config user.name "personalizar-bot"
+            git config user.email "personalizar-bot@users.noreply.github.com"
+            git add -A
+            git commit -m "Personalizar: aplicar identidad de parroquia.json"
+            git pull --rebase -q origin main
+            git push
+          fi

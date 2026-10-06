@@ -3,6 +3,7 @@
 
 import { esc, icon } from "./util.js";
 import { illus } from "./ilustraciones.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -19,14 +20,14 @@ const T = [
   // Primeros pasos
   { t: "inicio", q: "¿Cómo entro a la app?", who: ["visitante"], a: ["Toca «Ingresar» arriba a la derecha.", "Elige «Continuar con Google» con el correo con que te invitaron.", "Si dice que tu correo no está invitado, pídele al equipo que te invite con ese correo."], go: "#/perfil", el: "[data-action=signIn]" },
   { t: "inicio", q: "¿Cómo instalo la app en mi celular?", who: ["visitante", ...CUENTA], a: ["En Android (Chrome): menú ⋮ → «Instalar app» o «Agregar a pantalla principal».", "En iPhone (Safari): botón Compartir → «Agregar a inicio».", "Queda como un ícono más y funciona aunque tengas poca señal."], go: "#/perfil", el: "[data-action=install]" },
-  { t: "inicio", q: "¿Cómo pongo el marco de Ágape en mi foto de perfil?", who: CUENTA, a: ["En Inicio toca «Estudio de difusión» → «Marco de foto».", "Elige tu foto y un marco; ajusta con «Acercar» y «Mover».", "Toca «Descargar» y ponla de foto en WhatsApp o Facebook. Tu foto no se sube a ninguna parte."], go: "#/difusion", el: ".dif-tabs" },
+  { t: "inicio", q: `¿Cómo pongo el marco de ${ID.corto} en mi foto de perfil?`, who: CUENTA, a: ["En Inicio toca «Estudio de difusión» → «Marco de foto».", "Elige tu foto y un marco; ajusta con «Acercar» y «Mover».", "Toca «Descargar» y ponla de foto en WhatsApp o Facebook. Tu foto no se sube a ninguna parte."], go: "#/difusion", el: ".dif-tabs" },
   { t: "inicio", q: "¿Cómo hago una historia o invito a alguien?", who: CUENTA, a: ["En «Estudio de difusión» elige una plantilla: frase, actividad de la agenda, cuenta regresiva o invitación.", "Cambia estilo, dibujo y formato (Estado, post o cuadrado).", "Toca «Compartir» para mandarla directo a WhatsApp o Instagram."], go: "#/difusion", el: ".dif-form" },
   { t: "inicio", q: "¿Cómo agrando la letra o hago que la app me lea?", who: ["visitante", ...CUENTA], a: ["Abre «Accesibilidad» (al final de cualquier página o en Mi perfil).", "Elige el tamaño de la letra y activa «Lectura fácil» si quieres textos más claros.", "Activa «Escuchar» y aparecerá un botón para que el teléfono te lea en voz alta."], go: "#/accesibilidad", el: "#a11yPanel" },
   { t: "comunidad", q: "¿Cómo acompaño a un joven con discapacidad?", who: GUIAS, a: ["Pregúntale a la persona y a su familia qué le ayuda y qué le gusta. No decidas en su lugar.", "Dale tiempo: espera su respuesta y no respondas por ella.", "Explica con ejemplos concretos y frases cortas; muestra en vez de solo decir.", "Ofrece formas de participar sin hablar en público: escribir, dibujar, encender la vela, tocar un instrumento.", "En las dinámicas, adapta las reglas para que todos puedan jugar.", "Muéstrale «Accesibilidad»: letra grande, lectura fácil y «Escuchar»."], go: "#/accesibilidad" },
   { t: "inicio", q: "¿Cómo elijo mi avatar?", who: CUENTA, a: ["Entra a Mi perfil (tu nombre, arriba a la derecha).", "Arma tu monito: fondo, piel, peinado, cara y un detalle.", "Toca «Guardar avatar». Se verá en el chat y en el muro."], go: "#/perfil", el: "#avCard" },
   { t: "inicio", q: "¿Qué es el desafío de la semana?", who: CUENTA, a: ["Es un gesto concreto para vivir lo del encuentro durante la semana. Aparece en Inicio.", "Cuando lo hagas, toca «¡Lo cumplí!». Los demás verán que lo cumpliste."], go: "#/", el: "[data-action=desDone]" },
   { t: "inicio", q: "¿Dónde veo mi pasaporte y mis sellos?", who: CUENTA, a: ["En Mi perfil → «Mi pasaporte», o desde la tarjeta de Inicio.", "Cada encuentro al que vas suma; los sellos los entregan tus dirigentes."], go: "#/pasaporte" },
-  { t: "inicio", q: "Soy nuevo: ¿quiero ser dirigente, por dónde parto?", who: ["visitante"], a: ["Mira la presentación «Sé puente»: cuenta qué es ser dirigente en Ágape.", "Después conversa con alguien del equipo: ellos te invitan a la app."], href: "presentaciones/se-puente.html" },
+  { t: "inicio", q: "Soy nuevo: ¿quiero ser dirigente, por dónde parto?", who: ["visitante"], a: [`Mira la presentación «Sé puente»: cuenta qué es ser dirigente en ${ID.corto}.`, "Después conversa con alguien del equipo: ellos te invitan a la app."], href: "presentaciones/se-puente.html" },
 
   // Mi Camino
   { t: "camino", q: "¿Qué encuentro me toca esta semana?", who: ["joven", "aspirante"], a: ["Abre «Mi Camino» en el menú.", "Arriba está el encuentro de esta semana de tu etapa. Los siguientes se abren solos cada semana."], go: "#/mi-camino" },
@@ -54,7 +55,7 @@ const T = [
   { t: "oracion", q: "¿Cómo exporto el cancionero?", who: CUENTA, a: ["En el Cancionero, toca «Exportar».", "Elige PDF, PowerPoint o texto."], go: "#/cancionero", el: "[data-action=canExport]" },
   { t: "oracion", q: "¿Quiero ayudar con el cancionero, cómo lo hago?", who: CUENTA, a: ["El cancionero está en construcción y lo armamos entre todos.", "Pídele al equipo que te habilite: un administrador lo activa en tu ficha de Gestión.", "Con eso podrás agregar canciones, corregirlas y armar los repertorios de las misas."], go: "#/cancionero" },
   { t: "admin", q: "¿Cómo habilito a alguien para el cancionero?", who: ["admin"], a: ["En Gestión → Dirigentes, abre la ficha de la persona.", "En «Apostolado del cancionero» marca «Ayuda a construir el cancionero».", "Podrá agregar y editar canciones y repertorios. Borrar sigue siendo del equipo."], go: "#/admin/dirigentes" },
-  { t: "oracion", q: "¿Cómo agrego una canción?", who: CUENTA, a: ["Si eres del equipo o te habilitaron para el cancionero, toca «Agregar una canción».", "Pega la letra con los acordes entre corchetes, justo antes de la sílaba: [G]Somos jóvenes de [D]Yungay."], go: "#/cancionero", el: "[data-action=canNew]" },
+  { t: "oracion", q: "¿Cómo agrego una canción?", who: CUENTA, a: ["Si eres del equipo o te habilitaron para el cancionero, toca «Agregar una canción».", `Pega la letra con los acordes entre corchetes, justo antes de la sílaba: [G]Somos jóvenes de [D]${ID.comuna}.`], go: "#/cancionero", el: "[data-action=canNew]" },
 
   // Formación
   { t: "itinerario", q: "¿Cómo avanzo en el curso?", who: ["aspirante", ...GUIAS], a: ["En Formación, toca la unidad que sigue: se abre como presentación.", "En la última lámina toca «Marcar unidad como completada». Al completar todas las de un módulo se abre su evaluación."], go: "#/itinerario" },

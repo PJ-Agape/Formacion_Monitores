@@ -3,8 +3,9 @@
 // sin cuenta: cada persona la ajusta a su medida desde Mi perfil o #/accesibilidad.
 
 import { esc } from "./util.js";
+import { ID } from "./identidad.js";
 
-const K = "agape_a11y_v1";
+const K = `${ID.prefijo}_a11y_v1`;
 const DEF = { size: 0, facil: false, calma: false, contraste: false, voz: false };
 let P = { ...DEF };
 try { P = { ...DEF, ...JSON.parse(localStorage.getItem(K) || "{}") }; } catch {}
@@ -45,7 +46,7 @@ export function panelHTML() {
 }
 export function viewPage() {
   return `<header class="page-head"><span class="eyebrow">Para todos</span><h1>Una app a tu <em>medida</em></h1>
-    <p>En Ágape hay un lugar para cada uno. Aquí puedes hacer la letra más grande, pedir que la app te lea en voz alta y más.</p></header>
+    <p>En ${ID.corto} hay un lugar para cada uno. Aquí puedes hacer la letra más grande, pedir que la app te lea en voz alta y más.</p></header>
     ${panelHTML()}`;
 }
 
@@ -133,7 +134,7 @@ document.addEventListener("click", (e) => {
   const t = e.target.closest("[data-a11y-say], [data-a11y-test]");
   if (!t) return;
   e.preventDefault(); e.stopPropagation();
-  if (t.hasAttribute("data-a11y-test")) return say("Hola. Así te voy a leer los encuentros y las oraciones de Ágape.");
+  if (t.hasAttribute("data-a11y-test")) return say(`Hola. Así te voy a leer los encuentros y las oraciones de ${ID.corto}.`);
   if (t.getAttribute("aria-pressed") === "true") return stop();
   if (t.dataset.a11ySay === "page") {
     const v = document.getElementById("view");
