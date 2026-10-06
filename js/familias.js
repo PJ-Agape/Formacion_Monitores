@@ -9,6 +9,7 @@ import { occurrences, isRepeat, describe as repeatText } from "./repeat.js";
 import { merge } from "./familias-contenido.js";
 import * as autz from "./autorizacion.js";
 import * as cuenta from "./cuenta.js";
+import { ID } from "./identidad.js";
 
 const $ = (s) => document.querySelector(s);
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
@@ -101,7 +102,7 @@ function contactHTML(c) {
     tel ? `<a class="fam-c" href="tel:${esc(tel)}">📞 <span><b>Teléfono</b>${esc(c.telefono)}</span></a>` : "",
     wa ? `<a class="fam-c" href="https://wa.me/${esc(wa)}" target="_blank" rel="noopener">💬 <span><b>WhatsApp</b>${esc(c.whatsapp)}</span></a>` : "",
     c.correo ? `<a class="fam-c" href="mailto:${esc(c.correo)}">✉️ <span><b>Correo</b>${esc(c.correo)}</span></a>` : "",
-    c.direccion ? `<a class="fam-c" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.direccion + ", Yungay, Chile")}" target="_blank" rel="noopener">📍 <span><b>Dónde estamos</b>${esc(c.direccion)}</span></a>` : "",
+    c.direccion ? `<a class="fam-c" href="https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(c.direccion + `, ${ID.comuna}, Chile`)}" target="_blank" rel="noopener">📍 <span><b>Dónde estamos</b>${esc(c.direccion)}</span></a>` : "",
     c.instagram ? `<a class="fam-c" href="https://instagram.com/${esc(c.instagram.replace(/^@|.*instagram\.com\//g, "").replace(/\/.*/, ""))}" target="_blank" rel="noopener">📸 <span><b>Instagram</b>${esc(c.instagram)}</span></a>` : "",
     c.facebook ? `<a class="fam-c" href="${esc(/^https?:/.test(c.facebook) ? c.facebook : "https://facebook.com/" + c.facebook)}" target="_blank" rel="noopener">👍 <span><b>Facebook</b>${esc(c.facebook.replace(/^https?:\/\/(www\.)?facebook\.com\//, ""))}</span></a>` : "",
   ].filter(Boolean);
@@ -136,7 +137,7 @@ async function main() {
     ${C.carta.titulo ? `<h2>${esc(C.carta.titulo)}</h2>` : ""}<div class="fam-carta-t">${esc(C.carta.texto).replace(/\n/g, "<br>")}</div>
     ${C.carta.firma ? `<p class="fam-firma">${esc(C.carta.firma)}</p>` : ""}</section>` : ""}
 
-  ${!sem && fuera(cam) ? `<section class="fam-sec fam-semana"><div><span class="fam-k">Camino Ágape</span>
+  ${!sem && fuera(cam) ? `<section class="fam-sec fam-semana"><div><span class="fam-k">Camino ${ID.corto}</span>
       <h2>En estos meses nos estamos preparando para el año siguiente.</h2>
       <p>${esc(fuera(cam))}</p></div>${illus("familia")}</section>` : ""}
   ${sem ? `<section class="fam-sec fam-semana">

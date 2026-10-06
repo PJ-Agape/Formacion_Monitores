@@ -4,8 +4,9 @@
 // pdf-lib se carga solo al descargar.
 
 import { esc } from "./util.js";
+import { ID } from "./identidad.js";
 
-export const TEXTO_DEF = "Autorizo a mi hijo/a o pupilo/a a participar en la actividad descrita, organizada por la Pastoral Juvenil Ágape de la Parroquia San Miguel de Yungay. Declaro conocer su horario, lugar y condiciones, y me comprometo a avisar al equipo cualquier cambio en los datos de contacto o de salud.";
+export const TEXTO_DEF = `Autorizo a mi hijo/a o pupilo/a a participar en la actividad descrita, organizada por ${ID.elNombre} ${ID.deParroquia}. Declaro conocer su horario, lugar y condiciones, y me comprometo a avisar al equipo cualquier cambio en los datos de contacto o de salud.`;
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const DIAS = ["domingo", "lunes", "martes", "miércoles", "jueves", "viernes", "sábado"];
 const parse = (s) => { const [y, m, d] = String(s).split("-").map(Number); return new Date(y, m - 1, d); };
@@ -88,7 +89,7 @@ export async function pdfBytes(ev) {
   const a = ev.auth || {};
   const doc = await PDFDocument.create();
   doc.setTitle(clean(`Autorización · ${ev.title}`));
-  doc.setAuthor("Pastoral Juvenil Ágape");
+  doc.setAuthor(`${ID.nombre}`);
   const page = doc.addPage([612, 792]);
   const form = doc.getForm();
   const F = await doc.embedFont(StandardFonts.Helvetica), B = await doc.embedFont(StandardFonts.HelveticaBold);
@@ -134,8 +135,8 @@ export async function pdfBytes(ev) {
     const png = await fetch(new URL("../icons/icon-192.png", import.meta.url)).then((r) => (r.ok ? r.arrayBuffer() : null));
     if (png) page.drawImage(await doc.embedPng(png), { x: M, y: y - 34, width: 42, height: 42 });
   } catch {}
-  text("PASTORAL JUVENIL ÁGAPE", M + 52, y - 10, { f: B, size: 10 });
-  text("Parroquia San Miguel de Yungay · Diócesis San Bartolomé de Chillán", M + 52, y - 24, { size: 8.5, color: SOFT });
+  text(`${ID.NOMBRE}`, M + 52, y - 10, { f: B, size: 10 });
+  text(`${ID.parroquia} · ${ID.diocesis}`, M + 52, y - 24, { size: 8.5, color: SOFT });
   const tag = "AUTORIZACIÓN";
   const tw = B.widthOfTextAtSize(tag, 9) + 20;
   page.drawRectangle({ x: 612 - M - tw, y: y - 22, width: tw, height: 20, color: SUN, borderColor: INK, borderWidth: 1 });

@@ -7,11 +7,13 @@ import * as cloud from "./cloud.js";
 import * as S from "./store.js";
 import { esc, icon, toast } from "./util.js";
 import { nextOn } from "./repeat.js";
+import { ID } from "./identidad.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 // Los códigos QR siempre llevan al sitio oficial (también desde el sitio de prueba).
-const LIVE = "https://pj-agape.github.io/Formacion_Monitores/";
-const BASE = () => (/pj-agape\.github\.io$/.test(location.hostname) ? location.href.split("#")[0] : LIVE);
+const LIVE = `${ID.url}`;
+// Desde el sitio oficial se usa la dirección actual; desde una copia de prueba, la oficial.
+const BASE = () => (location.hostname === new URL(LIVE).hostname ? location.href.split("#")[0] : LIVE);
 const URLS = {
   app: () => BASE(),
   puente: () => new URL("presentaciones/se-puente.html", BASE()).href,
@@ -39,14 +41,14 @@ const myName = () => ((cloud.enabled && cloud.state().account?.name) || S.getPro
 export async function view() {
   const s = cloud.enabled ? cloud.state() : { ready: true };
   if (cloud.enabled && !s.ready) return `<header class="page-head"><span class="eyebrow">Difusión</span><h1>Estudio de <em>difusión</em></h1>
-    <p>Marcos de foto, historias, invitaciones y stickers de Ágape. Es para quienes tienen cuenta.</p></header>
+    <p>Marcos de foto, historias, invitaciones y stickers de ${ID.corto}. Es para quienes tienen cuenta.</p></header>
     <div class="card" style="margin-top:16px"><a class="btn btn-primary" href="#/perfil">${icon("users")} Ingresar</a></div>`;
   const today = isoDay(new Date());
   events = (await cloud.listAgenda().catch(() => [])).map((e) => ({ ...e, when: nextOn(e, today) || e.date })).filter((e) => e.when && e.when >= today).sort((a, b) => a.when.localeCompare(b.when)).slice(0, 12);
   if (!st.ev && events[0]) st.ev = events[0].id;
   ctx.onAfterRender(() => { E.ready().then(paint); });
   return `<header class="page-head"><span class="eyebrow">Difusión</span><h1>Estudio de <em>difusión</em></h1>
-    <p>Arma piezas con la identidad de Ágape para tus Estados, historias y grupos. Se hacen en tu teléfono y las descargas o compartes al tiro.</p></header>
+    <p>Arma piezas con la identidad de ${ID.corto} para tus Estados, historias y grupos. Se hacen en tu teléfono y las descargas o compartes al tiro.</p></header>
     <div class="dif-tabs seg" role="tablist" aria-label="Qué quieres hacer">
       ${[["piezas", "Historias y posts"], ["marco", "Marco de foto"], ["stickers", "Stickers"], ["fondos", "Fondos de pantalla"]].map(([k, l]) => `<label><input type="radio" name="difTab" value="${k}" ${st.tab === k ? "checked" : ""}><span>${l}</span></label>`).join("")}
     </div>
@@ -55,7 +57,7 @@ export async function view() {
 function body() { return st.tab === "marco" ? marcoHTML() : st.tab === "stickers" ? stickersHTML() : st.tab === "fondos" ? fondosHTML() : piezasHTML(); }
 
 // --- Historias, posts e invitaciones ---------------------------------------
-const TPLS = [["frase", "Frase de Ágape"], ["evento", "Actividad de la agenda"], ["cuenta", "Cuenta regresiva"], ["invita", "Invitación personal"]];
+const TPLS = [["frase", `Frase de ${ID.corto}`], ["evento", "Actividad de la agenda"], ["cuenta", "Cuenta regresiva"], ["invita", "Invitación personal"]];
 function piezasHTML() {
   const sel = (name, opts, cur) => `<select class="input" data-dif="${name}">${opts.map(([v, l]) => `<option value="${esc(v)}" ${String(v) === String(cur) ? "selected" : ""}>${esc(l)}</option>`).join("")}</select>`;
   const evOpts = events.length ? events.map((e) => [e.id, `${fmtDate(e.when)} · ${clean(e.title)}`]) : [["", "No hay actividades próximas"]];
@@ -76,7 +78,7 @@ function piezasHTML() {
           <div class="field"><label>Frase a mano</label><input class="input" data-dif="hand" maxlength="34" value="${esc(st.hand)}"></div>
           <div class="field"><label>Detalle</label><input class="input" data-dif="sub" maxlength="70" value="${esc(st.sub)}"></div>
         </div></details>
-      <div class="field"><label>Código QR</label>${sel("qr", [["", "Sin código"], ["app", "A la app de Ágape"], ["puente", "A «Sé puente» (para invitar)"], ["familias", "A la página para familias"]], st.qr)}</div>
+      <div class="field"><label>Código QR</label>${sel("qr", [["", "Sin código"], ["app", `A la app de ${ID.corto}`], ["puente", "A «Sé puente» (para invitar)"], ["familias", "A la página para familias"]], st.qr)}</div>
       ${actionsHTML()}
     </form></div>`;
 }
@@ -92,7 +94,7 @@ function fmtDate(iso) { const [y, m, d] = iso.split("-").map(Number); const dt =
 function pieceData() {
   let d = {};
   const e = events.find((x) => x.id === st.ev);
-  if (st.tpl === "frase") { const p = E.PHRASES[st.phrase] || E.PHRASES[0]; d = { title: p.title, hand: p.hand, sub: "Parroquia San Miguel de Yungay", ill: p.ill }; }
+  if (st.tpl === "frase") { const p = E.PHRASES[st.phrase] || E.PHRASES[0]; d = { title: p.title, hand: p.hand, sub: `${ID.parroquia}`, ill: p.ill }; }
   if (st.tpl === "evento" && e) {
     const [, m, dd] = e.when.split("-").map(Number);
     d = { kicker: fmtDate(e.when), title: clean(e.title), hand: "¡Te esperamos!", sub: [e.place, e.start && (e.end ? `${e.start} a ${e.end}` : e.start)].filter(Boolean).join(" · "), day: dd, mon: MESES[m - 1] };
@@ -101,7 +103,7 @@ function pieceData() {
     const [y, m, dd] = e.when.split("-").map(Number), n = Math.max(0, Math.round((new Date(y, m - 1, dd) - new Date(new Date().toDateString())) / 864e5));
     d = { big: n, bigLabel: n === 1 ? "día" : "días", hand: n ? "Faltan…" : "¡Es hoy!", title: `para *${clean(e.title)}*`, sub: fmtDate(e.when) + (e.start ? ` · ${e.start}` : "") };
   }
-  if (st.tpl === "invita") d = { kicker: "Invitación", title: st.para ? `*${st.para}*, hay un lugar para ti` : "Hay un lugar *para ti*", hand: myName() ? `${myName()} te invita` : "Te invito", sub: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay" };
+  if (st.tpl === "invita") d = { kicker: "Invitación", title: st.para ? `*${st.para}*, hay un lugar para ti` : "Hay un lugar *para ti*", hand: myName() ? `${myName()} te invita` : "Te invito", sub: `${ID.nombre} · ${ID.parroquia}` };
   if ((st.tpl === "evento" || st.tpl === "cuenta") && !e) d = { title: "Pronto *nuevas actividades*", hand: "Atento a la agenda" };
   if (st.title) d.title = st.title;
   if (st.hand) d.hand = st.hand;
@@ -185,9 +187,9 @@ async function paint() {
 }
 
 function fileName() {
-  if (st.tab === "marco") return `agape-marco-${st.frame}.png`;
-  if (st.tab === "fondos") return `agape-fondo-${st.fsize}-${st.fondo}.png`;
-  return `agape-${st.tpl}-${st.fmt}.png`;
+  if (st.tab === "marco") return `${ID.prefijo}-marco-${st.frame}.png`;
+  if (st.tab === "fondos") return `${ID.prefijo}-fondo-${st.fsize}-${st.fondo}.png`;
+  return `${ID.prefijo}-${st.tpl}-${st.fmt}.png`;
 }
 const toBlob = (cv) => new Promise((ok) => cv.toBlob(ok, "image/png"));
 function save(blob, name) {
@@ -210,7 +212,7 @@ function registerActions() {
   A.difFrame = (t) => { st.frame = t.dataset.v; document.querySelectorAll(".dif-frames button").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); paint(); };
   A.difSave = async () => { const cv = $("#difCanvas"); if (cv) save(await toBlob(cv), fileName()); };
   A.difShare = async () => { const cv = $("#difCanvas"); if (cv) share(await toBlob(cv), fileName()); };
-  A.difSticker = async (t) => { const cv = t.querySelector("canvas"); share(await toBlob(cv), `agape-sticker-${+t.dataset.i + 1}.png`); };
+  A.difSticker = async (t) => { const cv = t.querySelector("canvas"); share(await toBlob(cv), `${ID.prefijo}-sticker-${+t.dataset.i + 1}.png`); };
   // Tabs: el radio necesita su cambio de estado, así que no basta con el clic delegado
   document.addEventListener("change", (e) => {
     const t = e.target;

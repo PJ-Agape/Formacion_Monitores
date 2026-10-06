@@ -1,0 +1,47 @@
+{
+  "_ayuda": "Identidad de esta pastoral. Cambia solo los valores (lo que está a la derecha de los dos puntos), respeta las comillas y guarda. La app se personaliza sola en un par de minutos. Paso a paso en GUIA-INSTALACION.md.",
+
+  "nombre": "Pastoral Juvenil Ágape",
+  "articulo": "la",
+  "nombreCorto": "Ágape",
+  "marca": "Pastoral Ágape",
+  "subtituloMarca": "Comunidad juvenil",
+  "frase": "Construyendo vínculos de amistad en Cristo",
+
+  "parroquia": "Parroquia San Miguel de Yungay",
+  "articuloParroquia": "la",
+  "comuna": "Yungay",
+  "diocesis": "Diócesis San Bartolomé de Chillán",
+
+  "direccionWeb": "https://pj-agape.github.io/Formacion_Monitores/",
+  "repositorio": "PJ-Agape/Formacion_Monitores",
+  "prefijo": "agape",
+
+  "colores": {
+    "principal": "#1351a4",
+    "oscuro": "#0b2566",
+    "acento": "#ef591c",
+    "destacado": "#ffba03",
+    "suave": "#8ad2fa",
+    "fondo": "#fff6e5"
+  },
+
+  "administradores": ["iperezconus84@gmail.com"],
+
+  "firebase": {
+    "apiKey": "AIzaSyBMJBH1HTZYgDDHd0z0jtR528j2ODJKAxQ",
+    "authDomain": "pastoral-agape.firebaseapp.com",
+    "projectId": "pastoral-agape",
+    "storageBucket": "pastoral-agape.firebasestorage.app",
+    "messagingSenderId": "1060050673929",
+    "appId": "1:1060050673929:web:04504eae425c6114e833d8"
+  },
+
+  "planillaAvisos": "https://script.google.com/macros/s/AKfycbwfChJaWzClUzdZebm4mWg0LOyqkjI3-KkHZxj1NN7nSUSW3-K-DtJD2HjcpxcrQNUo/exec",
+
+  "radios": [
+    { "name": "Radio María Chile", "where": "89.3 FM Santiago · a todo Chile por internet", "url": "https://radiomaria.cl/" },
+    { "name": "Radio El Sembrador", "where": "104.7 FM Chillán · Diócesis de Chillán · en su Facebook", "url": "https://www.facebook.com/ElSembrador1047/" },
+    { "name": "Radio Regina Coeli", "where": "Los Ángeles · Diócesis Santa María de Los Ángeles", "url": "https://reinadelcielo.cl/radio/" }
+  ]
+}

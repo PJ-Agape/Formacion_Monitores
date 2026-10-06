@@ -5,6 +5,7 @@
 
 import { CONFIG } from "./config.js";
 import * as S from "./store.js";
+import { ID } from "./identidad.js";
 
 export const enabled = !!(CONFIG.firebase && CONFIG.firebase.apiKey);
 
@@ -39,7 +40,7 @@ const lower = (e) => String(e || "").trim().toLowerCase();
 
 // «Ver como…»: el equipo puede mirar la app como otro perfil para guiar a alguien.
 // Cambia solo lo que se muestra (menú, secciones, bloqueos); sus permisos reales no cambian.
-const VA_KEY = "agape_ver_como";
+const VA_KEY = `${ID.prefijo}_ver_como`;
 let viewAs = (() => { try { return sessionStorage.getItem(VA_KEY) || ""; } catch { return ""; } })();
 const realStaff = () => !!(account && account.active !== false && STAFF.includes(account.role));
 export const viewingAs = () => (status === "ready" && realStaff() && viewAs ? viewAs : "");
@@ -290,11 +291,11 @@ async function celebrate(course, code) {
     const first = String(account.name || "").trim().split(/\s+/)[0] || "dirigente";
     await fb.setDoc(ref, {
       type: "logro", certCode: code, title: `¡Felicitaciones, ${first}!`,
-      body: `${shortName(account.name)} completó el curso de formación «${course.title}». Su camino de formación ahora se hace servicio en la Pastoral Ágape. ¡Déjale tu saludo aquí abajo!`,
+      body: `${shortName(account.name)} completó el curso de formación «${course.title}». Su camino de formación ahora se hace servicio en la Pastoral ${ID.corto}. ¡Déjale tu saludo aquí abajo!`,
       ...author(), pinned: false, closed: false, hidden: false, likes: {}, reports: {}, replyCount: 0,
       createdAt: fb.serverTimestamp(), lastActivity: fb.serverTimestamp(),
     });
-    window.dispatchEvent(new CustomEvent("agape:logro"));
+    window.dispatchEvent(new CustomEvent(`${ID.prefijo}:logro`));
   } catch (e) { console.warn("Logro:", e); }
 }
 export async function getCertificate(code) {
@@ -426,7 +427,7 @@ export const myUid = () => (user ? user.uid : "");
 // Chat por salas (todas grupales; lo privado queda fuera de la app).
 // ---------------------------------------------------------------------------
 export const SALAS = [
-  { key: "general", name: "Sala general", desc: "Todos los que tienen cuenta en Ágape." },
+  { key: "general", name: "Sala general", desc: `Todos los que tienen cuenta en ${ID.corto}.` },
   { key: "coordinacion", name: "Equipo coordinador", desc: "Asesores y coordinadores." },
   { key: "dirigentes", name: "Dirigentes", desc: "Los dirigentes del grupo." },
   { key: "aspirantes", name: "Aspirantes", desc: "Quienes disciernen servir como dirigentes, con sus acompañantes." },

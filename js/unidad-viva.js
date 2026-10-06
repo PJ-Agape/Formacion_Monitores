@@ -6,6 +6,7 @@
 
 import { esc, rich, plain, icon, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onLeave, S }
 export function setup(c) { ctx = c; registerActions(); }
@@ -20,7 +21,7 @@ async function extras() {
 // ---------------------------------------------------------------------------
 // Puntaje guardado (mejor resultado por unidad)
 // ---------------------------------------------------------------------------
-const LS = "agape_uv_v1";
+const LS = `${ID.prefijo}_uv_v1`;
 const loadBest = () => { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch { return {}; } };
 export function best(courseId, key) { return loadBest()[`${courseId}|${key}`] || null; }
 function saveBest(courseId, key, r) {

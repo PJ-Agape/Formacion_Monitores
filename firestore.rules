@@ -2,7 +2,9 @@ rules_version = '2';
 
 // Reglas de seguridad de la Pastoral Juvenil Ágape.
 // Pégalas en Firebase → Firestore Database → Reglas → Publicar.
-// El correo de bootstrapAdmin() es el primer administrador (el mismo de bootstrapAdmins en js/config.js).
+// Los correos de bootstrapAdmin() y protectedEmail() salen de «administradores» en parroquia.json
+// (scripts/personalizar.mjs los escribe aquí). En una copia parroquial, copia las reglas desde
+// <dirección de la app>/reglas-firestore.txt, que ya trae sus correos.
 
 service cloud.firestore {
   match /databases/{database}/documents {

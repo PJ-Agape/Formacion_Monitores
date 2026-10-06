@@ -4,6 +4,7 @@
 
 import { esc, rich, icon, toast } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -166,7 +167,7 @@ export function view() {
     <div class="cap-arch">
       ${roseWindow()}
       <span class="cap-hand">pasa, Él te espera</span>
-      <h1 class="cap-title">Capilla <em>Ágape</em></h1>
+      <h1 class="cap-title">Capilla <em>${ID.corto}</em></h1>
       <p class="cap-sub">Un lugar tranquilo para estar con Jesús, solo o en comunidad.</p>
       <div class="cap-chips">
         <span class="cap-season"><i></i>${esc(s.name)} · color ${esc(s.color)}</span>
@@ -280,7 +281,7 @@ export function view() {
     <div class="cap-room-head"><span class="cap-num">07</span><h2>Cantar es rezar <em>dos veces</em></h2></div>
     <a class="card link cap-sing" href="#/cancionero">
       <span class="cap-notes" aria-hidden="true">♪ ♫</span>
-      <span style="flex:1"><strong>Cancionero Ágape</strong>
+      <span style="flex:1"><strong>Cancionero ${ID.corto}</strong>
       <span class="muted small">Canciones con acordes para cada momento de la misa, en el tono que necesites, y los repertorios de cada celebración.</span></span>${icon("right")}
     </a>
   </section>
@@ -302,12 +303,12 @@ export function view() {
 // Evangelio del día (data/evangelio.json, lo actualiza cada día una acción de GitHub)
 // ---------------------------------------------------------------------------
 let gospel = null;
-try { gospel = JSON.parse(localStorage.getItem("agape_evangelio") || "null"); } catch {}
+try { gospel = JSON.parse(localStorage.getItem(`${ID.prefijo}_evangelio`) || "null"); } catch {}
 const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 async function loadGospel() {
   try {
     const g = await fetch("data/evangelio.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null));
-    if (g && g.days) { gospel = g; try { localStorage.setItem("agape_evangelio", JSON.stringify(g)); } catch {} }
+    if (g && g.days) { gospel = g; try { localStorage.setItem(`${ID.prefijo}_evangelio`, JSON.stringify(g)); } catch {} }
   } catch {}
 }
 const READ_URL = "https://www.vaticannews.va/es/evangelio-de-hoy.html";
@@ -483,7 +484,7 @@ function rosarySVG() {
 
 const rosaryIcon = () => `<svg width="1.15em" height="1.15em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.9" stroke-linecap="round" aria-hidden="true"><circle cx="12" cy="8.5" r="6"/><path d="M12 14.5v3M12 18v4M10 20h4"/><circle cx="12" cy="2.5" r=".6" fill="currentColor"/><circle cx="6" cy="8.5" r=".6" fill="currentColor"/><circle cx="18" cy="8.5" r=".6" fill="currentColor"/></svg>`;
 let ros = null; // { set, steps, i, el }
-const ROS_KEY = "agape_rosario_v1";
+const ROS_KEY = `${ID.prefijo}_rosario_v1`;
 function rosSave() { try { localStorage.setItem(ROS_KEY, JSON.stringify({ set: ros.set, i: ros.i, day: todayKey() })); } catch {} }
 function rosLoad(set) {
   try { const s = JSON.parse(localStorage.getItem(ROS_KEY) || "null"); if (s && s.set === set && s.day === todayKey()) return +s.i || 0; } catch {}

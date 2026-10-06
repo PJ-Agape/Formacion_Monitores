@@ -7,6 +7,7 @@
 import { esc, icon, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
 import * as a11y from "./accesible.js";
+import { ID } from "./identidad.js";
 
 // Lectura fácil: lo esencial del encuentro en frases cortas
 const first = (t) => { const m = String(t || "").match(/^[^.!?]+[.!?]/); return m ? m[0] : String(t || ""); };
@@ -70,14 +71,14 @@ function currentIdx(list) {
 // ---------------------------------------------------------------------------
 export async function view(nArg) {
   const d = await load();
-  if (!d) return `<div class="card" style="padding:30px;text-align:center"><p class="muted">No pudimos cargar el Camino Ágape. Revisa tu conexión.</p></div>`;
+  if (!d) return `<div class="card" style="padding:30px;text-align:center"><p class="muted">No pudimos cargar el Camino ${ID.corto}. Revisa tu conexión.</p></div>`;
   const et = myEtapa(), E = ETAPAS[et];
   const list = enriched(d), cur = currentIdx(list), done = vividos(et);
   const vivCount = Object.keys(done).length;
   const sel = nArg != null ? list.findIndex((e) => String(e.n) === String(nArg)) : cur;
   const head = `<header class="page-head mc-head" style="--c:${E.color}">
       <span class="eyebrow">Mi Camino · Etapa ${esc(E.name)}</span>
-      <h1>${esc(d.title || "Camino Ágape")}</h1>
+      <h1>${esc(d.title || `Camino ${ID.corto}`)}</h1>
       <p>${esc((d.etapas || []).find((x) => x.key === et)?.lema || "")}${d.ciclo ? ` · ${esc(d.ciclo)}` : ""}</p>
       ${canPreview() ? `<div class="mc-prev"><span class="xs muted">Vista previa del equipo:</span>${Object.entries(ETAPAS).map(([k, v]) => `<button class="chip ${k === et ? "accent" : ""}" data-action="mcPreview" data-e="${k}">${esc(v.name)}</button>`).join("")}</div>` : ""}
     </header>`;

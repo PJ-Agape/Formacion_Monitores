@@ -4,6 +4,7 @@
 
 import { illus } from "./ilustraciones.js";
 import qrcode from "./qrcode.mjs";
+import { ID } from "./identidad.js";
 
 export const C = { navy: "#0b2566", blue: "#1351a4", sun: "#ffba03", coral: "#ef591c", sky: "#8ad2fa", cream: "#fff6e5", white: "#ffffff", rose: "#fde0d2", butter: "#fff1c7", ice: "#e1f3fd" };
 const BASE = new URL("../", import.meta.url).href;
@@ -152,7 +153,7 @@ export function dottedPath(ctx, pts, { color = C.cream, width = 12, dash = [4, 2
 }
 export function footer(ctx, x, y, size, color = C.navy, align = "left") {
   font(ctx, `800 ${size}px Jakarta`); ctx.fillStyle = color; ctx.globalAlpha = 0.85; ctx.textAlign = align;
-  ctx.fillText("PASTORAL JUVENIL ÁGAPE · PARROQUIA SAN MIGUEL DE YUNGAY".split("").join(String.fromCharCode(8202)), x, y);
+  ctx.fillText(`${ID.NOMBRE} · ${ID.PARROQUIA}`.split("").join(String.fromCharCode(8202)), x, y);
   ctx.globalAlpha = 1; ctx.textAlign = "left";
 }
 export function dateBlock(ctx, x, y, s, day, mon, { fill = C.coral, color = C.white } = {}) {
@@ -312,7 +313,7 @@ function centerLayout(ctx, s, d, w, h) {
 // Fondos para videollamada: el centro queda despejado para la persona.
 function fondoLayout(ctx, s, d, w, h) {
   logo(ctx, 70, 60, 150);
-  headline(ctx, d.title || "Pastoral Juvenil *Ágape*", 240, 82, 900, 58, { color: s.fg, mark: s.mark, maxLines: 2 });
+  headline(ctx, d.title || `${ID.nombreMarcado}`, 240, 82, 900, 58, { color: s.fg, mark: s.mark, maxLines: 2 });
   if (d.hand) hand(ctx, d.hand, w - 110, 90, 70, { color: s.fg, rot: -4, align: "right" });
   illCard(ctx, d.ill || "comunidad", w - 470, h - 400, 380, { bg: s.illBg, rot: 3, r: 30 });
   if (d.ill2) illCard(ctx, d.ill2, 60, h - 360, 320, { bg: s.illBg, rot: -4, r: 30 });
@@ -323,15 +324,15 @@ function fondoLayout(ctx, s, d, w, h) {
 // Marcos de foto de perfil (1080 × 1080): foto en círculo + aro con texto curvo
 // ---------------------------------------------------------------------------
 export const FRAMES = [
-  { id: "soy", text: "SOY ÁGAPE · AMOR QUE TRANSFORMA ·", ring: C.sun, ink: C.navy, badge: "corazon" },
-  { id: "puente", text: "SÉ PUENTE · PASTORAL JUVENIL ÁGAPE ·", ring: C.coral, ink: C.cream, badge: "amigos" },
+  { id: "soy", text: `SOY ${ID.CORTO} · AMOR QUE TRANSFORMA ·`, ring: C.sun, ink: C.navy, badge: "corazon" },
+  { id: "puente", text: `SÉ PUENTE · ${ID.NOMBRE} ·`, ring: C.coral, ink: C.cream, badge: "amigos" },
   { id: "retiro", text: "VOY AL RETIRO · ¡NOS VEMOS ALLÁ! ·", ring: C.sky, ink: C.navy, badge: "camino" },
   { id: "maria", text: "MES DE MARÍA · CON MARÍA, PUENTE A JESÚS ·", ring: C.blue, ink: C.cream, badge: "maria" },
-  { id: "caminamos", text: "CAMINAMOS JUNTOS · CAMINO ÁGAPE ·", ring: C.navy, ink: C.sun, badge: "camino" },
-  { id: "casa", text: "BIENVENIDO A CASA · ÁGAPE ·", ring: C.cream, ink: C.navy, badge: "acogida" },
-  { id: "dirigente", text: "SOY DIRIGENTE ÁGAPE · AL SERVICIO ·", ring: C.navy, ink: C.cream, badge: "servir" },
+  { id: "caminamos", text: `CAMINAMOS JUNTOS · CAMINO ${ID.CORTO} ·`, ring: C.navy, ink: C.sun, badge: "camino" },
+  { id: "casa", text: `BIENVENIDO A CASA · ${ID.CORTO} ·`, ring: C.cream, ink: C.navy, badge: "acogida" },
+  { id: "dirigente", text: `SOY DIRIGENTE ${ID.CORTO} · AL SERVICIO ·`, ring: C.navy, ink: C.cream, badge: "servir" },
   { id: "solidaridad", text: "MES DE LA SOLIDARIDAD · EL PAN QUE SE COMPARTE ·", ring: C.coral, ink: C.navy, badge: "panes" },
-  { id: "rezo", text: "REZO POR TI · CAPILLA ÁGAPE ·", ring: C.sky, ink: C.navy, badge: "oracion" },
+  { id: "rezo", text: `REZO POR TI · CAPILLA ${ID.CORTO} ·`, ring: C.sky, ink: C.navy, badge: "oracion" },
   { id: "vive", text: "¡ÉL VIVE Y TE QUIERE VIVO! ·", ring: C.sun, ink: C.coral, badge: "levantate" },
 ];
 export const framesIlls = () => FRAMES.map((f) => [f.badge, C.navy, C.cream, C.sun]);
@@ -419,12 +420,12 @@ export const STICKERS = [
   ["envio", "¡Misión cumplida!", C.sun], ["luz", "¡Brilla!", C.sun],
 ];
 export const PHRASES = [
-  { title: "Amor que *transforma*", hand: "Pastoral Juvenil Ágape", ill: "corazon" },
+  { title: "Amor que *transforma*", hand: `${ID.nombre}`, ill: "corazon" },
   { title: "Sé *puente*", hand: "Hay un lugar para ti", ill: "amigos" },
   { title: "Bienvenido *a casa*", hand: "Aquí te esperamos", ill: "acogida" },
-  { title: "Caminamos *juntos*", hand: "Camino Ágape", ill: "camino" },
+  { title: "Caminamos *juntos*", hand: `Camino ${ID.corto}`, ill: "camino" },
   { title: "¡Él vive y te quiere *vivo!*", hand: "Christus vivit 1", ill: "levantate" },
   { title: "Aquí nadie es *espectador*", hand: "Súmate", ill: "equipo" },
   { title: "Hay un lugar *para ti*", hand: "Ven a conocernos", ill: "comunidad" },
-  { title: "Rezo *por ti*", hand: "Capilla Ágape", ill: "oracion" },
+  { title: "Rezo *por ti*", hand: `Capilla ${ID.corto}`, ill: "oracion" },
 ];

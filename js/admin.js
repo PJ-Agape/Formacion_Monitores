@@ -5,6 +5,7 @@ import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as familiasAdmin from "./familias-admin.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
+import { ID } from "./identidad.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 let api;          // { actions, render, onAfterRender }
@@ -359,7 +360,7 @@ const aboutArr = (d, k) => (k === "roles" ? d.roles : d.about[k]);
 function publishView(d) {
   const dirty = S.draftIsDirty();
   const pub = S.publishedContent();
-  const repoUpload = "https://github.com/PJ-Agape/Formacion_Monitores/upload/main/data";
+  const repoUpload = `https://github.com/${ID.repositorio}/upload/main/data`;
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Publicar cambios</h1>
     <p>${cloudOn ? "Al publicar, todos los dirigentes ven los cambios la próxima vez que abran la app." : `La página lee su contenido desde <span class="kbd">data/contenido.json</span>. Publicar es reemplazar ese archivo por tu borrador.`}</p></header>
@@ -817,7 +818,7 @@ function bindActions() {
   });
   const shareInvite = (email, name) => {
     const url = location.origin + location.pathname;
-    const msg = `¡Hola${name ? " " + name.split(" ")[0] : ""}! Te invitamos al curso de formación de dirigentes de la Pastoral Juvenil Ágape. Entra aquí y elige «Continuar con Google» con tu correo ${email}: ${url}`;
+    const msg = `¡Hola${name ? " " + name.split(" ")[0] : ""}! Te invitamos al curso de formación de dirigentes ${ID.deNombre}. Entra aquí y elige «Continuar con Google» con tu correo ${email}: ${url}`;
     window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
   };
   A.aConsentPdf = async () => {

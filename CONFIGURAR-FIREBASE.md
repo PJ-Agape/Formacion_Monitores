@@ -1,5 +1,7 @@
 # Configurar cuentas y seguimiento (Firebase)
 
+> ¿Instalas la app en otra parroquia? Sigue la **[Guía de instalación](GUIA-INSTALACION.md)**, que incluye estos pasos.
+
 Con esta configuración los dirigentes ingresan con su cuenta de Google, su avance y su cuaderno los acompañan en cualquier dispositivo, las constancias se pueden verificar con el QR y el equipo coordinador ve el avance de todos en **Gestión → Dirigentes**.
 
 Mientras no hagas estos pasos, la app sigue funcionando como hasta ahora (modo local, sin cuentas).
@@ -27,7 +29,7 @@ Usa el **plan gratuito (Spark)** de Firebase: no pide tarjeta y alcanza de sobra
 
 1. En Firestore Database, pestaña **Reglas**.
 2. Borra lo que haya y pega el contenido completo del archivo `firestore.rules` de este repositorio.
-3. Reemplaza `tu_correo@gmail.com` por el correo de Google de quien será el **primer administrador** (en minúsculas).
+3. Las reglas ya traen los correos de «administradores» de `parroquia.json` (en una copia parroquial, cópialas desde `<dirección de la app>/reglas-firestore.txt`).
 4. **Publicar**.
 
 Las reglas son las que protegen los datos: solo los invitados pueden crear cuenta, cada dirigente escribe solo su propio avance, el cuaderno personal es privado (ni los administradores lo leen) y solo los administradores editan el contenido y ven el seguimiento.
@@ -49,8 +51,8 @@ Las reglas son las que protegen los datos: solo los invitados pueden crear cuent
 }
 ```
 
-4. En `js/config.js` de este repositorio, reemplaza `firebase: null,` por `firebase: { ...lo que copiaste... },` y agrega el mismo correo del paso 4 en `bootstrapAdmins: ["tu_correo@gmail.com"],`.
-5. Sube el cambio a GitHub (o pídeselo a Claude).
+4. Copia esos valores en la sección `firebase` de `parroquia.json` (todo entre comillas, también los nombres) y revisa que tu correo esté en `administradores`.
+5. Guarda el cambio en GitHub. En una copia parroquial el sitio se vuelve a publicar solo; en el repositorio de Ágape, corre `node scripts/personalizar.mjs` y sube los archivos que cambien.
 
 Estos datos no son secretos: están pensados para ir en la página pública. La seguridad la dan las reglas del paso 4.
 

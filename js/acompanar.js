@@ -5,6 +5,7 @@
 
 import { esc, icon, toast, initials } from "./util.js";
 import { svg as avatarSvg } from "./avatares.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -237,7 +238,7 @@ function passportHTML(j, { guide = false, own = false, sessions = null } = {}) {
   const color = PORTADAS[+j.portada || 0] || PORTADAS[0];
   return `<article class="pass" style="--pc:${color}">
     <div class="pass-cover">
-      <span class="pass-k">Pasaporte Ágape</span>
+      <span class="pass-k">Pasaporte ${ID.corto}</span>
       <div class="pass-id">${av(j, "pass-av")}<div><h1>${esc(j.nombre)}</h1><span class="pass-etapa">${esc((ETAPAS[j.etapa] || {}).l || "")}</span>
         ${j.lema ? `<p class="pass-lema">«${esc(j.lema)}»</p>` : own ? `<p class="pass-lema muted">Escribe tu lema ✍️</p>` : ""}</div></div>
       <div class="pass-stats"><span><b>${f.length}</b>encuentros</span>${racha != null ? `<span><b>${racha}</b>racha actual</span>` : ""}<span><b>${Object.keys(got).length}</b>sellos</span></div>
@@ -267,7 +268,7 @@ export function viewMine() {
     if (mine && s.account.avatar && mine.avatar !== s.account.avatar) { try { await ctx.cloud.patchJoven(mine.id, { avatar: s.account.avatar }); mine.avatar = s.account.avatar; } catch {} }
     paintMine();
   });
-  return `<header class="page-head"><span class="eyebrow">Mi camino en Ágape</span><h1>Mi <em>pasaporte</em></h1><p>Cada encuentro, servicio y celebración deja un sello. ¡Sigue sumando!</p></header><div id="passMine"><p class="muted" style="padding:30px;text-align:center">Cargando…</p></div>`;
+  return `<header class="page-head"><span class="eyebrow">Mi camino en ${ID.corto}</span><h1>Mi <em>pasaporte</em></h1><p>Cada encuentro, servicio y celebración deja un sello. ¡Sigue sumando!</p></header><div id="passMine"><p class="muted" style="padding:30px;text-align:center">Cargando…</p></div>`;
 }
 function paintMine() {
   const box = $("#passMine"); if (!box) return;

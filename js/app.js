@@ -25,6 +25,7 @@ import * as cuenta from "./cuenta.js";
 import * as difusion from "./difusion.js";
 import * as a11y from "./accesible.js";
 import { illus } from "./ilustraciones.js";
+import { ID } from "./identidad.js";
 
 qrcode.stringToBytes = utf8Bytes;
 
@@ -330,9 +331,9 @@ function viewHome() {
   ${cloud.enabled && (cloud.state().isJoven || (cloud.state().ready && cloud.state().role === "aspirante")) ? `<div id="mcSlot"></div>` : cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
     <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
-    <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : `<a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
+    <span class="muted small">Una presentación corta sobre qué es ser dirigente en ${ID.corto} y cómo es el curso.</span></span>${icon("right")}</a>` : `<a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
-    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
+    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino ${ID.corto}</strong>
     <span class="muted small">Revista principal, guía de coordinación y revistas de cada etapa.</span></span>${icon("right")}
   </a>`}
   ${cloud.enabled && cloud.state().isGuide ? `<a class="card link camino-banner" href="#/acompanar" style="margin-top:16px">
@@ -341,12 +342,12 @@ function viewHome() {
     <span class="muted small">Pasa lista, mira quién necesita un llamado y entrega sellos del pasaporte.</span></span>${icon("right")}</a>`
     : cloud.enabled && cloud.state().ready ? `<a class="card link camino-banner" href="#/pasaporte" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("award")}</span>
-    <span style="flex:1"><span class="eyebrow">Mi camino en Ágape</span><strong>Mi pasaporte</strong>
+    <span style="flex:1"><span class="eyebrow">Mi camino en ${ID.corto}</span><strong>Mi pasaporte</strong>
     <span class="muted small">Tus encuentros, tu racha y los sellos que vas ganando.</span></span>${icon("right")}</a>` : ""}
   ${!cloud.enabled || cloud.state().ready ? `<a class="card link camino-banner" href="#/difusion" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("send")}</span>
     <span style="flex:1"><span class="eyebrow">Para compartir</span><strong>Estudio de difusión</strong>
-    <span class="muted small">Marco para tu foto de perfil, historias, invitaciones y stickers de Ágape.</span></span>${icon("right")}</a>` : ""}
+    <span class="muted small">Marco para tu foto de perfil, historias, invitaciones y stickers de ${ID.corto}.</span></span>${icon("right")}</a>` : ""}
   <div id="desafioSlot"></div>
   <div id="acHomeSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
@@ -403,7 +404,7 @@ function viewCommunity() {
   </header>
   <a class="card link camino-banner no-print" href="#/encuentros" style="margin:6px 0 10px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
-    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
+    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino ${ID.corto}</strong>
     <span class="muted small">El itinerario del grupo en tres etapas: ingreso, madurez y aspirante.</span></span>${icon("right")}
   </a>
 
@@ -605,7 +606,7 @@ actions.resetProgress = () => {
 };
 actions.shareProgress = () => {
   const c = S.activeCourse(), st = S.courseState(c), p = S.getProfile();
-  const msg = `¡Paz y bien! Soy ${p.name}${p.parish ? ` (${p.parish})` : ""}. Mi avance en el curso "${c.title}" de Ágape: ${st.readSessions} de ${st.totalSessions} unidades completadas y ${st.donePhases} de ${c.phases.length} módulos aprobados.`;
+  const msg = `¡Paz y bien! Soy ${p.name}${p.parish ? ` (${p.parish})` : ""}. Mi avance en el curso "${c.title}" de ${ID.corto}: ${st.readSessions} de ${st.totalSessions} unidades completadas y ${st.donePhases} de ${c.phases.length} módulos aprobados.`;
   window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
 };
 
@@ -824,7 +825,7 @@ actions.downloadNotes = () => {
     if (block) out += `\n\nMÓDULO ${ph.phaseNum}: ${plain(ph.title)}\n${"-".repeat(40)}${block}`;
   });
   const blob = new Blob([out], { type: "text/plain;charset=utf-8" });
-  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = "mi-cuaderno-agape.txt";
+  const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = `mi-cuaderno-${ID.prefijo}.txt`;
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 };
 
@@ -939,15 +940,15 @@ function viewCertificate() {
   const sessions = st.totalSessions;
   const qr = qrcode(0, "M");
   if (cloud.enabled) { qr.addData(cloud.verifyUrl(st.p.certCode)); cloud.registerCertificate(course, st.p); }
-  else qr.addData(`PASTORAL JUVENIL ÁGAPE\nConstancia de Formación y Envío\nCurso: ${course.title}\nDirigente: ${p.name}\nComunidad: ${p.parish}\nCódigo: ${st.p.certCode}\nFecha: ${date}`);
+  else qr.addData(`${ID.NOMBRE}\nConstancia de Formación y Envío\nCurso: ${course.title}\nDirigente: ${p.name}\nComunidad: ${p.parish}\nCódigo: ${st.p.certCode}\nFecha: ${date}`);
   qr.make();
   const svg = qr.createSvgTag({ cellSize: 3, margin: 0, scalable: true });
 
   return `
   <nav class="crumbs no-print" style="margin-bottom:14px"><a href="#/itinerario">Formación</a>${icon("right")}<span>Constancia</span></nav>
   <div class="certificate">
-    <img class="seal-logo" src="icons/logo-320.webp" width="96" height="96" alt="Logo Ágape Joven PJ">
-    <div class="kicker">Pastoral Juvenil Ágape</div>
+    <img class="seal-logo" src="icons/logo-320.webp" width="96" height="96" alt="Logo ${ID.corto} Joven PJ">
+    <div class="kicker">${ID.nombre}</div>
     <h2>Constancia de Formación y Envío</h2>
     <div class="small" style="color:#6f6a7e">Curso de formación de dirigentes «${esc(course.title)}»</div>
     <div class="to">Otorgada a</div>
@@ -958,7 +959,7 @@ function viewCertificate() {
       <div class="qr">${svg}</div>
       <div class="code">Código<br><b>${esc(st.p.certCode)}</b><br><br>Fecha<br><b>${esc(date)}</b></div>
     </div>
-    <div class="signs"><div><b>Equipo de Asesores</b><br>Pastoral Parroquial</div><div><b>Coordinación General</b><br>Pastoral Ágape</div></div>
+    <div class="signs"><div><b>Equipo de Asesores</b><br>Pastoral Parroquial</div><div><b>Coordinación General</b><br>Pastoral ${ID.corto}</div></div>
   </div>
   <div class="row-wrap no-print" style="justify-content:center;margin-top:20px">
     <button class="btn btn-primary" data-action="print">${icon("print")} Imprimir o guardar PDF</button>
@@ -1016,7 +1017,7 @@ function viewMaterials() {
   };
   const guides = (m.cards || []).filter((c) => c.type !== "action"), prints = (m.cards || []).filter((c) => c.type === "action");
   const FILES = [
-    ["revistas", "Revistas", "#1351a4", "Las revistas del Camino Ágape, archivadas año tras año.", [archivoHTML()], null],
+    ["revistas", "Revistas", "#1351a4", `Las revistas del Camino ${ID.corto}, archivadas año tras año.`, [archivoHTML()], null],
     ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
       row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
@@ -1024,13 +1025,13 @@ function viewMaterials() {
       row("presentaciones/sacramentos.html", "sparkle", "Los Sacramentos", "Qué es un sacramento y los siete, explicados en simple", true),
     ]],
     ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
-      row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),
+      row("#/cancionero", "book", `Cancionero ${ID.corto}`, "Acordes, cambio de tono, proyección y repertorios"),
     ]],
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
       `<a class="fi-row" href="presentaciones/mes-de-maria.pdf" download><span class="fi-ico">${icon("dl")}</span><span class="fi-txt"><b>Mes de María en PDF</b><small>Tamaño carta, una página por día</small></span>${icon("dl")}</a>`,
-      row("#/encuentros", "print", "Revistas Camino Ágape", "Se imprimen completas o solo el encuentro de la semana"),
+      row("#/encuentros", "print", `Revistas Camino ${ID.corto}`, "Se imprimen completas o solo el encuentro de la semana"),
       row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
       ...prints.map(guide),
     ]],
@@ -1051,12 +1052,12 @@ function viewMaterials() {
 }
 // Revistas por año: las ediciones del Camino Ágape (en la app) y lo que el equipo archiva con enlace.
 let archivo = null;
-try { archivo = JSON.parse(localStorage.getItem("agape_archivo") || "null"); } catch {}
+try { archivo = JSON.parse(localStorage.getItem(`${ID.prefijo}_archivo`) || "null"); } catch {}
 async function loadArchivo() {
   const a = cloud.getArchivo ? await cloud.getArchivo() : null;
   if (!a) return false;
   const ch = JSON.stringify(a) !== JSON.stringify(archivo);
-  archivo = a; try { localStorage.setItem("agape_archivo", JSON.stringify(a)); } catch {}
+  archivo = a; try { localStorage.setItem(`${ID.prefijo}_archivo`, JSON.stringify(a)); } catch {}
   return ch;
 }
 const REV_SHORT = [["principal", "Principal"], ["coordinacion", "Coordinación"], ["ingreso", "Ingreso"], ["madurez", "Madurez"], ["aspirante", "Aspirante"]];
@@ -1068,7 +1069,7 @@ function archivoHTML() {
   const list = [...years.values()].sort((a, b) => b.year - a.year);
   return `<div id="fiArchivo" class="fi-years">
     ${list.map((y) => `<div class="fi-year"><span class="fi-y">${y.year}</span><div class="fi-y-items">${y.items.map((x) => x.ed ? `
-      <a class="fi-row" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}"><span class="fi-txt"><b>Camino Ágape ${x.ed.year} · ${esc(x.ed.ciclo)}</b>
+      <a class="fi-row" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}"><span class="fi-txt"><b>Camino ${ID.corto} ${x.ed.year} · ${esc(x.ed.ciclo)}</b>
         <small>${x.ed.actual ? "Edición actual · " : ""}${esc(x.ed.rango)}</small></span>${icon("right")}</a>
       <div class="fi-revs">${REV_SHORT.map(([k, l]) => `<a class="chip" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}/${k}">${l}</a>`).join("")}</div>`
       : `<div class="fi-row-wrap"><a class="fi-row" href="${esc(x.link.url)}" target="_blank" rel="noopener"><span class="fi-txt"><b>${esc(x.link.title)}</b>${x.link.note ? `<small>${esc(x.link.note)}</small>` : ""}</span>${icon("arrowR")}</a>
@@ -1228,8 +1229,8 @@ function viewProfile() {
   return `
   <div class="welcome">
     ${isNew ? `<section class="hero" style="margin-bottom:18px;text-align:center">
-      <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo Ágape Joven PJ">
-      <span class="eyebrow">Bienvenido a Ágape</span>
+      <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo ${ID.corto} Joven PJ">
+      <span class="eyebrow">Bienvenido a ${ID.corto}</span>
       <h1>Tu camino de <em>formación</em></h1>
       <p class="lead">Cuéntanos quién eres para acompañar tu avance en el curso y preparar tu constancia al final.</p>
     </section>` : `<header class="page-head"><span class="eyebrow">Mi perfil</span><h1>${esc(p.name)}</h1></header>`}
@@ -1291,10 +1292,10 @@ function viewLogin(kind = "curso") {
   }[st.status];
   return `<div class="welcome">
     <section class="hero" style="margin-bottom:18px;text-align:center">
-      <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo Ágape Joven PJ">
+      <img class="welcome-logo" src="icons/logo-320.webp" width="116" height="116" alt="Logo ${ID.corto} Joven PJ">
       <span class="eyebrow">${MU ? "Muro y chat" : R ? "Materiales y revistas" : "Curso de formación de dirigentes"}</span>
       <h1>${MU ? `Lo que conversa el <em>grupo</em>` : R ? `Recursos para <em>dirigentes</em>` : `Tu camino de <em>formación</em>`}</h1>
-      <p class="lead">${MU ? "El muro y el chat son del grupo: para cuidar a los jóvenes, solo los ven quienes tienen cuenta. Ingresa con tu cuenta de Google." : R ? "Las revistas del Camino Ágape, las presentaciones, las guías y el banco de dinámicas son para quienes tienen cuenta. Ingresa con tu cuenta de Google para verlos." : "Ingresa con tu cuenta de Google para avanzar a tu ritmo, guardar tu cuaderno y recibir tu constancia. Tu avance te sigue en cualquier dispositivo."}</p>
+      <p class="lead">${MU ? "El muro y el chat son del grupo: para cuidar a los jóvenes, solo los ven quienes tienen cuenta. Ingresa con tu cuenta de Google." : R ? `Las revistas del Camino ${ID.corto}, las presentaciones, las guías y el banco de dinámicas son para quienes tienen cuenta. Ingresa con tu cuenta de Google para verlos.` : "Ingresa con tu cuenta de Google para avanzar a tu ritmo, guardar tu cuaderno y recibir tu constancia. Tu avance te sigue en cualquier dispositivo."}</p>
     </section>
     <div class="card" style="text-align:center;padding:28px">
       ${msg || `<button class="btn btn-primary btn-block google-btn" data-action="signIn">${googleIcon()} Continuar con Google</button>
@@ -1384,11 +1385,11 @@ async function viewVerify(code) {
       ${ok ? `<span class="eyebrow">Constancia válida</span>
         <h1 class="display" style="font-size:1.8rem;margin-top:8px">${esc(c.name)}</h1>
         <p class="muted" style="margin-top:6px">${esc(c.parish || "")}</p>
-        <p style="margin-top:14px">Completó el curso de formación <b>«${esc(c.course)}»</b> de la Pastoral Juvenil Ágape${c.date ? ` el ${esc(new Date(c.date).toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" }))}` : ""}.</p>
+        <p style="margin-top:14px">Completó el curso de formación <b>«${esc(c.course)}»</b> ${ID.deNombre}${c.date ? ` el ${esc(new Date(c.date).toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" }))}` : ""}.</p>
         <p class="xs muted" style="margin-top:14px">Código ${esc(code)}</p>`
       : c === null ? `<h1 class="display" style="font-size:1.6rem">Código no encontrado</h1><p class="muted" style="margin-top:8px">No existe una constancia con el código ${esc(code)}. Revisa que esté bien escrito.</p>`
       : `<h1 class="display" style="font-size:1.6rem">No pudimos verificar</h1><p class="muted" style="margin-top:8px">La verificación necesita conexión a internet. Inténtalo de nuevo.</p>`}
-      <a class="btn btn-ghost" style="margin-top:18px" href="#/">Ir a Pastoral Ágape</a>
+      <a class="btn btn-ghost" style="margin-top:18px" href="#/">Ir a Pastoral ${ID.corto}</a>
     </div></div>`;
 }
 
@@ -1414,7 +1415,7 @@ function installCard() {
   if (deferredInstall) {
     return `<div class="card install-bar" style="margin-top:16px">
       <span class="tile-ico" style="margin:0">${icon("phone")}</span>
-      <div style="flex:1"><strong>Lleva Ágape en tu celular</strong><p class="muted small">Instálala y úsala incluso sin internet.</p></div>
+      <div style="flex:1"><strong>Lleva ${ID.corto} en tu celular</strong><p class="muted small">Instálala y úsala incluso sin internet.</p></div>
       <button class="btn btn-primary btn-sm" data-action="install">Instalar</button></div>`;
   }
   if (isIOS()) {
@@ -1434,7 +1435,7 @@ actions.install = async () => {
 // Arranque
 // ---------------------------------------------------------------------------
 wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
-window.addEventListener("agape:logro", () => toast("🎉 ¡Felicitaciones! Compartimos tu logro en el muro de la comunidad", "ok", 6000));
+window.addEventListener(`${ID.prefijo}:logro`, () => toast("🎉 ¡Felicitaciones! Compartimos tu logro en el muro de la comunidad", "ok", 6000));
 camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });

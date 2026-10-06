@@ -4,6 +4,7 @@
 
 import { esc, icon, toast } from "./util.js";
 import { BANCO } from "./dinamicas-banco.js";
+import { ID } from "./identidad.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -67,8 +68,8 @@ const BASE = [
 // ---------------------------------------------------------------------------
 let items = null, q = "", tag = "", dur = "", lastList = [];
 let favs = {};
-try { favs = JSON.parse(localStorage.getItem("agape_dinfavs") || "{}"); } catch {}
-const saveFavs = () => { try { localStorage.setItem("agape_dinfavs", JSON.stringify(favs)); } catch {} };
+try { favs = JSON.parse(localStorage.getItem(`${ID.prefijo}_dinfavs`) || "{}"); } catch {}
+const saveFavs = () => { try { localStorage.setItem(`${ID.prefijo}_dinfavs`, JSON.stringify(favs)); } catch {} };
 const all = () => [...BASE, ...BANCO, ...(items || [])].sort((a, b) => (favs[b.id] ? 1 : 0) - (favs[a.id] ? 1 : 0) || a.title.localeCompare(b.title, "es"));
 const byId = (id) => all().find((x) => x.id === id);
 let repaint = () => {};
