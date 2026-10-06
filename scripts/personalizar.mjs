@@ -42,6 +42,21 @@ if (errores.length) {
   console.error("\n✗ Hay que corregir parroquia.json:\n" + errores.map((e) => "  • " + e).join("\n") + "\n");
   process.exit(1);
 }
+// Al publicar una copia en GitHub: revisar que no quedaron datos de Ágape o de otra copia.
+if (PUBLICAR && process.env.GITHUB_REPOSITORY) {
+  const real = process.env.GITHUB_REPOSITORY;
+  const [owner, name] = real.split("/");
+  const sugerida = name.toLowerCase() === `${owner.toLowerCase()}.github.io` ? `https://${owner.toLowerCase()}.github.io/` : `https://${owner.toLowerCase()}.github.io/${name}/`;
+  const prob = [];
+  if (ID.repositorio.toLowerCase() !== real.toLowerCase()) prob.push(`«repositorio» debe ser "${real}".`);
+  if (ID.firebase && ID.firebase.projectId === "pastoral-agape" && real.toLowerCase() !== "pj-agape/formacion_monitores")
+    prob.push(`La sección «firebase» todavía tiene los datos de Ágape. Mientras no hagas el paso 5, cambia "apiKey" por "PEGA_AQUI".`);
+  if (prob.length) {
+    console.error("\n✗ Hay que corregir parroquia.json:\n" + prob.map((e) => "  • " + e).join("\n") + "\n");
+    process.exit(1);
+  }
+  if (ID.url.toLowerCase() !== sugerida.toLowerCase()) console.warn(`  ! «direccionWeb» es ${ID.url}, pero el sitio se publica en ${sugerida} (salvo que uses un dominio propio). Los códigos QR usan «direccionWeb».`);
+}
 const { nombre, corto, marca, subtituloMarca: subMarca, frase, parroquia, diocesis, prefijo, colores, administradores: admins } = ID;
 const de = (a, x) => ({ el: `del ${x}`, la: `de la ${x}`, los: `de los ${x}`, las: `de las ${x}` }[a]);
 
@@ -99,9 +114,13 @@ patch("familias/index.html", [
 }
 const lista = admins.map((e) => `'${e}'`).join(", ");
 patch("firestore.rules", [
+  [/(\/\/ Reglas de seguridad )[^\n]*/, `$1${ID.deNombre}.`],
   [/(function bootstrapAdmin\(\) \{ return signedIn\(\) && myEmail\(\) in \[)[^\]]*/, `$1${lista}`],
   [/(function protectedEmail\(e\) \{ return e in \[)[^\]]*/, `$1${lista}`],
 ]);
+
+// Copia legible de las reglas en el sitio publicado (para copiarlas y pegarlas en Firebase).
+if (PUBLICAR) write("reglas-firestore.txt", read("firestore.rules"));
 
 // ---------------------------------------------------------------------------
 // 4. Paleta de colores (cambia los seis colores de marca en un solo paso)
@@ -145,6 +164,20 @@ if (existsSync(P("logo.png"))) {
     await out("icons/icon-maskable-512.png", await onBg(512, 0.16));
     await out("icons/apple-touch-icon.png", await onBg(180, 0.08));
   }
+}
+
+// ---------------------------------------------------------------------------
+// 5b. Contenido del curso (solo al publicar una copia)
+// ---------------------------------------------------------------------------
+// La app usa la versión más nueva entre lo publicado desde Gestión (Firebase) y data/contenido.json.
+// En una copia, el curso que la parroquia publique desde Gestión debe mandar siempre, aunque después
+// llegue una versión más nueva del curso de Ágape con «Sync fork». Por eso la copia publicada del archivo
+// queda marcada como la más antigua: mientras la parroquia no publique nada, ve el curso de Ágape al día.
+if (PUBLICAR && existsSync(P("data/contenido.json"))) {
+  try {
+    const c = JSON.parse(read("data/contenido.json"));
+    if (c.updatedAt !== "") { c.updatedAt = ""; c.version = 0; write("data/contenido.json", JSON.stringify(c)); }
+  } catch { console.warn("  ! data/contenido.json no se pudo leer; se publica tal cual."); }
 }
 
 // ---------------------------------------------------------------------------
