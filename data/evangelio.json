@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-04": {
-   "titulo": "27.º domingo del Tiempo Ordinario",
-   "cita": "Mt 21,33-43",
-   "frase": "Por eso les digo que el Reino de Dios les será quitado a ustedes, para ser entregado a un pueblo que le hará producir sus frutos."
-  },
   "2026-10-05": {
    "titulo": "Lunes de la 27.ª semana del Tiempo Ordinario",
    "cita": "Lc 10,25-37",
@@ -55,6 +50,11 @@
    "titulo": "Miércoles de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,42-46",
    "frase": "Maestro, cuando hablas así, nos insultas también a nosotros."
+  },
+  "2026-10-15": {
+   "titulo": "Jueves de la 28.ª semana del Tiempo Ordinario",
+   "cita": "Lc 11,47-54",
+   "frase": "Sí, les aseguro que a esta generación se le pedirá cuenta de todo esto."
   }
  }
 }
