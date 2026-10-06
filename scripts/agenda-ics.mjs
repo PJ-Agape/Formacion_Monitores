@@ -3,7 +3,9 @@
 // Uso: node scripts/agenda-ics.mjs [salida]   (sin dependencias; Node 18+)
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { rrule } from "../js/repeat.js";
-import { ID } from "../js/identidad.js";
+import { leerIdentidad } from "./identidad.mjs";
+const { ID, errores } = leerIdentidad();
+if (!ID) { console.error("parroquia.json:\n  " + errores.join("\n  ")); process.exit(1); }
 
 const OUT = process.argv[2] || "agenda.ics";
 // Identidad y proyecto Firebase de esta pastoral (generado desde parroquia.json).

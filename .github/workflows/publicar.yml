@@ -1,0 +1,38 @@
+# Publica el sitio de una copia parroquial con su identidad (parroquia.json y logo.png).
+# La personalización se hace aquí, sobre una copia temporal: el repositorio no cambia y sigue
+# recibiendo las mejoras de Ágape con «Sync fork».
+# Requisito (una sola vez): Settings → Pages → Source: «GitHub Actions».
+# Si parroquia.json tiene un error, esta acción queda en rojo con la explicación y el sitio sigue
+# mostrando la versión anterior: nada se rompe.
+name: Publicar sitio
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+concurrency: { group: pages, cancel-in-progress: false }
+jobs:
+  publicar:
+    # El sitio de Ágape se publica directo desde la rama main; esta acción es para las copias.
+    if: github.repository != 'PJ-Agape/Formacion_Monitores'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deploy.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - name: Herramienta para los íconos (solo si hay logo.png)
+        run: if [ -f logo.png ]; then npm install --no-save --no-package-lock sharp@0.33; fi
+      - name: Aplicar la identidad de parroquia.json
+        run: node scripts/personalizar.mjs --publicar
+      - run: rm -rf node_modules .github
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with: { path: . }
+      - id: deploy
+        uses: actions/deploy-pages@v4

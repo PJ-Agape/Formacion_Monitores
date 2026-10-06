@@ -1,6 +1,12 @@
-// Personaliza la app con la identidad de parroquia.json.
-// Lo ejecuta solo una acción de GitHub cada vez que alguien cambia parroquia.json o sube logo.png.
-// También se puede correr a mano:  node scripts/personalizar.mjs
+// Aplica la identidad de parroquia.json (y logo.png, si existe) a la app.
+//
+// Dos usos:
+//  • node scripts/personalizar.mjs --publicar
+//      Lo corre la acción «Publicar sitio» en cada copia parroquial, sobre una copia temporal,
+//      justo antes de subir el sitio. El repositorio de la parroquia NO se modifica: así queda
+//      igual al de Ágape (salvo parroquia.json, logo.png y su contenido) y recibe mejoras con «Sync fork».
+//  • node scripts/personalizar.mjs
+//      Aplica la identidad en el lugar, para quien desarrolla y prueba en su computador.
 //
 // Qué hace:
 //  1. Revisa parroquia.json y explica en palabras simples cualquier error.
@@ -8,103 +14,46 @@
 //  3. Ajusta index.html, familias/, manifest.webmanifest y firestore.rules.
 //  4. Cambia la paleta de colores en estilos, código y presentaciones.
 //  5. Si hay un logo.png en la raíz, genera todos los íconos (necesita "sharp").
-//  6. Sube la versión del service worker para que los celulares reciban el cambio.
+//  6. Ajusta la versión del service worker para que los celulares reciban el cambio.
 // Es idempotente: correrlo dos veces seguidas no cambia nada la segunda vez.
 
 import { readFileSync, writeFileSync, existsSync, readdirSync } from "node:fs";
 import { join } from "node:path";
+import { createHash } from "node:crypto";
+import { leerIdentidad, PALETA_BASE } from "./identidad.mjs";
 
 const ROOT = new URL("..", import.meta.url).pathname;
 const P = (f) => join(ROOT, f);
 const read = (f) => readFileSync(P(f), "utf8");
-const changed = [];
+const changed = new Set();
 function write(f, text) {
   if (existsSync(P(f)) && read(f) === text) return;
   writeFileSync(P(f), text);
-  changed.push(f);
+  changed.add(f);
 }
 
-// Paleta original de Ágape: es la que trae el código si nunca se ha personalizado.
-const PALETA_BASE = { principal: "#1351a4", oscuro: "#0b2566", acento: "#ef591c", destacado: "#ffba03", suave: "#8ad2fa", fondo: "#fff6e5" };
+const PUBLICAR = process.argv.includes("--publicar");
 
 // ---------------------------------------------------------------------------
 // 1. Leer y revisar parroquia.json
 // ---------------------------------------------------------------------------
-const errores = [];
-let cfg;
-try { cfg = JSON.parse(read("parroquia.json")); }
-catch (e) {
-  console.error(`\n✗ parroquia.json no se puede leer: ${e.message}\n  Revisa que cada texto esté entre comillas "así", que haya una coma entre líneas y que no sobre una coma antes de "}".\n`);
-  process.exit(1);
-}
-const txt = (k, max = 120) => {
-  const v = cfg[k];
-  if (typeof v !== "string" || !v.trim()) errores.push(`Falta «${k}».`);
-  else if (v.length > max) errores.push(`«${k}» es muy largo (máximo ${max} caracteres).`);
-  return typeof v === "string" ? v.trim() : "";
-};
-const nombre = txt("nombre", 60), corto = txt("nombreCorto", 24), marca = txt("marca", 30), subMarca = txt("subtituloMarca", 30), frase = txt("frase", 90);
-const parroquia = txt("parroquia", 80), comuna = txt("comuna", 40), diocesis = txt("diocesis", 80);
-const art = String(cfg.articulo || "la").toLowerCase(), artP = String(cfg.articuloParroquia || "la").toLowerCase();
-for (const [k, v] of [["articulo", art], ["articuloParroquia", artP]]) if (!["el", "la", "los", "las"].includes(v)) errores.push(`«${k}» debe ser el, la, los o las.`);
-
-let url = txt("direccionWeb", 200);
-if (url && !/^https:\/\/[^\s]+$/.test(url)) errores.push("«direccionWeb» debe empezar con https:// (por ejemplo https://pj-sanjuan.github.io/app/).");
-if (url && !url.endsWith("/")) url += "/";
-const repo = txt("repositorio", 100);
-if (repo && !/^[\w.-]+\/[\w.-]+$/.test(repo)) errores.push("«repositorio» debe ser «cuenta/nombre-del-repositorio», como aparece en GitHub.");
-const prefijo = txt("prefijo", 20);
-if (prefijo && !/^[a-z][a-z0-9]{1,19}$/.test(prefijo)) errores.push("«prefijo» debe ser una sola palabra en minúsculas, sin tildes, espacios ni guiones (por ejemplo sanjuan).");
-
-const colores = { ...PALETA_BASE, ...(cfg.colores || {}) };
-for (const [k, v] of Object.entries(colores)) {
-  if (!/^#[0-9a-fA-F]{6}$/.test(v)) errores.push(`El color «${k}» debe escribirse como #RRGGBB (por ejemplo #1351a4).`);
-  else colores[k] = v.toLowerCase();
-}
-if (new Set(Object.values(colores)).size !== Object.keys(colores).length) errores.push("Los seis colores deben ser distintos entre sí.");
-
-const admins = Array.isArray(cfg.administradores) ? cfg.administradores.map((e) => String(e).trim().toLowerCase()).filter(Boolean) : [];
-if (!admins.length) errores.push("Pon al menos un correo de Google en «administradores».");
-for (const e of admins) if (!/^[^\s@"']+@[^\s@"']+\.[a-z]{2,}$/.test(e)) errores.push(`«${e}» no parece un correo válido.`);
-
-const fb = cfg.firebase || null;
-const fbOn = !!(fb && fb.apiKey && !/^PEGA/i.test(fb.apiKey));
-if (fbOn) for (const k of ["apiKey", "authDomain", "projectId", "appId"]) if (!fb[k] || /^PEGA/i.test(fb[k])) errores.push(`Falta firebase.${k} (cópialo desde la consola de Firebase, paso 5 de la guía).`);
-
-const radios = Array.isArray(cfg.radios) ? cfg.radios.filter((r) => r && r.name && /^https:\/\//.test(r.url || "")) : [];
-const planilla = typeof cfg.planillaAvisos === "string" && /^https:\/\//.test(cfg.planillaAvisos) ? cfg.planillaAvisos : "";
-
+const { ID, errores } = leerIdentidad(ROOT);
 if (errores.length) {
   console.error("\n✗ Hay que corregir parroquia.json:\n" + errores.map((e) => "  • " + e).join("\n") + "\n");
   process.exit(1);
 }
+const { nombre, corto, marca, subtituloMarca: subMarca, frase, parroquia, diocesis, prefijo, colores, administradores: admins } = ID;
+const de = (a, x) => ({ el: `del ${x}`, la: `de la ${x}`, los: `de los ${x}`, las: `de las ${x}` }[a]);
 
 // ---------------------------------------------------------------------------
 // 2. js/identidad.js
 // ---------------------------------------------------------------------------
-const de = (a, x) => ({ el: `del ${x}`, la: `de la ${x}`, los: `de los ${x}`, las: `de las ${x}` }[a]);
-const up = (s) => s.toLocaleUpperCase("es");
-const i = nombre.lastIndexOf(corto);
-const ID = {
-  nombre, nombreCorto: corto, corto, marca, subtituloMarca: subMarca, frase,
-  NOMBRE: up(nombre), CORTO: up(corto),
-  nombreMarcado: i >= 0 ? nombre.slice(0, i) + "*" + corto + "*" + nombre.slice(i + corto.length) : `*${nombre}*`,
-  elNombre: `${art} ${nombre}`, deNombre: de(art, nombre),
-  parroquia, PARROQUIA: up(parroquia), deParroquia: de(artP, parroquia),
-  comuna, COMUNA: up(comuna), diocesis,
-  url, urlCorta: url.replace(/^https:\/\//, ""), repositorio: repo, dominio: repo.split("/")[0].toLowerCase(), prefijo,
-  colores, administradores: admins,
-  firebase: fbOn ? { apiKey: fb.apiKey, authDomain: fb.authDomain, projectId: fb.projectId, storageBucket: fb.storageBucket || "", messagingSenderId: fb.messagingSenderId || "", appId: fb.appId } : null,
-  planillaAvisos: planilla, radios,
-};
-
-// Paleta aplicada la vez anterior (la que hoy está escrita en el código).
+// Paleta que hoy está escrita en el código (la de la vez anterior, o la original de Ágape).
 let antes = PALETA_BASE;
 if (existsSync(P("js/identidad.js"))) {
   const m = read("js/identidad.js").match(/\/\* paleta-aplicada (\{.*?\}) \*\//);
   if (m) try { antes = JSON.parse(m[1]); } catch {}
 }
-
 write("js/identidad.js", `// Identidad de esta pastoral. Archivo GENERADO desde parroquia.json por scripts/personalizar.mjs:
 // no lo edites a mano, cambia parroquia.json.
 /* paleta-aplicada ${JSON.stringify(colores)} */
@@ -158,7 +107,8 @@ patch("firestore.rules", [
 // 4. Paleta de colores (cambia los seis colores de marca en un solo paso)
 // ---------------------------------------------------------------------------
 const swap = {};
-for (const k of Object.keys(PALETA_BASE)) if (antes[k] && antes[k] !== colores[k]) swap[antes[k]] = colores[k];
+// Se cambian la paleta original y la aplicada antes: así también quedan bien las líneas nuevas que traiga una actualización.
+for (const k of Object.keys(PALETA_BASE)) for (const viejo of [PALETA_BASE[k], antes[k]]) if (viejo && viejo !== colores[k]) swap[viejo] = colores[k];
 if (Object.keys(swap).length) {
   const re = new RegExp(Object.keys(swap).join("|"), "gi");
   const files = ["css/app.css", "index.html", "familias/index.html", "manifest.webmanifest",
@@ -181,7 +131,7 @@ if (existsSync(P("logo.png"))) {
   if (sharp) {
     const src = readFileSync(P("logo.png"));
     const bg = colores.fondo;
-    const out = async (file, buf) => { const old = existsSync(P(file)) ? readFileSync(P(file)) : null; if (!old || !old.equals(buf)) { writeFileSync(P(file), buf); changed.push(file); } };
+    const out = async (file, buf) => { const old = existsSync(P(file)) ? readFileSync(P(file)) : null; if (!old || !old.equals(buf)) { writeFileSync(P(file), buf); changed.add(file); } };
     const fit = (n) => sharp(src).resize(n, n, { fit: "contain", background: { r: 0, g: 0, b: 0, alpha: 0 } });
     const onBg = async (n, pad) => {
       const inner = Math.round(n * (1 - 2 * pad));
@@ -202,12 +152,16 @@ if (existsSync(P("logo.png"))) {
 // ---------------------------------------------------------------------------
 {
   const s = read("sw.js");
-  const m = s.match(/const VERSION = "([a-z0-9]+)-v(\d+)";/);
+  const m = s.match(/const VERSION = "([a-z0-9]+)-v(\d+)(?:\.[0-9a-f]+)?";/);
   if (!m) console.warn("  ! sw.js: no encontré la línea VERSION.");
-  else {
-    const n = +m[2] + (changed.length || m[1] !== prefijo ? 1 : 0);
+  else if (PUBLICAR) {
+    // Al publicar: misma versión del código + huella de la identidad, para que los celulares se actualicen.
+    const h = createHash("sha1").update(read("js/identidad.js")).update(existsSync(P("logo.png")) ? readFileSync(P("logo.png")) : "").digest("hex").slice(0, 8);
+    write("sw.js", s.replace(m[0], `const VERSION = "${prefijo}-v${m[2]}.${h}";`));
+  } else {
+    const n = +m[2] + (changed.size || m[1] !== prefijo ? 1 : 0);
     write("sw.js", s.replace(m[0], `const VERSION = "${prefijo}-v${n}";`));
   }
 }
 
-console.log(changed.length ? `✓ Personalizado para «${nombre}». Archivos actualizados:\n  ${changed.join("\n  ")}` : `✓ Nada que cambiar: la app ya tiene la identidad de «${nombre}».`);
+console.log(changed.size ? `✓ Personalizado para «${nombre}». Archivos actualizados:\n  ${[...changed].join("\n  ")}` : `✓ Nada que cambiar: la app ya tiene la identidad de «${nombre}».`);

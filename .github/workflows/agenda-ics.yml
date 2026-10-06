@@ -9,6 +9,7 @@ on:
     paths: ["data/encuentros.json", "scripts/agenda-ics.mjs", "js/repeat.js"]
 permissions:
   contents: write
+  actions: write  # para volver a publicar el sitio en las copias parroquiales
 concurrency: { group: agenda-ics, cancel-in-progress: false }
 jobs:
   ics:
@@ -27,4 +28,10 @@ jobs:
             git commit -m "Agenda: actualizar calendario"
             git pull --rebase -q origin main
             git push
+            # En las copias parroquiales el sitio se publica con una acción: hay que avisarle.
+            if [ "${GITHUB_REPOSITORY,,}" != "pj-agape/formacion_monitores" ]; then
+              gh workflow run publicar.yml --ref main
+            fi
           fi
+        env:
+          GH_TOKEN: ${{ github.token }}
