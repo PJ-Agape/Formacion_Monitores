@@ -1390,7 +1390,7 @@ async function viewVerify(code) {
         <p class="xs muted" style="margin-top:14px">Código ${esc(code)}</p>`
       : c === null ? `<h1 class="display" style="font-size:1.6rem">Código no encontrado</h1><p class="muted" style="margin-top:8px">No existe una constancia con el código ${esc(code)}. Revisa que esté bien escrito.</p>`
       : `<h1 class="display" style="font-size:1.6rem">No pudimos verificar</h1><p class="muted" style="margin-top:8px">La verificación necesita conexión a internet. Inténtalo de nuevo.</p>`}
-      <a class="btn btn-ghost" style="margin-top:18px" href="#/">Ir a Pastoral Ágape</a>
+      <a class="btn btn-ghost" style="margin-top:18px" href="#/">Ir al inicio de agAPPe</a>
     </div></div>`;
 }
 

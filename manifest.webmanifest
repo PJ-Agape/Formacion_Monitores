@@ -1,7 +1,7 @@
 {
-  "name": "Pastoral Juvenil Ágape",
-  "short_name": "Ágape",
-  "description": "La casa digital de la Pastoral Juvenil Ágape: agenda, muro y chat, curso de dirigentes, capilla, cancionero y materiales.",
+  "name": "agAPPe · Pastoral Juvenil Ágape",
+  "short_name": "agAPPe",
+  "description": "agAPPe, la app de la Pastoral Juvenil Ágape: agenda, muro y chat, formación, capilla, cancionero y materiales.",
   "lang": "es",
   "start_url": "./#/",
   "scope": "./",

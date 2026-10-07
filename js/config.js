@@ -2,7 +2,7 @@
 // Cuando se conecte una base de datos (usuarios y seguimiento), sus datos irán aquí.
 
 export const CONFIG = {
-  appName: "Pastoral Juvenil Ágape",
+  appName: "agAPPe",
   // Contenido publicado (itinerarios, recursos, oraciones). El administrador
   // lo edita desde el panel y lo reemplaza en el repositorio con "Publicar".
   contentUrl: "data/contenido.json",
