@@ -1,7 +1,7 @@
 // Recordatorios suaves de Ágape (lo corre GitHub Actions una vez al día).
 // A quien lleve 2 días o más sin entrar a la app —o, si es dirigente o aspirante, sin avanzar
 // en la formación— le envía una notificación a su celular; si no la activó, un correo.
-// Como máximo un aviso cada 3 días por persona, y nunca a quien los apagó en su perfil.
+// SOLO a quien los activó en Mi cuenta (vienen apagados); como máximo un aviso cada 3 días.
 //
 // Secretos (GitHub → Settings → Secrets and variables → Actions):
 //   FIREBASE_SERVICE_ACCOUNT  JSON de la cuenta de servicio de Firebase (obligatorio)
@@ -40,7 +40,7 @@ const MSG = {
 const html = (m) => `<div style="font-family:Arial,sans-serif;max-width:480px;margin:auto;padding:24px;background:#fff6e5;border-radius:18px;color:#0b2566">
   <h2 style="margin:0 0 10px">${m.title}</h2><p style="font-size:16px;line-height:1.5">${m.body}</p>
   <p style="margin:22px 0"><a href="${new URL(m.url, APP).href}" style="background:#1351a4;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-weight:bold">Entrar a la app</a></p>
-  <p style="font-size:12px;color:#4a5d7a">Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay.<br>¿No quieres estos recordatorios? Apágalos en la app, en «Mi cuenta» → Recordatorios.</p></div>`;
+  <p style="font-size:12px;color:#4a5d7a">Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay.<br>Recibes esto porque activaste los recordatorios. Puedes apagarlos en la app, en «Mi cuenta» → Recordatorios.</p></div>`;
 
 const [users, progress, avisos] = await Promise.all(["users", "progress", "avisos"].map(async (c) => {
   const qs = await db.collection(c).get(); return new Map(qs.docs.map((d) => [d.id, d.data()]));
@@ -50,7 +50,8 @@ let push = 0, mail = 0, skip = 0;
 for (const [uid, u] of users) {
   if (u.active === false || ["admin", "coordinador"].includes(u.role)) continue;
   const a = avisos.get(uid) || {};
-  if (a.on === false || days(a.last) < EVERY) { skip++; continue; }
+  if (a.on !== true) continue;                 // voluntario: solo quien lo pidió
+  if (days(a.last) < EVERY) { skip++; continue; }
   const p = progress.get(uid) || {}, sum = (p.summary || {})[COURSE] || {};
   const formRole = ["dirigente", "aspirante"].includes(u.role || "dirigente");
   let kind = null;
@@ -76,5 +77,5 @@ for (const [uid, u] of users) {
   console.log(`${DRY ? "[prueba] " : ""}${kind} → ${first(u.name) || uid}: ${sent ? "enviado" : "sin canal disponible"}`);
   if (sent && !DRY) await db.collection("avisos").doc(uid).set({ last: admin.firestore.FieldValue.serverTimestamp(), lastKind: kind, ...((a.subs || []).length !== alive.length ? { subs: alive } : {}) }, { merge: true });
 }
-console.log(`Listo: ${push} notificaciones, ${mail} correos, ${skip} omitidos (pausa de ${EVERY} días o apagados).`);
+console.log(`Listo: ${push} notificaciones, ${mail} correos, ${skip} omitidos (pausa de ${EVERY} días).`);
 process.exit(0);

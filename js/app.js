@@ -123,7 +123,7 @@ export async function render() {
   afterRender.splice(0).forEach((f) => f());
   ayuda.afterRender();
   a11y.afterRender();
-  avisos.afterRender(section);
+  avisos.afterRender();
   helpFab(section);
 }
 // Botón flotante «?»: abre la Ayuda en el tema de la sección donde estás.
