@@ -84,6 +84,70 @@ function jesus(x, y, { arms = "out", face = "smile", s = 1, flip = 1 } = {}) {
   out += P(`M${X(-4)} ${Y(57.5)} Q${X(0)} ${Y(54.5)} ${X(4)} ${Y(57.5)}`);
   return out;
 }
+// Personajes de la fe (María, José, santos): mismo monito, con vestimenta propia.
+// robe: color de la túnica (larga) · len: dónde termina (0 = a los pies; >0 deja ver piernas)
+// veil: color del manto/velo sobre la cabeza · band: franja del velo (Teresa de Calcuta)
+// hair/beard/cap: cabello, barba, solideo · shirt/pants: ropa moderna (sin túnica) · stars: aureola con estrellas
+function person(x, y, o = {}) {
+  const { arms = "down", face = "smile", s0 = 1, flip = 1, robe = null, len = 0, veil = null, band = null, hair = "#8a5a3c", long = false,
+    beard = null, cap = null, halo = true, stars = false, sash = null, shirt = null, pants = null, belt = null, cape = null, collar = null } = o;
+  const s = s0 * 1.22;
+  const X = (dx) => +(x + dx * s * flip).toFixed(1), Y = (dy) => +(y - dy * s).toFixed(1);
+  const k = (v) => +(v * s).toFixed(2);
+  const tube = (d, c = "var(--il-bg, #fff)") => P(d, `stroke-width="${k(10.5)}"`) + P(d, `stroke="${c}" stroke-width="${k(5.6)}"`);
+  const F = (c) => `fill="${c}" stroke="currentColor"`;
+  const A = {
+    down: `M${X(-8)} ${Y(41)} L${X(-13)} ${Y(26)} M${X(8)} ${Y(41)} L${X(13)} ${Y(26)}`,
+    out: `M${X(-8)} ${Y(43)} L${X(-24)} ${Y(48)} M${X(8)} ${Y(43)} L${X(24)} ${Y(48)}`,
+    open: `M${X(-8)} ${Y(43)} L${X(-22)} ${Y(56)} M${X(8)} ${Y(43)} L${X(22)} ${Y(56)}`,
+    up: `M${X(-8)} ${Y(42)} L${X(-18)} ${Y(66)} M${X(8)} ${Y(42)} L${X(18)} ${Y(66)}`,
+    hug: `M${X(-8)} ${Y(42)} L${X(-21)} ${Y(39)} M${X(8)} ${Y(42)} L${X(21)} ${Y(39)}`,
+    hold: `M${X(-8)} ${Y(41)} L${X(-14)} ${Y(32)} M${X(8)} ${Y(41)} L${X(14)} ${Y(32)}`,
+    give: `M${X(-8)} ${Y(41)} L${X(-12)} ${Y(29)} M${X(8)} ${Y(42)} L${X(25)} ${Y(42)}`,
+    wave: `M${X(-8)} ${Y(41)} L${X(-13)} ${Y(27)} M${X(8)} ${Y(42)} L${X(16)} ${Y(54)} L${X(19)} ${Y(68)}`,
+    raise: `M${X(-8)} ${Y(41)} L${X(-16)} ${Y(34)} M${X(8)} ${Y(42)} L${X(14)} ${Y(58)} L${X(13)} ${Y(74)}`,
+    pray: `M${X(-8)} ${Y(41)} L${X(-4)} ${Y(34)} M${X(8)} ${Y(41)} L${X(4)} ${Y(34)}`,
+  };
+  const armC = shirt || robe || "var(--il-bg, #fff)";
+  let out = "";
+  if (halo) {
+    out += C(X(0), Y(63), k(22), `stroke="var(--il-pop, #ffba03)" stroke-width="${k(3.2)}" fill="var(--il-bg, #fff)"`);
+    if (stars) out += [...Array(12)].map((_, i) => { const a = Math.PI * (0.1 + i * 0.8 / 11); return C(+(X(0) - Math.cos(a) * k(22)).toFixed(1), +(Y(63) - Math.sin(a) * k(22)).toFixed(1), k(1.6), 'fill="var(--il-pop, #ffba03)" stroke="currentColor" stroke-width="1"'); }).join("");
+  }
+  if (cape) out += P(`M${X(-10)} ${Y(46)} L${X(-19)} ${Y(8)} L${X(19)} ${Y(8)} L${X(10)} ${Y(46)} Z`, F(cape));
+  if (veil) out += P(`M${X(-14)} ${Y(72)} Q${X(-22)} ${Y(50)} ${X(-20)} ${Y(len ? 30 : 12)} L${X(20)} ${Y(len ? 30 : 12)} Q${X(22)} ${Y(50)} ${X(14)} ${Y(72)} Z`, F(veil));
+  else if (long && hair) out += P(`M${X(-16)} ${Y(66)} Q${X(-18)} ${Y(50)} ${X(-15)} ${Y(42)} L${X(15)} ${Y(42)} Q${X(18)} ${Y(50)} ${X(16)} ${Y(66)} Z`, F(hair));
+  const front = arms === "pray";
+  if (!front) out += tube(A[arms] || A.down, armC);
+  // piernas o pies
+  if (!robe || len) out += tube(`M${X(-4)} ${Y(21)} L${X(-6)} ${Y(4)} M${X(4)} ${Y(21)} L${X(6)} ${Y(4)}`, pants || "var(--il-bg, #fff)");
+  else out += C(X(-6), Y(3), k(3.2), 'fill="var(--il-bg, #fff)"') + C(X(6), Y(3), k(3.2), 'fill="var(--il-bg, #fff)"');
+  // cuerpo
+  if (robe) { const b = len ? len : 6, w = len ? 12 : 15;
+    out += P(`M${X(-9.5)} ${Y(44)} Q${X(-10)} ${Y(49)} ${X(0)} ${Y(49)} Q${X(10)} ${Y(49)} ${X(9.5)} ${Y(44)} L${X(w)} ${Y(b)} Q${X(0)} ${Y(b - 3)} ${X(-w)} ${Y(b)} Z`, F(robe)); }
+  else out += P(`M${X(-9.5)} ${Y(43)} Q${X(-10)} ${Y(49)} ${X(0)} ${Y(49)} Q${X(10)} ${Y(49)} ${X(9.5)} ${Y(43)} L${X(9)} ${Y(23)} Q${X(9)} ${Y(18)} ${X(0)} ${Y(18)} Q${X(-9)} ${Y(18)} ${X(-9)} ${Y(23)} Z`, F(shirt || "var(--il-bg, #fff)"));
+  if (band && robe) out += P(`M${X(-14)} ${Y(10)} Q${X(0)} ${Y(7)} ${X(14)} ${Y(10)}`, `stroke="${band}" stroke-width="${k(2.4)}"`);
+  if (sash) out += P(`M${X(-6)} ${Y(47)} L${X(9)} ${Y(14)}`, `stroke="${sash}" stroke-width="${k(4)}"`);
+  if (belt) out += P(`M${X(-9.6)} ${Y(30)} L${X(9.6)} ${Y(30)}`, `stroke="${belt}" stroke-width="${k(3)}"`);
+  if (collar) out += P(`M${X(-3)} ${Y(48)} L${X(3)} ${Y(48)}`, `stroke="${collar}" stroke-width="${k(3)}"`);
+  if (front) out += tube(A.pray, armC) + P(`M${X(0)} ${Y(48)} C${X(-5)} ${Y(44)} ${X(-5)} ${Y(34)} ${X(0)} ${Y(32)} C${X(5)} ${Y(34)} ${X(5)} ${Y(44)} ${X(0)} ${Y(48)} Z`, 'fill="var(--il-bg, #fff)" stroke-width="2.4"');
+  // cabeza
+  out += C(X(0), Y(62), k(15.5), 'fill="var(--il-bg, #fff)"');
+  const sw = flip > 0 ? 1 : 0;
+  if (veil) out += P(`M${X(-16.5)} ${Y(60)} A${k(16.5)} ${k(16.5)} 0 0 ${sw} ${X(16.5)} ${Y(60)} Q${X(9)} ${Y(73)} ${X(0)} ${Y(72.5)} Q${X(-9)} ${Y(73)} ${X(-16.5)} ${Y(60)} Z`, F(veil))
+    + (band ? P(`M${X(-14.5)} ${Y(61)} Q${X(-8)} ${Y(71)} ${X(0)} ${Y(70.5)} Q${X(8)} ${Y(71)} ${X(14.5)} ${Y(61)}`, `stroke="${band}" stroke-width="${k(2.2)}"`) : "");
+  else if (hair) out += P(`M${X(-15.5)} ${Y(64)} A${k(15.5)} ${k(15.5)} 0 0 ${sw} ${X(15.5)} ${Y(64)} Q${X(9)} ${Y(72)} ${X(1)} ${Y(70)} Q${X(-7)} ${Y(73)} ${X(-15.5)} ${Y(64)} Z`, F(hair));
+  if (cap) out += P(`M${X(-9)} ${Y(74.5)} Q${X(0)} ${Y(82)} ${X(9)} ${Y(74.5)} Z`, F(cap));
+  if (beard) out += P(`M${X(-12.5)} ${Y(55)} Q${X(-11)} ${Y(46)} ${X(0)} ${Y(45.5)} Q${X(11)} ${Y(46)} ${X(12.5)} ${Y(55)} Q${X(6)} ${Y(50.5)} ${X(0)} ${Y(51)} Q${X(-6)} ${Y(50.5)} ${X(-12.5)} ${Y(55)} Z`, F(beard));
+  out += C(X(-8.5), Y(59), k(2), 'fill="#ef591c" stroke="none" opacity=".25"') + C(X(8.5), Y(59), k(2), 'fill="#ef591c" stroke="none" opacity=".25"');
+  if (face === "calm") out += P(`M${X(-7.5)} ${Y(63)} q2.5 -2.4 5 0 M${X(2.5)} ${Y(63)} q2.5 -2.4 5 0`);
+  else out += C(X(-5), Y(63), k(1.7), FILL) + C(X(5), Y(63), k(1.7), FILL);
+  out += P(`M${X(-4.5)} ${Y(57.5)} Q${X(0)} ${Y(54)} ${X(4.5)} ${Y(57.5)}`);
+  return out;
+}
+const MANTO = "#8ad2fa", CAFE = "#8a5a3c", CANA = "#d9d4cc", ROJO = "#e48a68", NAVY = "#1d2c55";
+const lily = (x, y, h = 46) => P(`M${x} ${y} L${x} ${y - h}`, 'stroke-width="2.4"') + P(`M${x} ${y - h} q-8 -4 -6 -12 q4 4 6 4 q2 0 6 -4 q2 8 -6 12 Z`, 'fill="var(--il-bg,#fff)"') + P(`M${x} ${y - h * .55} q-8 -2 -10 -8 M${x} ${y - h * .4} q8 -2 10 -8`, 'stroke-width="2"');
+const mountains = () => P("M0 168 L50 96 L80 128 L120 70 L160 120 L190 94 L240 168", 'fill="var(--il-bg,#fff)"') + P("M108 86 L120 70 L132 86 Q120 82 108 86 Z M182 104 L190 94 L198 104 Q190 101 182 104 Z", 'fill="var(--il-bg,#fff)" stroke-width="2"');
 const ground = (x1 = 10, x2 = 230, y = 168) => P(`M${x1} ${y} q30 -3 60 0 t60 0 t60 0 t40 0`);
 const sparkle = (x, y, r = 6) => P(`M${x} ${y - r} L${x} ${y + r} M${x - r} ${y} L${x + r} ${y} M${x - r * .6} ${y - r * .6} L${x + r * .6} ${y + r * .6} M${x - r * .6} ${y + r * .6} L${x + r * .6} ${y - r * .6}`, 'stroke-width="2"');
 const heart = (x, y, w = 20, extra = POP) => P(`M${x} ${y + w * .8} C${x - w * 1.3} ${y - w * .1} ${x - w * .5} ${y - w * .9} ${x} ${y - w * .25} C${x + w * .5} ${y - w * .9} ${x + w * 1.3} ${y - w * .1} ${x} ${y + w * .8} Z`, extra);
@@ -102,6 +166,30 @@ const wave = (y) => P(`M0 ${y} q15 -8 30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t30 0 t
 const road = () => P("M20 172 C 70 150, 60 120, 110 110 S 190 90, 220 60", 'stroke-dasharray="3 9" stroke-width="3"');
 
 const SCENES = {
+  // María, José y la Sagrada Familia
+  virgen: () => person(120, 170, { arms: "pray", robe: "var(--il-bg,#fff)", veil: MANTO, stars: true, face: "calm" }) + sparkle(70, 70, 5) + sparkle(186, 60) + P("M150 168 q6 -16 14 -6 q6 -12 12 2 q-4 8 -12 4 q-8 6 -14 0 Z M70 168 q6 -14 12 -4 q6 -10 10 2 q-6 6 -11 3 q-6 4 -11 -1 Z", POP) + ground(),
+  jose: () => person(110, 170, { arms: "hold", robe: "#d7c49e", hair: CAFE, beard: CAFE, sash: "#9bbf8a" }) + lily(136, 150) + sparkle(186, 64, 5) + ground(),
+  sagradafamilia: () => person(70, 170, { arms: "hug", robe: "#d7c49e", hair: CAFE, beard: CAFE, s0: .9 }) + person(170, 170, { arms: "hug", robe: "var(--il-bg,#fff)", veil: MANTO, flip: -1, s0: .9 }) + person(120, 170, { arms: "up", robe: "var(--il-bg,#fff)", sash: ROJO, hair: CAFE, s0: .55 }) + heart(120, 34, 8) + ground(),
+  apostoles: () => [42, 82, 158, 198].map((x, i) => person(x, 170, { arms: i === 0 ? "hold" : i === 3 ? "wave" : "down", robe: ["#d7c49e", "#cfe6c4", "#f3dc9f", "#fde0d2"][i], beard: i % 2 ? null : CAFE, hair: i === 2 ? "#3b2a20" : CAFE, halo: false, flip: x > 120 ? -1 : 1, s0: .72 })).join("")
+    + jesus(120, 170, { arms: "open", s: .85 }) + P("M50 128 a5 5 0 1 0 10 0 a5 5 0 1 0 -10 0 M55 133 l0 14 l4 0 M55 142 l4 0", 'stroke="var(--il-pop,#ffba03)" stroke-width="2.6"') + ground(),
+  // Santos
+  sanmiguel: () => P("M100 118 q-44 -20 -60 -56 q30 6 44 24 q-14 -16 -8 -34 q22 18 30 52 Z M140 118 q44 -20 60 -56 q-30 6 -44 24 q14 -16 8 -34 q-22 18 -30 52 Z", 'fill="var(--il-bg,#fff)"')
+    + person(120, 170, { arms: "raise", robe: MANTO, len: 0, hair: "#e0b04a", belt: "var(--il-pop,#ffba03)", cape: ROJO })
+    + P("M136 80 L150 22 M142 84 L132 80 M145 70 l-10 -3", 'stroke-width="3.5"') + P("M150 22 L147 34", 'stroke="#fff" stroke-width="1.6"') + P("M84 120 q12 -6 22 0 l-2 22 q-9 8 -18 0 Z", 'fill="var(--il-pop,#ffba03)" stroke="currentColor"') + P("M95 124 L95 140 M89 130 L101 130", 'stroke-width="2.2"') + ground(),
+  sansebastian: () => P("M196 168 L196 60 M196 92 l-18 -20 M196 80 l16 -14", 'stroke-width="5"') + person(110, 170, { arms: "hold", robe: "#f3dc9f", len: 20, hair: CAFE, cape: ROJO, belt: CAFE, pants: "var(--il-bg,#fff)" })
+    + P("M88 128 q-14 -26 -6 -52 M88 128 q-4 -24 8 -44", 'stroke="#5e9a5a" stroke-width="2.6"') + P("M84 96 l-8 -2 M86 108 l-9 0 M90 100 l8 -6", 'stroke="#5e9a5a" stroke-width="2"')
+    + P("M128 136 L150 92 M132 138 L158 98", 'stroke-width="2.2"') + P("M150 92 l-6 2 l4 -7 Z M158 98 l-6 2 l4 -7 Z", 'fill="currentColor"') + ground(),
+  juanpablo: () => person(110, 170, { arms: "wave", robe: "var(--il-bg,#fff)", hair: CANA, cap: "var(--il-bg,#fff)", sash: null, flip: -1 }) + P("M86 168 L86 66 M86 70 q-8 -4 -12 2 M86 70 q8 -4 12 2 M80 78 L92 78", 'stroke-width="3"') + C(86, 66, 3, POP) + heart(160, 60, 8) + sparkle(190, 90, 5) + ground(),
+  teresacalcuta: () => person(100, 170, { arms: "pray", robe: "var(--il-bg,#fff)", veil: "var(--il-bg,#fff)", band: "#3d7fd1", face: "calm" }) + fig(166, 168, { arms: "hug", s: .55, flip: -1 }) + heart(140, 70, 9) + ground(),
+  carloacutis: () => person(100, 170, { arms: "hold", shirt: "#e05a4f", pants: "#5b86c5", hair: "#3b2a20", halo: true })
+    + P("M112 118 h40 v28 h-40 Z", 'fill="var(--il-bg,#fff)"') + P("M106 146 h52 l-4 6 h-44 Z", 'fill="var(--il-bg,#fff)"') + C(132, 132, 7, POP) + P("M128 132 h8 M132 128 v8", 'stroke-width="1.6"')
+    + P("M86 120 q-6 2 -8 12", 'stroke-width="2"') + sparkle(186, 70) + ground(),
+  // Santos de Chile
+  teresaandes: () => mountains() + person(120, 172, { arms: "pray", robe: "#9b7a5a", veil: NAVY, collar: "#fff", face: "calm" }) + sparkle(200, 50, 5) + sparkle(40, 60, 5),
+  albertohurtado: () => person(80, 170, { arms: "give", robe: NAVY, hair: "#3b2a20", collar: "#fff" }) + fig(126, 168, { arms: "up", s: .55, flip: -1 })
+    + P("M150 168 L150 132 L188 132 L200 146 L216 148 L216 168 Z", 'fill="#9bbf8a" stroke="currentColor"') + P("M190 136 L198 146 L190 146 Z", 'fill="var(--il-bg,#fff)"') + C(162, 168, 7, 'fill="var(--il-bg,#fff)"') + C(204, 168, 7, 'fill="var(--il-bg,#fff)"') + heart(168, 118, 6) + ground(),
+  lauravicuna: () => person(110, 170, { arms: "hold", robe: NAVY, len: 22, hair: "#3b2a20", long: true, collar: "#fff", pants: "var(--il-bg,#fff)" }) + lily(140, 150, 50) + sparkle(70, 60) + sparkle(180, 70, 5) + ground(),
+  santoschile: () => mountains() + person(80, 172, { arms: "pray", robe: "#9b7a5a", veil: NAVY, collar: "#fff", face: "calm", s0: .82 }) + person(162, 172, { arms: "wave", robe: NAVY, hair: "#3b2a20", collar: "#fff", s0: .82, flip: -1 }),
   // Jesús
   jesus: () => jesus(120, 170, { arms: "open" }) + sparkle(56, 60) + sparkle(186, 52, 5) + heart(190, 110, 8) + ground(),
   emaus: () => road() + fig(62, 168, { arms: "out", legs: "walk", s: .75 }) + jesus(118, 150, { arms: "give", s: .78 }) + fig(176, 136, { arms: "down", legs: "walk", s: .65, flip: -1 }) + sun(206, 34, 9),
@@ -163,7 +251,7 @@ const BY_N = {
   27: "ninos", 28: "tesoro", 29: "servir", 30: "bartimeo", 31: "amar", 32: "moneda", 33: "futuro", 34: "rey",
 };
 export const SCENE_KEYS = Object.keys(SCENES);
-const NAMES = { jesus: "Jesús", emaus: "Jesús en Emaús", dejadlos: "Jesús y los niños", buenpastor: "Buen Pastor", sagradocorazon: "Sagrado Corazón", corazonlimpio: "Corazón limpio", eucaristia: "Eucaristía", espiritu: "Espíritu Santo", maria: "María", oracion: "Oración", acogida: "Acogida", levantate: "Levántate", eleccion: "Elección", uncion: "Unción", ninos: "Niños", rey: "Cristo Rey" };
+const NAMES = { jesus: "Jesús", emaus: "Jesús en Emaús", dejadlos: "Jesús y los niños", buenpastor: "Buen Pastor", sagradocorazon: "Sagrado Corazón", corazonlimpio: "Corazón limpio", eucaristia: "Eucaristía", espiritu: "Espíritu Santo", maria: "María", oracion: "Oración", acogida: "Acogida", levantate: "Levántate", eleccion: "Elección", uncion: "Unción", ninos: "Niños", rey: "Cristo Rey", virgen: "Virgen María", jose: "San José", sagradafamilia: "Sagrada Familia", apostoles: "Los apóstoles", sanmiguel: "San Miguel Arcángel", sansebastian: "San Sebastián", juanpablo: "San Juan Pablo II", teresacalcuta: "Santa Teresa de Calcuta", carloacutis: "San Carlo Acutis", teresaandes: "Santa Teresa de los Andes", albertohurtado: "San Alberto Hurtado", lauravicuna: "Beata Laura Vicuña", santoschile: "Santos de Chile" };
 export const sceneLabel = (k) => NAMES[k] || k.charAt(0).toUpperCase() + k.slice(1);
 export function illus(key, cls = "") {
   const f = SCENES[key];

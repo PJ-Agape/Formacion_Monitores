@@ -409,7 +409,7 @@ export function sticker(ctx, key, text, color = C.sun) {
 // Contenidos listos: stickers y frases del grupo
 // ---------------------------------------------------------------------------
 export const STICKERS = [
-  ["jesus", "Jesús te ama", C.sun], ["emaus", "¡Camina conmigo!", C.sky], ["buenpastor", "Él te cuida", C.coral],
+  ["jesus", "Jesús te ama", C.sun], ["emaus", "¡Camina conmigo!", C.sky], ["buenpastor", "Él te cuida", C.coral], ["virgen", "María, ruega por nosotros", C.sky], ["sanmiguel", "¿Quién como Dios?", C.sun], ["carloacutis", "Mi autopista al cielo", C.coral],
   ["corazon", "¡Te quiero!", C.sun], ["oracion", "Rezo por ti", C.sky], ["amigos", "¡Amigos!", C.coral], ["juego", "¡Vamos!", C.sun],
   ["celular", "Ya llego", C.sky], ["levantate", "¡Arriba!", C.coral], ["acogida", "¡Bienvenido!", C.sun], ["comunidad", "¡Nos vemos!", C.sky],
   ["equipo", "¡Equipazo!", C.coral], ["amar", "Amor que transforma", C.sun], ["escuchar", "Te escucho", C.sky], ["descanso", "Modo siesta", C.sky],

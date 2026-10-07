@@ -282,7 +282,7 @@ function viewHome() {
           <span class="small"><b>${st.readSessions}/${st.totalSessions}</b> unidades</span>
         </div>
       </div>
-      ${illus("camino", "car-illus")}
+      ${illus("apostoles", "car-illus")}
     </article>`;
   const carousel = () => {
     const slides = portada.current();

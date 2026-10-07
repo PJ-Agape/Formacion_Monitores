@@ -28,19 +28,19 @@ const ILLUS_LABEL = (k) => sceneLabel(k);
 // Diapositivas de base (se pueden editar, ocultar o restaurar desde Gestión)
 // ---------------------------------------------------------------------------
 export const DEFAULTS = [
-  { key: "agape", label: "Qué es Ágape", theme: "sky", order: 10, logo: true, illus: "comunidad",
+  { key: "agape", label: "Qué es Ágape", theme: "sky", order: 10, logo: true, illus: "emaus",
     kicker: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", hand: "bienvenido a casa",
     title: "Amor que *transforma*",
     text: "Somos jóvenes de la parroquia que caminan juntos para encontrarse con Jesús, formarse y servir. Aquí nadie es espectador: cada uno importa, con su historia y lo que aporta.",
     chips: ["Familiar y comunitario", "Intuitivo", "Activo"],
     b1: { label: "Conoce la comunidad", href: "#/comunidad" }, b2: { label: "Ver la agenda", href: "#/agenda" } },
   { key: "curso", label: "Curso de dirigentes", order: 20, course: true },
-  { key: "santos", label: "Todos los Santos", theme: "gold", order: 30, from: "2026-09-15", to: "2026-11-02", illus: "santos",
+  { key: "santos", label: "Todos los Santos", theme: "gold", order: 30, from: "2026-09-15", to: "2026-11-02", illus: "santoschile",
     kicker: "Domingo 1 de noviembre · Solemnidad", hand: "tú también estás llamado",
     title: "Todos los *Santos*",
     text: "La santidad no es para unos pocos: es la vocación de todos. Celebramos a quienes ya viven junto a Dios, como san Alberto Hurtado y santa Teresa de los Andes, y el 2 de noviembre rezamos por nuestros difuntos.",
     b1: { label: "Horarios en la agenda", href: "#/agenda" }, b2: { label: "Rezar con el devocionario", href: "#/oracion" } },
-  { key: "maria", label: "Mes de María", theme: "rose", order: 40, from: "2026-09-15", to: "2026-12-08", illus: "flores",
+  { key: "maria", label: "Mes de María", theme: "rose", order: 40, from: "2026-09-15", to: "2026-12-08", illus: "virgen",
     kicker: "8 de noviembre al 8 de diciembre", hand: "con flores a María",
     title: "Mes de *María*",
     text: "Durante un mes nos reunimos a rezar, cantar y llevar flores a la Virgen, como es tradición en Chile. Invita a tu familia y a tus amigos: María nos enseña a decir «aquí estoy».",
