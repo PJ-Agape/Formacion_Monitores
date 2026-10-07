@@ -2435,3 +2435,4 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .asg-row.changed { box-shadow: inset 4px 0 0 #ef591c; }
 .asg-row label { display: grid; gap: 2px; }
 @media (max-width: 640px) { .asg-row { grid-template-columns: 1fr; } }
+.chat-more { text-align: center; margin: 4px 0 10px; }

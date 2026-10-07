@@ -477,9 +477,25 @@ export async function listPeople() {
   try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "users")), 8000)).filter((u) => u.active !== false).map((u) => ({ uid: u.id, name: u.name || u.email, role: u.role })); }
   catch { return []; }
 }
-export function watchChat(sala, cb, onErr) {
+// Ajustes del chat (horario y limpieza): content/chat, lo edita un administrador.
+export const CHAT_DEFAULT = { desde: "08:00", hasta: "22:30", dias: 90 };
+let chatCfg = null;
+export async function chatConfig(force) {
+  if (!chatCfg || force) chatCfg = { ...CHAT_DEFAULT, ...((await getContent("chat")) || {}) };
+  return chatCfg;
+}
+export async function saveChatConfig(data) { await setContent("chat", data); chatCfg = { ...CHAT_DEFAULT, ...data }; }
+// Borra los mensajes más antiguos que el plazo (lo hace el equipo al abrir una sala; hasta 100 por vez).
+export async function purgeChat(sala, dias) {
+  if (!enabled || !db || !dias) return 0;
+  const cut = fb.Timestamp ? fb.Timestamp.fromMillis(Date.now() - dias * 864e5) : new Date(Date.now() - dias * 864e5);
+  const qs = await fb.getDocs(fb.query(fb.collection(db, "chat", sala, "msgs"), fb.where("createdAt", "<", cut), fb.orderBy("createdAt", "asc"), fb.limit(100)));
+  await Promise.all(qs.docs.map((d) => fb.deleteDoc(fb.doc(db, "chat", sala, "msgs", d.id)).catch(() => {})));
+  return qs.docs.length;
+}
+export function watchChat(sala, cb, onErr, limit = 40) {
   if (!enabled || !db) return () => {};
-  const q = fb.query(fb.collection(db, "chat", sala, "msgs"), fb.orderBy("createdAt", "desc"), fb.limit(200));
+  const q = fb.query(fb.collection(db, "chat", sala, "msgs"), fb.orderBy("createdAt", "desc"), fb.limit(limit));
   return fb.onSnapshot(q, (qs) => cb(snapRows(qs).reverse()), (e) => { console.warn("Chat:", e); onErr && onErr(e); });
 }
 export async function lastChat(sala) {
@@ -509,13 +525,18 @@ export async function sendBuzz(sala, to) {
 }
 export const REACTIONS = ["❤️", "🙏", "😂", "👍", "😮", "🔥"];
 export const reactChat = (sala, id, emoji) => fb.updateDoc(fb.doc(db, "chat", sala, "msgs", id), { [`reactions.${user.uid}`]: emoji ? emoji : fb.deleteField() });
-// Presencia: quién tiene la sala abierta. Se renueva cada minuto; al salir se borra.
+// Presencia: quién tiene la sala abierta. Se renueva cada 3 minutos solo si la app está a la vista; al salir se borra.
 export function joinRoom(sala) {
   if (!enabled || !db || !user || !account) return () => {};
   const ref = fb.doc(db, "chat", sala, "presence", user.uid);
-  const beat = () => fb.setDoc(ref, { name: shortName(account.name), avatar: account.avatar || "", role: account.role, at: fb.serverTimestamp() }).catch(() => {});
+  let lastBeat = 0;
+  const beat = () => {
+    if (document.visibilityState === "hidden" || Date.now() - lastBeat < 60000) return;
+    lastBeat = Date.now();
+    fb.setDoc(ref, { name: shortName(account.name), avatar: account.avatar || "", role: account.role, at: fb.serverTimestamp() }).catch(() => {});
+  };
   beat();
-  const t = setInterval(beat, 60000);
+  const t = setInterval(beat, 180000);
   const vis = () => { if (document.visibilityState === "visible") beat(); };
   document.addEventListener("visibilitychange", vis);
   const leave = () => { clearInterval(t); document.removeEventListener("visibilitychange", vis); window.removeEventListener("pagehide", leave); fb.deleteDoc(ref).catch(() => {}); };

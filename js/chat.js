@@ -11,7 +11,18 @@ const $ = (s, r = document) => r.querySelector(s);
 const st = () => ctx.cloud.state();
 let msgs = null, current = null, online = [], replyTo = null, openedAt = 0;
 const seenBuzz = new Set();
-const ONLINE_MS = 150000; // se considera en línea si dio señales en los últimos 2,5 minutos
+const ONLINE_MS = 420000; // se considera en línea si dio señales en los últimos 7 minutos (la señal se renueva cada 3)
+const PAGE = 40; // mensajes que se cargan por vez
+let limit = PAGE, stopMsgs = null, cfg = null, lastSent = 0;
+const purged = new Set();
+const hm = (d) => d.getHours() * 60 + d.getMinutes();
+const toMin = (t) => { const [h, m] = String(t || "0:0").split(":").map(Number); return h * 60 + (m || 0); };
+// ¿El chat está abierto ahora? El equipo coordinador puede escribir siempre.
+function chatOpen() {
+  if (!cfg || st().isStaff) return true;
+  const a = toMin(cfg.desde), b = toMin(cfg.hasta), n = hm(new Date());
+  return a === b ? true : a < b ? n >= a && n < b : n >= a || n < b;
+}
 const SALA_ILLUS = { general: "comunidad", coordinacion: "mesa", dirigentes: "equipo", aspirantes: "camino" };
 const SALA_COLOR = { general: "#8ad2fa", coordinacion: "#ffba03", dirigentes: "#1351a4", aspirantes: "#ef591c" };
 const COLORS = ["#8ad2fa", "#ffba03", "#ef591c", "#1351a4", "#fde0d2", "#9be3b0"];
@@ -81,10 +92,35 @@ export async function viewRooms() {
   <header class="page-head"><span class="eyebrow">Chat de la comunidad</span><h1>Conversemos <em>juntos</em></h1>
     <p>Salas de grupo para coordinarnos y compartir. Todo lo que se escribe aquí lo ven los integrantes de la sala; para temas personales o privados, usa otro canal con tu acompañante.</p></header>
   ${tabs("chat")}
-  ${g || `${staff ? `<div class="row-wrap" style="margin:10px 0"><button class="btn btn-gold btn-sm" data-action="salaNew">${icon("plus")} Nueva sala</button></div>` : ""}
+  ${g || `${staff ? `<div class="row-wrap" style="margin:10px 0"><button class="btn btn-gold btn-sm" data-action="salaNew">${icon("plus")} Nueva sala</button>${st().isAdmin ? `<button class="btn btn-ghost btn-sm" data-action="chatCfg">⚙️ Horario y limpieza</button>` : ""}</div>` : ""}
     <div class="chat-rooms">${active.map(card).join("")}</div>
     ${archived.length ? `<h3 class="mag-hub-sub" style="margin-top:22px">Salas archivadas</h3><div class="chat-rooms">${archived.map(card).join("")}</div>` : ""}
     <p class="xs muted" style="margin-top:16px">¿No ves una sala que te corresponde? El equipo coordinador asigna las salas.</p>`}`;
+}
+
+// Ajustes del chat (solo administradores)
+async function chatCfgDialog() {
+  const c = await ctx.cloud.chatConfig(true).catch(() => ctx.cloud.CHAT_DEFAULT);
+  let d = document.getElementById("chatCfgDlg");
+  if (!d) { d = document.createElement("dialog"); d.id = "chatCfgDlg"; d.className = "sheet"; document.body.appendChild(d); }
+  d.innerHTML = `<form method="dialog" id="chatCfgForm">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Chat</span><h2>Horario y limpieza</h2></div>
+      <button type="button" class="icon-btn" onclick="this.closest('dialog').close()" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:14px">
+      <div class="ag-form-row"><div class="field"><label>Abre a las</label><input class="input" type="time" name="desde" value="${esc(c.desde)}" required></div>
+        <div class="field"><label>Cierra a las</label><input class="input" type="time" name="hasta" value="${esc(c.hasta)}" required></div></div>
+      <p class="xs muted">Fuera de ese horario las salas se pueden leer, pero no reciben mensajes. El equipo coordinador puede escribir siempre. Si pones la misma hora en ambos, el chat queda abierto todo el día.</p>
+      <div class="field"><label>Borrar los mensajes con más de</label><select class="select" name="dias">${[[30, "30 días"], [60, "60 días"], [90, "90 días"], [180, "6 meses"], [0, "Nunca"]].map(([v, l]) => `<option value="${v}" ${+c.dias === v ? "selected" : ""}>${l}</option>`).join("")}</select>
+        <span class="xs muted">La limpieza ocurre sola cuando alguien del equipo abre una sala. Cuida la privacidad y mantiene la app liviana.</span></div>
+    </div>
+    <div class="sheet-foot"><span class="spacer"></span><button class="btn btn-primary" type="submit">Guardar</button></div></form>`;
+  d.querySelector("form").onsubmit = async (e) => {
+    e.preventDefault();
+    const f = new FormData(e.target);
+    try { await ctx.cloud.saveChatConfig({ desde: f.get("desde"), hasta: f.get("hasta"), dias: +f.get("dias") }); d.close(); toast("Ajustes del chat guardados", "ok"); }
+    catch (err) { console.warn(err); toast("No se pudo guardar", ""); }
+  };
+  d.showModal();
 }
 
 // ---------------------------------------------------------------------------
@@ -100,10 +136,14 @@ export async function viewRoom(key) {
       <p class="muted" style="margin-top:8px">Si crees que deberías estar, pídelo al equipo coordinador.</p>
       <a class="btn btn-primary" style="margin-top:14px" href="#/chat">Ver mis salas</a></div>`;
   }
-  if (current !== key) { current = key; msgs = null; online = []; replyTo = null; seenBuzz.clear(); }
+  if (current !== key) { current = key; msgs = null; online = []; replyTo = null; seenBuzz.clear(); limit = PAGE; }
+  if (!g) cfg = await ctx.cloud.chatConfig().catch(() => ctx.cloud.CHAT_DEFAULT);
   if (!g) ctx.onAfterRender(() => {
     openedAt = Date.now();
-    const stop = ctx.cloud.watchChat(key, (rows) => { msgs = rows; checkBuzz(); paint(); }, () => { msgs = msgs || []; paint(true); });
+    subscribe(key);
+    const stop = () => { if (stopMsgs) stopMsgs(); stopMsgs = null; };
+    // Limpieza: el equipo borra en segundo plano lo que pasó el plazo (una vez por sala y sesión)
+    if (st().isStaff && cfg && cfg.dias > 0 && !purged.has(key)) { purged.add(key); ctx.cloud.purgeChat(key, cfg.dias).catch((e) => console.warn("Limpieza del chat:", e)); }
     const stopP = ctx.cloud.watchPresence(key, (rows) => { online = rows; paintOnline(); });
     const leave = ctx.cloud.joinRoom(key);
     const tick = setInterval(paintOnline, 30000);
@@ -122,7 +162,7 @@ export async function viewRoom(key) {
   <div class="chat-box card">
     <div class="chat-list" id="chatList" aria-live="polite"><div class="muted small" style="text-align:center;padding:30px">Cargando…</div></div>
     <div class="chat-replybar" id="chatReply" hidden></div>
-    ${sala.archived ? `<div class="chat-arch">${icon("lock")} Sala archivada: se puede leer, pero ya no recibe mensajes.</div>` : `<form class="chat-compose" id="chatForm" data-sala="${esc(key)}">
+    ${sala.archived ? `<div class="chat-arch">${icon("lock")} Sala archivada: se puede leer, pero ya no recibe mensajes.</div>` : !chatOpen() ? `<div class="chat-arch">🌙 El chat está abierto de ${esc(cfg.desde)} a ${esc(cfg.hasta)}. Puedes leer los mensajes; vuelve a escribir en ese horario.</div>` : `<form class="chat-compose" id="chatForm" data-sala="${esc(key)}">
       <details class="chat-buzzpick"><summary class="btn btn-ghost" title="Enviar un zumbido" aria-label="Enviar un zumbido">📳</summary><div class="wall-menu-list" id="chatBuzzList"></div></details>
       <textarea id="chatText" class="textarea" rows="1" maxlength="1500" placeholder="Escribe un mensaje…" aria-label="Mensaje"></textarea>
       <button class="btn btn-primary" type="submit" aria-label="Enviar">${icon("send")}</button>
@@ -133,6 +173,10 @@ export async function viewRoom(key) {
   <p class="xs muted" style="margin-top:10px;text-align:center">Lo que escribes lo ven todos los integrantes de esta sala. Si algo no corresponde, repórtalo desde el menú del mensaje.</p>`}`;
 }
 
+function subscribe(key) {
+  if (stopMsgs) stopMsgs();
+  stopMsgs = ctx.cloud.watchChat(key, (rows) => { msgs = rows; checkBuzz(); paint(); }, () => { msgs = msgs || []; paint(true); }, limit);
+}
 function paint(err) {
   const box = $("#chatList");
   if (!box) return;
@@ -147,7 +191,8 @@ function paint(err) {
   let lastDay = "", lastAuthor = "", lastT = 0;
   const ms = (t) => (t && t.toMillis ? t.toMillis() : t && t.seconds ? t.seconds * 1000 : +new Date(t || 0)) || 0;
   const onl = onlineNow();
-  box.innerHTML = msgs.map((m) => {
+  const more = msgs.length >= limit ? `<div class="chat-more"><button class="btn btn-sm btn-ghost" data-action="chatMore">Ver mensajes anteriores</button></div>` : "";
+  box.innerHTML = more + msgs.map((m) => {
     const day = dayOf(m.createdAt);
     const sep = day !== lastDay ? `<div class="chat-day"><span>${esc(day)}</span></div>` : "";
     if (sep) lastAuthor = "";
@@ -186,7 +231,8 @@ function paint(err) {
       <details class="wall-menu chat-menu"><summary class="icon-btn" aria-label="Opciones del mensaje"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><circle cx="5" cy="12" r="1.8"/><circle cx="12" cy="12" r="1.8"/><circle cx="19" cy="12" r="1.8"/></svg></summary><div class="wall-menu-list">${opts.join("")}</div></details>
     </div>`;
   }).join("");
-  if (nearBottom || !box.dataset.ready) { box.scrollTop = box.scrollHeight; box.dataset.ready = "1"; }
+  if (box.dataset.keep) { box.scrollTop = box.scrollHeight - +box.dataset.keep; delete box.dataset.keep; }
+  else if (nearBottom || !box.dataset.ready) { box.scrollTop = box.scrollHeight; box.dataset.ready = "1"; }
 }
 
 // ---------- En línea ----------
@@ -350,10 +396,19 @@ function registerActions() {
     if (on && !confirm("¿Reportar este mensaje al equipo coordinador?")) return;
     ctx.cloud.reportChat(current, el.dataset.id, on).then(() => toast(on ? "Gracias. El equipo lo revisará." : "Reporte retirado")).catch(() => toast("No se pudo guardar", ""));
   };
+  A.chatMore = () => {
+    const box = $("#chatList"), h = box ? box.scrollHeight : 0;
+    limit += PAGE; box.dataset.keep = String(h); subscribe(current);
+  };
+  A.chatCfg = () => chatCfgDialog();
   const send = async (form) => {
     const ta = form.querySelector("textarea");
     const text = ta.value.trim();
     if (!text) return;
+    if (!chatOpen()) { toast(`El chat está abierto de ${cfg.desde} a ${cfg.hasta}`, ""); return; }
+    const wait = Math.ceil((lastSent + 3000 - Date.now()) / 1000);
+    if (wait > 0) { toast(`Espera ${wait} s antes de enviar otro mensaje`, ""); return; }
+    lastSent = Date.now();
     ta.value = ""; ta.style.height = "";
     const rt = replyTo; replyTo = null; paintReply();
     try { await ctx.cloud.sendChat(form.dataset.sala, text, rt); const b = $("#chatList"); if (b) b.scrollTop = b.scrollHeight; }
