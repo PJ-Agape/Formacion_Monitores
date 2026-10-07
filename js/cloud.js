@@ -648,6 +648,15 @@ export const saveJoven = saveIn("jovenes");
 export const patchJoven = (id, data) => fb.updateDoc(fb.doc(db, "jovenes", id), data);
 export const deleteJoven = (id) => fb.deleteDoc(fb.doc(db, "jovenes", id));
 export const listJovenes = () => all("jovenes");
+// Grupo de WhatsApp de la app (privado/whatsapp): lo ven solo cuentas activas; lo edita el equipo.
+let waCache;
+export async function getGrupoWA(force) {
+  if (!enabled || !db || !user) return null;
+  if (waCache !== undefined && !force) return waCache;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "privado", "whatsapp")), 6000); waCache = s.exists() ? s.data() : null; } catch { waCache = null; }
+  return waCache;
+}
+export async function saveGrupoWA(d) { await fb.setDoc(fb.doc(db, "privado", "whatsapp"), { ...d, updatedAt: fb.serverTimestamp(), updatedBy: account.email }); waCache = d; }
 export const saveSesion = (fecha, data) => fb.setDoc(fb.doc(db, "sesiones", fecha), { ...data, by: account.email, at: fb.serverTimestamp() });
 export const deleteSesion = (fecha) => fb.deleteDoc(fb.doc(db, "sesiones", fecha));
 export async function myJoven() {

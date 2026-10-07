@@ -2441,3 +2441,8 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .inact-list { display: grid; gap: 6px; margin-top: 12px; }
 .inact-row { display: flex; flex-wrap: wrap; align-items: center; gap: 8px; padding: 8px 10px; border-radius: 12px; background: var(--surface-2); }
 .inact-row .xs { display: block; }
+.wa-wrap { margin: 16px 0; }
+.card.link.wa-card { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; border-left: 8px solid #25d366 !important; }
+.wa-ico { width: 46px; height: 46px; border-radius: 50%; background: #25d366; color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+.wa-ico svg { width: 28px; height: 28px; }
+.wa-btn { background: #25d366 !important; color: #fff !important; border-color: #0b2566 !important; }

@@ -1,6 +1,7 @@
 // Panel de Gestión: edición de itinerarios, evaluaciones, materiales, oraciones
 // y guía de comunidad. Todo se edita en un borrador y se publica al final.
 
+import * as grupo from "./grupo.js";
 import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as familiasAdmin from "./familias-admin.js";
@@ -151,6 +152,7 @@ async function summaryView(d) {
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Resumen</h1>
     <p>Todo lo que edites queda en un borrador en este dispositivo. Cuando esté listo, lo publicas y todos los dirigentes lo verán.</p></header>
   ${cloudOn ? await followSummary() : ""}
+  ${cloudOn ? await grupo.adminHTML() : ""}
   ${legacy ? `<div class="card" style="border-color:var(--gold)">
     <h3>Encontramos contenido editado con la versión anterior</h3>
     <p class="muted small" style="margin-top:6px">Este navegador guarda cambios hechos con el panel antiguo (${legacy.join(", ")}). ¿Quieres traerlos al borrador para publicarlos?</p>

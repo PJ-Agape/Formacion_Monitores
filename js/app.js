@@ -24,6 +24,7 @@ import * as ayuda from "./ayuda.js";
 import * as cuenta from "./cuenta.js";
 import * as difusion from "./difusion.js";
 import * as a11y from "./accesible.js";
+import * as grupo from "./grupo.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -122,6 +123,7 @@ export async function render() {
   afterRender.splice(0).forEach((f) => f());
   ayuda.afterRender();
   a11y.afterRender();
+  grupo.afterRender(section);
   helpFab(section);
 }
 // Botón flotante «?»: abre la Ayuda en el tema de la sección donde estás.
