@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-05": {
-   "titulo": "Lunes de la 27.ª semana del Tiempo Ordinario",
-   "cita": "Lc 10,25-37",
-   "frase": "Ve, y procede tú de la misma manera."
-  },
   "2026-10-06": {
    "titulo": "Martes de la 27.ª semana del Tiempo Ordinario",
    "cita": "Lc 10,38-42",
@@ -55,6 +50,11 @@
    "titulo": "Jueves de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,47-54",
    "frase": "Sí, les aseguro que a esta generación se le pedirá cuenta de todo esto."
+  },
+  "2026-10-16": {
+   "titulo": "Viernes de la 28.ª semana del Tiempo Ordinario",
+   "cita": "Lc 12,1-7",
+   "frase": "Se reunieron miles de personas, hasta el punto de atropellarse unos a otros."
   }
  }
 }
