@@ -128,7 +128,7 @@ function marcoHTML() {
 
 // --- Stickers ----------------------------------------------------------------
 function stickersHTML() {
-  return `<div class="card" style="margin-bottom:14px"><p class="small">Toca un sticker para enviarlo. «Como sticker» lo manda con fondo transparente (en WhatsApp de Android llega como sticker de verdad); «como imagen» lo manda con fondo claro. Para guardarlos en tu colección de WhatsApp, descárgalos y súmalos con una app de stickers (por ejemplo «Sticker Maker»).</p></div>
+  return `<div class="card" style="margin-bottom:14px"><p class="small">Toca un sticker para compartirlo o guardarlo. Para tenerlos en WhatsApp, guárdalos y súmalos con una app de stickers (por ejemplo «Sticker Maker»).</p></div>
     <div class="dif-stk">${E.STICKERS.map(([k, t], i) => `<button type="button" data-action="difSticker" data-i="${i}" title="${esc(t)}"><canvas data-stk="${i}" width="512" height="512" aria-label="${esc(t)}"></canvas></button>`).join("")}</div>`;
 }
 
@@ -191,43 +191,12 @@ function fileName() {
   return `agape-${st.tpl}-${st.fmt}.png`;
 }
 const toBlob = (cv) => new Promise((ok) => cv.toBlob(ok, "image/png"));
-// Stickers: WhatsApp convierte en foto (y pinta de negro lo transparente) cualquier PNG.
-// Como sticker se manda en WebP 512×512 (≤100 KB, el formato de los stickers); como imagen, sobre fondo claro.
-async function webpBlob(cv) {
-  for (const q of [0.9, 0.8, 0.7, 0.6, 0.5]) {
-    const b = await new Promise((ok) => cv.toBlob(ok, "image/webp", q));
-    if (!b || b.type !== "image/webp") return null; // el navegador no sabe crear WebP
-    if (b.size <= 100 * 1024) return b;
-  }
-  return null;
-}
-async function flatBlob(cv) {
-  const c = document.createElement("canvas"); c.width = cv.width; c.height = cv.height;
-  const x = c.getContext("2d"); x.fillStyle = "#fff6e5"; x.fillRect(0, 0, c.width, c.height); x.drawImage(cv, 0, 0);
-  return new Promise((ok) => c.toBlob(ok, "image/png"));
-}
-function stickerSheet(i) {
-  const [, t] = E.STICKERS[i] || [];
-  let d = document.getElementById("stkDlg");
-  if (!d) { d = document.createElement("dialog"); d.id = "stkDlg"; d.className = "sheet"; document.body.appendChild(d); }
-  d.innerHTML = `<div class="sheet-head"><div style="flex:1"><span class="eyebrow">Sticker</span><h2>${esc(t || "")}</h2></div>
-      <button type="button" class="icon-btn" onclick="this.closest('dialog').close()" aria-label="Cerrar">${icon("x")}</button></div>
-    <div class="sheet-body stack" style="--gap:10px">
-      <canvas class="stk-prev" width="512" height="512"></canvas>
-      <button type="button" class="btn btn-primary btn-block" data-action="difStkSend" data-how="sticker" data-i="${i}">${icon("send")} Enviar como sticker</button>
-      <button type="button" class="btn btn-soft btn-block" data-action="difStkSend" data-how="imagen" data-i="${i}">${icon("send")} Enviar como imagen (fondo claro)</button>
-      <button type="button" class="btn btn-ghost btn-block" data-action="difStkSend" data-how="guardar" data-i="${i}">${icon("dl")} Descargar con fondo transparente</button>
-    </div>`;
-  const src = document.querySelector(`[data-stk="${i}"]`);
-  if (src) d.querySelector(".stk-prev").getContext("2d").drawImage(src, 0, 0);
-  d.showModal();
-}
 function save(blob, name) {
   const a = document.createElement("a"); a.href = URL.createObjectURL(blob); a.download = name;
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 async function share(blob, name) {
-  const file = new File([blob], name, { type: blob.type || "image/png" });
+  const file = new File([blob], name, { type: "image/png" });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file] }); return; } catch (e) { if (e && e.name === "AbortError") return; }
   }
@@ -242,14 +211,7 @@ function registerActions() {
   A.difFrame = (t) => { st.frame = t.dataset.v; document.querySelectorAll(".dif-frames button").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); paint(); };
   A.difSave = async () => { const cv = $("#difCanvas"); if (cv) save(await toBlob(cv), fileName()); };
   A.difShare = async () => { const cv = $("#difCanvas"); if (cv) share(await toBlob(cv), fileName()); };
-  A.difSticker = (t) => stickerSheet(+t.dataset.i);
-  A.difStkSend = async (t) => {
-    const i = +t.dataset.i, how = t.dataset.how, cv = document.querySelector(`[data-stk="${i}"]`); if (!cv) return;
-    const n = `agape-sticker-${i + 1}`;
-    if (how === "sticker") { const b = await webpBlob(cv); if (b) return share(b, n + ".webp"); return share(await flatBlob(cv), n + ".png"); }
-    if (how === "imagen") return share(await flatBlob(cv), n + ".png");
-    save(await toBlob(cv), n + ".png");
-  };
+  A.difSticker = async (t) => { const cv = t.querySelector("canvas"); share(await toBlob(cv), `agape-sticker-${+t.dataset.i + 1}.png`); };
   // Tabs: el radio necesita su cambio de estado, así que no basta con el clic delegado
   document.addEventListener("change", (e) => {
     const t = e.target;
