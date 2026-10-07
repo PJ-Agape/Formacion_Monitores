@@ -6,7 +6,7 @@
 // Cada diapositiva se muestra solo entre sus fechas «desde» y «hasta» (si las tiene).
 
 import { esc, icon, toast } from "./util.js";
-import { illus, SCENE_KEYS } from "./ilustraciones.js";
+import { illus, SCENE_KEYS, sceneLabel } from "./ilustraciones.js";
 import { isRepeat, nextOn, describe as repeatText } from "./repeat.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
@@ -22,7 +22,7 @@ const longDate = (s) => { const [y, m, d] = s.split("-").map(Number); return new
 export const THEMES = {
   sky: "Celeste", blue: "Azul", gold: "Dorado", rose: "Rosa", orange: "Naranja",
 };
-const ILLUS_LABEL = (k) => k.charAt(0).toUpperCase() + k.slice(1);
+const ILLUS_LABEL = (k) => sceneLabel(k);
 
 // ---------------------------------------------------------------------------
 // Diapositivas de base (se pueden editar, ocultar o restaurar desde Gestión)
@@ -50,7 +50,7 @@ const DEF = Object.fromEntries(DEFAULTS.map((d) => [d.key, d]));
 
 // Eventos de la Agenda → diapositivas
 const EV_THEME = { encuentro: "sky", actividad: "orange", liturgia: "gold", equipo: "blue", otro: "rose" };
-const EV_ILLUS = { encuentro: "comunidad", actividad: "amigos", liturgia: "eucaristia", equipo: "equipo", otro: "corazon" };
+const EV_ILLUS = { encuentro: "emaus", actividad: "amigos", liturgia: "eucaristia", equipo: "equipo", otro: "corazon" };
 function fromEvent(ev) {
   // Si se repite, la diapositiva muestra la próxima fecha.
   const e = isRepeat(ev) ? { ...ev, date: nextOn(ev, todayIso()) || ev.date } : ev;

@@ -2,7 +2,7 @@
 // dirigentes y aspirantes). No hay mensajes privados: lo privado queda fuera de la app.
 
 import { esc, icon, toast, initials } from "./util.js";
-import { illus, SCENE_KEYS } from "./ilustraciones.js";
+import { illus, SCENE_KEYS, sceneLabel } from "./ilustraciones.js";
 import { avatar } from "./avatares.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
@@ -322,7 +322,7 @@ async function salaEditor(id) {
       </div>
       <div class="ag-form-row">
         <div class="field"><label>Color</label><div class="can-chips">${COLORS.map((c) => `<label class="av-sw sala-sw" style="--c:${c}"><input type="radio" name="color" value="${c}" ${s.color === c ? "checked" : ""}></label>`).join("")}</div></div>
-        <div class="field"><label>Ilustración</label><select class="select" name="illus">${SCENE_KEYS.map((k) => `<option value="${k}" ${illusOf(s) === k ? "selected" : ""}>${k.charAt(0).toUpperCase() + k.slice(1)}</option>`).join("")}</select></div>
+        <div class="field"><label>Ilustración</label><select class="select" name="illus">${SCENE_KEYS.map((k) => `<option value="${k}" ${illusOf(s) === k ? "selected" : ""}>${sceneLabel(k)}</option>`).join("")}</select></div>
       </div>
       <fieldset class="p-dates"><legend>¿Quiénes entran?</legend>
         <div class="can-chips">

@@ -4,7 +4,7 @@
 // aparecen solos a partir del programa del año.
 
 import { esc, icon, toast } from "./util.js";
-import { illus, SCENE_KEYS } from "./ilustraciones.js";
+import { illus, SCENE_KEYS, sceneLabel } from "./ilustraciones.js";
 import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
 import * as autz from "./autorizacion.js";
 
@@ -206,7 +206,7 @@ function openForm(ev) {
           </div>
           <div class="ag-form-row">
             <div class="field"><label>Frase manuscrita</label><input class="input" name="featHand" maxlength="40" value="${esc(e.featHand || "")}" placeholder="¡no te lo pierdas!"></div>
-            <div class="field"><label>Ilustración</label><select class="select" name="featIllus"><option value="">Automática según el tipo</option>${SCENE_KEYS.map((k) => `<option value="${k}" ${e.featIllus === k ? "selected" : ""}>${k.charAt(0).toUpperCase() + k.slice(1)}</option>`).join("")}</select></div>
+            <div class="field"><label>Ilustración</label><select class="select" name="featIllus"><option value="">Automática según el tipo</option>${SCENE_KEYS.map((k) => `<option value="${k}" ${e.featIllus === k ? "selected" : ""}>${sceneLabel(k)}</option>`).join("")}</select></div>
           </div>
         </div>
       </fieldset>

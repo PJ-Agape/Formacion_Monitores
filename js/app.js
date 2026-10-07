@@ -135,12 +135,12 @@ function helpFab(section) {
   b.href = `#/ayuda?t=${t}`;
 }
 // Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
-const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "oracion", muro: "amigos", perfil: "acogida", verificar: "envio", difusion: "envio" };
+const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "jesus", muro: "amigos", perfil: "acogida", verificar: "envio", difusion: "envio" };
 function decorate(v, section) {
   const hero = v.querySelector(".hero");
   if (hero && !hero.querySelector(".z-illus")) {
     hero.insertAdjacentHTML("afterbegin", '<i class="hero-blob b1"></i><i class="hero-blob b2"></i><i class="hero-blob b3"></i>');
-    if (!hero.style.textAlign) hero.insertAdjacentHTML("beforeend", illus("comunidad", "hero-illus"));
+    if (!hero.style.textAlign) hero.insertAdjacentHTML("beforeend", illus("emaus", "hero-illus"));
   }
   const head = v.querySelector(".page-head");
   const key = HEAD_ILLUS[section];

@@ -2,6 +2,7 @@
 // historias y grupos. Todo se dibuja en el teléfono: la foto de perfil nunca se sube.
 
 import * as E from "./estudio.js";
+import { sceneLabel } from "./ilustraciones.js";
 import * as F from "./fondos.js";
 import * as cloud from "./cloud.js";
 import * as S from "./store.js";
@@ -18,7 +19,7 @@ const URLS = {
   familias: () => new URL("familias/", BASE()).href,
 };
 const FORMATS = { historia: [1080, 1920, "Historia o Estado"], post: [1080, 1350, "Post"], cuadrado: [1080, 1080, "Cuadrado"] };
-const ILLS = ["comunidad", "amigos", "acogida", "corazon", "camino", "oracion", "equipo", "juego", "biblia", "espiritu", "maria", "eucaristia", "servir", "familia", "luz", "panes", "santos", "levantate", "futuro", "flores"];
+const ILLS = ["jesus", "emaus", "dejadlos", "buenpastor", "sagradocorazon", "comunidad", "amigos", "acogida", "corazon", "camino", "oracion", "equipo", "juego", "biblia", "espiritu", "maria", "eucaristia", "servir", "familia", "luz", "panes", "santos", "levantate", "futuro", "flores"];
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
@@ -68,7 +69,7 @@ function piezasHTML() {
       ${st.tpl === "invita" ? `<div class="field"><label>¿A quién invitas?</label><input class="input" data-dif="para" maxlength="24" value="${esc(st.para)}" placeholder="Su nombre (opcional)"></div>` : ""}
       <div class="field"><label>Formato</label>${sel("fmt", Object.entries(FORMATS).map(([k, v]) => [k, v[2]]), st.fmt)}</div>
       <div class="field"><label>Estilo</label><div class="dif-sw" role="radiogroup" aria-label="Estilo">${E.STYLES.map((x) => `<button type="button" role="radio" aria-checked="${st.style === x.id}" title="${esc(x.name)}" data-action="difStyle" data-v="${x.id}" style="--a:${x.bg};--b:${x.split || x.b1}"><span class="sr-only">${esc(x.name)}</span></button>`).join("")}</div></div>
-      <div class="field"><label>Dibujo o foto</label>${sel("ill", [...(st.photo ? [["__foto", "📷 Mi foto"]] : []), ...ILLS.map((k) => [k, k[0].toUpperCase() + k.slice(1)])], st.photo && st.ill === "__foto" ? "__foto" : st.ill)}
+      <div class="field"><label>Dibujo o foto</label>${sel("ill", [...(st.photo ? [["__foto", "📷 Mi foto"]] : []), ...ILLS.map((k) => [k, sceneLabel(k)])], st.photo && st.ill === "__foto" ? "__foto" : st.ill)}
         ${photoBtn()}</div>
       <details class="dif-more"><summary>Cambiar los textos</summary>
         <div class="stack" style="margin-top:10px">
