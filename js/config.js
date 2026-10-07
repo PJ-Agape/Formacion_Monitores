@@ -18,11 +18,6 @@ export const CONFIG = {
   // protege contra ediciones accidentales, no contra alguien con conocimientos técnicos.
   defaultAdminHash: "759aa99668fbfe8167eb6c524004699da9ee172a7cf0c459f47cde3ca73f2d3d",
 
-  // ---- Recordatorios (notificaciones al celular) ----
-  // Clave pública de «Web Push» (Firebase → Configuración del proyecto → Cloud Messaging →
-  // Certificados web push). Es pública; la privada va SOLO como secreto en GitHub.
-  vapidPublicKey: "",
-
   // ---- Cuentas y seguimiento (Firebase) ----
   // Mientras sea null, la app funciona en modo local (sin cuentas).
   // Configuración web del proyecto Firebase "pastoral-agape" (ver CONFIGURAR-FIREBASE.md).

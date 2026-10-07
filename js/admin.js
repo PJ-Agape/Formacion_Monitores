@@ -533,7 +533,7 @@ function inactiveCard(users, course) {
         <a class="btn btn-sm btn-soft" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}" title="Abre WhatsApp con el mensaje listo; tú eliges a quién">WhatsApp</a>
         ${u.email ? `<a class="btn btn-sm btn-ghost" href="mailto:${encodeURIComponent(u.email)}?subject=${encodeURIComponent(kind === "curso" ? "Tu formación te espera 📖" : "¡Te extrañamos en Ágape! 💙")}&body=${encodeURIComponent(txt)}">Correo</a>` : ""}</div>`;
     }).join("")}</div>
-    <p class="xs muted" style="margin-top:8px">WhatsApp se abre con el mensaje listo y tú eliges el contacto: la app no guarda números de teléfono. Cuando estén configurados, los recordatorios automáticos salen solos una vez al día.</p></details>`;
+    <p class="xs muted" style="margin-top:8px">WhatsApp se abre con el mensaje listo y tú eliges el contacto: la app no guarda números de teléfono. Un mensaje de alguien que lo conoce vale más que cualquier aviso automático.</p></details>`;
 }
 
 // ---------- Cuadros por rol ----------
