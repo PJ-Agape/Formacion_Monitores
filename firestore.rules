@@ -78,6 +78,22 @@ service cloud.firestore {
       allow delete: if isAdmin() && !protectedEmail(resource.data.email);
     }
 
+    // Recordatorios: cada uno guarda si quiere avisos y la suscripción de su dispositivo.
+    // La tarea diaria (cuenta de servicio) los lee y anota el último aviso enviado.
+    function avisoOk() {
+      return request.resource.data.keys().hasOnly(['on', 'subs', 'at', 'last', 'lastKind'])
+        && (!('on' in request.resource.data) || request.resource.data.on is bool)
+        && (!('subs' in request.resource.data) || (request.resource.data.subs is list && request.resource.data.subs.size() <= 5));
+    }
+    match /avisos/{uid} {
+      allow read: if signedIn() && request.auth.uid == uid;
+      allow create: if isMember() && request.auth.uid == uid && avisoOk()
+        && !('last' in request.resource.data) && !('lastKind' in request.resource.data);
+      allow update: if isMember() && request.auth.uid == uid && avisoOk()
+        && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['last', 'lastKind']);
+      allow delete: if signedIn() && request.auth.uid == uid;
+    }
+
     // Avance en los cursos: lo escribe su dueño; lo leen su dueño y los administradores.
     match /progress/{uid} {
       allow read: if (signedIn() && request.auth.uid == uid) || isAdmin();

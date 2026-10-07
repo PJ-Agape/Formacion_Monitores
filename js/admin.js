@@ -477,6 +477,8 @@ async function peopleView() {
 
   <div class="seg people-mode" role="radiogroup" aria-label="Cómo ver">${[["cuadros", "Cuadros por rol"], ["tabla", "Tabla"]].map(([k, l]) => `<label><input type="radio" name="peopleMode" value="${k}" ${peopleMode === k ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
 
+  ${inactiveCard(data.users, course)}
+
   ${peopleMode === "cuadros" ? peopleCards(list, course, t) : `<div class="card people-table">
     <table>
       <thead><tr><th>Dirigente</th><th>Avance en unidades</th><th>Módulos</th><th>Última actividad</th><th>Constancia</th></tr></thead>
@@ -501,6 +503,37 @@ async function peopleView() {
         <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
         ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
   </div>` : ""}`;
+}
+
+// ---------- Quién lleva días sin entrar ----------
+const LIVE_URL = "https://pj-agape.github.io/Formacion_Monitores/";
+const daysSince = (t) => { const d = tsDate(t); return d && !isNaN(d) ? Math.floor((Date.now() - d.getTime()) / 864e5) : null; };
+function reminderText(u, kind) {
+  const n = String(u.name || "").split(" ")[0];
+  return kind === "curso"
+    ? `¡Hola${n ? " " + n : ""}! 💙 ¿Cómo vas? Tu formación en Ágape te espera: unos minutos hoy en «El Arte de Encontrarnos» y das un paso más. ¡Tú puedes! 📖 ${LIVE_URL}`
+    : `¡Hola${n ? " " + n : ""}! 💙 Te extrañamos en la app de Ágape. Hay novedades, la Capilla y tu comunidad te esperan 🙌 ${LIVE_URL}`;
+}
+function inactiveCard(users, course) {
+  const rows = [];
+  users.filter((u) => u.active !== false && !api.cloud.isStaffRole(u.role)).forEach((u) => {
+    const dApp = daysSince(u.lastSeen), r = rowFor(u, course);
+    const formRole = ["dirigente", "aspirante"].includes(u.role || "dirigente");
+    const dCur = daysSince(u.progress?.updatedAt);
+    if (dApp != null && dApp >= 2) rows.push({ u, kind: "app", d: dApp });
+    else if (formRole && !r.complete && (dCur == null || dCur >= 2)) rows.push({ u, kind: "curso", d: dCur });
+  });
+  if (!rows.length) return "";
+  rows.sort((a, b) => (b.d ?? 999) - (a.d ?? 999));
+  return `<details class="card inact-card"><summary><b>💭 Para dar un empujoncito · ${rows.length}</b> <span class="small muted">— llevan 2 días o más sin entrar a la app o sin avanzar en la formación</span></summary>
+    <div class="inact-list">${rows.map(({ u, kind, d }) => {
+      const txt = reminderText(u, kind);
+      return `<div class="inact-row"><div style="flex:1;min-width:180px"><b>${esc(u.name || u.email)}</b>
+        <span class="xs muted">${kind === "app" ? `Sin entrar a la app hace ${d} días` : d == null ? "Aún no comienza la formación" : `Sin avanzar en la formación hace ${d} días`} · ${esc(api.cloud.roleLabel(u.role))}</span></div>
+        <a class="btn btn-sm btn-soft" target="_blank" rel="noopener" href="https://wa.me/?text=${encodeURIComponent(txt)}" title="Abre WhatsApp con el mensaje listo; tú eliges a quién">WhatsApp</a>
+        ${u.email ? `<a class="btn btn-sm btn-ghost" href="mailto:${encodeURIComponent(u.email)}?subject=${encodeURIComponent(kind === "curso" ? "Tu formación te espera 📖" : "¡Te extrañamos en Ágape! 💙")}&body=${encodeURIComponent(txt)}">Correo</a>` : ""}</div>`;
+    }).join("")}</div>
+    <p class="xs muted" style="margin-top:8px">WhatsApp se abre con el mensaje listo y tú eliges el contacto: la app no guarda números de teléfono. Cuando estén configurados, los recordatorios automáticos salen solos una vez al día.</p></details>`;
 }
 
 // ---------- Cuadros por rol ----------

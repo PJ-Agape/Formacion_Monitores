@@ -648,6 +648,12 @@ export const saveJoven = saveIn("jovenes");
 export const patchJoven = (id, data) => fb.updateDoc(fb.doc(db, "jovenes", id), data);
 export const deleteJoven = (id) => fb.deleteDoc(fb.doc(db, "jovenes", id));
 export const listJovenes = () => all("jovenes");
+// Recordatorios: preferencias y suscripciones de cada uno (avisos/{uid}); lo escribe su dueño.
+export async function getAvisos() {
+  if (!enabled || !db || !user) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "avisos", user.uid)), 6000); return s.exists() ? s.data() : {}; } catch { return null; }
+}
+export const saveAvisos = (data) => fb.setDoc(fb.doc(db, "avisos", user.uid), { ...data, at: fb.serverTimestamp() }, { merge: true });
 export const saveSesion = (fecha, data) => fb.setDoc(fb.doc(db, "sesiones", fecha), { ...data, by: account.email, at: fb.serverTimestamp() });
 export const deleteSesion = (fecha) => fb.deleteDoc(fb.doc(db, "sesiones", fecha));
 export async function myJoven() {

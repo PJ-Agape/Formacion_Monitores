@@ -1,0 +1,30 @@
+# Recordatorios suaves: una vez al día, a media mañana en Chile (ver scripts/recordatorios.mjs).
+name: Recordatorios Ágape
+on:
+  schedule:
+    - cron: "13 14 * * *"
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: "Solo mostrar a quién le tocaría (no envía nada)"
+        type: boolean
+        default: true
+permissions:
+  contents: read
+concurrency: { group: recordatorios, cancel-in-progress: false }
+jobs:
+  avisos:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with: { node-version: 20 }
+      - run: npm install --no-save --no-audit --no-fund firebase-admin@12 web-push@3 nodemailer@6
+      - run: node scripts/recordatorios.mjs
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+          VAPID_PUBLIC_KEY: ${{ secrets.VAPID_PUBLIC_KEY }}
+          VAPID_PRIVATE_KEY: ${{ secrets.VAPID_PRIVATE_KEY }}
+          MAIL_USER: ${{ secrets.MAIL_USER }}
+          MAIL_PASS: ${{ secrets.MAIL_PASS }}
+          DRY_RUN: ${{ github.event_name == 'workflow_dispatch' && inputs.dry_run && '1' || '0' }}
