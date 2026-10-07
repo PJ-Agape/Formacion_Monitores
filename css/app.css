@@ -2418,3 +2418,20 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .chat-buzzpick .wall-menu-list { width: 240px; max-height: 300px; overflow-y: auto; }
 .chat-buzzpick .avatar { width: 26px; height: 26px; font-size: .65rem; }
 .chat-buzz-t { display: block; padding: 6px 10px 2px; font-size: .85rem; }
+/* Gestión → Dirigentes: cuadros por rol */
+.people-mode { align-self: flex-start; }
+.pc-group { display: grid; gap: 10px; }
+.pc-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 250px), 1fr)); gap: 12px; }
+.card.link.pc-card { display: flex; flex-direction: column; gap: 6px; border-top: 8px solid var(--gc) !important; color: var(--ink); text-decoration: none; }
+.pc-card.paused { opacity: .6; }
+.pc-head b { font-size: 1.02rem; }
+.pc-card p { margin: 0; }
+.pc-prog .mini-bar { margin-top: 2px; }
+/* Asignar jóvenes */
+.asg-sec h3 { margin-bottom: 8px; }
+.asg-list { display: grid; gap: 6px; }
+.asg-row { display: grid; grid-template-columns: minmax(140px, 1fr) minmax(0, 1.2fr) minmax(0, 1.2fr); gap: 10px; align-items: end; padding: 8px 10px; border-radius: 12px; }
+.asg-row:nth-child(odd) { background: var(--surface-2); }
+.asg-row.changed { box-shadow: inset 4px 0 0 #ef591c; }
+.asg-row label { display: grid; gap: 2px; }
+@media (max-width: 640px) { .asg-row { grid-template-columns: 1fr; } }

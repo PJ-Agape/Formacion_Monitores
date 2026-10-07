@@ -626,6 +626,7 @@ export const watchSesiones = watchCol("sesiones");
 export const saveJoven = saveIn("jovenes");
 export const patchJoven = (id, data) => fb.updateDoc(fb.doc(db, "jovenes", id), data);
 export const deleteJoven = (id) => fb.deleteDoc(fb.doc(db, "jovenes", id));
+export const listJovenes = () => all("jovenes");
 export const saveSesion = (fecha, data) => fb.setDoc(fb.doc(db, "sesiones", fecha), { ...data, by: account.email, at: fb.serverTimestamp() });
 export const deleteSesion = (fecha) => fb.deleteDoc(fb.doc(db, "sesiones", fecha));
 export async function myJoven() {

@@ -174,22 +174,24 @@ async function saveAttendance() {
 function jovenesHTML() {
   const sessions = sesAsc(), last8 = sessions.slice(-8);
   const q = qJ.trim().toLowerCase();
-  const list = (jovenes || []).filter((j) => !q || String(j.nombre).toLowerCase().includes(q)).sort((a, b) => (a.activo === false) - (b.activo === false) || String(a.nombre).localeCompare(String(b.nombre), "es"));
+  const me = ctx.cloud.myUid(), hasMine = (jovenes || []).some((j) => j.guia === me || j.guia2 === me);
+  const list = (jovenes || []).filter((j) => !q || String(j.nombre).toLowerCase().includes(q)).filter((j) => !soloMios || !hasMine || j.guia === me || j.guia2 === me).sort((a, b) => (a.activo === false) - (b.activo === false) || String(a.nombre).localeCompare(String(b.nombre), "es"));
   const groups = Object.entries(ETAPAS).map(([k, e]) => ({ k, e, list: list.filter((j) => j.etapa === k && j.activo !== false) })).filter((g) => g.list.length);
   const off = list.filter((j) => j.activo === false);
   const row = (j) => {
     const f = new Set(fechasOf(j)), own = last8.filter((s) => s >= desdeOf(j)), pct = own.length ? Math.round((own.filter((s) => f.has(s)).length / own.length) * 100) : null;
     return `<a class="card link ac-j" href="#/acompanar/joven/${encodeURIComponent(j.id)}">${av(j)}
-      <span class="can-main"><strong>${esc(j.nombre)}</strong><span class="xs muted">${f.size} encuentro${f.size === 1 ? "" : "s"}${pct != null ? ` · ${pct}% en los últimos ${own.length}` : ""}${j.uid ? " · con cuenta" : ""}</span>
+      <span class="can-main"><strong>${esc(j.nombre)}</strong><span class="xs muted">${f.size} encuentro${f.size === 1 ? "" : "s"}${pct != null ? ` · ${pct}% en los últimos ${own.length}` : ""}${j.uid ? " · con cuenta" : ""}${j.guia ? ` · 🤝 ${j.guia === me || j.guia2 === me ? "<b>te lo asignaron</b>" : esc([j.guiaNombre, j.guia2Nombre].filter(Boolean).map((n) => n.split(" ")[0]).join(" y "))}` : ""}</span>
       <span class="ac-mini-sellos">${Object.keys(allSellos(j)).slice(0, 8).map((k) => (SELLO[k] || {}).e || "").join(" ")}</span></span>${icon("right")}</a>`;
   };
   return `<div class="row-wrap" style="margin:6px 0 12px"><input class="input" id="acSearch" placeholder="Buscar por nombre…" value="${esc(qJ)}" style="flex:1;min-width:200px">
+      ${hasMine ? `<button class="chip ${soloMios ? "accent" : ""}" data-action="acMios">🤝 Mis jóvenes</button>` : ""}
       <button class="btn btn-gold btn-sm" data-action="acNew">${icon("plus")} Agregar joven</button></div>
     ${groups.map((g) => `<h3 class="mag-hub-sub"><span class="ac-dot" style="background:${g.e.c}"></span>${g.e.l} · ${g.list.length}</h3><div class="ac-jlist">${g.list.map(row).join("")}</div>`).join("") || `<div class="card" style="text-align:center;padding:26px"><p class="muted">Agrega a los jóvenes de tu grupo para empezar a pasar lista.</p></div>`}
     ${off.length ? `<h3 class="mag-hub-sub">En pausa · ${off.length}</h3><div class="ac-jlist">${off.map(row).join("")}</div>` : ""}
     <p class="xs muted" style="margin-top:14px">Los jóvenes no necesitan cuenta para estar en la lista. Si tienen cuenta, un administrador o coordinador la vincula para que vean su pasaporte.</p>`;
 }
-let people = null;
+let people = null, soloMios = false;
 async function jovenEditor(j) {
   if (st().isStaff && !people) people = await ctx.cloud.listPeople();
   let d = document.getElementById("acDlg");
@@ -341,6 +343,7 @@ export async function homeCards() {
 // ---------------------------------------------------------------------------
 function registerActions() {
   const A = ctx.actions;
+  A.acMios = () => { soloMios = !soloMios; paintMain(); };
   A.acEtapa = (el) => { etapaF = el.dataset.e; paintMain(); };
   A.acToggle = (el) => { const id = el.dataset.id; if (draft.has(id)) draft.delete(id); else draft.add(id); paintMain(); };
   A.acAll = () => { activos().filter((j) => !etapaF || j.etapa === etapaF).forEach((j) => draft.add(j.id)); paintMain(); };

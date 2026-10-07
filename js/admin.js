@@ -35,6 +35,7 @@ export async function renderAdmin(sub, _api) {
   switch (page) {
     case "resumen": body = await summaryView(draft); break;
     case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
+    case "asignar": body = cloudOn ? await asignarView() : summaryView(draft); break;
     case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
     case "portada": body = portada.adminView(); break;
     case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
@@ -76,6 +77,7 @@ function shell(page, body) {
     <nav class="admin-side" aria-label="Gestión">
       ${link("resumen", "#/admin", "Resumen", "grid")}
       ${cloudOn ? link("dirigentes", "#/admin/dirigentes", "Dirigentes", "users") : ""}
+      ${cloudOn ? link("asignar", "#/admin/asignar", "Asignar jóvenes", "check") : ""}
       ${cloudOn ? link("portada", "#/admin/portada", "Portada", "sparkle") : ""}
       ${cloudOn ? link("familias", "#/admin/familias", "Familias", "users") : ""}
       ${cloudOn ? `<a href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
@@ -410,12 +412,17 @@ function ago(t) {
   if (days <= 0) return "hoy"; if (days === 1) return "ayer"; if (days < 30) return `hace ${days} días`;
   return d.toLocaleDateString("es-CL", { day: "numeric", month: "short", year: "numeric" });
 }
-let peopleAt = 0, peopleUid = "", keepPeople = false;
+let peopleAt = 0, peopleUid = "", keepPeople = false, peopleMode = "cuadros", jovenesAll = null;
+async function loadJovenes(force) {
+  if (!jovenesAll || force) { try { jovenesAll = await api.cloud.listJovenes(); } catch { jovenesAll = []; } }
+  return jovenesAll;
+}
 async function loadPeople(force) {
   const uid = api.cloud.state().account?.uid || "";
   const reuse = keepPeople; keepPeople = false;
   if (!people || force || peopleUid !== uid || !reuse) {
     people = await api.cloud.adminData(); peopleAt = Date.now(); peopleUid = uid;
+    await loadJovenes(true);
   }
   return people;
 }
@@ -468,7 +475,9 @@ async function peopleView() {
     <button class="btn btn-sm btn-ghost" data-action="aPeopleCsv">${icon("dl")} Exportar planilla</button>
   </div>
 
-  <div class="card people-table">
+  <div class="seg people-mode" role="radiogroup" aria-label="Cómo ver">${[["cuadros", "Cuadros por rol"], ["tabla", "Tabla"]].map(([k, l]) => `<label><input type="radio" name="peopleMode" value="${k}" ${peopleMode === k ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
+
+  ${peopleMode === "cuadros" ? peopleCards(list, course, t) : `<div class="card people-table">
     <table>
       <thead><tr><th>Dirigente</th><th>Avance en unidades</th><th>Módulos</th><th>Última actividad</th><th>Constancia</th></tr></thead>
       <tbody>
@@ -482,7 +491,7 @@ async function peopleView() {
       </tr>`).join("") : `<tr><td colspan="5" class="muted" style="text-align:center;padding:24px">${data.users.length ? "Nadie coincide con la búsqueda." : "Aún no hay dirigentes con cuenta. Invita al primero."}</td></tr>`}
       </tbody>
     </table>
-  </div>
+  </div>`}
 
   ${data.invites.length ? `<div class="card">
     <h3>Invitaciones pendientes · ${data.invites.length}</h3>
@@ -492,6 +501,102 @@ async function peopleView() {
         <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
         ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
   </div>` : ""}`;
+}
+
+// ---------- Cuadros por rol ----------
+const GROUPS = [
+  { k: "equipo", l: "Equipo coordinador", roles: ["admin", "coordinador"], c: "#ffba03" },
+  { k: "dirigente", l: "Dirigentes", roles: ["dirigente"], c: "#1351a4" },
+  { k: "aspirante", l: "Aspirantes (predirigentes)", roles: ["aspirante"], c: "#ef591c" },
+  { k: "joven", l: "Jóvenes", roles: ["ingreso", "madurez"], c: "#8ad2fa" },
+];
+const ETAPA_L = { ingreso: "Ingreso", madurez: "Madurez", aspirante: "Aspirante", equipo: "Equipo" };
+// Quién acompaña a cada uno (según la lista de Acompañar)
+function guideLoad() {
+  const load = {};
+  (jovenesAll || []).filter((j) => j.activo !== false).forEach((j) => { [j.guia, j.guia2].filter(Boolean).forEach((g) => { (load[g] = load[g] || []).push(j); }); });
+  return load;
+}
+function peopleCards(list, course, t) {
+  const load = guideLoad(), byUid = Object.fromEntries((jovenesAll || []).filter((j) => j.uid).map((j) => [j.uid, j]));
+  const names = Object.fromEntries((people?.users || []).map((u) => [u.uid, u.name || u.email]));
+  const card = ({ u, r }, g) => {
+    const paused = u.active === false, j = byUid[u.uid], mine = load[u.uid] || [];
+    const prog = `<div class="pc-prog"><div class="mini-bar"><i style="width:${t.units ? (r.units / t.units) * 100 : 0}%"></i></div><span class="xs">${r.units}/${t.units} unidades · ${r.modules}/${t.modules} módulos</span></div>`;
+    let body = "";
+    if (g.k === "joven") {
+      const gs = j ? [j.guia, j.guia2].filter(Boolean).map((x) => names[x] || j[x === j.guia ? "guiaNombre" : "guia2Nombre"] || "—") : [];
+      body = `<span class="chip">${esc(api.cloud.roleLabel(u.role))}</span>
+        <p class="xs muted">${j ? `${(j.fechas || []).length} encuentros · ` : ""}Activo ${ago(r.last)}</p>
+        <p class="small">${gs.length ? `🤝 Lo acompaña: <b>${esc(gs.join(" y "))}</b>` : `<span class="muted">Sin dirigente asignado</span>`}</p>`;
+    } else {
+      body = `${prog}
+        <p class="small">${r.complete ? `<span class="chip ok">${icon("award")} Curso aprobado</span>` : `<span class="chip">Curso en camino</span>`}
+        ${g.k !== "aspirante" ? ` <span class="chip ${mine.length ? "accent" : ""}">🤝 ${mine.length} joven${mine.length === 1 ? "" : "es"}</span>` : ""}</p>
+        <p class="xs muted">Última actividad: ${ago(r.last)}</p>`;
+    }
+    return `<a class="card link pc-card ${paused ? "paused" : ""}" href="#/admin/dirigentes/${esc(u.uid)}" style="--gc:${g.c}">
+      <span class="pc-head"><b>${esc(u.name || u.email)}</b>${u.cantor ? ` <span title="Apostolado del cancionero">🎵</span>` : ""}${paused ? ` <span class="chip">En pausa</span>` : ""}</span>
+      ${u.parish ? `<span class="xs muted">${esc(u.parish)}</span>` : ""}${body}</a>`;
+  };
+  const html = GROUPS.map((g) => {
+    const xs = list.filter(({ u }) => g.roles.includes(u.role || "dirigente"));
+    if (!xs.length) return "";
+    return `<section class="pc-group"><h3 class="mag-hub-sub"><span class="ac-dot" style="background:${g.c}"></span>${g.l} · ${xs.length}</h3>
+      <div class="pc-grid">${xs.map((x) => card(x, g)).join("")}</div></section>`;
+  }).join("");
+  return html || `<div class="card muted" style="text-align:center;padding:24px">${people?.users?.length ? "Nadie coincide con la búsqueda." : "Aún no hay personas con cuenta. Invita a la primera."}</div>`;
+}
+
+// ---------- Asignar jóvenes a dirigentes ----------
+let asg = null; // borrador { [jovenId]: { guia, guia2 } }
+function eligibleGuides(course) {
+  return (people?.users || []).filter((u) => u.active !== false && ["dirigente", "coordinador", "admin"].includes(u.role || "dirigente") && rowFor(u, course).complete)
+    .sort((a, b) => String(a.name).localeCompare(String(b.name), "es"));
+}
+async function asignarView() {
+  try { await loadPeople(); await loadJovenes(); } catch (e) { return `<div class="note warn">No se pudieron cargar los datos (${esc(e.code || e.message)}).</div>`; }
+  const course = S.content().courses[0], guides = eligibleGuides(course);
+  const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
+  if (!asg) asg = Object.fromEntries(js.map((j) => [j.id, { guia: j.guia || "", guia2: j.guia2 || "" }]));
+  const cur = (j) => asg[j.id] || { guia: "", guia2: "" };
+  const count = {}; js.forEach((j) => { const a = cur(j); [a.guia, a.guia2].filter(Boolean).forEach((g) => (count[g] = (count[g] || 0) + 1)); });
+  const changed = js.filter((j) => (j.guia || "") !== cur(j).guia || (j.guia2 || "") !== cur(j).guia2).length;
+  const sel = (j, k) => `<select class="select" data-asg="${esc(j.id)}" data-k="${k}"><option value="">${k === "guia" ? "— Sin asignar —" : "— Sin apoyo —"}</option>${guides.map((g) => `<option value="${esc(g.uid)}" ${cur(j)[k] === g.uid ? "selected" : ""}>${esc(g.name || g.email)}</option>`).join("")}</select>`;
+  return `
+  <header class="page-head"><span class="eyebrow">Gestión</span><h1>Asignar <em>jóvenes</em></h1>
+    <p>Cada joven puede tener un dirigente a cargo y, si hace falta, un segundo de apoyo. Solo aparecen los dirigentes con el curso «${esc(course.title)}» aprobado.</p></header>
+  ${!guides.length ? `<div class="note warn">Todavía nadie tiene el curso aprobado, así que no hay dirigentes disponibles para asignar.</div>` : `
+  <div class="card asg-load"><b>Carga de cada dirigente</b><div class="can-chips" style="margin-top:8px">${guides.map((g) => `<span class="chip ${count[g.uid] ? "accent" : ""}">${esc((g.name || g.email).split(" ")[0])} · ${count[g.uid] || 0}</span>`).join("")}</div></div>
+  <div class="row-wrap" style="gap:8px">
+    <button class="btn btn-gold" data-action="aAsgSuggest">✨ Sugerir reparto</button>
+    <span class="xs muted" style="flex:1;min-width:200px">Reparte parejo, por etapa, a quienes aún no tienen dirigente. No cambia lo ya asignado. Revisa y luego guarda.</span>
+    <button class="btn btn-ghost btn-sm" data-action="aAsgReset" ${changed ? "" : "disabled"}>Deshacer cambios</button>
+    <button class="btn btn-primary" data-action="aAsgSave" ${changed ? "" : "disabled"}>${icon("check")} Guardar${changed ? ` (${changed})` : ""}</button>
+  </div>
+  ${["ingreso", "madurez", "aspirante"].map((e) => { const xs = js.filter((j) => j.etapa === e).sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es"));
+    return xs.length ? `<section class="card asg-sec"><h3>${ETAPA_L[e]}${e === "aspirante" ? " (predirigentes)" : ""} · ${xs.length}</h3>
+      <div class="asg-list">${xs.map((j) => `<div class="asg-row ${(j.guia || "") !== cur(j).guia || (j.guia2 || "") !== cur(j).guia2 ? "changed" : ""}"><b>${esc(j.nombre)}</b>
+        <label><span class="xs muted">A cargo</span>${sel(j, "guia")}</label><label><span class="xs muted">Apoyo (opcional)</span>${sel(j, "guia2")}</label></div>`).join("")}</div></section>` : ""; }).join("")
+    || `<div class="note">No hay jóvenes activos en la lista de Acompañar. <a href="#/acompanar/jovenes">Agrégalos ahí</a>.</div>`}`}
+  <p class="xs muted">La lista de jóvenes es la de Acompañar (con o sin cuenta). Cada dirigente ve a «sus» jóvenes en Acompañar.</p>`;
+}
+function suggestAsg() {
+  const course = S.content().courses[0], guides = eligibleGuides(course).map((g) => g.uid);
+  if (!guides.length) return 0;
+  const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
+  const total = {}, byStage = {};
+  guides.forEach((g) => (total[g] = 0));
+  js.forEach((j) => { const a = asg[j.id]; if (a && a.guia && total[a.guia] != null) { total[a.guia]++; byStage[j.etapa + a.guia] = (byStage[j.etapa + a.guia] || 0) + 1; } });
+  let n = 0;
+  ["ingreso", "madurez", "aspirante"].forEach((e) => {
+    js.filter((j) => j.etapa === e && !(asg[j.id] && asg[j.id].guia)).sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es")).forEach((j) => {
+      // menos jóvenes de esta etapa primero; a igualdad, menos jóvenes en total
+      const g = [...guides].sort((a, b) => (byStage[e + a] || 0) - (byStage[e + b] || 0) || total[a] - total[b])[0];
+      asg[j.id] = { ...(asg[j.id] || { guia2: "" }), guia: g }; total[g]++; byStage[e + g] = (byStage[e + g] || 0) + 1; n++;
+    });
+  });
+  return n;
 }
 
 async function personView(uid) {
@@ -766,6 +871,16 @@ function bindActions() {
       S.setAdminHash(await sha256(f.get("n1"))); e.target.reset(); toast("Contraseña actualizada");
     }
   });
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t.name === "peopleMode") { peopleMode = t.value; keepPeople = true; api.render(); return; }
+    if (t.dataset && t.dataset.asg && asg) {
+      const a = asg[t.dataset.asg] = asg[t.dataset.asg] || { guia: "", guia2: "" };
+      a[t.dataset.k] = t.value;
+      if (a.guia && a.guia2 === a.guia) a.guia2 = "";
+      keepPeople = true; api.render();
+    }
+  });
   document.addEventListener("change", async (e) => {
     if (e.target.id !== "importFile") return;
     const file = e.target.files[0]; if (!file) return;
@@ -797,6 +912,17 @@ function bindActions() {
 
   // Seguimiento de dirigentes
   A.aPeopleRefresh = async () => { await loadPeople(true); api.render(); toast("Datos actualizados"); };
+  A.aAsgSuggest = () => { const n = suggestAsg(); api.render(); toast(n ? `Sugerí dirigente para ${n} joven${n === 1 ? "" : "es"}. Revisa y guarda.` : "Todos ya tienen dirigente a cargo."); };
+  A.aAsgReset = () => { asg = null; api.render(); };
+  A.aAsgSave = async () => {
+    const names = Object.fromEntries((people?.users || []).map((u) => [u.uid, u.name || u.email]));
+    const ch = (jovenesAll || []).filter((j) => asg[j.id] && ((j.guia || "") !== asg[j.id].guia || (j.guia2 || "") !== asg[j.id].guia2));
+    try {
+      await Promise.all(ch.map((j) => { const a = asg[j.id], g2 = a.guia2 && a.guia2 !== a.guia ? a.guia2 : "";
+        return api.cloud.patchJoven(j.id, { nombre: j.nombre, etapa: j.etapa, guia: a.guia, guiaNombre: a.guia ? names[a.guia] || "" : "", guia2: g2, guia2Nombre: g2 ? names[g2] || "" : "" }); }));
+      asg = null; await loadJovenes(true); api.render(); toast(`Asignación guardada (${ch.length})`, "ok");
+    } catch (e) { console.warn(e); toast("No se pudo guardar. Revisa la conexión o las reglas de Firestore.", ""); }
+  };
   A.aPeopleCsv = () => peopleCsv();
   A.aInvite = () => openEditor({
     title: "Invitar a una persona", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente", consent: {} },

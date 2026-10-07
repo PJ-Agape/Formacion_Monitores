@@ -274,7 +274,8 @@ service cloud.firestore {
         && (isStaff() || request.resource.data.get('uid', '') == '');
       allow update: if (isGuide() && validText(request.resource.data.nombre, 80)
           && request.resource.data.etapa in ['ingreso', 'madurez', 'aspirante', 'equipo']
-          && (isStaff() || request.resource.data.get('uid', '') == resource.data.get('uid', '')))
+          && (isStaff() || request.resource.data.get('uid', '') == resource.data.get('uid', ''))
+          && (isStaff() || !changed().hasAny(['guia', 'guia2', 'guiaNombre', 'guia2Nombre'])))
         || (signedIn() && resource.data.uid == request.auth.uid && changed().hasOnly(['lema', 'portada', 'avatar'])
           && request.resource.data.get('lema', '') is string && request.resource.data.get('lema', '').size() <= 60);
       allow delete: if isStaff();
