@@ -68,6 +68,7 @@ const routes = [
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
+  [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
   [/^\/difusion$/, () => difusion.view(), "difusion"],

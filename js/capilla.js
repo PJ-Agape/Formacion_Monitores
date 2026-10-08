@@ -144,7 +144,7 @@ const candleSVG = (lit = true, cls = "") => `<svg class="cap-candle ${lit ? "lit
 // Vista
 // ---------------------------------------------------------------------------
 let velas = null;
-export function view() {
+export function view(opt = {}) {
   const d = ctx.content().devotional || { title: "", desc: "", cards: [] };
   const s = season(), m = moment(), now = new Date();
   const [vt, vr] = VERSES[dayIndex(VERSES.length)];
@@ -154,7 +154,13 @@ export function view() {
   const own = cards.filter((c) => c !== lectio);
   const member = st().ready;
   ctx.onAfterRender(() => {
-    loadGospel().then(paintGospel);
+    loadGospel().then(() => {
+      paintGospel();
+      if (opt.focus !== "gospel") return;
+      const box = document.getElementById("capGospel"); if (!box) return;
+      box.scrollIntoView({ behavior: "auto", block: "center" });
+      box.classList.add("cap-flash"); setTimeout(() => box.classList.remove("cap-flash"), 2600);
+    });
     if (!member) return;
     const stop = ctx.cloud.watchVelas((rows) => { velas = rows; paintVelas(); }, () => { velas = velas || []; paintVelas(true); });
     ctx.onLeave(stop);
