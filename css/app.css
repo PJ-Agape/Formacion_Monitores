@@ -2537,6 +2537,9 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 @media (prefers-reduced-motion: no-preference) { .blk { transition: transform .15s; } .blk:hover { transform: translate(-1px, -1px); } }
 /* Velas: más espacio para escribir la intención */
 .cap-vela-form > div { flex: 1 1 260px !important; }
-.cap-vela-ta { min-height: 150px; font-size: 1rem; line-height: 1.45; resize: vertical; }
+.cap-vela-ta { min-height: 180px; font-size: 1rem; line-height: 1.45; resize: vertical; }
 .cap-vela-n { display: block; text-align: right; margin-top: 4px; }
 @media (max-width: 560px) { .cap-vela-form > .cap-candle, .cap-vela-form > svg:first-child { display: none; } }
+.cap-vela-body p { white-space: pre-line; overflow-wrap: anywhere; }
+.cap-vela-body p.cap-clamp { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
+.cap-more { background: none; border: 0; padding: 2px 0; font-weight: 800; font-size: .82rem; color: #1351a4; cursor: pointer; text-decoration: underline; }

@@ -211,8 +211,8 @@ export function view(opt = {}) {
         ${candleSVG(false, "sm")}
         <div style="flex:1;min-width:200px">
           <label class="xs muted" for="velaText">Mi intención (opcional)</label>
-          <textarea id="velaText" class="textarea cap-vela-ta" rows="4" maxlength="400" placeholder="Por mi abuela que está enferma… Por mi curso… Por la paz…"></textarea>
-          <span class="xs muted cap-vela-n" id="velaN">0/400</span>
+          <textarea id="velaText" class="textarea cap-vela-ta" rows="5" maxlength="1500" placeholder="Por mi abuela que está enferma… Por mi curso… Por la paz…"></textarea>
+          <span class="xs muted cap-vela-n" id="velaN">0/1500</span>
           <div class="row-wrap" style="margin-top:8px;justify-content:space-between">
             <span class="xs muted">La ven solo quienes tienen cuenta. Lo muy personal, mejor conversarlo con tu acompañante.</span>
             <button class="btn btn-gold" type="submit">${icon("flame")} Encender vela</button>
@@ -360,7 +360,7 @@ function paintVelas(err) {
     return `<article class="cap-vela">
       ${candleSVG(true, "xs")}
       <div class="cap-vela-body">
-        ${v.text ? `<p>${esc(v.text)}</p>` : `<p class="muted"><i>Una intención en silencio</i></p>`}
+        ${v.text ? `<p class="${v.text.length > 260 ? "cap-clamp" : ""}">${esc(v.text)}</p>${v.text.length > 260 ? `<button class="cap-more" data-action="velaMore">Leer todo</button>` : ""}` : `<p class="muted"><i>Una intención en silencio</i></p>`}
         <span class="xs muted">${esc(v.authorName || "Alguien")} · ${ago(v.createdAt)}</span>
         <div class="row-wrap" style="margin-top:6px;gap:6px">
           <button class="btn btn-sm ${mine ? "btn-soft" : "btn-ghost"}" data-action="capPray" data-id="${esc(v.id)}" data-on="${mine ? 0 : 1}" aria-pressed="${mine}">🙏 ${mine ? "Estoy rezando" : "Rezo por esto"}${n ? ` · ${n}` : ""}</button>
@@ -608,6 +608,7 @@ function registerActions() {
     else if (e.key === "ArrowRight" || (e.key === " " && e.target === document.body)) { e.preventDefault(); rosMove(1); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); rosMove(-1); }
   });
+  A.velaMore = (el) => { const p = el.previousElementSibling; const open = p.classList.toggle("cap-clamp"); el.textContent = open ? "Leer todo" : "Mostrar menos"; };
   A.capGo = (el) => { document.getElementById("cap-" + el.dataset.k)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); };
   A.capSilence = (el) => silence(+el.dataset.min || 1);
   A.capStop = () => stopSilence(false);
@@ -620,7 +621,7 @@ function registerActions() {
     ctx.cloud.deleteVela(el.dataset.id).catch(() => toast("No se pudo apagar", ""));
   };
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.getElementById("capOverlay")) stopSilence(false); });
-  document.addEventListener("input", (e) => { if (e.target.id === "velaText") { const n = $("#velaN"); if (n) n.textContent = `${e.target.value.length}/400`; } });
+  document.addEventListener("input", (e) => { if (e.target.id === "velaText") { const n = $("#velaN"); if (n) n.textContent = `${e.target.value.length}/1500`; } });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "velaForm") return;
     e.preventDefault();
@@ -630,7 +631,7 @@ function registerActions() {
       await ctx.cloud.lightVela(ta.value.trim());
       ta.value = ""; toast("Tu vela está encendida 🕯️");
       e.target.querySelector(".cap-candle")?.classList.add("lit");
-      const n = $("#velaN"); if (n) n.textContent = "0/400";
+      const n = $("#velaN"); if (n) n.textContent = "0/1500";
     } catch (err) { console.warn(err); toast("No se pudo encender. Revisa tu conexión.", ""); }
     btn.disabled = false;
   });
