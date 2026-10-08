@@ -484,6 +484,10 @@ export async function chatConfig(force) {
   if (!chatCfg || force) chatCfg = { ...CHAT_DEFAULT, ...((await getContent("chat")) || {}) };
   return chatCfg;
 }
+// Campanita: qué tipos de novedades están activos (content/novedades, lo cambia un administrador)
+let novCfg = null;
+export async function novConfig(force) { if (!novCfg || force) novCfg = (await getContent("novedades")) || {}; return novCfg; }
+export async function saveNovConfig(data) { await setContent("novedades", data); novCfg = data; }
 export async function saveChatConfig(data) { await setContent("chat", data); chatCfg = { ...CHAT_DEFAULT, ...data }; }
 // Borra los mensajes más antiguos que el plazo (lo hace el equipo al abrir una sala; hasta 100 por vez).
 export async function purgeChat(sala, dias) {

@@ -3,7 +3,25 @@
 // app: no hay notificaciones del teléfono ni correos. Lo «ya visto» se guarda en este dispositivo.
 
 import * as cloud from "./cloud.js";
-import { esc, icon } from "./util.js";
+import * as S from "./store.js";
+import { esc, icon, toast } from "./util.js";
+import { todayGospel } from "./capilla.js";
+
+// Tipos de novedades. «on»: cómo viene de fábrica; un administrador los prende o apaga en Gestión.
+export const TIPOS = [
+  { k: "velas", e: "🕯️", t: "Velas encendidas", d: "Cuando alguien enciende una vela en la Capilla.", on: true },
+  { k: "avisos", e: "📢", t: "Avisos y logros del muro", d: "Anuncios del equipo y logros publicados.", on: true },
+  { k: "temas", e: "🗣️", t: "Nuevo tema de conversación", d: "Cuando el equipo abre un tema de discusión en el muro.", on: true },
+  { k: "publicaciones", e: "💬", t: "Nuevas publicaciones en el muro", d: "Preguntas y publicaciones de la comunidad.", on: true },
+  { k: "encuestas", e: "📊", t: "Encuestas", d: "Cuando hay una encuesta nueva para votar.", on: true },
+  { k: "agenda", e: "📅", t: "Novedades de la agenda", d: "Actividades nuevas o que cambiaron.", on: true },
+  { k: "chat", e: "💭", t: "Mensajes nuevos en el chat", d: "Cuando hay mensajes en las salas donde estás.", on: false },
+  { k: "formacion", e: "🎓", t: "Recordatorio de formación", d: "Cada lunes: «Recuerda avanzar en tu formación» (a los jóvenes, su encuentro de la semana).", on: false },
+  { k: "rosario", e: "📿", t: "Misterios del día", d: "Cada mañana: qué misterios del Rosario corresponden hoy.", on: false },
+  { k: "evangelio", e: "📖", t: "Evangelio del día", d: "Cada mañana: la cita y la frase del Evangelio de hoy.", on: false },
+];
+let cfg = null;
+const isOn = (k) => { const t = TIPOS.find((x) => x.k === k); return cfg && k in cfg ? !!cfg[k] : !!(t && t.on); };
 
 const DAY = 86400000;
 let items = [], lastFetch = 0, loading = null, open = false;
@@ -21,18 +39,46 @@ const ago = (t) => {
   const h = Math.round(m / 60); if (h < 24) return `hace ${h} h`;
   const d = Math.round(h / 24); return d === 1 ? "ayer" : `hace ${d} días`;
 };
+const lunes = () => { const d = new Date(); d.setDate(d.getDate() - ((d.getDay() + 6) % 7)); return d; };
 const short = (t, n = 70) => { t = String(t || "").replace(/\s+/g, " ").trim(); return t.length > n ? t.slice(0, n - 1) + "…" : t; };
 
+const MYST_DIA = ["gloriosos", "gozosos", "dolorosos", "gloriosos", "luminosos", "dolorosos", "gozosos"]; // dom..sáb
+const at = (h, d = new Date()) => { const x = new Date(d); x.setHours(h, 0, 0, 0); return x.getTime(); };
 async function fetchAll() {
   const me = cloud.myUid(), since = Date.now() - 14 * DAY;
-  const [velas, wall, agenda] = await Promise.all([cloud.recentVelas(20), cloud.latestWall(), cloud.listAgenda()]);
+  cfg = await cloud.novConfig().catch(() => ({}));
+  const none = async () => [];
+  const [velas, wall, agenda] = await Promise.all([
+    isOn("velas") ? cloud.recentVelas(20) : none(),
+    ["avisos", "temas", "publicaciones", "encuestas"].some(isOn) ? cloud.latestWall() : none(),
+    isOn("agenda") ? cloud.listAgenda() : none(),
+  ]);
   const out = [];
   velas.forEach((v) => { const ts = ms(v.createdAt); if (ts > since && v.authorUid !== me) out.push({ ts, e: "🕯️", href: "#/oracion/velas", vela: true,
     t: `${v.authorName || "Alguien"} encendió una vela`, d: v.text ? `«${short(v.text)}»` : "Una intención en silencio. ¿Rezas por ella?" }); });
-  wall.filter((p) => !p.hidden).forEach((p) => { const ts = ms(p.createdAt); if (ts > since && p.authorUid !== me) out.push({ ts, e: p.type === "anuncio" ? "📢" : p.type === "logro" ? "🏅" : p.type === "encuesta" ? "📊" : "💬",
-    href: `#/muro/${encodeURIComponent(p.id)}`, t: p.type === "anuncio" ? "Nuevo aviso en el muro" : p.type === "logro" ? "Un nuevo logro en el muro" : p.type === "encuesta" ? "Nueva encuesta" : `${p.authorName || "Alguien"} publicó en el muro`, d: short(p.title || p.body) }); });
+  const tipoMuro = (p) => (p.type === "anuncio" || p.type === "logro" ? "avisos" : p.type === "tema" ? "temas" : p.type === "encuesta" ? "encuestas" : "publicaciones");
+  wall.filter((p) => !p.hidden && isOn(tipoMuro(p))).forEach((p) => { const ts = ms(p.createdAt); if (ts > since && p.authorUid !== me) out.push({ ts, e: p.type === "anuncio" ? "📢" : p.type === "logro" ? "🏅" : p.type === "encuesta" ? "📊" : "💬",
+    href: `#/muro/${encodeURIComponent(p.id)}`, t: p.type === "anuncio" ? "Nuevo aviso en el muro" : p.type === "logro" ? "Un nuevo logro en el muro" : p.type === "encuesta" ? "Nueva encuesta" : p.type === "tema" ? "Nuevo tema de conversación" : `${p.authorName || "Alguien"} publicó en el muro`, d: short(p.title || p.body) }); });
   agenda.forEach((e) => { const ts = ms(e.updatedAt); if (ts > since && e.title && (!e.date || e.date >= new Date(Date.now() - DAY).toISOString().slice(0, 10))) out.push({ ts, e: "📅", href: e.date ? `#/agenda/${e.date}` : "#/agenda",
     t: "Novedad en la agenda", d: short(`${e.title}${e.date ? " · " + e.date.split("-").reverse().join("/") : ""}`) }); });
+  const now = Date.now();
+  if (isOn("chat")) {
+    await cloud.loadSalas().catch(() => []);
+    const salas = cloud.allSalas().filter((x) => cloud.mySalas().includes(x.key)).slice(0, 8);
+    const last = await Promise.all(salas.map((x) => cloud.lastChat(x.key).then((m) => [x, m])));
+    last.forEach(([x, m]) => { const ts = m && ms(m.createdAt); if (ts > since && m.authorUid !== me) out.push({ ts, e: "💭", href: `#/chat/${encodeURIComponent(x.key)}`,
+      t: `Mensajes nuevos en «${x.name || x.title || x.key}»`, d: `${m.authorName || "Alguien"}: ${short(m.text, 60)}` }); });
+  }
+  if (isOn("formacion") && now >= at(8, lunes())) {
+    const st = cloud.state();
+    if (st.isJoven || st.role === "aspirante") out.push({ ts: at(8, lunes()), e: "🧭", href: "#/mi-camino", t: "Tu encuentro de esta semana te espera", d: "Míralo en Mi Camino y prepárate para vivirlo." });
+    if (!st.isJoven) { const c = S.activeCourse(), cs = S.courseState(c);
+      if (!cs.complete) out.push({ ts: at(8, lunes()), e: "🎓", href: "#/itinerario", t: "Recuerda avanzar en tu formación", d: `Llevas ${cs.readSessions} de ${cs.totalSessions} unidades. ¡Una más esta semana!` }); }
+  }
+  if (isOn("rosario") && now >= at(8)) { const m = MYST_DIA[new Date().getDay()];
+    out.push({ ts: at(8), e: "📿", href: "#/oracion/maria", t: `Hoy corresponde rezar los misterios ${m}`, d: "Un Rosario con María, solo o en comunidad." }); }
+  if (isOn("evangelio") && now >= at(7)) { const g = await todayGospel().catch(() => null);
+    if (g && g.cita) out.push({ ts: at(7), e: "📖", href: "#/evangelio", t: `Evangelio de hoy · ${g.cita}`, d: g.frase ? `«${short(g.frase, 80)}»` : "Lee la Palabra de hoy." }); }
   items = out.sort((a, b) => b.ts - a.ts).slice(0, 25);
 }
 export async function refresh(force) {
@@ -103,3 +149,23 @@ document.addEventListener("visibilitychange", () => { if (document.visibilitySta
 setInterval(() => { if (document.visibilityState === "visible") refresh(); }, 5 * 60000);
 // Al encender tu propia vela o publicar, vuelve a mirar al rato
 export const poke = () => { lastFetch = 0; };
+
+// ---------------------------------------------------------------------------
+// Gestión: qué avisa la campanita
+// ---------------------------------------------------------------------------
+export async function adminHTML() {
+  cfg = await cloud.novConfig(true).catch(() => ({}));
+  const admin = cloud.state().isAdmin;
+  return `<section class="card" id="novAdmin"><h3>🔔 Campanita de novedades</h3>
+    <p class="muted small" style="margin-top:4px">Elige qué cosas encienden el punto rojo de la campanita. Todo queda dentro de la app: no llegan notificaciones al teléfono ni correos.</p>
+    <div class="nov-tipos">${TIPOS.map((x) => `<label class="nov-tipo"><input type="checkbox" data-nov="${x.k}" ${isOn(x.k) ? "checked" : ""} ${admin ? "" : "disabled"}>
+      <span class="nov-e" aria-hidden="true">${x.e}</span><span><b>${esc(x.t)}</b><small>${esc(x.d)}</small></span></label>`).join("")}</div>
+    ${admin ? `<button class="btn btn-primary btn-sm" data-nov-save style="margin-top:10px">Guardar</button>` : `<p class="xs muted" style="margin-top:8px">Solo un administrador puede cambiar esto.</p>`}
+  </section>`;
+}
+document.addEventListener("click", async (e) => {
+  if (!e.target.closest("[data-nov-save]")) return;
+  const data = Object.fromEntries([...document.querySelectorAll("[data-nov]")].map((i) => [i.dataset.nov, i.checked]));
+  try { await cloud.saveNovConfig(data); cfg = data; lastFetch = 0; toast("Campanita actualizada 🔔", "ok"); refresh(true); }
+  catch (err) { console.warn(err); toast("No se pudo guardar", ""); }
+});

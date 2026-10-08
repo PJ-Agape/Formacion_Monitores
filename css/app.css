@@ -2564,3 +2564,8 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .vela-strip { display: flex !important; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px !important; background: #fff6d6 !important; color: #0b2566; }
 .vela-strip .muted { color: #33456e !important; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .vela-strip-e { font-size: 1.8rem; }
+.nov-tipos { display: grid; gap: 6px; margin-top: 12px; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); }
+.nov-tipo { display: flex; gap: 10px; align-items: flex-start; padding: 10px 12px; border: 2px solid var(--line); border-radius: 14px; cursor: pointer; }
+.nov-tipo:has(input:checked) { border-color: var(--z-b); background: color-mix(in srgb, #ffba03 14%, var(--surface)); }
+.nov-tipo input { width: 20px; height: 20px; margin-top: 2px; accent-color: #1351a4; flex: 0 0 auto; }
+.nov-e { font-size: 1.3rem; } .nov-tipo b { display: block; font-size: .92rem; } .nov-tipo small { display: block; color: var(--ink-3); font-size: .8rem; line-height: 1.35; }
