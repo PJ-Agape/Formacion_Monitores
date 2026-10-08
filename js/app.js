@@ -72,6 +72,7 @@ const routes = [
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
+  [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
   [/^\/red$/, () => inicio.viewRed(), "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],

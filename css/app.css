@@ -2569,3 +2569,6 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .nov-tipo:has(input:checked) { border-color: var(--z-b); background: color-mix(in srgb, #ffba03 14%, var(--surface)); }
 .nov-tipo input { width: 20px; height: 20px; margin-top: 2px; accent-color: #1351a4; flex: 0 0 auto; }
 .nov-e { font-size: 1.3rem; } .nov-tipo b { display: block; font-size: .92rem; } .nov-tipo small { display: block; color: var(--ink-3); font-size: .8rem; line-height: 1.35; }
+.cap-vela-focus { box-shadow: 0 0 0 4px #ffba03, 4px 4px 0 #0b2566 !important; }
+@media (prefers-reduced-motion: no-preference) { .cap-vela-focus { animation: velaGlow 1.4s ease-in-out 3; } @keyframes velaGlow { 50% { box-shadow: 0 0 0 9px rgba(255,186,3,.55), 4px 4px 0 #0b2566; } } }
+.bell-i em u { text-decoration: none; font-weight: 800; color: #1351a4; }

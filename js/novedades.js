@@ -54,8 +54,8 @@ async function fetchAll() {
     isOn("agenda") ? cloud.listAgenda() : none(),
   ]);
   const out = [];
-  velas.forEach((v) => { const ts = ms(v.createdAt); if (ts > since && v.authorUid !== me) out.push({ ts, e: "🕯️", href: "#/oracion/velas", vela: true,
-    t: `${v.authorName || "Alguien"} encendió una vela`, d: v.text ? `«${short(v.text)}»` : "Una intención en silencio. ¿Rezas por ella?" }); });
+  velas.forEach((v) => { const ts = ms(v.createdAt); if (ts > since && v.authorUid !== me) out.push({ ts, e: "🕯️", href: `#/oracion/velas/${encodeURIComponent(v.id)}`, vela: true,
+    t: `${v.authorName || "Alguien"} encendió una vela`, d: v.text ? `«${short(v.text)}»` : "Una intención en silencio. ¿Rezas por ella?", full: v.text ? `«${short(v.text, 400)}»` : "" }); });
   const tipoMuro = (p) => (p.type === "anuncio" || p.type === "logro" ? "avisos" : p.type === "tema" ? "temas" : p.type === "encuesta" ? "encuestas" : "publicaciones");
   wall.filter((p) => !p.hidden && isOn(tipoMuro(p))).forEach((p) => { const ts = ms(p.createdAt); if (ts > since && p.authorUid !== me) out.push({ ts, e: p.type === "anuncio" ? "📢" : p.type === "logro" ? "🏅" : p.type === "encuesta" ? "📊" : "💬",
     href: `#/muro/${encodeURIComponent(p.id)}`, t: p.type === "anuncio" ? "Nuevo aviso en el muro" : p.type === "logro" ? "Un nuevo logro en el muro" : p.type === "encuesta" ? "Nueva encuesta" : p.type === "tema" ? "Nuevo tema de conversación" : `${p.authorName || "Alguien"} publicó en el muro`, d: short(p.title || p.body) }); });
@@ -117,7 +117,7 @@ function paint() {
   const strip = document.getElementById("velaStrip");
   if (strip) {
     const v = unread().filter((x) => x.vela);
-    strip.innerHTML = v.length ? `<a class="card link vela-strip" href="#/oracion/velas"><span class="vela-strip-e" aria-hidden="true">🕯️</span>
+    strip.innerHTML = v.length ? `<a class="card link vela-strip" href="${esc(v[0].href)}"><span class="vela-strip-e" aria-hidden="true">🕯️</span>
       <span style="flex:1;min-width:0"><strong>${v.length === 1 ? "Hay una vela nueva encendida" : `Hay ${v.length} velas nuevas encendidas`}</strong>
       <span class="muted small">${esc(v[0].d)}</span></span><span class="btn btn-sm btn-gold">Rezar 🙏</span></a>` : "";
   }
@@ -130,7 +130,7 @@ function openPanel() {
   if (!p) { p = document.createElement("div"); p.id = "bellPanel"; p.className = "bell-panel"; p.setAttribute("role", "dialog"); p.setAttribute("aria-label", "Novedades"); document.body.appendChild(p); }
   p.innerHTML = `<div class="bell-head"><strong>Novedades</strong><button type="button" class="bell-x" aria-label="Cerrar">${icon("x")}</button></div>
     ${items.length ? `<div class="bell-list">${items.slice(0, 15).map((x) => `<a class="bell-i ${x.ts > s ? "new" : ""}" href="${esc(x.href)}">
-      <span class="bell-e" aria-hidden="true">${x.e}</span><span><b>${esc(x.t)}</b><small>${esc(x.d)}</small><em>${ago(x.ts)}</em></span></a>`).join("")}</div>`
+      <span class="bell-e" aria-hidden="true">${x.e}</span><span><b>${esc(x.t)}</b><small>${esc(x.full || x.d)}</small><em>${ago(x.ts)}${x.vela ? " · <u>Ir a rezar 🙏</u>" : " · <u>Ver</u>"}</em></span></a>`).join("")}</div>`
       : `<p class="bell-empty">${loading ? "Buscando novedades…" : "Todo tranquilo por ahora. Cuando alguien encienda una vela o publique algo, lo verás aquí."}</p>`}`;
   p.querySelector(".bell-x").onclick = closePanel;
   p.querySelectorAll(".bell-i").forEach((a) => a.addEventListener("click", closePanel));

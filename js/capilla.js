@@ -143,8 +143,9 @@ const candleSVG = (lit = true, cls = "") => `<svg class="cap-candle ${lit ? "lit
 // ---------------------------------------------------------------------------
 // Vista
 // ---------------------------------------------------------------------------
-let velas = null;
+let velas = null, focusVela = null, focusDone = false;
 export function view(opt = {}) {
+  focusVela = opt.vela || null; focusDone = false;
   const d = ctx.content().devotional || { title: "", desc: "", cards: [] };
   const s = season(), m = moment(), now = new Date();
   const [vt, vr] = VERSES[dayIndex(VERSES.length)];
@@ -156,7 +157,7 @@ export function view(opt = {}) {
   ctx.onAfterRender(() => {
     loadGospel().then(() => {
       paintGospel();
-      if (!opt.focus) return;
+      if (!opt.focus || opt.vela) return;
       const box = document.getElementById(opt.focus === "gospel" ? "capGospel" : "cap-" + opt.focus); if (!box) return;
       if (opt.focus !== "gospel") { box.scrollIntoView({ behavior: "auto", block: "start" }); return; }
       box.scrollIntoView({ behavior: "auto", block: "center" });
@@ -357,10 +358,11 @@ function paintVelas(err) {
   const me = ctx.cloud.myUid(), staff = st().isStaff;
   box.innerHTML = `<p class="xs muted cap-count">${list.length} vela${list.length > 1 ? "s" : ""} encendida${list.length > 1 ? "s" : ""} esta semana</p>` + list.map((v) => {
     const n = Object.keys(v.prays || {}).length, mine = !!(v.prays && v.prays[me]);
-    return `<article class="cap-vela">
+    const focus = focusVela === v.id, clamp = v.text && v.text.length > 260 && !focus;
+    return `<article class="cap-vela${focus ? " cap-vela-focus" : ""}" data-vela="${esc(v.id)}">
       ${candleSVG(true, "xs")}
       <div class="cap-vela-body">
-        ${v.text ? `<p class="${v.text.length > 260 ? "cap-clamp" : ""}">${esc(v.text)}</p>${v.text.length > 260 ? `<button class="cap-more" data-action="velaMore">Leer todo</button>` : ""}` : `<p class="muted"><i>Una intención en silencio</i></p>`}
+        ${v.text ? `<p class="${clamp ? "cap-clamp" : ""}">${esc(v.text)}</p>${v.text.length > 260 ? `<button class="cap-more" data-action="velaMore">${clamp ? "Leer todo" : "Mostrar menos"}</button>` : ""}` : `<p class="muted"><i>Una intención en silencio</i></p>`}
         <span class="xs muted">${esc(v.authorName || "Alguien")} · ${ago(v.createdAt)}</span>
         <div class="row-wrap" style="margin-top:6px;gap:6px">
           <button class="btn btn-sm ${mine ? "btn-soft" : "btn-ghost"}" data-action="capPray" data-id="${esc(v.id)}" data-on="${mine ? 0 : 1}" aria-pressed="${mine}">🙏 ${mine ? "Estoy rezando" : "Rezo por esto"}${n ? ` · ${n}` : ""}</button>
@@ -369,7 +371,13 @@ function paintVelas(err) {
       </div>
     </article>`;
   }).join("");
+  // Llegaste desde la campanita: muestra esa vela, completa y destacada
+  if (focusVela && !focusDone) {
+    const el = box.querySelector(`[data-vela="${CSS.escape(focusVela)}"]`);
+    if (el) { focusDone = true; setTimeout(() => el.scrollIntoView({ behavior: "auto", block: "center" }), 60); }
+  }
 }
+
 
 // ---------------------------------------------------------------------------
 // Silencio guiado
