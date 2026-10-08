@@ -632,7 +632,11 @@ function registerActions() {
       ta.value = ""; toast("Tu vela está encendida 🕯️");
       e.target.querySelector(".cap-candle")?.classList.add("lit");
       const n = $("#velaN"); if (n) n.textContent = "0/1500";
-    } catch (err) { console.warn(err); toast("No se pudo encender. Revisa tu conexión.", ""); }
+    } catch (err) {
+      console.warn(err);
+      const denied = /permission|insufficient/i.test(String(err && (err.code || err.message)));
+      toast(denied && ta.value.trim().length > 140 ? "Por ahora la intención puede tener hasta 140 caracteres. Acórtala un poquito 🙏" : "No se pudo encender. Revisa tu conexión.", "");
+    }
     btn.disabled = false;
   });
 }
