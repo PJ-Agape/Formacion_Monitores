@@ -1342,30 +1342,41 @@ function viewAccount() {
     <div id="installSlot" style="margin-top:14px"></div>
   </div>`;
 }
-// Selector de avatar (Mi cuenta)
-let avDraft = null;
+// Selector de avatar (Mi cuenta): arma tu monito, elige un personaje o un sticker de la comunidad
+let avDraft = null, avKey = null, avTab = null;
 function avPicker() {
   const a = cloud.state().account || {};
   if (!avDraft) avDraft = AV.parse(a.avatar) || AV.parse(AV.randomKey());
-  const key = AV.keyOf(avDraft), saved = a.avatar === key;
+  if (!avTab) avTab = AV.kind(a.avatar) || "m";
+  if (!avKey) avKey = AV.isValid(a.avatar) ? a.avatar : AV.keyOf(avDraft);
+  const key = avKey, saved = a.avatar === key;
   const swatch = (k, colors) => colors.map((c, i) => `<button class="av-sw ${avDraft[k] === i ? "on" : ""}" style="--c:${c}" data-action="avSet" data-k="${k}" data-v="${i}" aria-label="${AV.OPTS[k].label} ${i + 1}"></button>`).join("");
   const mini = (k) => Array.from({ length: AV.OPTS[k].n }, (_, i) => `<button class="av-mini ${avDraft[k] === i ? "on" : ""}" data-action="avSet" data-k="${k}" data-v="${i}" title="${esc(AV.OPTS[k].names[i])}">${AV.svg(AV.keyOf({ ...avDraft, [k]: i }))}</button>`).join("");
-  return `<div class="av-head"><div class="av-big">${AV.svg(key)}</div>
-      <div style="flex:1;min-width:180px"><h3>Mi avatar</h3><p class="muted small">Aparece junto a tu nombre en el chat, el muro y la lista de quienes están en línea.</p>
-        <div class="row-wrap" style="margin-top:10px"><button class="btn btn-sm btn-ghost" data-action="avRandom">🎲 Al azar</button>
-        <button class="btn btn-sm ${saved ? "btn-soft" : "btn-primary"}" data-action="avSave" ${saved ? "disabled" : ""}>${saved ? "Guardado ✓" : "Guardar avatar"}</button></div></div></div>
-    <div class="av-row"><span>${AV.OPTS.h.label}</span><div>${mini("h")}</div></div>
+  const grid = (pre, keys, names) => `<div class="av-grid">${keys.map((k) => `<button class="av-pick ${key === pre + k ? "on" : ""}" data-action="avPick" data-key="${pre}${k}" title="${esc(names[k])}">${AV.svg(pre + k)}<small>${esc(names[k])}</small></button>`).join("")}</div>`;
+  const tab = (t, l) => `<button class="av-tab ${avTab === t ? "on" : ""}" data-action="avTab" data-t="${t}" role="tab" aria-selected="${avTab === t}">${l}</button>`;
+  const body = avTab === "j" ? `<p class="muted small">Personajes con onda para representarte.</p>${grid("j:", AV.PJ_KEYS, Object.fromEntries(AV.PJ_KEYS.map((k) => [k, AV.PJ[k][0]])))}`
+    : avTab === "k" ? `<p class="muted small">Los mismos dibujos de nuestros stickers: Jesús, María, los santos y la comunidad.</p>${grid("k:", AV.STK_KEYS, AV.STK)}`
+    : `<div class="av-row"><span>${AV.OPTS.h.label}</span><div>${mini("h")}</div></div>
     <div class="av-row"><span>${AV.OPTS.c.label}</span><div>${swatch("c", AV.HAIRC)}</div></div>
     <div class="av-row"><span>${AV.OPTS.s.label}</span><div>${swatch("s", AV.SKIN)}</div></div>
     <div class="av-row"><span>${AV.OPTS.f.label}</span><div>${mini("f")}</div></div>
     <div class="av-row"><span>${AV.OPTS.x.label}</span><div>${mini("x")}</div></div>
-    <div class="av-row"><span>${AV.OPTS.b.label}</span><div>${swatch("b", AV.BG)}</div></div>`;
+    <div class="av-row"><span>${AV.OPTS.r.label}</span><div>${mini("r")}</div></div>
+    <div class="av-row"><span>${AV.OPTS.b.label}</span><div>${mini("b")}</div></div>`;
+  return `<div class="av-head"><div class="av-big">${AV.svg(key)}</div>
+      <div style="flex:1;min-width:180px"><h3>Mi avatar</h3><p class="muted small">Aparece junto a tu nombre en el chat, el muro y la lista de quienes están en línea.</p>
+        <div class="row-wrap" style="margin-top:10px">${avTab === "m" ? `<button class="btn btn-sm btn-ghost" data-action="avRandom">🎲 Al azar</button>` : ""}
+        <button class="btn btn-sm ${saved ? "btn-soft" : "btn-primary"}" data-action="avSave" ${saved ? "disabled" : ""}>${saved ? "Guardado ✓" : "Guardar avatar"}</button></div></div></div>
+    <div class="av-tabs" role="tablist">${tab("m", "🧑 Arma tu monito")}${tab("j", "🦙 Personajes")}${tab("k", "✨ Stickers")}</div>
+    ${body}`;
 }
 const repaintAv = () => { const c = $("#avCard"); if (c) c.innerHTML = avPicker(); };
-actions.avSet = (el) => { avDraft = { ...avDraft, [el.dataset.k]: +el.dataset.v }; repaintAv(); };
-actions.avRandom = () => { avDraft = AV.parse(AV.randomKey()); repaintAv(); };
+actions.avSet = (el) => { avDraft = { ...avDraft, [el.dataset.k]: +el.dataset.v }; avKey = AV.keyOf(avDraft); repaintAv(); };
+actions.avRandom = () => { avDraft = AV.parse(AV.randomKey()); avKey = AV.keyOf(avDraft); repaintAv(); };
+actions.avTab = (el) => { avTab = el.dataset.t; if (avTab === "m") avKey = AV.keyOf(avDraft); repaintAv(); };
+actions.avPick = (el) => { avKey = el.dataset.key; repaintAv(); };
 actions.avSave = async () => {
-  try { await cloud.updateMyProfile({ avatar: AV.keyOf(avDraft) }); toast("¡Avatar guardado!"); render(); }
+  try { await cloud.updateMyProfile({ avatar: avKey }); toast("¡Avatar guardado!"); render(); }
   catch { toast("No se pudo guardar. Revisa tu conexión.", ""); }
 };
 document.addEventListener("submit", async (e) => {
