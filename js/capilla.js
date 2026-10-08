@@ -211,7 +211,8 @@ export function view(opt = {}) {
         ${candleSVG(false, "sm")}
         <div style="flex:1;min-width:200px">
           <label class="xs muted" for="velaText">Mi intención (opcional)</label>
-          <textarea id="velaText" class="textarea" rows="2" maxlength="140" placeholder="Por mi abuela que está enferma… Por mi curso… Por la paz…"></textarea>
+          <textarea id="velaText" class="textarea cap-vela-ta" rows="4" maxlength="400" placeholder="Por mi abuela que está enferma… Por mi curso… Por la paz…"></textarea>
+          <span class="xs muted cap-vela-n" id="velaN">0/400</span>
           <div class="row-wrap" style="margin-top:8px;justify-content:space-between">
             <span class="xs muted">La ven solo quienes tienen cuenta. Lo muy personal, mejor conversarlo con tu acompañante.</span>
             <button class="btn btn-gold" type="submit">${icon("flame")} Encender vela</button>
@@ -619,6 +620,7 @@ function registerActions() {
     ctx.cloud.deleteVela(el.dataset.id).catch(() => toast("No se pudo apagar", ""));
   };
   document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.getElementById("capOverlay")) stopSilence(false); });
+  document.addEventListener("input", (e) => { if (e.target.id === "velaText") { const n = $("#velaN"); if (n) n.textContent = `${e.target.value.length}/400`; } });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "velaForm") return;
     e.preventDefault();
@@ -628,6 +630,7 @@ function registerActions() {
       await ctx.cloud.lightVela(ta.value.trim());
       ta.value = ""; toast("Tu vela está encendida 🕯️");
       e.target.querySelector(".cap-candle")?.classList.add("lit");
+      const n = $("#velaN"); if (n) n.textContent = "0/400";
     } catch (err) { console.warn(err); toast("No se pudo encender. Revisa tu conexión.", ""); }
     btn.disabled = false;
   });

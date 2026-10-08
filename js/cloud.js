@@ -594,7 +594,7 @@ export function watchVelas(cb, onErr) {
 }
 export async function lightVela(text) {
   await fb.setDoc(fb.doc(fb.collection(db, "velas")), {
-    text: String(text || "").slice(0, 140), authorUid: user.uid, authorName: shortName(account.name), prays: {}, createdAt: fb.serverTimestamp(),
+    text: String(text || "").slice(0, 400), authorUid: user.uid, authorName: shortName(account.name), prays: {}, createdAt: fb.serverTimestamp(),
   });
 }
 export const prayVela = (id, on) => toggleMark(["velas", id], "prays", on);

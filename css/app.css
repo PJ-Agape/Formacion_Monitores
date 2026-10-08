@@ -2535,3 +2535,8 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .hub-course strong { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
 .hub-prog { height: 12px; border-radius: 9px; border: 2px solid var(--z-b); overflow: hidden; background: var(--surface-2); } .hub-prog i { display: block; height: 100%; background: #ffba03; }
 @media (prefers-reduced-motion: no-preference) { .blk { transition: transform .15s; } .blk:hover { transform: translate(-1px, -1px); } }
+/* Velas: más espacio para escribir la intención */
+.cap-vela-form > div { flex: 1 1 260px !important; }
+.cap-vela-ta { min-height: 150px; font-size: 1rem; line-height: 1.45; resize: vertical; }
+.cap-vela-n { display: block; text-align: right; margin-top: 4px; }
+@media (max-width: 560px) { .cap-vela-form > .cap-candle, .cap-vela-form > svg:first-child { display: none; } }
