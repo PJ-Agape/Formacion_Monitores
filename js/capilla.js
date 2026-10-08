@@ -258,12 +258,7 @@ export function view(opt = {}) {
         <a class="card link camino-banner" href="presentaciones/mes-de-maria.html" target="_blank" rel="noopener">
           <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
           <span style="flex:1"><span class="eyebrow">8 de noviembre al 8 de diciembre</span><strong>Mes de María: Con María, puente hacia Jesús</strong>
-          <span class="muted small">31 días con oración, Rosario, motivación y un desafío diario.</span></span>${icon("right")}
-        </a>
-        <a class="card link camino-banner" href="presentaciones/mes-de-maria.pdf" download>
-          <span class="tile-ico tile-brand" style="margin:0">${icon("print")}</span>
-          <span style="flex:1"><span class="eyebrow">Para imprimir</span><strong>Mes de María en PDF</strong>
-          <span class="muted small">Tamaño carta, una página por día.</span></span>${icon("dl")}
+          <span class="muted small">31 días con oración, Rosario, motivación y un desafío diario. Adentro puedes imprimirlo.</span></span>${icon("right")}
         </a>
       </div>
     </div>
