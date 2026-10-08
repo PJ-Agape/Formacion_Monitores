@@ -2467,3 +2467,12 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .av-pick:hover svg { transform: scale(1.06) rotate(-3deg); }
 .av-pick.on svg { box-shadow: 0 0 0 3px #fff6e5, 0 0 0 6px #ef591c; }
 @media (prefers-reduced-motion: reduce) { .av-pick:hover svg { transform: none; } }
+
+/* Unidad viva: siempre en colores claros (también con el celular en modo oscuro) */
+.uv { color-scheme: light; --surface: #fff; --surface-2: #fff6e5; --paper: #fff6e5; --ink: #0b2566; --ink-2: #33456e; --ink-3: #5a6a8c; --line: #d6dcea; --line-2: #b9c3d9; --z-b: #0b2566; --accent-soft: #e1f3fd; }
+.uv-q textarea, .uv-q .textarea { background: #fff; color: #0b2566; border: 2px solid #0b2566; caret-color: #ef591c; }
+.uv-q textarea::placeholder { color: #7a87a6; opacity: 1; }
+.uv .muted { color: #4a5a7e; }
+/* Los círculos decorativos quedan detrás del texto */
+.uv-deco { z-index: 0; }
+.uv-deco ~ * { position: relative; z-index: 1; }
