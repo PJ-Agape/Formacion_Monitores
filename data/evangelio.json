@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-06": {
-   "titulo": "Martes de la 27.ª semana del Tiempo Ordinario",
-   "cita": "Lc 10,38-42",
-   "frase": "Marta, Marta, te inquietas y te agitas por muchas cosas, y sin embargo, pocas cosas, o más bien, una sola es necesaria."
-  },
   "2026-10-07": {
    "titulo": "Miércoles de la 27.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,1-4",
@@ -55,6 +50,11 @@
    "titulo": "Viernes de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,1-7",
    "frase": "Se reunieron miles de personas, hasta el punto de atropellarse unos a otros."
+  },
+  "2026-10-17": {
+   "titulo": "Sábado de la 28.ª semana del Tiempo Ordinario",
+   "cita": "Lc 12,8-12",
+   "frase": "Pero el que no me reconozca delante de los hombres, no será reconocido ante los ángeles de Dios."
   }
  }
 }
