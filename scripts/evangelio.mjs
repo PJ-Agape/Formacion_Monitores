@@ -4,7 +4,8 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OUT = process.argv[2] || "data/evangelio.json";
-const DAYS = 10;
+const DAYS = +process.env.DIAS || 10; // la acción manual puede pedir más días (p. ej. para los mensajes de buenos días)
+const WITH_TEXT = process.env.TEXTO === "1";
 const API = "https://feed.evangelizo.org/v2/reader.php";
 const get = async (params) => {
   const r = await fetch(`${API}?${new URLSearchParams({ lang: "SP", ...params })}`, { headers: { "User-Agent": "PastoralAgape/1.0" } });
@@ -59,7 +60,7 @@ for (let i = -1; i < DAYS; i++) {
       get({ date, type: "liturgic_t" }), get({ date, type: "reading_st", content: "GSP" }), get({ date, type: "reading", content: "GSP" }),
     ]);
     const frase = phrase(clean(texto));
-    if (cita) days[iso] = { titulo: clean(titulo).replace(/(\d+)a (semana)/g, "$1.ª $2").replace(/(\d+)o (domingo)/gi, "$1.º $2"), cita: clean(cita).replace(/[.\s]+$/, ""), frase };
+    if (cita) days[iso] = { titulo: clean(titulo).replace(/(\d+)a (semana)/g, "$1.ª $2").replace(/(\d+)o (domingo)/gi, "$1.º $2"), cita: clean(cita).replace(/[.\s]+$/, ""), frase, ...(WITH_TEXT ? { texto: clean(texto).replace(/Copyright.*$/i, "").slice(0, 1800) } : {}) };
   } catch (e) {
     console.warn(iso, e.message);
     if (prev.days && prev.days[iso]) days[iso] = prev.days[iso];

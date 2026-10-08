@@ -4,6 +4,11 @@ on:
   schedule:
     - cron: "7 3,11 * * *"
   workflow_dispatch:
+    inputs:
+      dias:
+        description: "Opcional: genera además data/evangelio-mes.json con estos días (con el texto completo)"
+        required: false
+        default: ""
   push:
     branches: [main]
     paths: ["scripts/evangelio.mjs"]
@@ -18,12 +23,15 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: node scripts/evangelio.mjs data/evangelio.json
+      - name: Mes completo (solo si se pidió)
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.dias != '' }}
+        run: DIAS=${{ inputs.dias }} TEXTO=1 node scripts/evangelio.mjs data/evangelio-mes.json
       - name: Publicar si cambió
         run: |
-          if [ -n "$(git status --porcelain data/evangelio.json)" ]; then
+          if [ -n "$(git status --porcelain data/evangelio.json data/evangelio-mes.json)" ]; then
             git config user.name "evangelio-bot"
             git config user.email "evangelio-bot@users.noreply.github.com"
-            git add data/evangelio.json
+            git add data/evangelio.json data/evangelio-mes.json 2>/dev/null || git add data/evangelio.json
             git commit -m "Capilla: Evangelio de los próximos días"
             git pull --rebase -q origin main
             git push
