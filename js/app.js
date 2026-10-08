@@ -997,7 +997,6 @@ function viewMaterials() {
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
-      `<a class="fi-row" href="presentaciones/mes-de-maria.pdf" download><span class="fi-ico">${icon("dl")}</span><span class="fi-txt"><b>Mes de María en PDF</b><small>Tamaño carta, una página por día</small></span>${icon("dl")}</a>`,
       row("#/encuentros", "print", "Revistas Camino Ágape", "Se imprimen completas o solo el encuentro de la semana"),
       row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
       ...prints.map(guide),
