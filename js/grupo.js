@@ -28,7 +28,7 @@ export async function afterRender(section) {
 export async function adminHTML() {
   const g = (await cloud.getGrupoWA(true)) || {};
   return `<section class="card" id="waAdmin"><h3>💬 Grupo de WhatsApp de la app</h3>
-    <p class="muted small" style="margin-top:4px">Aparece como botón en Inicio y en Ayuda, solo para quienes tienen cuenta. Pega el enlace de invitación del grupo (chat.whatsapp.com/…) o de un canal (whatsapp.com/channel/…).</p>
+    <p class="muted small" style="margin-top:4px">Aparece como botón en Comunidad y en Ayuda, solo para quienes tienen cuenta. Pega el enlace de invitación del grupo (chat.whatsapp.com/…) o de un canal (whatsapp.com/channel/…).</p>
     <div class="stack" style="--gap:10px;margin-top:12px">
       <div class="field"><label>Enlace</label><input class="input" id="waUrl" value="${esc(g.url || "")}" placeholder="https://chat.whatsapp.com/…"></div>
       <div class="field"><label>Título del botón</label><input class="input" id="waTitle" maxlength="60" value="${esc(g.title || "")}" placeholder="Únete al grupo de WhatsApp de la app"></div>
