@@ -156,8 +156,9 @@ export function view(opt = {}) {
   ctx.onAfterRender(() => {
     loadGospel().then(() => {
       paintGospel();
-      if (opt.focus !== "gospel") return;
-      const box = document.getElementById("capGospel"); if (!box) return;
+      if (!opt.focus) return;
+      const box = document.getElementById(opt.focus === "gospel" ? "capGospel" : "cap-" + opt.focus); if (!box) return;
+      if (opt.focus !== "gospel") { box.scrollIntoView({ behavior: "auto", block: "start" }); return; }
       box.scrollIntoView({ behavior: "auto", block: "center" });
       box.classList.add("cap-flash"); setTimeout(() => box.classList.remove("cap-flash"), 2600);
     });
@@ -317,6 +318,12 @@ async function loadGospel() {
   } catch {}
 }
 const READ_URL = "https://www.vaticannews.va/es/evangelio-de-hoy.html";
+// Para Inicio: la cita y la frase del Evangelio de hoy (o null)
+export async function todayGospel() {
+  const pick = () => (gospel && gospel.days && gospel.days[todayKey()]) || null;
+  if (pick()) return pick();
+  await loadGospel(); return pick();
+}
 function gospelHTML(s) {
   const g = gospel && gospel.days && gospel.days[todayKey()];
   if (!g || !g.frase) return `<p class="cap-hint">${esc(s.hint)}</p>`;

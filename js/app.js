@@ -25,6 +25,7 @@ import * as cuenta from "./cuenta.js";
 import * as difusion from "./difusion.js";
 import * as a11y from "./accesible.js";
 import * as grupo from "./grupo.js";
+import * as inicio from "./inicio.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -69,6 +70,10 @@ const routes = [
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
+  [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
+  [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
+  [/^\/red$/, () => inicio.viewRed(), "red"],
+  [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
   [/^\/difusion$/, () => difusion.view(), "difusion"],
@@ -132,11 +137,11 @@ function helpFab(section) {
   let b = document.getElementById("helpFab");
   if (section === "ayuda" || section === "admin" && !cloud.state().isStaff) { if (b) b.remove(); return; }
   if (!b) { b = document.createElement("a"); b.id = "helpFab"; b.className = "help-fab"; b.setAttribute("aria-label", "Ayuda"); b.title = "Ayuda: ¿cómo hago…?"; b.textContent = "?"; document.body.appendChild(b); }
-  const t = { muro: "muro", agenda: "agenda", oracion: "oracion", itinerario: "itinerario", comunidad: "comunidad", camino: "camino", admin: "admin" }[section] || "inicio";
+  const t = { muro: "muro", red: "muro", agenda: "agenda", oracion: "oracion", itinerario: "itinerario", formacion: "itinerario", comunidad: "comunidad", camino: "camino", admin: "admin" }[section] || "inicio";
   b.href = `#/ayuda?t=${t}`;
 }
 // Identidad visual: ilustración de trazo simple en el encabezado de cada sección.
-const HEAD_ILLUS = { camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "jesus", muro: "amigos", perfil: "acogida", verificar: "envio", difusion: "envio" };
+const HEAD_ILLUS = { formacion: "apostoles", red: "amigos", buscar: "pregunta", camino: "camino", agenda: "futuro", comunidad: "equipo", itinerario: "camino", materiales: "biblia", oracion: "jesus", muro: "amigos", perfil: "acogida", verificar: "envio", difusion: "envio" };
 function decorate(v, section) {
   const hero = v.querySelector(".hero");
   if (hero && !hero.querySelector(".z-illus")) {
@@ -167,23 +172,16 @@ function applyTheme() {
 // ---------------------------------------------------------------------------
 // Cabecera, navegación inferior
 // ---------------------------------------------------------------------------
+// Navegación en tres bloques: Formación · Comunidad · Espiritualidad
 const NAV = [
   ["inicio", "#/", "Inicio", "home"],
-  ["agenda", "#/agenda", "Agenda", "grid"],
-  ["muro", "#/muro", "Muro y chat", "chat"],
-  ["comunidad", "#/comunidad", "Comunidad", "users"],
-  ["itinerario", "#/itinerario", "Formación", "route"],
-  ["materiales", "#/materiales", "Materiales", "book", "top"],
-  ["oracion", "#/oracion", "Capilla", "flame"],
+  ["formacion", "#/formacion", "Formación", "route"],
+  ["red", "#/red", "Comunidad", "users"],
+  ["oracion", "#/oracion", "Espiritualidad", "flame"],
 ];
-// Menú según el rol: los jóvenes ven su espacio; aspirantes suman el curso; el equipo, todo.
-const CAMINO_NAV = ["camino", "#/mi-camino", "Mi Camino", "route"];
-function navFor() {
-  const s = cloud.enabled ? cloud.state() : {};
-  if (s.isJoven) return [NAV[0], CAMINO_NAV, NAV[1], NAV[2], NAV[6]];
-  if (s.ready && s.role === "aspirante") return [NAV[0], CAMINO_NAV, NAV[1], NAV[2], NAV[4], NAV[6]];
-  return NAV;
-}
+// Cada sección se marca en su bloque
+const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", agenda: "red", comunidad: "red", difusion: "red" };
+const navFor = () => NAV;
 // Franja «Ver como…» (solo equipo): recuerda que es una vista de prueba y cómo volver.
 const VER_COMO = [["visitante", "Visitante sin cuenta"], ["ingreso", "Joven · Ingreso"], ["madurez", "Joven · Madurez"], ["aspirante", "Aspirante"], ["dirigente", "Dirigente"], ["coordinador", "Coordinador"]];
 function viewAsBar() {
@@ -219,7 +217,8 @@ actions.vaSet = (el) => {
 };
 function renderChrome(section) {
   viewAsBar();
-  const cur = (k) => (k === section ? 'aria-current="page"' : "");
+  const tab = TAB_OF[section] || section;
+  const cur = (k) => (k === tab ? 'aria-current="page"' : "");
   const NAV = navFor();
   $("#topNav").innerHTML = NAV.map(([k, h, l]) => `<a href="${h}" ${cur(k)}>${l}</a>`).join("");
   $("#bottomNav").innerHTML = NAV.filter((n) => n[4] !== "top").map(([k, h, l, ic]) =>
@@ -232,6 +231,8 @@ function renderChrome(section) {
     : guest ? `<span class="avatar">${icon("users")}</span><span class="name">Ingresar</span>`
     : `${cloud.enabled && AV.isValid((cloud.state().account || {}).avatar) ? `<span class="chip-av">${AV.svg(cloud.state().account.avatar)}</span>` : `<span class="avatar">${esc(initials(p.name))}</span>`}<span class="name">${esc(p.name || "Mi perfil")}</span>`;
   $("#profileChip").setAttribute("href", inAdmin ? "#/admin" : "#/perfil");
+  if (!$("#hdrSearch")) $("#profileChip").insertAdjacentHTML("beforebegin", `<a class="hdr-search" id="hdrSearch" href="#/buscar" aria-label="Buscar en la app" title="Buscar">${icon("search")}</a>`);
+  $("#hdrSearch").toggleAttribute("hidden", section === "buscar" || section === "inicio");
 }
 
 function previewBanner() {
@@ -261,8 +262,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => { wall.homeHighlight(); agenda.homeNext(); acompanar.homeCards(); desafio.homeCard(); camJ.homeCard(); });
-  const c = S.content();
+  onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); });
   const course = S.activeCourse();
   const st = S.courseState(course);
   const p = S.getProfile();
@@ -296,64 +296,13 @@ function viewHome() {
     </div>` : ""}
   </section>`;
   };
-  onAfterRender(() => portada.refresh().then((changed) => {
-    const el = document.getElementById("homeCarousel");
-    if (!changed || !el) return;
-    el.outerHTML = carousel(); startCarousel();
-  }));
-  onAfterRender(startCarousel);
-
-  onAfterRender(async () => {
-    const e = cuenta.pick(await cloud.listAgenda());
-    const slot = document.getElementById("countSlot");
-    if (e && slot) { slot.innerHTML = cuenta.html(e, { href: `#/agenda/${e.when}` }); cuenta.start(); }
-  });
   return `
-  ${carousel()}
+  ${inicio.greetHTML()}
   <div id="countSlot"></div>
-
-  <div class="grid grid-4" style="margin-top:20px">
-    ${cloud.enabled && cloud.state().isJoven ? `${tile("#/mi-camino", "route", "Mi Camino", "El encuentro de tu etapa de esta semana.")}
-    ${tile("#/agenda", "grid", "Agenda", "Lo que viene en el grupo.")}
-    ${tile("#/muro", "chat", "Muro y chat", "Lo que conversa el grupo.")}
-    ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}` : `
-    ${tile("#/comunidad", "users", "Nuestra comunidad", "Identidad, roles, cargos y reuniones.")}
-    ${tile("#/itinerario", "route", "Formación", `${st.readSessions} de ${st.totalSessions} unidades completadas.`)}
-    ${tile("#/materiales", "book", "Materiales", c.materials.title)}
-    ${tile("#/oracion", "flame", "Capilla", "Silencio, velas, la Palabra y María.")}`}
-  </div>
-
-  ${st.complete ? `
-  <a class="card link" href="#/constancia" style="margin-top:16px;display:flex;gap:16px;align-items:center">
-    <span class="tile-ico" style="margin:0;background:var(--ok-soft);color:var(--ok)">${icon("award")}</span>
-    <span><strong>¡Completaste el curso!</strong><br><span class="muted small">Tu constancia de formación y envío está lista.</span></span>
-    <span class="spacer"></span>${icon("right")}
-  </a>` : ""}
-
-  ${cloud.enabled && (cloud.state().isJoven || (cloud.state().ready && cloud.state().role === "aspirante")) ? `<div id="mcSlot"></div>` : cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
-    <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
-    <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
-    <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : `<a class="card link camino-banner" href="#/encuentros" style="margin-top:16px">
-    <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
-    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
-    <span class="muted small">Revista principal, guía de coordinación y revistas de cada etapa.</span></span>${icon("right")}
-  </a>`}
-  ${cloud.enabled && cloud.state().isGuide ? `<a class="card link camino-banner" href="#/acompanar" style="margin-top:16px">
-    <span class="tile-ico tile-brand" style="margin:0">${icon("check")}</span>
-    <span style="flex:1"><span class="eyebrow">Para los guías</span><strong>Acompañar</strong>
-    <span class="muted small">Pasa lista, mira quién necesita un llamado y entrega sellos del pasaporte.</span></span>${icon("right")}</a>`
-    : cloud.enabled && cloud.state().ready ? `<a class="card link camino-banner" href="#/pasaporte" style="margin-top:16px">
-    <span class="tile-ico tile-brand" style="margin:0">${icon("award")}</span>
-    <span style="flex:1"><span class="eyebrow">Mi camino en Ágape</span><strong>Mi pasaporte</strong>
-    <span class="muted small">Tus encuentros, tu racha y los sellos que vas ganando.</span></span>${icon("right")}</a>` : ""}
-  ${!cloud.enabled || cloud.state().ready ? `<a class="card link camino-banner" href="#/difusion" style="margin-top:16px">
-    <span class="tile-ico tile-brand" style="margin:0">${icon("send")}</span>
-    <span style="flex:1"><span class="eyebrow">Para compartir</span><strong>Estudio de difusión</strong>
-    <span class="muted small">Marco para tu foto de perfil, historias, invitaciones y stickers de Ágape.</span></span>${icon("right")}</a>` : ""}
-  <div id="desafioSlot"></div>
+  ${inicio.blocksHTML()}
   <div id="acHomeSlot"></div>
-  <div id="agendaSlot" style="margin-top:16px"></div>
-  <div id="wallSlot"></div>
+  <div id="desafioSlot"></div>
+  <section class="home-news"><h2 class="home-h2">Novedades</h2>${carousel()}</section>
   <div id="installSlot"></div>
   `;
 }
@@ -1462,6 +1411,7 @@ viva.setup({ actions, render: () => render(), onLeave, S });
 camJ.setup({ actions, render: () => render(), cloud, S });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
+inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

@@ -19,13 +19,13 @@ const T = [
   // Primeros pasos
   { t: "inicio", q: "¿Cómo entro a la app?", who: ["visitante"], a: ["Toca «Ingresar» arriba a la derecha.", "Elige «Continuar con Google» con el correo con que te invitaron.", "Si dice que tu correo no está invitado, pídele al equipo que te invite con ese correo."], go: "#/perfil", el: "[data-action=signIn]" },
   { t: "inicio", q: "¿Cómo instalo la app en mi celular?", who: ["visitante", ...CUENTA], a: ["En Android (Chrome): menú ⋮ → «Instalar app» o «Agregar a pantalla principal».", "En iPhone (Safari): botón Compartir → «Agregar a inicio».", "Queda como un ícono más y funciona aunque tengas poca señal."], go: "#/perfil", el: "[data-action=install]" },
-  { t: "inicio", q: "¿Cómo pongo el marco de Ágape en mi foto de perfil?", who: CUENTA, a: ["En Inicio toca «Estudio de difusión» → «Marco de foto».", "Elige tu foto y un marco; ajusta con «Acercar» y «Mover».", "Toca «Descargar» y ponla de foto en WhatsApp o Facebook. Tu foto no se sube a ninguna parte."], go: "#/difusion", el: ".dif-tabs" },
+  { t: "inicio", q: "¿Cómo pongo el marco de Ágape en mi foto de perfil?", who: CUENTA, a: ["En Comunidad toca «Estudio de difusión» → «Marco de foto».", "Elige tu foto y un marco; ajusta con «Acercar» y «Mover».", "Toca «Descargar» y ponla de foto en WhatsApp o Facebook. Tu foto no se sube a ninguna parte."], go: "#/difusion", el: ".dif-tabs" },
   { t: "inicio", q: "¿Cómo hago una historia o invito a alguien?", who: CUENTA, a: ["En «Estudio de difusión» elige una plantilla: frase, actividad de la agenda, cuenta regresiva o invitación.", "Cambia estilo, dibujo y formato (Estado, post o cuadrado).", "Toca «Compartir» para mandarla directo a WhatsApp o Instagram."], go: "#/difusion", el: ".dif-form" },
   { t: "inicio", q: "¿Cómo agrando la letra o hago que la app me lea?", who: ["visitante", ...CUENTA], a: ["Abre «Accesibilidad» (al final de cualquier página o en Mi perfil).", "Elige el tamaño de la letra y activa «Lectura fácil» si quieres textos más claros.", "Activa «Escuchar» y aparecerá un botón para que el teléfono te lea en voz alta."], go: "#/accesibilidad", el: "#a11yPanel" },
   { t: "comunidad", q: "¿Cómo acompaño a un joven con discapacidad?", who: GUIAS, a: ["Pregúntale a la persona y a su familia qué le ayuda y qué le gusta. No decidas en su lugar.", "Dale tiempo: espera su respuesta y no respondas por ella.", "Explica con ejemplos concretos y frases cortas; muestra en vez de solo decir.", "Ofrece formas de participar sin hablar en público: escribir, dibujar, encender la vela, tocar un instrumento.", "En las dinámicas, adapta las reglas para que todos puedan jugar.", "Muéstrale «Accesibilidad»: letra grande, lectura fácil y «Escuchar»."], go: "#/accesibilidad" },
-  { t: "inicio", q: "¿Cómo elijo mi avatar?", who: CUENTA, a: ["Entra a Mi perfil (tu nombre, arriba a la derecha).", "Arma tu monito: fondo, piel, peinado, cara y un detalle.", "Toca «Guardar avatar». Se verá en el chat y en el muro."], go: "#/perfil", el: "#avCard" },
+  { t: "inicio", q: "¿Cómo elijo mi avatar?", who: CUENTA, a: ["Entra a Mi perfil (tu nombre, arriba a la derecha).", "Arma tu monito (peinado, cara, ropa, fondo…) o elige un personaje o un sticker de Ágape.", "Toca «Guardar avatar». Se verá en el chat y en el muro."], go: "#/perfil", el: "#avCard" },
   { t: "inicio", q: "¿Qué es el desafío de la semana?", who: CUENTA, a: ["Es un gesto concreto para vivir lo del encuentro durante la semana. Aparece en Inicio.", "Cuando lo hagas, toca «¡Lo cumplí!». Los demás verán que lo cumpliste."], go: "#/", el: "[data-action=desDone]" },
-  { t: "inicio", q: "¿Dónde veo mi pasaporte y mis sellos?", who: CUENTA, a: ["En Mi perfil → «Mi pasaporte», o desde la tarjeta de Inicio.", "Cada encuentro al que vas suma; los sellos los entregan tus dirigentes."], go: "#/pasaporte" },
+  { t: "inicio", q: "¿Dónde veo mi pasaporte y mis sellos?", who: CUENTA, a: ["En Mi perfil → «Mi pasaporte», o en Comunidad → «Mi pasaporte».", "Cada encuentro al que vas suma; los sellos los entregan tus dirigentes."], go: "#/pasaporte" },
   { t: "inicio", q: "Soy nuevo: ¿quiero ser dirigente, por dónde parto?", who: ["visitante"], a: ["Mira la presentación «Sé puente»: cuenta qué es ser dirigente en Ágape.", "Después conversa con alguien del equipo: ellos te invitan a la app."], href: "presentaciones/se-puente.html" },
 
   // Mi Camino
@@ -38,7 +38,7 @@ const T = [
   { t: "agenda", q: "¿Cómo creo un evento?", who: EQUIPO, a: ["En Agenda, toca «Nuevo evento».", "Completa título, fecha y hora. Si se repite, elige cada cuánto.", "Marca «Visible para familias» si las familias deben verlo."], go: "#/agenda", el: "[data-action=agNew]" },
   { t: "agenda", q: "¿Cómo pido autorización a los papás para una salida?", who: EQUIPO, a: ["Al crear o editar el evento, marca «¿Requiere autorización de papás o apoderados?».", "Completa salida, regreso, lugar, aporte y qué llevar. Con «Ver cómo queda el PDF» lo revisas.", "Las familias lo descargan desde la página para familias o desde el evento."], go: "#/agenda", el: "[data-action=agNew]" },
   { t: "agenda", q: "¿Cómo pongo una cuenta regresiva para un evento?", who: EQUIPO, a: ["Crea o edita el evento en la Agenda, con su fecha y hora.", "Marca «Mostrar cuenta regresiva en Inicio» y elige desde cuándo se ve.", "Aparece en Inicio con días, horas, minutos y segundos. Si el evento es visible para familias, también en su página."], go: "#/agenda", el: "[data-action=agNew]" },
-  { t: "agenda", q: "¿Cómo destaco un evento en el carrusel de Inicio?", who: EQUIPO, a: ["Edita el evento y marca «Destacar en Inicio».", "Elige desde y hasta cuándo se muestra."], go: "#/agenda", el: "[data-action=agNew]" },
+  { t: "agenda", q: "¿Cómo destaco un evento en las Novedades de Inicio?", who: EQUIPO, a: ["Edita el evento y marca «Destacar en Inicio».", "Elige desde y hasta cuándo se muestra."], go: "#/agenda", el: "[data-action=agNew]" },
 
   // Muro y chat
   { t: "muro", q: "¿Cómo publico en el muro?", who: CUENTA, a: ["En «Muro y chat», escribe en el cuadro de arriba.", "Los jóvenes pueden publicar preguntas; el equipo, también anuncios, temas y encuestas."], go: "#/muro", el: "#wallCompose" },
@@ -68,13 +68,13 @@ const T = [
 
   // Gestión
   { t: "admin", q: "¿Cómo invito a alguien a la app?", who: ["admin"], a: ["En Gestión → Dirigentes, toca «Invitar».", "Escribe su correo de Google y elige el rol.", "Si es un joven, primero descarga el consentimiento, que lo firme su familia y regístralo."], go: "#/admin/dirigentes", el: "[data-action=aInvite]" },
-  { t: "admin", q: "¿Cómo cambio el carrusel de Inicio?", who: EQUIPO, a: ["En Gestión → Portada, edita, oculta u ordena las diapositivas.", "Con «Nueva diapositiva» creas una con fechas de inicio y término."], go: "#/admin/portada", el: "[data-action=pNew]" },
+  { t: "admin", q: "¿Cómo cambio las Novedades de Inicio?", who: EQUIPO, a: ["En Gestión → Portada, edita, oculta u ordena las diapositivas.", "Con «Nueva diapositiva» creas una con fechas de inicio y término."], go: "#/admin/portada", el: "[data-action=pNew]" },
   { t: "admin", q: "¿Cómo edito la página para familias?", who: EQUIPO, a: ["En Gestión → Familias cambias bienvenida, carta, preguntas y contacto.", "Ahí también está el enlace y el código QR para compartirla."], go: "#/admin/familias", el: "#famForm" },
   { t: "admin", q: "¿Cómo veo la app como la ve un joven?", who: EQUIPO, a: ["En Mi perfil o en Gestión, toca «Ver como…» y elige el perfil.", "Arriba aparece una franja amarilla. «Volver a mi vista» te devuelve a la tuya."], go: "#/perfil", el: "[data-action=vaOpen]" },
   { t: "admin", q: "¿Cómo propongo el desafío de la semana?", who: EQUIPO, a: ["En Inicio, toca «Proponer un desafío de la semana» (o el lápiz en la tarjeta).", "Mientras esté vigente reemplaza al de la revista."], go: "#/", el: "[data-action=desNew]" },
 ];
 
-function perfil() {
+export function perfil() {
   const s = ctx.cloud.enabled ? ctx.cloud.state() : { ready: true, role: "admin" };
   if (!s.ready) return "visitante";
   if (["ingreso", "madurez"].includes(s.role)) return "joven";

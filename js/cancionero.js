@@ -115,6 +115,7 @@ const savePrefs = () => { try { localStorage.setItem(PK, JSON.stringify(prefs));
 // ---------------------------------------------------------------------------
 let songs = null, misas = null, query = "", momento = "", tab = "canciones";
 const all = () => [...ORIGINALES, ...(songs || [])].sort((a, b) => a.title.localeCompare(b.title, "es"));
+export const songList = () => all(); // para el buscador de Inicio
 const byId = (id) => all().find((s) => s.id === id);
 function watchAll() {
   if (!st().ready) return;

@@ -12,7 +12,7 @@ const card = (g) => `<a class="card link wa-card" id="waCard" href="${esc(g.url)
   <span class="btn btn-sm wa-btn">Unirme</span></a>`;
 
 export async function afterRender(section) {
-  if (!["inicio", "ayuda"].includes(section)) return;
+  if (!["red", "ayuda"].includes(section)) return;
   const s = cloud.state();
   if (!cloud.enabled || !s.ready) return;
   const g = await cloud.getGrupoWA();
