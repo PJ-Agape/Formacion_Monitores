@@ -26,6 +26,7 @@ import * as difusion from "./difusion.js";
 import * as a11y from "./accesible.js";
 import * as grupo from "./grupo.js";
 import * as inicio from "./inicio.js";
+import * as novedades from "./novedades.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -233,6 +234,7 @@ function renderChrome(section) {
   $("#profileChip").setAttribute("href", inAdmin ? "#/admin" : "#/perfil");
   if (!$("#hdrSearch")) $("#profileChip").insertAdjacentHTML("beforebegin", `<a class="hdr-search" id="hdrSearch" href="#/buscar" aria-label="Buscar en la app" title="Buscar">${icon("search")}</a>`);
   $("#hdrSearch").toggleAttribute("hidden", section === "buscar" || section === "inicio");
+  novedades.mount();
 }
 
 function previewBanner() {
@@ -262,7 +264,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); });
+  onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); novedades.refresh(); });
   const course = S.activeCourse();
   const st = S.courseState(course);
   const p = S.getProfile();
@@ -311,6 +313,7 @@ function viewHome() {
   return `
   ${inicio.greetHTML()}
   <div id="countSlot"></div>
+  <div id="velaStrip"></div>
   ${inicio.blocksHTML()}
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>

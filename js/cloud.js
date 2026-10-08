@@ -592,6 +592,11 @@ export function watchVelas(cb, onErr) {
   const q = fb.query(fb.collection(db, "velas"), fb.orderBy("createdAt", "desc"), fb.limit(80));
   return fb.onSnapshot(q, (qs) => cb(snapRows(qs)), (e) => { console.warn("Velas:", e); onErr && onErr(e); });
 }
+// Últimas velas (una sola lectura, para la campanita de novedades)
+export async function recentVelas(n = 20) {
+  if (!enabled || !db) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.query(fb.collection(db, "velas"), fb.orderBy("createdAt", "desc"), fb.limit(n))), 6000)); } catch { return []; }
+}
 export async function lightVela(text) {
   await fb.setDoc(fb.doc(fb.collection(db, "velas")), {
     text: String(text || "").slice(0, 1500), authorUid: user.uid, authorName: shortName(account.name), prays: {}, createdAt: fb.serverTimestamp(),

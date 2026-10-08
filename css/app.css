@@ -2543,3 +2543,24 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .cap-vela-body p { white-space: pre-line; overflow-wrap: anywhere; }
 .cap-vela-body p.cap-clamp { display: -webkit-box; -webkit-line-clamp: 5; -webkit-box-orient: vertical; overflow: hidden; }
 .cap-more { background: none; border: 0; padding: 2px 0; font-weight: 800; font-size: .82rem; color: #1351a4; cursor: pointer; text-decoration: underline; }
+
+/* Campanita de novedades */
+.hdr-bell { position: relative; display: inline-grid; place-items: center; width: 40px; height: 40px; border-radius: 50%; border: 2px solid var(--z-b); color: var(--ink); background: var(--surface); margin-right: 8px; flex: 0 0 auto; cursor: pointer; padding: 0; }
+.hdr-bell[aria-expanded="true"] { background: #ffba03; color: #0b2566; }
+.bell-dot { position: absolute; top: -5px; right: -5px; min-width: 20px; height: 20px; padding: 0 5px; border-radius: 999px; background: #e5242b; color: #fff; font: 800 11px/20px var(--font-body); text-align: center; border: 2px solid var(--paper); }
+@media (prefers-reduced-motion: no-preference) { .bell-dot:not([hidden]) { animation: bellPop .4s ease-out; } @keyframes bellPop { 0% { transform: scale(0); } 70% { transform: scale(1.25); } 100% { transform: scale(1); } } }
+.bell-panel { position: fixed; z-index: 120; width: min(380px, calc(100vw - 16px)); max-height: min(70vh, 560px); overflow: auto; background: var(--surface); color: var(--ink); border: 2.5px solid var(--z-b); border-radius: 20px; box-shadow: 5px 5px 0 var(--z-b); }
+.bell-head { display: flex; align-items: center; justify-content: space-between; padding: 12px 14px 8px; position: sticky; top: 0; background: var(--surface); border-bottom: 2px dashed var(--line); }
+.bell-head strong { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; }
+.bell-x { background: none; border: 0; color: var(--ink); cursor: pointer; padding: 4px; }
+.bell-list { padding: 6px; }
+.bell-i { display: flex; gap: 10px; padding: 10px; border-radius: 14px; text-decoration: none; color: var(--ink); }
+.bell-i:hover { background: var(--surface-2); }
+.bell-i.new { background: color-mix(in srgb, #ffba03 18%, var(--surface)); }
+.bell-i.new b::after { content: ""; display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: #e5242b; margin-left: 6px; vertical-align: middle; }
+.bell-e { font-size: 1.4rem; width: 30px; text-align: center; flex: 0 0 auto; }
+.bell-i b { display: block; font-size: .92rem; line-height: 1.25; } .bell-i small { display: block; color: var(--ink-2); font-size: .82rem; line-height: 1.35; margin-top: 2px; } .bell-i em { display: block; font-style: normal; font-size: .72rem; color: var(--ink-3); margin-top: 3px; }
+.bell-empty { padding: 16px; margin: 0; color: var(--ink-2); font-size: .92rem; }
+.vela-strip { display: flex !important; align-items: center; gap: 12px; margin-top: 14px; padding: 12px 14px !important; background: #fff6d6 !important; color: #0b2566; }
+.vela-strip .muted { color: #33456e !important; display: block; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.vela-strip-e { font-size: 1.8rem; }
