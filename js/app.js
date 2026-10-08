@@ -296,6 +296,18 @@ function viewHome() {
     </div>` : ""}
   </section>`;
   };
+  onAfterRender(() => portada.refresh().then((changed) => {
+    const el = document.getElementById("homeCarousel");
+    if (!changed || !el) return;
+    el.outerHTML = carousel(); startCarousel();
+  }));
+  onAfterRender(startCarousel);
+
+  onAfterRender(async () => {
+    const e = cuenta.pick(await cloud.listAgenda());
+    const slot = document.getElementById("countSlot");
+    if (e && slot) { slot.innerHTML = cuenta.html(e, { href: `#/agenda/${e.when}` }); cuenta.start(); }
+  });
   return `
   ${inicio.greetHTML()}
   <div id="countSlot"></div>
