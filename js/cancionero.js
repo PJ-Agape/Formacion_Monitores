@@ -152,7 +152,7 @@ export function viewList() {
   <div class="can-wip">
     <span class="can-wip-tag" aria-hidden="true">🚧</span>
     <div><strong>En construcción</strong>
-      <p class="small">Lo vamos armando entre todos, canción por canción. ${canEdit() ? "Gracias por sumarte a este apostolado." : "¿Te gustaría ayudar a completarlo? Pídeselo al equipo."}</p></div>
+      <p class="small">Lo vamos armando entre todos, canción por canción. ${canEdit() ? "Gracias por sumarte a este apostolado." : "¿Te gustaría ayudar a completarlo? Pídeselo al equipo."}</p>${st().isStaff ? `<p class="xs muted" style="margin-top:6px">🎵 ¿Quieres que alguien más ayude? Ve a <a href="#/admin/dirigentes">Gestión → Dirigentes</a>, toca su nombre y marca «Ayuda a construir el cancionero».</p>` : ""}</div>
   </div>
   ${gate()}
   ${tab === "canciones" ? `
