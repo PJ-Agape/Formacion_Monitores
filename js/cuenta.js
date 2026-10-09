@@ -29,7 +29,8 @@ const longDate = (d) => d.toLocaleDateString("es-CL", { weekday: "long", day: "n
 export function html(e, { href = "" } = {}) {
   const p = parts(e.target - new Date());
   const tag = href ? "a" : "div";
-  return `<${tag} class="cd-card" ${href ? `href="${esc(href)}"` : ""} data-cd="${e.target.getTime()}" aria-live="off">
+  const bg = /^data:image\/(jpeg|png|webp);base64,[A-Za-z0-9+/=]+$/.test(e.countBg || "") ? ` style="--cd-img:url('${e.countBg}')"` : "";
+  return `<${tag} class="cd-card${bg ? " cd-photo" : ""}"${bg} ${href ? `href="${esc(href)}"` : ""} data-cd="${e.target.getTime()}" aria-live="off">
     <div class="cd-head"><span class="cd-k">Cuenta regresiva</span><strong>${esc(e.title)}</strong>
       <span class="cd-when">${esc(longDate(e.target))}${e.start ? ` · ${esc(e.start)} h` : ""}${e.place ? ` · ${esc(e.place)}` : ""}</span></div>
     <div class="cd-grid" role="timer" aria-label="Tiempo que falta">${UNITS.map(([k, pl, sg]) => `<span class="cd-u"><b data-u="${k}">${k === "d" ? p[k] : pad(p[k])}</b><small data-l="${k}">${p[k] === 1 ? sg : pl}</small></span>`).join("")}</div>
