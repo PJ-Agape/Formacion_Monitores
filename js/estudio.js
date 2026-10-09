@@ -3,6 +3,7 @@
 // Lo usa el Estudio de difusión de la app y el exportador del paquete de archivos.
 
 import { illus } from "./ilustraciones.js";
+import { pjSvg } from "./personajes.js";
 import qrcode from "./qrcode.mjs";
 
 export const C = { navy: "#0b2566", blue: "#1351a4", sun: "#ffba03", coral: "#ef591c", sky: "#8ad2fa", cream: "#fff6e5", white: "#ffffff", rose: "#fde0d2", butter: "#fff1c7", ice: "#e1f3fd" };
@@ -19,6 +20,13 @@ export async function ready() {
   if (!LOGO) LOGO = await loadImg(BASE + "icons/logo-320.webp").catch(() => null);
 }
 function svgFor(key, color, bg, pop, outline, bare) {
+  // Personajes juveniles (los mismos de los avatares): un sello redondo dentro del cuadro 240×180
+  if (String(key).startsWith("pj:")) {
+    const head = '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 240 180">';
+    if (outline) return head + '<circle cx="120" cy="90" r="85" fill="#ffffff"/></svg>';
+    const inner = pjSvg(key.slice(3)); if (!inner) return "";
+    return head + inner.replace("<svg ", '<svg x="34" y="4" width="172" height="172" ') + "</svg>";
+  }
   let s = illus(key);
   if (!s) return "";
   if (bare) { s = s.replace(/<path d="M\d+ 168 q30 -3 60 0[^"]*"[^>]*\/>/g, ""); if (!outline) s = s.replace(/stroke-width="[0-9.]+"/, 'stroke-width="3.6"'); }
@@ -418,6 +426,12 @@ export const STICKERS = [
   ["futuro", "¡Buenos días!", C.sun], ["santos", "¡Seamos santos!", C.sky], ["familia", "¡Familia!", C.coral], ["camino", "Voy en camino", C.sky],
   ["flores", "¡Gracias!", C.coral], ["panes", "¿Hay once?", C.sun], ["tesoro", "¡Eres un tesoro!", C.coral], ["mesa", "¡A comer!", C.sky],
   ["envio", "¡Misión cumplida!", C.sun], ["luz", "¡Brilla!", C.sun],
+  // Personajes juveniles
+  ["pj:llama", "¡Al tiro!", C.coral], ["pj:zorro", "¡Bacán!", C.sun], ["pj:pinguino", "¡Qué frío!", C.sky], ["pj:gato", "Modo gamer", C.coral],
+  ["pj:quiltro", "¡Fiel hasta el final!", C.sun], ["pj:oso", "Abrazo de oso", C.sky], ["pj:pudu", "Chiquito pero valiente", C.coral], ["pj:panda", "Modo zen", C.sun],
+  ["pj:conejo", "¡Voy saltando!", C.sky], ["pj:buho", "Estudiando…", C.coral], ["pj:ballena", "¡Te extrañé!", C.sky], ["pj:abeja", "¡A trabajar!", C.sun],
+  ["pj:paloma", "Paz a ti", C.sky], ["pj:dino", "¡Rawr!", C.coral], ["pj:astronauta", "¡Al infinito!", C.sun], ["pj:robot", "Procesando…", C.sky],
+  ["pj:sol", "¡Arriba ese ánimo!", C.sun], ["pj:cactus", "Aquí aguantando", C.coral], ["pj:taza", "¿Un tecito?", C.sky], ["pj:guitarra", "¡A cantar!", C.sun],
 ];
 export const PHRASES = [
   { title: "Amor que *transforma*", hand: "Pastoral Juvenil Ágape", ill: "corazon" },
