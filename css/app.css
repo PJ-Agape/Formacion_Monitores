@@ -2608,7 +2608,8 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 @media (min-width: 760px) { .sal-bv-grid { grid-template-columns: minmax(220px, 340px) 1fr; } }
 .sal-bv canvas { width: 100%; height: auto; border-radius: 14px; display: block; }
 .sal-bv textarea { width: 100%; margin-top: 8px; font-size: .9rem; }
-.cd-card.cd-photo { background-image: linear-gradient(90deg, rgba(11,37,102,.85) 0%, rgba(11,37,102,.45) 55%, rgba(11,37,102,.12) 100%), var(--cd-img); background-size: cover; background-position: center; min-height: 170px; }
+.cd-card.cd-photo { background-image: linear-gradient(90deg, rgba(11,37,102,.9) 0%, rgba(11,37,102,.6) 33%, rgba(11,37,102,.12) 52%, rgba(11,37,102,.12) 100%), var(--cd-img); background-size: cover; background-position: center; min-height: 170px; }
 .cd-photo .cd-head strong, .cd-photo .cd-when { text-shadow: 0 2px 8px rgba(0,0,0,.45); }
-@media (max-width: 700px) { .cd-card.cd-photo { background-image: linear-gradient(180deg, rgba(11,37,102,.78) 0%, rgba(11,37,102,.4) 45%, rgba(11,37,102,.7) 100%), var(--cd-img); } }
+/* En el teléfono la imagen va como franja arriba (ancho completo) y los textos debajo */
+@media (max-width: 700px) { .cd-card.cd-photo { background-image: linear-gradient(180deg, rgba(11,37,102,0) 0, rgba(11,37,102,0) 34vw, #0b2566 calc(34vw + 26px)), var(--cd-img); background-size: 100% 100%, 100% auto; background-position: top center; background-repeat: no-repeat; padding-top: calc(34vw + 6px); } }
 .ag-bg-prev { display: inline-block; width: 96px; height: 54px; border-radius: 10px; background-size: cover; background-position: center; border: 2px solid var(--line, #ccd); }
