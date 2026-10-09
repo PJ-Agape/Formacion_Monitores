@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-07": {
-   "titulo": "Miércoles de la 27.ª semana del Tiempo Ordinario",
-   "cita": "Lc 11,1-4",
-   "frase": "Señor, enséñanos a orar, así como Juan enseñó a sus discípulos."
-  },
   "2026-10-08": {
    "titulo": "Jueves de la 27.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,5-13",
@@ -55,6 +50,11 @@
    "titulo": "Sábado de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,8-12",
    "frase": "Pero el que no me reconozca delante de los hombres, no será reconocido ante los ángeles de Dios."
+  },
+  "2026-10-18": {
+   "titulo": "29.º domingo del Tiempo Ordinario",
+   "cita": "Mt 22,15-21",
+   "frase": "Den al César lo que es del César, y a Dios, lo que es de Dios."
   }
  }
 }
