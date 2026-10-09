@@ -316,6 +316,10 @@ function viewHome() {
   <div id="countSlot"></div>
   <div id="velaStrip"></div>
   ${inicio.blocksHTML()}
+  ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
+    <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
+    <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
+    <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : ""}
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
   <section class="home-news"><h2 class="home-h2">Novedades</h2>${carousel()}</section>
