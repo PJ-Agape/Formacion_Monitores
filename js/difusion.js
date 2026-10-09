@@ -127,9 +127,17 @@ function marcoHTML() {
 }
 
 // --- Stickers ----------------------------------------------------------------
+const STK_CHILE = ["virgencarmen", "teresaandes", "albertohurtado", "lauravicuna", "fraiandresito", "ceferino", "santoschile"];
+const STK_SANTOS = ["donbosco", "domingosavio", "frassati", "carloacutis", "teresita", "franciscoasis", "rosalima", "guadalupe", "juanpablo", "teresacalcuta", "sansebastian", "sanmiguel", "jose", "sagradafamilia", "apostoles"];
+const STK_JESUS = ["jesus", "emaus", "buenpastor", "sagradocorazon", "dejadlos", "rey", "virgen", "maria", "espiritu", "eucaristia"];
+const stkGroup = (k) => STK_CHILE.includes(k) ? 0 : STK_SANTOS.includes(k) ? 1 : STK_JESUS.includes(k) ? 2 : k.startsWith("pj:") ? 4 : 3;
+const STK_GROUPS = ["🇨🇱 Santos de Chile", "😇 Santos y amigos de Dios", "✝️ Jesús y María", "💬 Para el grupo", "🦙 Personajes"];
 function stickersHTML() {
-  return `<div class="card" style="margin-bottom:14px"><p class="small">Toca un sticker para compartirlo o guardarlo. Para tenerlos en WhatsApp, guárdalos y súmalos con una app de stickers (por ejemplo «Sticker Maker»).</p></div>
-    <div class="dif-stk">${E.STICKERS.map(([k, t], i) => `<button type="button" data-action="difSticker" data-i="${i}" title="${esc(t)}"><canvas data-stk="${i}" width="512" height="512" aria-label="${esc(t)}"></canvas></button>`).join("")}</div>`;
+  const items = E.STICKERS.map(([k, t], i) => ({ k, t, i, g: stkGroup(k) }));
+  return `<div class="card" style="margin-bottom:14px"><p class="small">Toca un sticker para compartirlo o guardarlo. Para tenerlos en WhatsApp, guárdalos y súmalos con una app de stickers (por ejemplo «Sticker Maker»).</p>
+    <div class="row-wrap" style="gap:6px;margin-top:8px">${STK_GROUPS.map((g, n) => `<a class="chip" href="#" data-action="difStkGo" data-g="${n}">${g}</a>`).join("")}</div></div>
+    ${STK_GROUPS.map((g, n) => `<h3 class="dif-stk-h" id="stkg${n}">${g} <small class="muted">${items.filter((x) => x.g === n).length}</small></h3>
+    <div class="dif-stk">${items.filter((x) => x.g === n).map(({ t, i }) => `<button type="button" data-action="difSticker" data-i="${i}" title="${esc(t)}"><canvas data-stk="${i}" width="512" height="512" aria-label="${esc(t)}"></canvas></button>`).join("")}</div>`).join("")}`;
 }
 
 // --- Fondos de pantalla ------------------------------------------------------
@@ -211,6 +219,7 @@ function registerActions() {
   A.difFrame = (t) => { st.frame = t.dataset.v; document.querySelectorAll(".dif-frames button").forEach((b) => b.setAttribute("aria-pressed", String(b === t))); paint(); };
   A.difSave = async () => { const cv = $("#difCanvas"); if (cv) save(await toBlob(cv), fileName()); };
   A.difShare = async () => { const cv = $("#difCanvas"); if (cv) share(await toBlob(cv), fileName()); };
+  A.difStkGo = (t, e) => { e && e.preventDefault && e.preventDefault(); document.getElementById("stkg" + t.dataset.g)?.scrollIntoView({ behavior: "smooth", block: "start" }); };
   A.difSticker = async (t) => { const cv = t.querySelector("canvas"); share(await toBlob(cv), `agape-sticker-${+t.dataset.i + 1}.png`); };
   // Tabs: el radio necesita su cambio de estado, así que no basta con el clic delegado
   document.addEventListener("change", (e) => {
