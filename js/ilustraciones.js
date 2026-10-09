@@ -238,7 +238,10 @@ const SCENES = {
   descanso: () => P("M170 168 L170 100", 'stroke-width="5"') + C(170, 80, 36, 'fill="var(--il-bg,#fff)"') + fig(120, 168, { arms: "down", legs: "sit", face: "calm" }) + sun(50, 44, 10) + ground(),
   panes: () => P("M70 150 q50 30 100 0 L160 130 L80 130 Z", 'fill="var(--il-bg,#fff)"') + [95, 120, 145].map((x) => bread(x, 130, 12)).join("") + bread(108, 118, 11) + bread(132, 118, 11) + fish(100, 96) + fish(142, 90) + sparkle(60, 60) + sparkle(190, 60, 5),
   camino: () => road() + fig(70, 150, { arms: "down", legs: "walk", s: .7 }) + fig(100, 128, { arms: "out", legs: "walk", s: .6 }) + sun(200, 40, 10) + flame(210, 100, .5),
-  maria: () => fig(110, 168, { arms: "pray", face: "calm" }) + P("M86 110 q24 -40 48 0 L140 168 L80 168 Z", 'fill="none" stroke-dasharray="1 7" stroke-width="2.5"') + [0, 1, 2, 3, 4].map((i) => C(150 + i * 12, 50 + Math.sin(i) * 6, 3, POP)).join("") + sparkle(60, 60),
+  maria: () => person(158, 170, { arms: "pray", robe: "var(--il-bg,#fff)", veil: MANTO, stars: true, face: "calm", s0: .86 })
+    + fig(72, 168, { arms: "give", face: "smile", s: .8 }) + P("M100 132 l8 -18 M104 134 l14 -14 M98 128 l2 -20", 'stroke="#5e9a5a" stroke-width="2.4"')
+    + C(108, 112, 5, 'fill="#e05a6a" stroke="currentColor" stroke-width="1.6"') + C(119, 118, 5, 'fill="var(--il-bg,#fff)" stroke="currentColor" stroke-width="1.6"') + C(100, 106, 5, 'fill="var(--il-pop,#ffba03)" stroke="currentColor" stroke-width="1.6"')
+    + heart(118, 60, 8) + sparkle(40, 56, 5) + ground(),
   eleccion: () => fig(120, 168, { arms: "out", face: "wow" }) + P("M40 168 L100 120 M200 168 L140 120", 'stroke-dasharray="3 8"') + heart(56, 80, 10) + P("M180 70 l0 24 M168 82 l24 0", 'stroke-width="3"'),
   corazonlimpio: () => fig(120, 168, { arms: "hold" }) + heart(120, 128, 20) + P("M74 62 q6 -10 12 0 M156 50 q6 -10 12 0 M186 88 q6 -10 12 0", 'stroke-width="2"') + P("M60 100 q20 -30 40 0", 'stroke-dasharray="2 6"'),
   escuchar: () => fig(90, 168, { arms: "wave", face: "calm" }) + P("M112 100 q10 0 10 10 M112 90 q20 0 20 20", 'stroke-width="2"') + fig(165, 168, { arms: "give", flip: -1 }) + P("M150 70 q-8 -12 4 -18 q12 -4 14 8", 'stroke-width="2"') + ground(),
