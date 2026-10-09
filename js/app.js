@@ -1438,6 +1438,7 @@ async function boot() {
     if (cloud.enabled) await cloud.init();
     await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
     if (cloud.enabled) cloud.onChange(render); // después de cargar el contenido, para no dibujar sin datos
+    if (cloud.enabled) setTimeout(() => cloud.countVisit(), 5000); // una visita por dispositivo y día (sin datos personales)
   } catch (e) {
     viewEl().innerHTML = `<div class="card" style="text-align:center;padding:40px"><h2 class="display">No se pudo cargar el contenido</h2>
       <p class="muted" style="margin-top:8px">Revisa tu conexión e inténtalo de nuevo.</p>

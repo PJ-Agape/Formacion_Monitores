@@ -292,6 +292,21 @@ service cloud.firestore {
       allow delete: if isMember() && uid == request.auth.uid;
     }
 
+    // Contador de visitas anónimo: una visita por dispositivo y día (v total, c con cuenta, g visitantes).
+    // Cualquiera suma 1; solo el equipo lo lee. No guarda datos personales.
+    match /stats/{day} {
+      allow read: if isStaff();
+      allow create: if day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['v', 'c', 'g'])
+        && request.resource.data.get('v', 0) == 1
+        && request.resource.data.get('c', 0) + request.resource.data.get('g', 0) == 1;
+      allow update: if request.resource.data.keys().hasOnly(['v', 'c', 'g'])
+        && request.resource.data.get('v', 0) == resource.data.get('v', 0) + 1
+        && request.resource.data.get('c', 0) >= resource.data.get('c', 0)
+        && request.resource.data.get('g', 0) >= resource.data.get('g', 0)
+        && request.resource.data.get('c', 0) + request.resource.data.get('g', 0) == resource.data.get('c', 0) + resource.data.get('g', 0) + 1;
+    }
+
     // Agenda oficial: la ve cualquiera (familias incluidas); la editan los administradores.
     match /agenda/{eventId} {
       allow read: if true;

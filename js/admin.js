@@ -158,6 +158,7 @@ async function summaryView(d) {
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Resumen</h1>
     <p>Todo lo que edites queda en un borrador en este dispositivo. Cuando esté listo, lo publicas y todos los dirigentes lo verán.</p></header>
   ${cloudOn ? await followSummary() : ""}
+  ${cloudOn ? await visitsCard() : ""}
   ${cloudOn ? await grupo.adminHTML() : ""}
   ${cloudOn ? await novedades.adminHTML() : ""}
   ${legacy ? `<div class="card" style="border-color:var(--gold)">
@@ -456,6 +457,29 @@ async function followSummary() {
   const stat = (n, l) => `<div class="card stat"><b>${n}</b><span class="muted small">${l}</span></div>`;
   return `<div class="grid grid-4">${stat(dir.length, "personas con cuenta")}${stat(started, "comenzaron el curso")}${stat(done, "completaron el curso")}${stat(week, "activas esta semana")}</div>
     <a class="btn btn-soft" href="#/admin/dirigentes" style="align-self:flex-start">${icon("users")} Ver seguimiento de dirigentes · ${t.units} unidades por curso</a>`;
+}
+
+// Visitas (contador anónimo por día) y actividad de las cuentas (última vez que entraron)
+async function visitsCard() {
+  const [st, data] = await Promise.all([api.cloud.visitStats(30).catch(() => []), loadPeople().catch(() => null)]);
+  const sum = (xs, k) => xs.reduce((a, x) => a + x[k], 0);
+  const last7 = st.slice(-7), today = st[st.length - 1] || { v: 0, c: 0, g: 0 };
+  const max = Math.max(1, ...st.slice(-14).map((x) => x.v));
+  const DIAS = ["do", "lu", "ma", "mi", "ju", "vi", "sá"];
+  const bars = st.slice(-14).map((x) => { const d = new Date(x.dia + "T12:00:00"), h = Math.round((x.v / max) * 100), hc = x.v ? Math.round((x.c / x.v) * h) : 0;
+    return `<div class="vis-col" title="${x.dia}: ${x.v} visitas (${x.c} con cuenta, ${x.g} visitantes)"><span class="vis-n">${x.v || ""}</span><div class="vis-bar" style="height:${h}%"><i style="height:${hc ? (hc / h) * 100 : 0}%"></i></div><small>${DIAS[d.getDay()]}<br>${d.getDate()}</small></div>`; }).join("");
+  const users = data ? data.users.filter((u) => u.active !== false) : [];
+  const since = (n) => users.filter((u) => { const d = tsDate(u.lastSeen); return d && Date.now() - d.getTime() < n * 864e5; }).length;
+  const stat = (n, l) => `<div class="card stat"><b>${n}</b><span class="muted small">${l}</span></div>`;
+  const none = !sum(st, "v");
+  return `<section class="card vis-card"><h3>📈 Visitas a la app</h3>
+    <p class="muted small" style="margin-top:4px">Se cuenta una visita por celular o computador al día. No se guarda quién es: solo cuántos entraron, con cuenta o como visitantes.</p>
+    <div class="grid grid-4" style="margin-top:12px">${stat(today.v, "visitas hoy")}${stat(sum(last7, "v"), "últimos 7 días")}${stat(sum(st, "v"), "últimos 30 días")}${stat(sum(st, "g"), "visitantes sin cuenta (30 días)")}</div>
+    ${none ? `<p class="note" style="margin-top:12px">Aún no hay visitas registradas. Empiezan a contarse cuando se publiquen las reglas de Firebase con el contador.</p>` : `<div class="vis-chart" aria-label="Visitas de los últimos 14 días">${bars}</div>
+    <p class="xs muted"><span class="vis-key c"></span> con cuenta <span class="vis-key g"></span> visitantes</p>`}
+    <h4 style="margin-top:16px">Cuentas que entraron</h4>
+    <div class="grid grid-4" style="margin-top:8px">${stat(since(1), "hoy")}${stat(since(7), "en 7 días")}${stat(since(30), "en 30 días")}${stat(users.length - since(30), "hace más de 30 días o nunca")}</div>
+  </section>`;
 }
 
 async function peopleView() {

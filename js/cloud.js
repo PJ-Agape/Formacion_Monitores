@@ -312,6 +312,26 @@ export function verifyUrl(code) {
 // Panel de seguimiento (solo administradores)
 // ---------------------------------------------------------------------------
 const all = async (name) => (await fb.getDocs(fb.collection(db, name))).docs.map((d) => ({ id: d.id, ...d.data() }));
+// Contador de visitas: una por dispositivo y día, sin datos personales (stats/AAAA-MM-DD → v, c, g).
+// v: visitas del día · c: con cuenta · g: visitantes sin cuenta. Solo el equipo lo puede leer.
+const dayKey = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+export async function countVisit() {
+  if (!enabled || !db) return;
+  const k = dayKey(), lk = "agape_visita_dia";
+  try { if (localStorage.getItem(lk) === k) return; } catch { return; }
+  const member = !!state().ready;
+  try {
+    await fb.setDoc(fb.doc(db, "stats", k), { v: fb.increment(1), [member ? "c" : "g"]: fb.increment(1) }, { merge: true });
+    try { localStorage.setItem(lk, k); } catch {}
+  } catch {}
+}
+export async function visitStats(days = 30) {
+  if (!enabled || !db) return [];
+  const out = [];
+  for (let i = days - 1; i >= 0; i--) { const d = new Date(); d.setDate(d.getDate() - i); out.push(dayKey(d)); }
+  const rows = await Promise.all(out.map((k) => withTimeout(fb.getDoc(fb.doc(db, "stats", k)), 6000).then((sn) => (sn.exists() ? sn.data() : null)).catch(() => null)));
+  return out.map((k, i) => ({ dia: k, v: (rows[i] && rows[i].v) || 0, c: (rows[i] && rows[i].c) || 0, g: (rows[i] && rows[i].g) || 0 }));
+}
 export async function adminData() {
   const [users, progress, invites] = await Promise.all([all("users"), all("progress"), all("invites")]);
   const prog = Object.fromEntries(progress.map((p) => [p.id, p]));

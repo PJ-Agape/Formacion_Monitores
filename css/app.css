@@ -2586,3 +2586,14 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .sal-img { width: 100%; max-width: 420px; aspect-ratio: 1; border-radius: 16px; border: 2px solid var(--z-b); display: block; }
 .sal-wa { background: #fff6d6; color: #0b2566; border-radius: 14px; padding: 12px 14px; font-size: .9rem; line-height: 1.45; overflow-wrap: anywhere; }
 .sal-part.noche .sal-wa { background: #e6e8f8; }
+
+/* Gestión → Visitas */
+.vis-chart { display: grid; grid-template-columns: repeat(14, 1fr); gap: 6px; align-items: end; height: 170px; margin-top: 16px; }
+.vis-col { display: grid; grid-template-rows: auto 1fr auto; height: 100%; text-align: center; gap: 4px; }
+.vis-n { font-size: .7rem; font-weight: 800; color: var(--ink-2); }
+.vis-col { align-items: end; }
+.vis-bar { position: relative; align-self: end; background: #ffba03; border: 2px solid var(--z-b); border-radius: 8px 8px 3px 3px; min-height: 4px; display: flex; align-items: flex-end; overflow: hidden; }
+.vis-bar i { display: block; width: 100%; background: #1351a4; }
+.vis-col small { font-size: .66rem; line-height: 1.1; color: var(--ink-3); font-weight: 700; }
+.vis-key { display: inline-block; width: 12px; height: 12px; border-radius: 3px; border: 1.5px solid var(--z-b); vertical-align: -2px; margin: 0 4px 0 10px; }
+.vis-key.c { background: #1351a4; } .vis-key.g { background: #ffba03; }
