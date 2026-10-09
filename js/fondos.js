@@ -2,15 +2,25 @@
 // Se dibujan en canvas con la paleta del logo; los usa la pestaña «Fondos» del Estudio
 // de difusión y el exportador del paquete de archivos.
 
-import { C, preload, illCard, card } from "./estudio.js";
+import { C, preload, illCard, card, hand, ready as eReady } from "./estudio.js";
 
 export const SIZES = { celular: [1080, 2340, "Celular"], pc: [2560, 1440, "PC"] };
 const BASE = new URL("../", import.meta.url).href;
 let LOGO = null;
 export async function ready() {
   if (!LOGO) LOGO = await new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = BASE + "icons/logo-512.webp"; });
-  await preload(MONITOS.map((k) => [k, C.navy, C.cream, C.sun]));
+  await eReady();
+  await preload([...MONITOS, ...SANTOS].map((k) => [k, C.navy, C.cream, C.sun]));
 }
+const SANTOS = ["virgencarmen", "albertohurtado", "teresaandes", "lauravicuna", "carloacutis", "frassati", "donbosco", "franciscoasis", "juanpablo", "teresita", "sanmiguel", "guadalupe"];
+
+// Opciones que eligen en el Estudio: tamaño del logo y una frase corta (opcional).
+const OPT = { logo: "grande", frase: "" };
+export const LOGOS = [["grande", "Grande"], ["chico", "Chico"], ["sin", "Sin logo"]];
+export const FRASES = ["", "Amor que transforma", "No tengan miedo", "Todo lo puedo en Cristo", "Sé puente", "Dios es alegría infinita", "Contento, Señor, contento", "Hacia lo alto", "Jesús, en ti confío", "Paz y bien", "Aquí estoy, Señor", "Eres amado"];
+export function setOptions(o) { Object.assign(OPT, o || {}); }
+// Diseños oscuros: la frase va en color claro
+const DARK = new Set(["noche", "neon", "paloma", "olasnoche", "cordillera", "olas", "atardecer", "camino"]);
 const MONITOS = ["corazon", "oracion", "amigos", "biblia", "espiritu", "maria", "juego", "servir", "familia", "luz", "semilla", "escuchar", "camino", "eucaristia", "flores", "comunidad"];
 
 // ---------------------------------------------------------------------------
@@ -69,6 +79,8 @@ function squiggle(ctx, x, y, s, color, lw, rot) {
 }
 // Logo en círculo con aro y sombra suave
 function logo(ctx, x, y, r, { ring = C.white, rw = 0.06, shadow = C.navy, sa = 0.18, line = 0 } = {}) {
+  if (OPT.logo === "sin") return;
+  if (OPT.logo === "chico") r *= 0.5;
   ctx.save();
   if (shadow) { ctx.shadowColor = hexA(shadow, sa); ctx.shadowBlur = r * 0.25; ctx.shadowOffsetY = r * 0.05; }
   if (ring) { ctx.beginPath(); ctx.arc(x, y, r * (1 + rw), 0, TAU); ctx.fillStyle = ring; ctx.fill(); }
@@ -318,7 +330,110 @@ D.atardecer = (ctx, W, H) => {
   logo(ctx, p.x, p.y, p.r);
 };
 
+
+// ---------------------------------------------------------------------------
+// Diseños nuevos (más «aesthetic» y oscuros, que lucen en la pantalla bloqueada)
+// ---------------------------------------------------------------------------
+function dove(ctx, x, y, s, fill) {
+  ctx.save(); ctx.translate(x, y); ctx.scale(s / 100, s / 100); ctx.fillStyle = fill; ctx.beginPath();
+  ctx.moveTo(-60, 8); ctx.quadraticCurveTo(-20, 4, 0, 18); ctx.quadraticCurveTo(-30, -40, -78, -70); ctx.quadraticCurveTo(-20, -60, 8, -6);
+  ctx.quadraticCurveTo(20, -50, 70, -78); ctx.quadraticCurveTo(40, -30, 22, 14); ctx.quadraticCurveTo(40, 14, 52, 6); ctx.quadraticCurveTo(48, 20, 30, 26);
+  ctx.quadraticCurveTo(10, 40, -20, 30); ctx.quadraticCurveTo(-46, 26, -60, 8); ctx.closePath(); ctx.fill(); ctx.restore();
+}
+D.noche = (ctx, W, H) => {
+  const p = spot(W, H), r = rng(21), n = Math.round((W * H) / 5200);
+  grad(ctx, W, H, ["#06173f", C.navy, "#1d3f8a"]);
+  glow(ctx, W * 0.5, H * 1.05, Math.max(W, H) * 0.6, C.blue, 0.55);
+  for (let i = 0; i < n; i++) { const x = r() * W, y = r() * H * 0.95, a = 0.25 + r() * 0.75; ctx.beginPath(); ctx.arc(x, y, p.U * (1 + r() * 2.6), 0, TAU); ctx.fillStyle = hexA(C.cream, a); ctx.fill(); }
+  for (let i = 0; i < 14; i++) sparkle(ctx, r() * W, r() * H * 0.9, p.U * (10 + r() * 16), hexA(C.sun, 0.9));
+  const mx = W * (p.port ? 0.76 : 0.82), my = H * (p.port ? 0.2 : 0.22), mr = p.m * 0.07;
+  glow(ctx, mx, my, mr * 4, C.sun, 0.25); ctx.beginPath(); ctx.arc(mx, my, mr, 0, TAU); ctx.fillStyle = C.butter; ctx.fill();
+  ctx.beginPath(); ctx.arc(mx + mr * 0.45, my - mr * 0.25, mr * 0.9, 0, TAU); ctx.fillStyle = "#0e2a68"; ctx.fill();
+  glow(ctx, p.x, p.y, p.r * 2.4, C.sky, 0.28);
+  logo(ctx, p.x, p.y, p.r, { shadow: "#000000", sa: 0.4 });
+};
+D.aurora = (ctx, W, H) => {
+  const p = spot(W, H), M = Math.max(W, H);
+  ctx.fillStyle = C.cream; ctx.fillRect(0, 0, W, H);
+  [[0.15, 0.1, C.sky, 0.95], [0.9, 0.25, C.rose, 1], [0.2, 0.65, C.sun, 0.55], [0.85, 0.85, C.sky, 0.8], [0.5, 0.45, "#c9b8f5", 0.55], [0.1, 0.95, C.coral, 0.35]]
+    .forEach(([x, y, c, a]) => glow(ctx, W * x, H * y, M * 0.55, c, a));
+  const r = rng(5); for (let i = 0; i < 18; i++) sparkle(ctx, r() * W, r() * H, p.U * (8 + r() * 12), hexA(C.white, 0.9));
+  logo(ctx, p.x, p.y, p.r, { sa: 0.12 });
+};
+D.cordillera = (ctx, W, H) => {
+  const p = spot(W, H, { y: 0.33, ly: 0.32 });
+  grad(ctx, W, H, [C.sky, C.ice, C.rose, "#ffd9a8"]);
+  glow(ctx, W * 0.5, H * (p.port ? 0.6 : 0.62), p.m * 0.5, C.sun, 0.8);
+  const layers = [["#9cc7ea", 0.58, 0.16], ["#5f9bd6", 0.66, 0.13], [C.blue, 0.74, 0.11], [C.navy, 0.83, 0.08]];
+  layers.forEach(([c, b, amp], li) => {
+    const r = rng(40 + li), y0 = H * b, A = H * amp * (p.port ? 0.6 : 1); ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, y0);
+    let x = 0; while (x < W) { const w = W * (0.08 + r() * 0.12); ctx.lineTo(x + w / 2, y0 - A * (0.4 + r() * 0.6)); x += w; ctx.lineTo(x, y0 - A * r() * 0.25); }
+    ctx.lineTo(W, H); ctx.closePath(); ctx.fillStyle = c; ctx.fill();
+    if (li === 0) { ctx.save(); ctx.globalAlpha = 0.9; ctx.restore(); }
+  });
+  cross(ctx, W * 0.72, H * (p.port ? 0.6 : 0.56), p.m * 0.07, C.navy);
+  for (let i = 0; i < 3; i++) bird(ctx, W * (0.2 + i * 0.07), H * (0.18 + (i % 2) * 0.03), p.U * 18, C.navy, p.U * 4);
+  logo(ctx, p.x, p.y, p.r);
+};
+D.neon = (ctx, W, H) => {
+  const p = spot(W, H), r = rng(8);
+  grad(ctx, W, H, ["#0a1236", "#0b2566", "#0a1236"]);
+  for (let i = 0; i < 26; i++) { const x = r() * W, y = r() * H; if (Math.hypot(x - p.x, y - p.y) < p.r * 3) continue; cross(ctx, x, y, p.U * (18 + r() * 18), hexA(C.sky, 0.18), (r() - 0.5) * 0.6); }
+  const hs = p.r * (p.port ? 4.2 : 3.3), hy = p.y + p.r * 0.2;
+  [[40, 0.5, C.coral, 26], [16, 1, "#ff8a5c", 12], [0, 1, "#ffd8c4", 4]].forEach(([blur, a, col, lw]) => {
+    ctx.save(); ctx.shadowColor = C.coral; ctx.shadowBlur = p.U * blur; heartPath(ctx, p.x, hy, hs); ctx.strokeStyle = hexA(col, a); ctx.lineWidth = p.U * lw; ctx.stroke(); ctx.restore();
+  });
+  logo(ctx, p.x, p.y, p.r, { shadow: C.coral, sa: 0.6 });
+};
+D.paloma = (ctx, W, H) => {
+  const p = spot(W, H, { y: 0.62 }), R = Math.hypot(W, H);
+  grad(ctx, W, H, ["#1d3f8a", C.navy, "#06173f"]);
+  const ox = W / 2, oy = H * (p.port ? 0.28 : 0.3);
+  for (let i = 0; i < 24; i++) { const a = (i / 24) * TAU; ctx.beginPath(); ctx.moveTo(ox, oy); ctx.arc(ox, oy, R, a, a + TAU / 60); ctx.closePath(); ctx.fillStyle = hexA(C.sun, 0.07); ctx.fill(); }
+  glow(ctx, ox, oy, p.m * 0.45, C.sun, 0.45);
+  dove(ctx, ox, oy + p.m * 0.03, p.m * (p.port ? 0.36 : 0.26), C.cream);
+  for (let i = 0; i < 5; i++) { const a = -Math.PI / 2 + (i - 2) * 0.45; ctx.save(); ctx.translate(ox + Math.cos(a) * p.m * 0.28, oy + Math.sin(a) * p.m * 0.28 + p.m * 0.02); ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(-p.U * 14, -p.U * 20, 0, -p.U * 44); ctx.quadraticCurveTo(p.U * 14, -p.U * 20, 0, 0); ctx.fillStyle = hexA(C.coral, 0.85); ctx.fill(); ctx.restore(); }
+  logo(ctx, p.x, p.y, p.r * 0.85, { shadow: "#000000", sa: 0.35 });
+};
+D.santos = (ctx, W, H) => {
+  const p = spot(W, H), r = rng(12), w = p.U * (p.port ? 300 : 330), cols = Math.ceil(W / (w * 1.05)) + 1, rows = Math.ceil(H / (w * 0.95)) + 1;
+  grad(ctx, W, H, [C.ice, C.cream, C.butter]);
+  let k = 0;
+  for (let j = -1; j < rows; j++) for (let i = -1; i < cols; i++) {
+    const x = i * w * 1.08 + (j % 2) * w * 0.5 + (r() - 0.5) * w * 0.1, y = j * w * 0.95 + (r() - 0.5) * w * 0.1;
+    if (Math.hypot(x + w / 2 - p.x, y + w * 0.4 - p.y) < p.r * 1.7) { k++; continue; }
+    illCard(ctx, SANTOS[(((i + 1) * 5 + (j + 1) * 7) + k++ * 0) % SANTOS.length], x, y, w * 0.9, { bg: C.cream, fill: C.white, rot: (r() - 0.5) * 10, shadow: w * 0.03, r: w * 0.08 });
+  }
+  glow(ctx, p.x, p.y, p.r * 2.2, C.white, 0.85);
+  logo(ctx, p.x, p.y, p.r, { line: 8 * p.U });
+};
+D.olasnoche = (ctx, W, H) => {
+  const p = spot(W, H, { y: 0.45, ly: 0.4 }), r = rng(3);
+  grad(ctx, W, H, ["#06173f", "#13306f", "#2a4f9a"]);
+  for (let i = 0; i < Math.round((W * H) / 9000); i++) { ctx.beginPath(); ctx.arc(r() * W, r() * H * 0.6, p.U * (1 + r() * 2), 0, TAU); ctx.fillStyle = hexA(C.cream, 0.3 + r() * 0.6); ctx.fill(); }
+  const cols = ["#2d6bc0", C.blue, "#0e3a86", "#06173f"], base = H * (p.port ? 0.7 : 0.66);
+  cols.forEach((c, i) => {
+    const y0 = base + i * H * (p.port ? 0.07 : 0.08), amp = p.m * 0.03, len = W / (p.port ? 1.2 : 2.2), ph = i * 1.3;
+    ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, y0);
+    for (let x = 0; x <= W + 10; x += 10) ctx.lineTo(x, y0 + Math.sin((x / len) * TAU + ph) * amp);
+    ctx.lineTo(W, H); ctx.closePath(); ctx.fillStyle = c; ctx.fill();
+  });
+  glow(ctx, W * 0.5, base, p.m * 0.5, C.sky, 0.25);
+  logo(ctx, p.x, p.y, p.r, { shadow: "#000000", sa: 0.4 });
+};
+D.minimal = (ctx, W, H) => {
+  const p = spot(W, H);
+  ctx.fillStyle = C.cream; ctx.fillRect(0, 0, W, H);
+  glow(ctx, W * 0.2, H * 0.15, p.m * 0.7, C.rose, 0.7); glow(ctx, W * 0.85, H * 0.9, p.m * 0.7, C.ice, 0.9);
+  const cx = W * (p.port ? 0.5 : 0.78), cy = H * (p.port ? 0.36 : 0.5), L = p.m * (p.port ? 0.42 : 0.5);
+  ctx.save(); ctx.strokeStyle = C.navy; ctx.lineWidth = p.U * 6; ctx.lineCap = "round"; ctx.beginPath();
+  ctx.moveTo(cx, cy - L / 2); ctx.lineTo(cx, cy + L / 2); ctx.moveTo(cx - L * 0.3, cy - L * 0.18); ctx.lineTo(cx + L * 0.3, cy - L * 0.18); ctx.stroke(); ctx.restore();
+  ctx.beginPath(); ctx.arc(cx, cy - L * 0.18, p.U * 16, 0, TAU); ctx.fillStyle = C.sun; ctx.fill();
+  if (p.port) logo(ctx, W / 2, H * 0.68, p.r * 0.6, { sa: 0.1 }); else logo(ctx, W * 0.3, H / 2, p.r * 0.9, { sa: 0.1 });
+};
+
 export const FONDOS = [
+  ["noche", "Noche estrellada"], ["aurora", "Aurora"], ["cordillera", "Cordillera"], ["neon", "Corazón neón"], ["paloma", "Paloma"], ["santos", "Santos"], ["olasnoche", "Mar de noche"], ["minimal", "Cruz simple"],
   ["amanecer", "Amanecer"], ["corazon", "Corazón"], ["rayos", "Rayos"], ["confeti", "Confeti"], ["olas", "Olas"],
   ["vuelo", "Vuelo"], ["cruz", "Cruz de luz"], ["lunares", "Lunares"], ["mosaico", "Mosaico"], ["monitos", "Monitos"],
   ["rosario", "Rosario"], ["estrellas", "Estrellas"], ["zine", "Cuaderno"], ["corazones", "Corazones"], ["aros", "Aros"],
@@ -335,5 +450,14 @@ export function fondo(ctx, W, H, id, photo = null) {
   ctx.save(); ctx.clearRect(0, 0, W, H);
   if (id === "foto" && photo) fotoFondo(ctx, W, H, photo);
   else (D[id] || D.amanecer)(ctx, W, H);
+  ctx.restore();
+  if (OPT.frase) frase(ctx, W, H, DARK.has(id) || id === "foto");
+}
+// Frase manuscrita abajo (en el celular, sobre la zona de accesos rápidos de la pantalla bloqueada)
+function frase(ctx, W, H, dark) {
+  const port = H > W, m = Math.min(W, H), size = m * (port ? 0.095 : 0.075);
+  ctx.save();
+  ctx.shadowColor = dark ? "rgba(0,0,0,.55)" : "rgba(255,255,255,.9)"; ctx.shadowBlur = size * 0.35;
+  hand(ctx, OPT.frase, W / 2, H * (port ? 0.8 : 0.86), size, { color: dark ? C.cream : C.navy, rot: -3, align: "center" });
   ctx.restore();
 }

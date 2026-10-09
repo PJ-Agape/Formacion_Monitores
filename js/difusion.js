@@ -24,7 +24,7 @@ const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "o
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
 let ctx = null;
-const st = { tab: "piezas", tpl: "frase", fmt: "historia", style: "cielo", qr: "app", ill: "corazon", title: "", hand: "", sub: "", kicker: "", ev: "", para: "", frame: "soy", fondo: "amanecer", fsize: "celular", zoom: 1, dx: 0, dy: 0, photo: null, phrase: 0 };
+const st = { tab: "piezas", tpl: "frase", fmt: "historia", style: "cielo", qr: "app", ill: "corazon", title: "", hand: "", sub: "", kicker: "", ev: "", para: "", frame: "soy", fondo: "noche", fsize: "celular", zoom: 1, dx: 0, dy: 0, photo: null, phrase: 0, flogo: "grande", ffrase: "" };
 let events = [];
 
 export function setup(c) { ctx = c; registerActions(); }
@@ -148,6 +148,10 @@ function fondosHTML() {
     <form class="card stack dif-form" onsubmit="return false">
       <div class="field"><label>Para</label><div class="seg" role="radiogroup" aria-label="Para qué pantalla">${Object.entries(F.SIZES).map(([k, v]) => `<label><input type="radio" name="difFsize" value="${k}" ${st.fsize === k ? "checked" : ""}><span>${v[2]}</span></label>`).join("")}</div></div>
       <div class="field"><label>Diseño</label><div class="dif-fondos ${st.fsize}">${[...(st.photo ? [["foto", "Mi foto"]] : []), ...F.FONDOS].map(([k, l]) => `<button type="button" aria-pressed="${st.fondo === k}" data-action="difFondo" data-v="${k}" title="${esc(l)}"><canvas data-fondo="${k}" width="${tw}" height="${th}" aria-label="${esc(l)}"></canvas></button>`).join("")}</div></div>
+      <div class="ag-form-row" style="display:grid;gap:10px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))">
+        <div class="field"><label>Logo</label><select class="select" data-fop="logo">${F.LOGOS.map(([v, l]) => `<option value="${v}" ${st.flogo === v ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+        <div class="field"><label>Frase</label><select class="select" data-fop="frase">${F.FRASES.map((v) => `<option value="${esc(v)}" ${st.ffrase === v ? "selected" : ""}>${v ? esc(v) : "Sin frase"}</option>`).join("")}</select></div>
+      </div>
       ${photoBtn()}
       <p class="small muted">Sirven como fondo de pantalla, pantalla de bloqueo o protector de pantalla. En el celular, el logo queda bajo la hora.</p>
       ${actionsHTML()}
@@ -172,6 +176,7 @@ async function paint() {
   const cv = $("#difCanvas"); if (!cv) return;
   if (st.tab === "fondos") {
     await F.ready(); if (id !== painting) return;
+    F.setOptions({ logo: st.flogo, frase: st.ffrase });
     const [W, H] = F.SIZES[st.fsize];
     cv.width = W; cv.height = H; F.fondo(cv.getContext("2d"), W, H, st.fondo, st.photo);
     for (const c of document.querySelectorAll("[data-fondo]")) {
@@ -229,6 +234,12 @@ function registerActions() {
     if (t.id === "difPhoto" && t.files[0]) return loadPhoto(t.files[0]);
     const k = t.dataset && t.dataset.dif; if (!k) return;
     onField(k, t.value, true);
+  });
+  document.addEventListener("change", (e) => {
+    const k = e.target.dataset && e.target.dataset.fop; if (!k) return;
+    st[k === "logo" ? "flogo" : "ffrase"] = e.target.value;
+    document.querySelectorAll("[data-fondo]").forEach((c) => delete c.dataset.done);
+    paint();
   });
   document.addEventListener("input", (e) => {
     const k = e.target.dataset && e.target.dataset.dif;
