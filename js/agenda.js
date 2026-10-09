@@ -3,13 +3,14 @@
 // La ve cualquiera; la editan los administradores. Los encuentros de Camino Ágape
 // aparecen solos a partir del programa del año.
 
+import * as fondo from "./fondo-cuenta.js";
 import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS, sceneLabel } from "./ilustraciones.js";
 import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
 import * as autz from "./autorizacion.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
-export function setup(c) { ctx = c; registerActions(); }
+export function setup(c) { ctx = c; registerActions(); fondo.wire(toast); }
 const $ = (s, r = document) => r.querySelector(s);
 
 export const TYPES = {
@@ -165,27 +166,9 @@ function paintNews() {
 // ---------------------------------------------------------------------------
 // Formulario (solo administradores)
 // ---------------------------------------------------------------------------
-// Imagen de fondo de la cuenta regresiva: se achica en el teléfono y se guarda en el mismo evento.
-let countBg = "";
-const bgPrev = () => countBg ? `<span class="ag-bg-prev" style="background-image:url('${countBg}')"></span><button type="button" class="btn btn-ghost btn-sm" data-action="agBgDel">Quitar imagen</button>` : "";
-function shrinkImage(file) {
-  return new Promise((ok, fail) => {
-    const url = URL.createObjectURL(file), img = new Image();
-    img.onload = () => {
-      const k = Math.min(1, 1280 / img.width, 900 / img.height), w = Math.round(img.width * k), h = Math.round(img.height * k);
-      const c = document.createElement("canvas"); c.width = w; c.height = h; c.getContext("2d").drawImage(img, 0, 0, w, h);
-      URL.revokeObjectURL(url);
-      let q = 0.78, out = c.toDataURL("image/jpeg", q);
-      while (out.length > 260000 && q > 0.4) { q -= 0.08; out = c.toDataURL("image/jpeg", q); }
-      ok(out);
-    };
-    img.onerror = () => { URL.revokeObjectURL(url); fail(new Error("img")); };
-    img.src = url;
-  });
-}
 function openForm(ev) {
   const e = ev || { date: selDay || todayIso(), type: "actividad" };
-  countBg = e.countBg || "";
+  fondo.init(e.countBg || "");
   let dlg = document.getElementById("agDialog");
   if (!dlg) { dlg = document.createElement("dialog"); dlg.id = "agDialog"; dlg.className = "sheet"; document.body.appendChild(dlg); }
   dlg.innerHTML = `<form method="dialog" id="agForm" data-id="${esc(ev ? ev.id : "")}">
@@ -214,8 +197,8 @@ function openForm(ev) {
         <span class="xs muted">Días, horas, minutos y segundos hasta la fecha y hora de este evento. Si es visible para familias, también aparece en su página.</span>
         <div class="field" id="agCountOpts" style="margin-top:10px" ${e.count ? "" : "hidden"}><label>Mostrarla desde</label><input class="input" type="date" name="countFrom" value="${esc(e.countFrom || todayIso())}"><span class="xs muted">Desaparece sola al terminar el día del evento.</span></div>
         <div class="field" id="agCountBg" style="margin-top:10px" ${e.count ? "" : "hidden"}><label>Imagen de fondo <span class="muted">(opcional)</span></label>
-          <div class="row-wrap" style="gap:8px;align-items:center"><label class="btn btn-soft btn-sm">🖼️ ${e.countBg ? "Cambiar imagen" : "Elegir imagen"}<input type="file" accept="image/*" id="agBgFile" class="sr-only"></label><span id="agBgPrev" class="row-wrap" style="gap:8px;align-items:center">${bgPrev()}</span></div>
-          <span class="xs muted">Una foto o afiche horizontal se ve mejor. Se oscurece un poco para que los números se lean bien.</span></div>
+          ${fondo.html()}
+          <span class="xs muted">Sube una foto o un logo y encuádralo aquí. Se oscurece un poco para que los números se lean bien.</span></div>
       </fieldset>
       ${autz.formHTML(ev)}
       <fieldset class="p-dates ag-feat-box">
@@ -330,7 +313,6 @@ function registerActions() {
     const ev = { title: String(f.get("title") || "Actividad").trim() || "Actividad", date: String(f.get("date") || ""), start: String(f.get("start") || ""), end: String(f.get("end") || ""), place: String(f.get("place") || ""), auth: autz.fromForm(f) || { req: true } };
     try { await autz.download(ev); } catch (err) { console.warn(err); toast("No se pudo crear el PDF", ""); }
   };
-  A.agBgDel = () => { countBg = ""; const p = $("#agBgPrev"); if (p) p.innerHTML = ""; const i = $("#agBgFile"); if (i) i.value = ""; };
   A.agIcs = (el) => {
     const e = all().find((x) => x.id === el.dataset.id); if (!e) return;
     const base = e.baseId && (events || []).find((x) => x.id === e.baseId);
@@ -339,9 +321,6 @@ function registerActions() {
   document.addEventListener("change", (e) => {
     if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); }
     if (e.target.id === "agCount") { const o = $("#agCountOpts"); if (o) o.hidden = !e.target.checked; const b = $("#agCountBg"); if (b) b.hidden = !e.target.checked; }
-    if (e.target.id === "agBgFile" && e.target.files[0]) {
-      shrinkImage(e.target.files[0]).then((d) => { countBg = d; const p = $("#agBgPrev"); if (p) p.innerHTML = bgPrev(); }).catch(() => toast("No pude abrir esa imagen", ""));
-    }
     if (e.target.id === "agAuth") { const o = $("#agAuthOpts"); if (o) o.hidden = !e.target.checked; const fam = $("#agFam"); if (e.target.checked && fam) fam.checked = true; }
     if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
     if (e.target.id === "agRepeat") { const o = $("#agUntilBox"); if (o) o.hidden = !e.target.value; }
@@ -358,7 +337,7 @@ function registerActions() {
     data.familias = f.get("familias") === "on";
     data.count = f.get("count") === "on";
     data.countFrom = data.count ? String(f.get("countFrom") || "") : "";
-    data.countBg = data.count ? countBg : "";
+    data.countBg = data.count ? fondo.get() : "";
     data.auth = autz.fromForm(f);
     if (data.auth && !data.auth.salidaF) data.auth.salidaF = data.date;
     data.feat = f.get("feat") === "on";
