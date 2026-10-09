@@ -3,6 +3,7 @@
 
 import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
+import * as saludos from "./saludos.js";
 import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as familiasAdmin from "./familias-admin.js";
@@ -23,7 +24,8 @@ export async function renderAdmin(sub, _api) {
   if (cloudOn) {
     const st = api.cloud.state();
     if (!st.ready) return cloudGate(st);
-    if (!st.isAdmin && st.isStaff) return coordShell(sub.startsWith("familias") ? "familias" : "portada", sub.startsWith("familias") ? familiasAdmin.adminView() : portada.adminView());
+    if (!st.isAdmin && st.isStaff) return sub.startsWith("saludos") ? coordShell("saludos", await saludos.adminView())
+      : coordShell(sub.startsWith("familias") ? "familias" : "portada", sub.startsWith("familias") ? familiasAdmin.adminView() : portada.adminView());
     if (!st.isAdmin) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
       <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
       <h1 class="display" style="font-size:1.6rem">Solo para administradores</h1>
@@ -40,6 +42,7 @@ export async function renderAdmin(sub, _api) {
     case "asignar": body = cloudOn ? await asignarView() : summaryView(draft); break;
     case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
     case "portada": body = portada.adminView(); break;
+    case "saludos": body = await saludos.adminView(); break;
     case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
@@ -58,6 +61,7 @@ function coordShell(page, body) {
     <nav class="admin-side" aria-label="Gestión">
       <a href="#/admin/portada" ${page === "portada" ? 'aria-current="page"' : ""}>${icon("sparkle")} Portada</a>
       <a href="#/admin/familias" ${page === "familias" ? 'aria-current="page"' : ""}>${icon("users")} Familias</a>
+      <a href="#/admin/saludos" ${page === "saludos" ? 'aria-current="page"' : ""}>${icon("send")} Saludos WhatsApp</a>
       <a href="#/agenda">${icon("grid")} Agenda</a>
       <a href="#/acompanar">${icon("check")} Acompañar</a>
       <a href="#/muro">${icon("chat")} Muro y chat</a>
@@ -82,6 +86,7 @@ function shell(page, body) {
       ${cloudOn ? link("asignar", "#/admin/asignar", "Asignar jóvenes", "check") : ""}
       ${cloudOn ? link("portada", "#/admin/portada", "Portada", "sparkle") : ""}
       ${cloudOn ? link("familias", "#/admin/familias", "Familias", "users") : ""}
+      ${link("saludos", "#/admin/saludos", "Saludos WhatsApp", "send")}
       ${cloudOn ? `<a href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
       ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
       ${link("materiales", "#/admin/materiales", "Materiales", "book")}
@@ -897,6 +902,7 @@ let bound = false;
 function bindActions() {
   if (bound) return; bound = true;
   const A = api.actions;
+  saludos.registerActions(A, () => api.render());
 
   document.addEventListener("submit", async (e) => {
     if (e.target.id === "loginForm") { e.preventDefault(); await doLogin($("#adminPass").value); }
