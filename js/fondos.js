@@ -2,7 +2,7 @@
 // Se dibujan en canvas con la paleta del logo; los usa la pestaña «Fondos» del Estudio
 // de difusión y el exportador del paquete de archivos.
 
-import { C, preload, illCard, card, hand, ready as eReady } from "./estudio.js";
+import { C, preload, illCard, card, hand, sticker, stickerIlls, ready as eReady } from "./estudio.js";
 
 export const SIZES = { celular: [1080, 2340, "Celular"], pc: [2560, 1440, "PC"] };
 const BASE = new URL("../", import.meta.url).href;
@@ -11,16 +11,54 @@ export async function ready() {
   if (!LOGO) LOGO = await new Promise((ok) => { const i = new Image(); i.onload = () => ok(i); i.onerror = () => ok(null); i.src = BASE + "icons/logo-512.webp"; });
   await eReady();
   await preload([...MONITOS, ...SANTOS].map((k) => [k, C.navy, C.cream, C.sun]));
+  await preload([...new Set([...STK_SANTOS, ...STK_PJ, ...STK_COM, ...STK_CHILE, ...Object.values(HOLE)])].flatMap((k) => stickerIlls(k, C.sun)));
 }
+// Stickers de la comunidad (los del Estudio, sin frase) para los fondos «collage»
+const STK_SANTOS = ["carloacutis", "frassati", "teresaandes", "albertohurtado", "lauravicuna", "virgencarmen", "donbosco", "franciscoasis", "teresita", "juanpablo", "guadalupe", "sanmiguel", "jesus", "virgen"];
+const STK_CHILE = ["virgencarmen", "teresaandes", "albertohurtado", "lauravicuna", "fraiandresito", "ceferino"];
+const STK_PJ = ["pj:llama", "pj:zorro", "pj:pinguino", "pj:gato", "pj:quiltro", "pj:oso", "pj:pudu", "pj:panda", "pj:conejo", "pj:buho", "pj:ballena", "pj:abeja", "pj:paloma", "pj:dino", "pj:astronauta", "pj:robot", "pj:sol", "pj:cactus", "pj:taza", "pj:guitarra"];
+const STK_COM = ["corazon", "oracion", "amigos", "juego", "biblia", "espiritu", "eucaristia", "luz", "flores", "comunidad", "equipo", "servir"];
+const HOLE = { lunares: "pj:panda", mosaico: "amigos", monitos: "comunidad", zine: "biblia", corazones: "pj:oso", aros: "pj:sol", diagonal: "pj:llama", rayos: "jesus",
+  corazon: "corazon", confeti: "juego", rosario: "virgen", burbujas: "pj:ballena", vuelo: "pj:paloma", santos: "carloacutis", amanecer: "pj:sol" };
+const STK = new Map();
+function stk(key) {
+  if (STK.has(key)) return STK.get(key);
+  const c = document.createElement("canvas"); c.width = c.height = 512; sticker(c.getContext("2d"), key, "", C.sun); STK.set(key, c); return c;
+}
+function drawStk(ctx, key, x, y, s, rot = 0) {
+  ctx.save(); ctx.translate(x, y); ctx.rotate(rot);
+  ctx.shadowColor = "rgba(11,37,102,.18)"; ctx.shadowBlur = s * 0.05; ctx.shadowOffsetY = s * 0.02;
+  ctx.drawImage(stk(key), -s / 2, -s / 2, s, s); ctx.restore();
+}
+// Reparte stickers sin que se tapen demasiado (muestreo simple con distancia mínima)
+function scatter(ctx, W, H, keys, { size, seed = 1, gap = 0.78, tries = 900, rot = 0.5 } = {}) {
+  const r = rng(seed), pts = []; let k = Math.floor(r() * keys.length);
+  for (let t = 0; t < tries; t++) {
+    const s = size * (0.8 + r() * 0.45), x = -s * 0.2 + r() * (W + s * 0.4), y = -s * 0.2 + r() * (H + s * 0.4);
+    if (pts.some((q) => Math.hypot(q.x - x, q.y - y) < (q.s + s) / 2 * gap)) continue;
+    pts.push({ x, y, s }); drawStk(ctx, keys[k++ % keys.length], x, y, s, (r() - 0.5) * rot);
+  }
+}
+const EMOJI_FONT = '"Apple Color Emoji","Segoe UI Emoji","Noto Color Emoji","Twemoji Mozilla",sans-serif';
+function emojis(ctx, W, H, list, { size, seed = 1, rot = 0.35, alpha = 1 } = {}) {
+  const r = rng(seed), step = size * 1.75; let k = 0;
+  ctx.save(); ctx.globalAlpha = alpha; ctx.font = `${size}px ${EMOJI_FONT}`; ctx.textAlign = "center"; ctx.textBaseline = "middle";
+  for (let j = -1, y = 0; y < H + step; j++, y = j * step * 0.9) for (let i = -1, x = 0; x < W + step; i++, x = i * step + (j % 2 ? step / 2 : 0)) {
+    ctx.save(); ctx.translate(x + (r() - 0.5) * size * 0.3, y + (r() - 0.5) * size * 0.3); ctx.rotate((r() - 0.5) * rot); ctx.fillText(list[k++ % list.length], 0, 0); ctx.restore();
+  }
+  ctx.restore();
+}
+// Paletas extra (además de las del logo) para variar
+const P2 = { lila: "#dccff7", lilaD: "#6b4fb8", menta: "#c9f0dd", mentaD: "#1f7a5a", durazno: "#ffd9c2", limon: "#fff1a1", teal: "#0f4c4a", vino: "#5a1f3d", rosa: "#ffc8dd", cielo2: "#bfe6ff" };
 const SANTOS = ["virgencarmen", "albertohurtado", "teresaandes", "lauravicuna", "carloacutis", "frassati", "donbosco", "franciscoasis", "juanpablo", "teresita", "sanmiguel", "guadalupe"];
 
 // Opciones que eligen en el Estudio: tamaño del logo y una frase corta (opcional).
-const OPT = { logo: "grande", frase: "" };
-export const LOGOS = [["grande", "Grande"], ["chico", "Chico"], ["sin", "Sin logo"]];
+const OPT = { logo: "sin", frase: "", W: 0, H: 0 };
+export const LOGOS = [["sin", "Sin logo"], ["chico", "Chico, en la esquina"], ["grande", "Grande, al centro"]];
 export const FRASES = ["", "Amor que transforma", "No tengan miedo", "Todo lo puedo en Cristo", "Sé puente", "Dios es alegría infinita", "Contento, Señor, contento", "Hacia lo alto", "Jesús, en ti confío", "Paz y bien", "Aquí estoy, Señor", "Eres amado"];
 export function setOptions(o) { Object.assign(OPT, o || {}); }
 // Diseños oscuros: la frase va en color claro
-const DARK = new Set(["noche", "neon", "paloma", "olasnoche", "cordillera", "olas", "atardecer", "camino"]);
+const DARK = new Set(["emojinoche", "vino", "hurtado", "noche", "neon", "paloma", "olasnoche", "cordillera", "olas", "atardecer", "camino"]);
 const MONITOS = ["corazon", "oracion", "amigos", "biblia", "espiritu", "maria", "juego", "servir", "familia", "luz", "semilla", "escuchar", "camino", "eucaristia", "flores", "comunidad"];
 
 // ---------------------------------------------------------------------------
@@ -79,8 +117,8 @@ function squiggle(ctx, x, y, s, color, lw, rot) {
 }
 // Logo en círculo con aro y sombra suave
 function logo(ctx, x, y, r, { ring = C.white, rw = 0.06, shadow = C.navy, sa = 0.18, line = 0 } = {}) {
-  if (OPT.logo === "sin") return;
-  if (OPT.logo === "chico") r *= 0.5;
+  // Sin logo al centro: donde el diseño dejaba su lugar, va uno de nuestros stickers
+  if (OPT.logo !== "grande") { const k = HOLE[OPT.id]; if (k) drawStk(ctx, k, x, y, r * 2.5, 0); return; }
   ctx.save();
   if (shadow) { ctx.shadowColor = hexA(shadow, sa); ctx.shadowBlur = r * 0.25; ctx.shadowOffsetY = r * 0.05; }
   if (ring) { ctx.beginPath(); ctx.arc(x, y, r * (1 + rw), 0, TAU); ctx.fillStyle = ring; ctx.fill(); }
@@ -432,7 +470,71 @@ D.minimal = (ctx, W, H) => {
   if (p.port) logo(ctx, W / 2, H * 0.68, p.r * 0.6, { sa: 0.1 }); else logo(ctx, W * 0.3, H / 2, p.r * 0.9, { sa: 0.1 });
 };
 
+
+// ---------------------------------------------------------------------------
+// Fondos con nuestros stickers, personajes y emojis (paletas variadas)
+// ---------------------------------------------------------------------------
+const U0 = (W, H) => Math.min(W, H) / 1080;
+D.bomba = (ctx, W, H) => {
+  const u = U0(W, H); grad(ctx, W, H, [P2.lila, "#efe6ff", P2.rosa]);
+  scatter(ctx, W, H, [...STK_PJ.slice(0, 8), ...STK_SANTOS.slice(0, 6), ...STK_COM.slice(0, 6)], { size: 360 * u, seed: 3, gap: 0.72 });
+};
+D.personajes = (ctx, W, H) => {
+  const u = U0(W, H), s = 300 * u, step = s * 1.12, r = rng(9);
+  ctx.fillStyle = P2.menta; ctx.fillRect(0, 0, W, H);
+  let k = 0;
+  for (let j = 0, y = s * 0.45; y < H + s; j++, y += step * 0.92) for (let x = (j % 2 ? step / 2 : 0) + s * 0.1; x < W + s; x += step) {
+    ctx.beginPath(); ctx.arc(x, y, s * 0.47, 0, TAU); ctx.fillStyle = hexA(C.white, 0.55); ctx.fill();
+    drawStk(ctx, STK_PJ[(k++ * 7 + j * 3) % STK_PJ.length], x, y, s * 0.92, (r() - 0.5) * 0.3);
+  }
+};
+D.chilenos = (ctx, W, H) => {
+  const u = U0(W, H), port = H > W;
+  grad(ctx, W, H, [P2.cielo2, C.ice, P2.durazno]);
+  const y0 = H * 0.86; ctx.beginPath(); ctx.moveTo(0, H); ctx.lineTo(0, y0);
+  [[0.12, -0.1], [0.24, -0.02], [0.38, -0.13], [0.52, -0.03], [0.66, -0.11], [0.8, -0.04], [0.92, -0.09], [1, -0.02]].forEach(([x, dy]) => ctx.lineTo(W * x, y0 + dy * H * (port ? 0.6 : 1)));
+  ctx.lineTo(W, H); ctx.closePath(); ctx.fillStyle = "#7fb3e3"; ctx.fill();
+  const sz = (port ? 540 : 420) * u, pos = port ? [[0.3, 0.2], [0.72, 0.3], [0.28, 0.45], [0.72, 0.56], [0.3, 0.7], [0.72, 0.8]] : [[0.15, 0.3], [0.38, 0.62], [0.62, 0.3], [0.85, 0.62], [0.15, 0.78], [0.85, 0.2]];
+  STK_CHILE.forEach((k, i) => drawStk(ctx, k, W * pos[i][0], H * pos[i][1], sz, (i % 2 ? 1 : -1) * 0.08));
+};
+D.emojis = (ctx, W, H) => {
+  const u = U0(W, H); grad(ctx, W, H, [P2.limon, "#fff7d1"]);
+  emojis(ctx, W, H, ["🙏", "💛", "✝️", "🕊️", "✨", "📖", "🔥", "🌻", "😇", "🤝"], { size: 110 * u, seed: 4 });
+};
+D.emojinoche = (ctx, W, H) => {
+  const u = U0(W, H); grad(ctx, W, H, [P2.teal, "#0b3a4f", C.navy]);
+  emojis(ctx, W, H, ["✨", "🌙", "⭐", "🕊️", "🙏", "💙"], { size: 90 * u, seed: 7, alpha: 0.85 });
+};
+D.carlo = (ctx, W, H) => {
+  const u = U0(W, H), port = H > W; grad(ctx, W, H, [P2.menta, "#e9fbf2"]);
+  const r = rng(6); for (let i = 0; i < 30; i++) { ctx.fillStyle = hexA(P2.mentaD, 0.12); ctx.font = `800 ${60 * u}px Bricolage`; ctx.fillText(["</>", "{ }", "♥", "✝", "01"][i % 5], r() * W, r() * H); }
+  drawStk(ctx, "carloacutis", W / 2, H * (port ? 0.52 : 0.5), (port ? 900 : 760) * u, -0.04);
+};
+D.teresa = (ctx, W, H) => {
+  const u = U0(W, H), port = H > W; grad(ctx, W, H, [P2.lila, "#f3eeff", P2.durazno]);
+  glow(ctx, W / 2, H * 0.45, Math.min(W, H) * 0.6, C.white, 0.9);
+  drawStk(ctx, "teresaandes", W / 2, H * (port ? 0.52 : 0.5), (port ? 900 : 760) * u, 0.03);
+  const r = rng(2); for (let i = 0; i < 22; i++) sparkle(ctx, r() * W, r() * H, u * (10 + r() * 14), hexA(P2.lilaD, 0.6));
+};
+D.hurtado = (ctx, W, H) => {
+  const u = U0(W, H), port = H > W; grad(ctx, W, H, [C.coral, "#f47a45", C.sun]);
+  const r = rng(11); for (let i = 0; i < 40; i++) heart(ctx, r() * W, r() * H, u * (30 + r() * 50), hexA(C.cream, 0.22));
+  drawStk(ctx, "albertohurtado", W / 2, H * (port ? 0.52 : 0.5), (port ? 900 : 760) * u, -0.03);
+};
+D.llama = (ctx, W, H) => {
+  const u = U0(W, H), port = H > W; ctx.fillStyle = P2.limon; ctx.fillRect(0, 0, W, H);
+  const r = rng(13), n = Math.round((W * H) / 22000);
+  for (let i = 0; i < n; i++) { const c = pick(r, [C.coral, C.sky, P2.lilaD, P2.mentaD]), x = r() * W, y = r() * H; if (r() < 0.5) { ctx.beginPath(); ctx.arc(x, y, u * 10, 0, TAU); ctx.fillStyle = c; ctx.fill(); } else squiggle(ctx, x, y, u * 26, c, u * 7, r() * TAU); }
+  drawStk(ctx, "pj:llama", W / 2, H * (port ? 0.52 : 0.5), (port ? 820 : 700) * u, 0.05);
+};
+D.vino = (ctx, W, H) => {
+  const u = U0(W, H); grad(ctx, W, H, [P2.vino, "#3a1430"]);
+  scatter(ctx, W, H, [...STK_SANTOS], { size: 400 * u, seed: 8, gap: 0.85, tries: 500 });
+  ctx.fillStyle = hexA(P2.vino, 0.25); ctx.fillRect(0, 0, W, H);
+};
+
 export const FONDOS = [
+  ["bomba", "Sticker bomb"], ["personajes", "Personajes"], ["chilenos", "Santos de Chile"], ["emojis", "Emojis"], ["carlo", "Carlo Acutis"], ["teresa", "Teresa de los Andes"], ["hurtado", "Padre Hurtado"], ["llama", "Llama"], ["emojinoche", "Emojis de noche"], ["vino", "Santos (vino)"],
   ["noche", "Noche estrellada"], ["aurora", "Aurora"], ["cordillera", "Cordillera"], ["neon", "Corazón neón"], ["paloma", "Paloma"], ["santos", "Santos"], ["olasnoche", "Mar de noche"], ["minimal", "Cruz simple"],
   ["amanecer", "Amanecer"], ["corazon", "Corazón"], ["rayos", "Rayos"], ["confeti", "Confeti"], ["olas", "Olas"],
   ["vuelo", "Vuelo"], ["cruz", "Cruz de luz"], ["lunares", "Lunares"], ["mosaico", "Mosaico"], ["monitos", "Monitos"],
@@ -449,9 +551,17 @@ function fotoFondo(ctx, W, H, im) {
 export function fondo(ctx, W, H, id, photo = null) {
   ctx.save(); ctx.clearRect(0, 0, W, H);
   if (id === "foto" && photo) fotoFondo(ctx, W, H, photo);
-  else (D[id] || D.amanecer)(ctx, W, H);
+  else { OPT.id = id; (D[id] || D.amanecer)(ctx, W, H); }
   ctx.restore();
+  if (OPT.logo === "chico") firma(ctx, W, H);
   if (OPT.frase) frase(ctx, W, H, DARK.has(id) || id === "foto");
+}
+// Logo chico como firma, abajo a la derecha (fuera de la zona del reloj y de los íconos centrales)
+function firma(ctx, W, H) {
+  const m = Math.min(W, H), r = m * (H > W ? 0.07 : 0.05);
+  const x = W - r * 1.6, y = H > W ? H * 0.9 : H - r * 1.6;
+  ctx.save(); ctx.shadowColor = "rgba(11,37,102,.25)"; ctx.shadowBlur = r * 0.3; ctx.beginPath(); ctx.arc(x, y, r * 1.07, 0, TAU); ctx.fillStyle = C.white; ctx.fill(); ctx.restore();
+  if (LOGO) ctx.drawImage(LOGO, x - r, y - r, r * 2, r * 2);
 }
 // Frase manuscrita abajo (en el celular, sobre la zona de accesos rápidos de la pantalla bloqueada)
 function frase(ctx, W, H, dark) {
