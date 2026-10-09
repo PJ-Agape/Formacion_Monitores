@@ -2600,3 +2600,11 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .resume-chip { display: inline-block; margin-top: 6px; font-size: .74rem; font-weight: 800; color: #0b2566; background: #ffe7a3; border: 1.5px solid #0b2566; border-radius: 999px; padding: 2px 10px; }
 .dif-stk-h { margin: 18px 0 8px; font-size: 1.05rem; scroll-margin-top: 80px; }
 .dif-stk-h small { font-weight: 500; font-size: .8rem; }
+.sal-bv { margin-bottom: 14px; }
+.sal-bv > summary { cursor: pointer; list-style: none; }
+.sal-bv > summary::-webkit-details-marker { display: none; }
+.sal-bv > summary h2 { font-size: 1.15rem; margin-right: 6px; }
+.sal-bv-grid { display: grid; gap: 16px; margin-top: 14px; }
+@media (min-width: 760px) { .sal-bv-grid { grid-template-columns: minmax(220px, 340px) 1fr; } }
+.sal-bv canvas { width: 100%; height: auto; border-radius: 14px; display: block; }
+.sal-bv textarea { width: 100%; margin-top: 8px; font-size: .9rem; }

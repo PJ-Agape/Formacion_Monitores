@@ -711,6 +711,9 @@ export async function saveCumples(d) {
   await fb.setDoc(fb.doc(db, "privado", "cumples"), { json: JSON.stringify(d), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
   fb.deleteDoc(fb.doc(db, "content", "cumples")).catch(() => {}); // borra la copia pública antigua
 }
+// Mensaje de bienvenida para quienes se suman al grupo (plantilla editable; no lleva datos privados).
+export const getBienvenida = () => getContent("bienvenida");
+export const saveBienvenida = (d) => setContent("bienvenida", d);
 export const getHonor = () => getContent("honor");
 export const saveHonor = (d) => setContent("honor", d);
 export const getFamilias = () => getContent("familias");
