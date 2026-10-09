@@ -27,4 +27,37 @@ DTSTART:19700906T000000
 RRULE:FREQ=YEARLY;BYMONTH=9;BYDAY=1SU
 END:DAYLIGHT
 END:VTIMEZONE
+BEGIN:VEVENT
+UID:cxvTItIYbfLwx2K3edQQ@pj-agape
+DTSTAMP:20261009T150036Z
+DTSTART;TZID=America/Santiago:20261009T203000
+DTEND;TZID=America/Santiago:20261009T213000
+SUMMARY:Ensayo de coro
+LOCATION:Salón Parroquial
+DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
+ es/familias/
+CATEGORIES:Actividad
+END:VEVENT
+BEGIN:VEVENT
+UID:cVUGBHVcFnpDNMRJwMY5@pj-agape
+DTSTAMP:20261009T150144Z
+DTSTART;TZID=America/Santiago:20261010T110000
+DTEND;TZID=America/Santiago:20261010T130000
+SUMMARY:Misa en El Castillo
+LOCATION:Capilla sector El Castillo
+DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
+ es/familias/
+CATEGORIES:Liturgia
+END:VEVENT
+BEGIN:VEVENT
+UID:x0hSDgaKuVeqqm25hgTe@pj-agape
+DTSTAMP:20261009T150323Z
+DTSTART;TZID=America/Santiago:20261010T200000
+DTEND;TZID=America/Santiago:20261010T210000
+SUMMARY:Misa juvenil
+LOCATION:Templo Parroquial
+DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
+ es/familias/
+CATEGORIES:Liturgia
+END:VEVENT
 END:VCALENDAR
