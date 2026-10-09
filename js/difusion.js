@@ -19,7 +19,7 @@ const URLS = {
   familias: () => new URL("familias/", BASE()).href,
 };
 const FORMATS = { historia: [1080, 1920, "Historia o Estado"], post: [1080, 1350, "Post"], cuadrado: [1080, 1080, "Cuadrado"] };
-const ILLS = ["jesus", "emaus", "dejadlos", "buenpastor", "sagradocorazon", "virgen", "jose", "sagradafamilia", "apostoles", "sanmiguel", "sansebastian", "juanpablo", "teresacalcuta", "carloacutis", "teresaandes", "albertohurtado", "lauravicuna", "santoschile", "comunidad", "amigos", "acogida", "corazon", "camino", "oracion", "equipo", "juego", "biblia", "espiritu", "maria", "eucaristia", "servir", "familia", "luz", "panes", "santos", "levantate", "futuro", "flores"];
+const ILLS = ["jesus", "emaus", "dejadlos", "buenpastor", "sagradocorazon", "virgen", "jose", "sagradafamilia", "apostoles", "sanmiguel", "sansebastian", "juanpablo", "teresacalcuta", "carloacutis", "teresaandes", "albertohurtado", "lauravicuna", "santoschile", "virgencarmen", "fraiandresito", "ceferino", "donbosco", "domingosavio", "frassati", "teresita", "franciscoasis", "rosalima", "guadalupe", "rey", "comunidad", "amigos", "acogida", "corazon", "camino", "oracion", "equipo", "juego", "biblia", "espiritu", "maria", "eucaristia", "servir", "familia", "luz", "panes", "santos", "levantate", "futuro", "flores"];
 const MESES = ["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"];
 const DIAS = ["Domingo", "Lunes", "Martes", "Miércoles", "Jueves", "Viernes", "Sábado"];
 
