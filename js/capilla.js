@@ -220,7 +220,7 @@ export function view(opt = {}) {
           </div>
         </div>
       </form>
-      <div class="cap-velas" id="velaList"><p class="muted small">Encendiendo…</p></div>`
+      <div class="cap-velas" id="velaList"><p class="muted small">Cargando…</p></div>`
     : `<div class="card cap-vela-guest">${candleSVG(true, "sm")}<div style="flex:1"><strong>Las intenciones son para quienes tienen cuenta</strong>
         <p class="muted small">Ingresa con la cuenta con que te invitaron para compartir tu intención y rezar por las de la comunidad.</p></div>
         ${ctx.cloud.enabled ? `<button class="btn btn-primary btn-sm" data-action="signIn">Ingresar</button>` : ""}</div>`}
@@ -638,7 +638,7 @@ function registerActions() {
     } catch (err) {
       console.warn(err);
       const denied = /permission|insufficient/i.test(String(err && (err.code || err.message)));
-      toast(denied && ta.value.trim().length > 140 ? "Por ahora la intención puede tener hasta 140 caracteres. Acórtala un poquito 🙏" : "No se pudo encender. Revisa tu conexión.", "");
+      toast(denied && ta.value.trim().length > 140 ? "Por ahora la intención puede tener hasta 140 caracteres. Acórtala un poquito 🙏" : "No se pudo compartir. Revisa tu conexión.", "");
     }
     btn.disabled = false;
   });
