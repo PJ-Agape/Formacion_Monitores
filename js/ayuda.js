@@ -49,7 +49,7 @@ const T = [
   { t: "muro", q: "Alguien escribió algo inapropiado, ¿qué hago?", who: CUENTA, a: ["Toca los tres puntos (⋯) del mensaje → «Reportar». El equipo lo revisa.", "Si es urgente o alguien está en riesgo, avisa de inmediato a un adulto del equipo."] },
 
   // Capilla y cancionero
-  { t: "oracion", q: "¿Cómo enciendo una vela por alguien?", who: CUENTA, a: ["En Capilla, baja hasta «Velas de la comunidad».", "Escribe por quién o por qué rezas y enciéndela. La ven los demás del grupo."], go: "#/oracion", el: "#velaForm" },
+  { t: "oracion", q: "¿Cómo comparto una intención?", who: CUENTA, a: ["En Capilla, toca «Intenciones».", "Escribe por quién o por qué rezas y toca «Compartir mi intención». La ven los demás del grupo y pueden rezar contigo."], go: "#/oracion", el: "#velaForm" },
   { t: "oracion", q: "¿Cómo proyecto una canción en la Misa o el encuentro?", who: CUENTA, a: ["En el Cancionero, abre la canción.", "Toca «Proyectar». Avanzas con las flechas o tocando la pantalla."], go: "#/cancionero" },
   { t: "oracion", q: "¿Cómo exporto el cancionero?", who: CUENTA, a: ["En el Cancionero, toca «Exportar».", "Elige PDF, PowerPoint o texto."], go: "#/cancionero", el: "[data-action=canExport]" },
   { t: "oracion", q: "¿Quiero ayudar con el cancionero, cómo lo hago?", who: CUENTA, a: ["El cancionero está en construcción y lo armamos entre todos.", "Pídele al equipo que te habilite: un administrador lo activa en tu ficha de Gestión.", "Con eso podrás agregar canciones, corregirlas y armar los repertorios de las misas."], go: "#/cancionero" },
@@ -91,7 +91,7 @@ export function view(tema) {
   ctx.onAfterRender(() => { const i = document.getElementById("helpQ"); if (i && q) { i.value = q; filter(); } });
   return `<header class="page-head"><span class="eyebrow">Ayuda</span><h1>¿Cómo hago…?</h1>
       <p>Respuestas cortas para tu perfil. Toca «Muéstrame» y te llevamos al botón exacto.</p></header>
-    <div class="help-search"><input class="input" id="helpQ" type="search" placeholder="Escribe lo que quieres hacer: vela, calendario, encuesta…" autocomplete="off"></div>
+    <div class="help-search"><input class="input" id="helpQ" type="search" placeholder="Escribe lo que quieres hacer: intención, calendario, encuesta…" autocomplete="off"></div>
     <div class="help-chips">${order.map(([k, l]) => `<a class="chip ${k === first ? "accent" : ""}" href="#help-${k}">${esc(l)}</a>`).join("")}</div>
     <div id="helpList">${order.map(([k, l]) => `<section class="help-sec" id="help-${k}"><h2>${esc(l)}</h2>
       ${mine.filter((x) => x.t === k).map((x) => `<details class="help-item" data-s="${esc((x.q + " " + x.a.join(" ")).toLowerCase())}"${k === first ? " open" : ""}>

@@ -39,7 +39,7 @@ export const BLOCKS = {
   red: { t: "Comunidad", hand: "para encontrarnos", href: "#/red", ill: "amigos", c: "#ef591c", soft: "#fde0d2",
     d: "El muro, el chat, la agenda y todo lo que compartimos como grupo." },
   espiritu: { t: "Espiritualidad", hand: "para rezar", href: "#/oracion", ill: "jesus", c: "#c98a00", soft: "#fff0c2",
-    d: "La Capilla: el Evangelio del día, velas, oraciones, cantos y radios católicas." },
+    d: "La Capilla: el Evangelio del día, intenciones, oraciones, cantos y radios católicas." },
 };
 // e: emoji · t: título · d: descripción · kw: palabras para el buscador · ok: quién lo ve
 const ITEMS = [
@@ -57,11 +57,11 @@ const ITEMS = [
   { b: "red", e: "🤝", t: "Acompañar", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled },
   { b: "red", e: "📣", t: "Estudio de difusión", d: "Marco de foto, historias, fondos y stickers.", href: "#/difusion", kw: "difusion stickers fondos de pantalla marco foto historias invitacion afiche", ok: (w) => w.cuenta },
   { b: "red", e: "🏛️", t: "Guía de servicio", d: "Identidad, roles, cargos y reuniones.", href: "#/comunidad", kw: "guia servicio pastoral identidad roles cargos reuniones comunidad", ok: (w) => w.equipo },
-  { b: "espiritu", e: "⛪", t: "Nuestra Capilla", d: "Silencio, velas, la Palabra y María: un lugar para estar con Jesús.", href: "#/oracion", kw: "capilla oracion rezar velas intenciones espiritualidad", ok: () => true },
+  { b: "espiritu", e: "⛪", t: "Nuestra Capilla", d: "Silencio, intenciones, la Palabra y María: un lugar para estar con Jesús.", href: "#/oracion", kw: "capilla oracion rezar velas intenciones espiritualidad", ok: () => true },
   { b: "espiritu", e: "📖", t: "Evangelio del día", d: "La Palabra de hoy.", href: "#/evangelio", kw: "evangelio palabra lectura hoy biblia", ok: () => true },
   { b: "espiritu", e: "🙏", t: "Oraciones de siempre", d: "Padre nuestro, Ave María, Credo y más.", href: "#/oracion/siempre", kw: "oraciones devocionario rezar", ok: () => true },
   { b: "espiritu", e: "🌹", t: "Con María", d: "El Rosario y oraciones a la Virgen.", href: "#/oracion/maria", kw: "maria virgen rosario misterios", ok: () => true },
-  { b: "espiritu", e: "🕯️", t: "Velas de la comunidad", d: "Enciende una vela por una intención y reza por las de otros.", href: "#/oracion/velas", kw: "vela intencion rezar por", ok: () => true },
+  { b: "espiritu", e: "🕯️", t: "Nuestras intenciones", d: "Comparte tu intención y reza por las de otros.", href: "#/oracion/velas", kw: "vela intencion rezar por", ok: () => true },
   { b: "espiritu", e: "🎶", t: "Cancionero", d: "Canciones con acordes para la misa.", href: "#/cancionero", kw: "cancionero canciones acordes misa cantos guitarra", ok: () => true },
   { b: "espiritu", e: "📻", t: "Radios católicas", d: "Radio María, El Sembrador y Regina Coeli.", href: "#/oracion/radio", kw: "radio maria sembrador regina coeli escuchar", ok: () => true },
   { b: "espiritu", e: "🤫", t: "Silencio", d: "Un momento de pausa con Jesús.", href: "#/oracion/silencio", kw: "silencio pausa calma respirar", ok: () => true },

@@ -40,7 +40,7 @@ export const DEFAULTS = [
     title: "Mes de la *Familia*",
     text: "En la familia aprendemos a amar, a perdonar y a rezar. Este mes damos gracias por los nuestros, rezamos por cada hogar y, como la Sagrada Familia de Nazaret, ponemos a Jesús al centro.",
     chips: ["Agradecer", "Rezar juntos", "Cuidarnos"],
-    b1: { label: "Encender una vela por mi familia", href: "#/oracion/velas" }, b2: { label: "Página para las familias", href: "familias/index.html" } },
+    b1: { label: "Rezar por mi familia", href: "#/oracion/velas" }, b2: { label: "Página para las familias", href: "familias/index.html" } },
   { key: "santos", label: "Todos los Santos", theme: "gold", order: 30, from: "2026-09-15", to: "2026-11-02", illus: "santoschile",
     kicker: "Domingo 1 de noviembre · Solemnidad", hand: "tú también estás llamado",
     title: "Todos los *Santos*",
