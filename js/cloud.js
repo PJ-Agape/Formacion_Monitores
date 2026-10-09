@@ -194,6 +194,10 @@ function mergeProgress(a, b) {
     for (const [k, s] of Object.entries(p.scores || {})) if (!o.scores[k] || s.right > o.scores[k].right) o.scores[k] = s;
     if (!o.completedDate || (p.completedDate && p.completedDate < o.completedDate)) o.completedDate = p.completedDate || o.completedDate || "";
     o.certCode = o.certCode || p.certCode || "";
+    // Posición dentro de cada unidad: gana la más reciente (y se borra si la unidad ya está completa)
+    o.pos = { ...(o.pos || {}) };
+    for (const [k, v] of Object.entries(p.pos || {})) if (!o.pos[k] || String(v.at || "") > String(o.pos[k].at || "")) o.pos[k] = v;
+    for (const k of Object.keys(o.pos)) if (o.read && o.read[k]) delete o.pos[k];
   }
   return out;
 }

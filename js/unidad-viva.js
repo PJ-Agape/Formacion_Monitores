@@ -136,9 +136,17 @@ function maxXP(slides, se) {
   }
   return m;
 }
+let posTimer = null;
+function keepPos() {
+  if (!G) return;
+  const g = G;
+  clearTimeout(posTimer);
+  posTimer = setTimeout(() => { if (ctx.S.progress(g.course.id).read[g.key] && g.cur === g.slides.length - 1) return;
+    ctx.S.savePos(g.course.id, g.key, { s: g.cur, n: g.slides.length, xp: g.xp, done: [...g.done], ans: g.answers }); }, 600);
+}
 function gain(id, pts, el) {
   if (!G || G.done.has(id) || pts <= 0) return;
-  G.done.add(id); G.xp += pts;
+  G.done.add(id); G.xp += pts; keepPos();
   const pill = document.getElementById("uvXp");
   if (pill) { pill.querySelector("b").textContent = G.xp; pill.classList.remove("bump"); void pill.offsetWidth; pill.classList.add("bump"); }
   if (el) {
@@ -167,9 +175,19 @@ export async function view(phaseIdx, sid) {
     ctx.onLeave(() => { document.body.classList.remove("uv-open"); document.removeEventListener("keydown", onKey); });
     return null;
   }
-  if (!G || G.key !== key || G.course.id !== course.id) G = { course, ph, pi, se, key, slides, cur: 0, xp: 0, done: new Set(), max: maxXP(slides, se), answers: {} };
-  else { G.slides = slides; G.max = maxXP(slides, se); }
-  const m = /[?&]s=(\d+)/.exec(location.hash); if (m) G.cur = Math.min(slides.length - 1, Math.max(0, +m[1] - 1));
+  const m = /[?&]s=(\d+)/.exec(location.hash);
+  let resumed = 0;
+  if (!G || G.key !== key || G.course.id !== course.id) {
+    G = { course, ph, pi, se, key, slides, cur: 0, xp: 0, done: new Set(), max: maxXP(slides, se), answers: {} };
+    // Retomar donde quedó (si no viene una lámina en la dirección)
+    const pos = S.getPos(course.id, key);
+    if (pos) {
+      G.xp = +pos.xp || 0; G.done = new Set(pos.done || []); G.answers = pos.ans || {};
+      if (!m && pos.s > 0) { G.cur = Math.min(slides.length - 1, +pos.s); resumed = G.cur + 1; }
+    }
+  } else { G.slides = slides; G.max = maxXP(slides, se); }
+  if (m) G.cur = Math.min(slides.length - 1, Math.max(0, +m[1] - 1));
+  if (resumed > 1) setTimeout(() => toast(`Retomaste donde quedaste: lámina ${resumed} de ${slides.length} 👍`, "ok", 3500), 400);
   document.body.classList.add("uv-open");
   ctx.onLeave(() => { document.body.classList.remove("uv-open"); document.removeEventListener("keydown", onKey); });
   document.addEventListener("keydown", onKey);
@@ -318,6 +336,7 @@ function enter(i) {
   const s = G.slides[i];
   if (s.type === "end") finish();
   try { history.replaceState(null, "", `#/vivir/${G.pi}/${encodeURIComponent(G.se.id)}?s=${i + 1}`); } catch {}
+  keepPos();
 }
 function go(d) { if (!G) return; const i = Math.max(0, Math.min(G.slides.length - 1, G.cur + d)); if (i !== G.cur) enter(i); }
 function onKey(e) {
@@ -451,7 +470,7 @@ function registerActions() {
     toast(s.read === s.total ? "¡Módulo listo! Ya puedes rendir su evaluación" : "Unidad completada", "ok", 3500);
   };
   A.uvRestart = () => {
-    const pi = G.pi, id = G.se.id; G = null; Object.keys(pairSel).forEach((x) => delete pairSel[x]);
+    const pi = G.pi, id = G.se.id; ctx.S.savePos(G.course.id, G.key, null); G = null; Object.keys(pairSel).forEach((x) => delete pairSel[x]);
     document.getElementById("uv")?.remove(); location.hash = `#/vivir/${pi}/${encodeURIComponent(id)}?s=1`; ctx.render();
   };
 }

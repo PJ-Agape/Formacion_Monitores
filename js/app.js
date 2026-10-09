@@ -541,10 +541,10 @@ function phaseBlock(course, ph, i, st) {
       ${s.open ? `<div class="phase-body" ${exp ? "" : "hidden"}>
         ${ph.intro ? `<p class="muted small phase-intro">${rich(ph.intro)}</p>` : ""}
         ${ph.sessions.map((se) => {
-          const read = st.p.read[S.sessionKey(i, se)];
+          const read = st.p.read[S.sessionKey(i, se)], pos = !read && S.getPos(course.id, S.sessionKey(i, se));
           return `<a class="session-row ${read ? "read" : ""}" href="#/vivir/${i}/${encodeURIComponent(se.id)}" data-search="${esc(plain(unitText(se)).toLowerCase())}">
             <span class="session-num">${read ? icon("check") : esc(se.id)}</span>
-            <span style="min-width:0;flex:1"><h4>${esc(se.title)}</h4><p>${esc(plain(se.objective))}</p></span>
+            <span style="min-width:0;flex:1"><h4>${esc(se.title)}</h4><p>${esc(plain(se.objective))}</p>${pos && pos.s > 0 ? `<span class="resume-chip">▶ Vas en la lámina ${pos.s + 1}${pos.n ? ` de ${pos.n}` : ""}</span>` : ""}</span>
             <span class="xs muted nowrap">${esc(se.time || "")}</span>
             <span class="arrow">${icon("right")}</span></a>`;
         }).join("")}

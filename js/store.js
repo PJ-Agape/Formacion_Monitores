@@ -138,7 +138,15 @@ function allProgress() {
 }
 export function progress(courseId) {
   const p = allProgress()[courseId] || {};
-  return { phases: p.phases || {}, read: p.read || {}, scores: p.scores || {}, completedDate: p.completedDate || "", certCode: p.certCode || "" };
+  return { phases: p.phases || {}, read: p.read || {}, scores: p.scores || {}, completedDate: p.completedDate || "", certCode: p.certCode || "", pos: p.pos || {} };
+}
+// Dónde quedó cada persona dentro de una unidad (lámina, puntos y actividades hechas).
+// Viaja con el avance a la nube, así se retoma también desde otro dispositivo.
+export const getPos = (courseId, key) => progress(courseId).pos[key] || null;
+export function savePos(courseId, key, data) {
+  const p = progress(courseId);
+  if (data) p.pos[key] = { ...data, at: new Date().toISOString() }; else delete p.pos[key];
+  saveProgress(courseId, p);
 }
 function saveProgress(courseId, prog) {
   const all = allProgress(); all[courseId] = prog; write(K.progress, all); synced("progress");
@@ -153,7 +161,7 @@ export function toggleRead(courseId, sessionKey) {
 }
 export function markRead(courseId, sessionKey) {
   const p = progress(courseId);
-  if (!p.read[sessionKey]) { p.read[sessionKey] = true; saveProgress(courseId, p); }
+  if (!p.read[sessionKey] || p.pos[sessionKey]) { p.read[sessionKey] = true; delete p.pos[sessionKey]; saveProgress(courseId, p); }
 }
 export function recordQuiz(courseId, phaseIdx, right, total, passed) {
   const p = progress(courseId);
