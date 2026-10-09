@@ -1,6 +1,6 @@
 // Portada de Inicio: el carrusel de bienvenida.
 // Mezcla tres fuentes:
-//  1) diapositivas de base (Ágape, curso, Todos los Santos, Mes de María),
+//  1) diapositivas de base (Ágape, curso, Mes de la Familia, Todos los Santos, Mes de María),
 //  2) lo que el equipo edita en Gestión → Portada (guardado en content/portada),
 //  3) eventos de la Agenda marcados «Destacar en Inicio».
 // Cada diapositiva se muestra solo entre sus fechas «desde» y «hasta» (si las tiene).
@@ -35,6 +35,12 @@ export const DEFAULTS = [
     chips: ["Familiar y comunitario", "Intuitivo", "Activo"],
     b1: { label: "Conoce la comunidad", href: "#/comunidad" }, b2: { label: "Ver la agenda", href: "#/agenda" } },
   { key: "curso", label: "Curso de dirigentes", order: 20, course: true },
+  { key: "familia", label: "Mes de la Familia", theme: "blue", order: 5, from: "2026-10-01", to: "2026-10-31", illus: "sagradafamilia",
+    kicker: "Octubre · Mes de la Familia", hand: "la familia, primera comunidad",
+    title: "Mes de la *Familia*",
+    text: "En la familia aprendemos a amar, a perdonar y a rezar. Este mes damos gracias por los nuestros, rezamos por cada hogar y, como la Sagrada Familia de Nazaret, ponemos a Jesús al centro.",
+    chips: ["Agradecer", "Rezar juntos", "Cuidarnos"],
+    b1: { label: "Encender una vela por mi familia", href: "#/oracion/velas" }, b2: { label: "Página para las familias", href: "familias/index.html" } },
   { key: "santos", label: "Todos los Santos", theme: "gold", order: 30, from: "2026-09-15", to: "2026-11-02", illus: "santoschile",
     kicker: "Domingo 1 de noviembre · Solemnidad", hand: "tú también estás llamado",
     title: "Todos los *Santos*",
