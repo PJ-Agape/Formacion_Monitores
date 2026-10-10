@@ -33,6 +33,17 @@ function seen() {
 }
 function markSeen() { try { localStorage.setItem(key(), String(Date.now())); } catch {} }
 const unread = () => { const s = seen(); return items.filter((x) => x.ts > s); };
+// Lo ya visto se va borrando: cada novedad queda en la campana hasta 24 horas después de verla.
+// «Limpiar» la saca de inmediato. Se guarda en este dispositivo.
+const vkey = () => `agape_nov_vistos_${cloud.myUid()}`;
+const nid = (x) => `${x.href}|${x.ts}`;
+function vistos() { try { return JSON.parse(localStorage.getItem(vkey()) || "{}") || {}; } catch { return {}; } }
+function saveVistos(v) {
+  const lim = Date.now() - 15 * DAY; for (const k in v) if (+k.split("|").pop() < lim) delete v[k];
+  try { localStorage.setItem(vkey(), JSON.stringify(v)); } catch {}
+}
+const visibles = () => { const v = vistos(), now = Date.now(); return items.filter((x) => { const t = v[nid(x)]; return t === undefined || (t > 0 && now - t < DAY); }); };
+function markVistos(list, t) { const v = vistos(); list.forEach((x) => { if (t === 0 || v[nid(x)] === undefined) v[nid(x)] = t; }); saveVistos(v); }
 const ago = (t) => {
   const m = Math.round((Date.now() - t) / 60000);
   if (m < 2) return "recién"; if (m < 60) return `hace ${m} min`;
@@ -128,16 +139,18 @@ function openPanel() {
   const s = seen();
   let p = document.getElementById("bellPanel");
   if (!p) { p = document.createElement("div"); p.id = "bellPanel"; p.className = "bell-panel"; p.setAttribute("role", "dialog"); p.setAttribute("aria-label", "Novedades"); document.body.appendChild(p); }
-  p.innerHTML = `<div class="bell-head"><strong>Novedades</strong><button type="button" class="bell-x" aria-label="Cerrar">${icon("x")}</button></div>
-    ${items.length ? `<div class="bell-list">${items.slice(0, 15).map((x) => `<a class="bell-i ${x.ts > s ? "new" : ""}" href="${esc(x.href)}">
+  const list = visibles().slice(0, 15);
+  p.innerHTML = `<div class="bell-head"><strong>Novedades</strong><span class="row" style="gap:6px">${list.length ? `<button type="button" class="bell-clear">Limpiar</button>` : ""}<button type="button" class="bell-x" aria-label="Cerrar">${icon("x")}</button></span></div>
+    ${list.length ? `<div class="bell-list">${list.map((x) => `<a class="bell-i ${x.ts > s ? "new" : ""}" href="${esc(x.href)}">
       <span class="bell-e" aria-hidden="true">${x.e}</span><span><b>${esc(x.t)}</b><small>${esc(x.full || x.d)}</small><em>${ago(x.ts)}${x.vela ? " · <u>Ir a rezar 🙏</u>" : " · <u>Ver</u>"}</em></span></a>`).join("")}</div>`
-      : `<p class="bell-empty">${loading ? "Buscando novedades…" : "Todo tranquilo por ahora. Cuando alguien comparta una intención o publique algo, lo verás aquí."}</p>`}`;
+      : `<p class="bell-empty">${loading ? "Buscando novedades…" : "Estás al día ✨ Cuando alguien comparta una intención o publique algo, lo verás aquí."}</p>`}`;
   p.querySelector(".bell-x").onclick = closePanel;
+  const cl = p.querySelector(".bell-clear"); if (cl) cl.onclick = (e) => { e.stopPropagation(); markVistos(list, 0); markSeen(); paint(); openPanel(); };
   p.querySelectorAll(".bell-i").forEach((a) => a.addEventListener("click", closePanel));
   const r = b.getBoundingClientRect();
   p.style.top = `${r.bottom + 8}px`; const w = Math.min(380, innerWidth - 16); p.style.left = `${Math.max(8, Math.min(innerWidth - w - 8, r.right - w + 8))}px`;
   p.hidden = false; open = true; b.setAttribute("aria-expanded", "true");
-  markSeen(); paint();
+  markVistos(list, Date.now()); markSeen(); paint();
 }
 function closePanel() {
   const p = document.getElementById("bellPanel"); if (p) p.hidden = true;
