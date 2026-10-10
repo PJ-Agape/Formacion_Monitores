@@ -60,4 +60,15 @@ DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
  es/familias/
 CATEGORIES:Liturgia
 END:VEVENT
+BEGIN:VEVENT
+UID:n4QBNirFcM8F1nJzY9CW@pj-agape
+DTSTAMP:20261010T130207Z
+DTSTART;TZID=America/Santiago:20261022T190000
+DTEND;TZID=America/Santiago:20261022T210000
+SUMMARY:Proyección The Chosen
+LOCATION:Salón parroquial
+DESCRIPTION:Algo para compartir en comunidad\n\nPastoral Juvenil Ágape · 
+ pj-agape.github.io/Formacion_Monitores/familias/
+CATEGORIES:Actividad
+END:VEVENT
 END:VCALENDAR
