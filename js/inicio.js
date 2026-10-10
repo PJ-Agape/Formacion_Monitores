@@ -60,7 +60,7 @@ const ITEMS = [
   { b: "red", e: "🤝", t: "Asistencia", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled, hub: false },
   // El equipo encuentra la difusión y la guía de servicio en Materiales; los jóvenes (sin Materiales) siguen viendo la difusión aquí.
   { b: "red", e: "📣", t: "Estudio de difusión", d: "Marco de foto, historias, fondos y stickers.", href: "#/difusion", kw: "difusion stickers fondos de pantalla marco foto historias invitacion afiche", ok: (w) => w.cuenta, hub: (w) => !w.equipo },
-  { b: "red", e: "🏛️", t: "Guía de servicio", d: "Identidad, roles, cargos y reuniones.", href: "#/comunidad", kw: "guia servicio pastoral identidad roles cargos reuniones comunidad", ok: (w) => w.equipo, hub: false },
+  { b: "red", e: "🏛️", t: "Guía de servicio", d: "Presentación: identidad, roles, cargos y reuniones.", href: "presentaciones/guia-de-servicio.html", ext: true, kw: "guia servicio pastoral identidad roles cargos reuniones comunidad presentacion", ok: (w) => w.equipo, hub: false },
   { b: "espiritu", e: "⛪", t: "Nuestra Capilla", d: "Silencio, intenciones, la Palabra y María: un lugar para estar con Jesús.", href: "#/oracion", kw: "capilla oracion rezar velas intenciones espiritualidad", ok: () => true },
   { b: "espiritu", e: "📖", t: "Evangelio del día", d: "La Palabra de hoy.", href: "#/evangelio", kw: "evangelio palabra lectura hoy biblia", ok: () => true },
   { b: "espiritu", e: "🙏", t: "Oraciones de siempre", d: "Padre nuestro, Ave María, Credo y más.", href: "#/oracion/siempre", kw: "oraciones devocionario rezar", ok: () => true },

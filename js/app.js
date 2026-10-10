@@ -64,7 +64,7 @@ const routes = [
   [/^\/encuentros\/([a-z]+)$/, (k) => camino.viewRevista(k), "comunidad"],
   [/^\/archivo\/(\d{4})$/, async (y) => (await camino.viewHub(y)) ?? viewNotFound(), "materiales"],
   [/^\/archivo\/(\d{4})\/([a-z]+)$/, async (y, k) => (await camino.viewRevista(k, y)) ?? viewNotFound(), "materiales"],
-  [/^\/comunidad$/, viewCommunity, "comunidad"],
+  [/^\/comunidad$/, () => { location.replace("presentaciones/guia-de-servicio.html"); return null; }, "comunidad"],
   [/^\/itinerario$/, viewItinerary, "itinerario"],
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
   [/^\/vivir\/(\d+)\/([^/?]+)(?:\?s=\d+)?$/, async (p, id) => (await viva.view(p, id)) ?? null, "itinerario"],
@@ -84,9 +84,9 @@ const routes = [
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
-  [/^\/acompanar$/, () => acompanar.viewMain(), "comunidad"],
-  [/^\/acompanar\/(asistencia|jovenes|honor)$/, (t) => acompanar.viewMain(t), "comunidad"],
-  [/^\/acompanar\/joven\/([^/?]+)$/, (id) => acompanar.viewJoven(id), "comunidad"],
+  [/^\/acompanar$/, () => acompanar.viewMain(), "acompanar"],
+  [/^\/acompanar\/(asistencia|jovenes|honor)$/, (t) => acompanar.viewMain(t), "acompanar"],
+  [/^\/acompanar\/joven\/([^/?]+)$/, (id) => acompanar.viewJoven(id), "acompanar"],
   [/^\/pasaporte$/, () => acompanar.viewMine(), "perfil"],
   [/^\/dinamicas\/([^/?]+)$/, (id) => dinamicas.viewOne(id), "materiales"],
   [/^\/cancionero\/misa\/([^/?]+)$/, (id) => cancionero.viewMisa(id), "oracion"],
@@ -370,88 +370,6 @@ function tile(href, ic, title, text) {
     <p class="muted small" style="margin-top:6px">${esc(text)}</p>
   </a>`;
 }
-
-// ---------------------------------------------------------------------------
-// COMUNIDAD
-// ---------------------------------------------------------------------------
-let selectedRole = 0;
-function viewCommunity() {
-  const c = S.content();
-  const a = c.about || {};
-  return `
-  <header class="page-head">
-    <span class="eyebrow">Bases de nuestra comunidad</span>
-    <h1>Guía de servicio pastoral</h1>
-    <p>${esc(a.intro || "")}</p>
-  </header>
-  <a class="card link camino-banner no-print" href="#/encuentros" style="margin:6px 0 10px">
-    <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
-    <span style="flex:1"><span class="eyebrow">Camino Ágape · encuentros semanales</span><strong>Nuestra Revista</strong>
-    <span class="muted small">El itinerario del grupo en tres etapas: ingreso, madurez y aspirante.</span></span>${icon("right")}
-  </a>
-
-  <div class="section-title"><span class="num">01</span><h2>Identidad y propósito</h2></div>
-  <div class="grid grid-3">
-    ${(a.identity || []).map((x) => `<article class="card">
-      <span class="chip accent">${esc(x.tag)}</span>
-      <h3 style="margin-top:12px">${esc(x.title)}</h3>
-      <p class="muted small" style="margin-top:6px">${rich(x.text)}</p></article>`).join("")}
-  </div>
-
-  <div class="section-title"><span class="num">02</span><h2>Cómo trabajamos</h2></div>
-  <div class="grid grid-3">
-    ${(a.methods || []).map((x) => `<article class="card">
-      <div class="row"><span class="tile-ico" style="margin:0">${esc(x.icon || "✦")}</span><span class="chip">${esc(x.tag)}</span></div>
-      <h3 style="margin-top:14px">${esc(x.title)}</h3>
-      <p class="muted small" style="margin-top:6px">${rich(x.text)}</p></article>`).join("")}
-  </div>
-
-  <div class="section-title"><span class="num">03</span><h2>Roles y responsabilidades</h2></div>
-  <div class="role-tabs" role="tablist">
-    ${c.roles.map((r, i) => `<button class="role-tab" role="tab" aria-selected="${i === selectedRole}" data-action="role" data-i="${i}">
-      <strong>${esc(r.title.replace(/\s*\(.*\)/, ""))}</strong><span>${esc(r.subtitle)}</span></button>`).join("")}
-  </div>
-  <div id="roleDetail" class="role-detail">${roleDetail(c.roles[selectedRole])}</div>
-
-  <div class="section-title"><span class="num">04</span><h2>Cargos y su duración</h2></div>
-  <div class="grid grid-4 ladder">
-    ${(a.cargos || []).map((x) => `<article class="card">
-      <span class="chip">${esc(x.tag)}</span>
-      <h3 style="margin-top:12px">${esc(x.title)}</h3>
-      <p class="muted small" style="margin-top:6px">${rich(x.text)}</p>
-      ${x.note ? `<div class="note accent xs" style="margin-top:12px">${rich(x.note)}</div>` : ""}</article>`).join("")}
-  </div>
-
-  <div class="section-title"><span class="num">05</span><h2>Reuniones y encuentros</h2></div>
-  <div class="stack" style="--gap:12px">
-    ${(a.meetings || []).map((x) => `<article class="card meeting">
-      <div class="freq">${esc(x.freq)}</div>
-      <div style="flex:1">
-        <h3>${esc(x.title)}</h3>
-        <p class="muted small" style="margin-top:4px">${rich(x.text)}</p>
-        <div class="chip accent" style="margin-top:10px">${icon("users")} ${esc(x.who)}</div>
-      </div></article>`).join("")}
-  </div>`;
-}
-function roleDetail(r) {
-  if (!r) return "";
-  return `<article class="card">
-    <div class="row-wrap">
-      <span class="eyebrow">${esc(r.tag)}</span>
-      <span class="spacer"></span>
-      <span class="chip warn">${esc(r.badge)}</span>
-      <span class="chip">${esc(r.duration)}</span>
-    </div>
-    <h3 class="display" style="font-size:1.6rem;margin-top:10px">${esc(r.title)}</h3>
-    <p style="margin-top:8px">${rich(r.responsibility)}</p>
-    <ul class="fn-list">${(r.functions || []).map((f) => `<li>${rich(f)}</li>`).join("")}</ul>
-  </article>`;
-}
-actions.role = (el) => {
-  selectedRole = +el.dataset.i;
-  $$(".role-tab").forEach((b, i) => b.setAttribute("aria-selected", i === selectedRole));
-  $("#roleDetail").innerHTML = roleDetail(S.content().roles[selectedRole]);
-};
 
 // ---------------------------------------------------------------------------
 // CURSO (módulos y unidades)
@@ -1005,7 +923,7 @@ function viewMaterials() {
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
       row("presentaciones/mes-de-maria.html", "flame", "Mes de María", "Con María, puente hacia Jesús · 31 días", true),
       row("presentaciones/sacramentos.html", "sparkle", "Los Sacramentos", "Qué es un sacramento y los siete, explicados en simple", true),
-      row("#/comunidad", "users", "Guía de servicio", "Identidad, roles, cargos y reuniones de la pastoral"),
+      row("presentaciones/guia-de-servicio.html", "users", "Guía de servicio", "Identidad, métodos, roles, cargos y reuniones de la pastoral", true),
     ]],
     ["difusion", "Difusión", "#9bbf8a", "Para invitar y compartir en Estados, historias y grupos.", [
       row("#/difusion", "sparkle", "Estudio de difusión", "Marco de foto, historias, invitaciones, fondos de pantalla y stickers"),
