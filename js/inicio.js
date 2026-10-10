@@ -100,6 +100,11 @@ const searchBox = (id, val = "") => `<form class="home-search" role="search" dat
     ${icon("search")}<input id="${id}" type="search" placeholder="Buscar en agAPPe: canción, oración, unidad…" autocomplete="off" value="${esc(val)}" aria-label="Buscar en la app">
   </form><div class="search-res" id="${id}Res" aria-live="polite"></div>`;
 
+// Puertas a los tres bloques (Inicio): grandes, de color, a un toque
+export function doorsHTML() {
+  return `<nav class="doors" aria-label="Bloques de agAPPe">${["formacion", "red", "espiritu"].map((k) => { const b = BLOCKS[k];
+    return `<a class="door" href="${b.href}" style="--bc:${b.c};--bs:${b.soft}"><span class="door-ill">${illus(b.ill, "")}</span><span class="door-h">${esc(b.hand)}</span><strong>${esc(b.t)}</strong></a>`; }).join("")}</nav>`;
+}
 export function blocksHTML() {
   const w = who(), course = S.activeCourse(), st = S.courseState(course);
   const status = {

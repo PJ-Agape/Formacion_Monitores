@@ -223,9 +223,9 @@ function renderChrome(section) {
   const tab = TAB_OF[section] || section;
   const cur = (k) => (k === tab ? 'aria-current="page"' : "");
   const NAV = navFor();
-  $("#topNav").innerHTML = NAV.map(([k, h, l]) => `<a href="${h}" ${cur(k)}>${l}</a>`).join("");
+  $("#topNav").innerHTML = NAV.map(([k, h, l]) => `<a href="${h}" data-k="${k}" ${cur(k)}>${l}</a>`).join("");
   $("#bottomNav").innerHTML = NAV.filter((n) => n[4] !== "top").map(([k, h, l, ic]) =>
-    `<a href="${h}" ${cur(k)}><span class="ico-wrap">${icon(ic)}</span>${l}</a>`).join("");
+    `<a href="${h}" data-k="${k}" ${cur(k)}><span class="ico-wrap">${icon(ic)}</span>${l}</a>`).join("");
   const p = S.getProfile();
   const inAdmin = section === "admin" && (cloud.enabled ? cloud.state().isStaff : S.isAdmin());
   const guest = cloud.enabled && !cloud.state().ready;
@@ -322,6 +322,7 @@ function viewHome() {
   // El resto vive en las pestañas de abajo (Formación, Comunidad, Espiritualidad).
   return `
   ${inicio.greetHTML()}
+  ${inicio.doorsHTML()}
   <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
