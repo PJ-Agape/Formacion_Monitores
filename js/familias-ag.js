@@ -12,7 +12,12 @@ const N = 10;
 const IDS = Array.from({ length: N }, (_, i) => `f${i + 1}`);
 const COLORS = ["#1351a4", "#ef591c", "#c98a00", "#2e8b57", "#7b4fc4", "#d6336c", "#0f8a8a", "#8a5a3c", "#3d7fd1", "#e48a68"];
 const SOFT = ["#e1f3fd", "#fde0d2", "#fff0c2", "#dcf3e4", "#ece3fa", "#fbe0ea", "#d8f2f2", "#efe3d6", "#dfeafb", "#fde8de"];
+const ETAPAS = { ingreso: ["Ingreso", "Etapa 1 · Bienvenido a casa", "#8ad2fa"], madurez: ["Madurez", "Etapa 2 · Mi fe en primera persona", "#1351a4"], aspirante: ["Aspirante", "Etapa 3 · Llamados a servir", "#ef591c"] };
 let rows = null, ctx = null;
+// Etapa más común entre los integrantes (sugerencia al armar la familia)
+const etapaSugerida = (js, ids) => { const c = {}; (js || []).filter((j) => ids.has(j.id) && ETAPAS[j.etapa]).forEach((j) => { c[j.etapa] = (c[j.etapa] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || ""; };
+// La revista de la etapa: los jóvenes la leen en «Mi Camino»; el equipo, en Nuestra Revista
+const revistaHref = (e) => (st().isJoven ? "#/mi-camino" : `#/encuentros/${e}`);
 
 export function setup(c) { ctx = c; registerActions(); }
 const corto = (n) => { const p = String(n || "").trim().split(/\s+/); return p.length > 1 ? `${p[0]} ${p[1][0].toUpperCase()}.` : p[0] || ""; };
@@ -39,7 +44,7 @@ export async function sync(jovenes) {
     const others = new Set(fams.filter((x) => x.id !== f.id).flatMap((x) => (x.dirigentes || []).map((d) => d.uid)));
     const ints = derive(dir.map((d) => d.uid), js, others);
     if (same(ints, f.integrantes) && JSON.stringify(uidsOf(dir, ints)) === JSON.stringify(f.uids || [])) continue;
-    await cloud.saveFamilia(f.id, { nombre: f.nombre || "", nombrePor: f.nombrePor || "", dirigentes: dir, integrantes: ints, uids: uidsOf(dir, ints) }).catch(() => {});
+    await cloud.saveFamilia(f.id, { nombre: f.nombre || "", nombrePor: f.nombrePor || "", etapa: f.etapa || "", dirigentes: dir, integrantes: ints, uids: uidsOf(dir, ints) }).catch(() => {});
     n++;
   }
   if (n) rows = null;
@@ -80,6 +85,7 @@ function card(f) {
     <div class="fam-top"><span class="fam-n">${f.i + 1}</span>${yo ? `<span class="fam-yo">Tu familia</span>` : ""}
       ${st().isStaff ? `<button class="fam-edit" data-action="famEdit" data-id="${f.id}" aria-label="Armar la familia ${f.i + 1}">${icon("edit")}</button>` : ""}</div>
     <h3 class="fam-name">${f.nombre ? esc(f.nombre) : `<span class="muted">Familia ${f.i + 1}</span>`}</h3>
+    ${ETAPAS[f.etapa] ? `<div class="fam-etapa"><span class="fam-et" style="--ec:${ETAPAS[f.etapa][2]}">${esc(ETAPAS[f.etapa][0])}</span><a class="chip-link" href="${revistaHref(f.etapa)}">📰 Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</a></div>` : ""}
     ${!f.nombre ? `<p class="xs muted">${mine(f) ? "Aún no tiene nombre: ¡pónganle uno entre todos!" : st().isStaff ? "Aún no tiene nombre. Ármala con el lápiz." : "Aún no tiene nombre."}</p>` : ""}
     ${mine(f) ? `<form class="fam-nf" data-id="${f.id}" onsubmit="return false"><input class="input" maxlength="40" placeholder="Nombre de la familia" value="${esc(f.nombre || "")}" aria-label="Nombre de la familia ${f.i + 1}"><button class="btn btn-sm btn-soft" data-action="famName" data-id="${f.id}">Guardar</button></form>` : ""}
     <div class="fam-sec"><span class="fam-k">Dirigente${dir.length === 1 ? "" : "s"} a cargo</span>
@@ -105,6 +111,9 @@ async function editor(id) {
     <div class="sheet-head"><h2>Familia ${i + 1}</h2><button type="button" class="icon-btn" data-action="famClose" aria-label="Cerrar">${icon("x")}</button></div>
     <div class="sheet-body stack">
       <div class="field"><label>Nombre <span class="muted">(lo pueden poner sus integrantes)</span></label><input class="input" name="nombre" maxlength="40" value="${esc(f.nombre || "")}" placeholder="Familia ${i + 1}"></div>
+      <div class="field"><label>Etapa <span class="muted">(define su revista)</span></label><select class="select" name="etapa" id="famEtapa">
+        <option value="">Sin definir</option>${Object.entries(ETAPAS).map(([k, v]) => `<option value="${k}" ${f.etapa === k ? "selected" : ""}>${esc(v[0])} · ${esc(v[1].split(" · ")[1])}</option>`).join("")}</select>
+        <span class="xs muted" id="famEtapaHint"></span></div>
       <fieldset class="fam-pick"><legend>Dirigente(s) a cargo</legend>
         ${guias.length ? guias.map((g) => `<label><input type="checkbox" name="dir" value="${esc(g.uid)}" data-n="${esc(g.name)}" ${dirSel.has(g.uid) ? "checked" : ""}> ${esc(g.name)}${enOtra[g.uid] ? ` <span class="xs muted">· ya en la familia ${enOtra[g.uid]}</span>` : ""}</label>`).join("") : `<p class="xs muted">No hay cuentas de dirigentes todavía.</p>`}</fieldset>
       <div class="fam-pick" id="famInts" aria-live="polite"></div>
@@ -119,6 +128,9 @@ function othersDir(id) { return new Set((rows || []).filter((r) => r.id !== id).
 function previewInts() {
   const form = document.getElementById("famForm"), box = document.getElementById("famInts"); if (!form || !box) return;
   const ints = derive(selectedDir(form).map((d) => d.uid), edJovenes, othersDir(form.dataset.id));
+  const sug = etapaSugerida(edJovenes, new Set(ints.map((j) => j.id))), sel = document.getElementById("famEtapa"), hint = document.getElementById("famEtapaHint");
+  if (sel && !sel.value && sug && !sel.dataset.touched) sel.value = sug;
+  if (hint) hint.textContent = sug ? `La mayoría de sus integrantes está en ${ETAPAS[sug][0]}.` : "";
   box.innerHTML = `<strong style="font-size:.9rem">Integrantes · ${ints.length}</strong>
     <div class="fam-chips" style="margin-top:6px">${ints.length ? ints.map((j) => `<span class="fam-chip" style="--fc:#1351a4">${esc(j.nombre)}</span>`).join("") : `<span class="xs muted">${selectedDir(form).length ? "Estos dirigentes aún no tienen jóvenes asignados." : "Elige uno o más dirigentes."}</span>`}</div>`;
 }
@@ -127,14 +139,15 @@ async function saveEditor(form) {
   const dirigentes = selectedDir(form);
   const integrantes = derive(dirigentes.map((d) => d.uid), edJovenes, othersDir(id));
   const nombre = String(new FormData(form).get("nombre") || "").trim().slice(0, 40);
+  const etapa = ETAPAS[form.elements.etapa?.value] ? form.elements.etapa.value : "";
   try {
     // un dirigente está en una sola familia: si estaba en otra, sale de ella
     const mine = new Set(dirigentes.map((d) => d.uid));
     for (const r of (rows || []).filter((r) => r.id !== id && (r.dirigentes || []).some((d) => mine.has(d.uid)))) {
       const dir = (r.dirigentes || []).filter((d) => !mine.has(d.uid));
-      await cloud.saveFamilia(r.id, { nombre: r.nombre || "", nombrePor: r.nombrePor || "", dirigentes: dir, integrantes: r.integrantes || [], uids: r.uids || [] });
+      await cloud.saveFamilia(r.id, { nombre: r.nombre || "", nombrePor: r.nombrePor || "", etapa: r.etapa || "", dirigentes: dir, integrantes: r.integrantes || [], uids: r.uids || [] });
     }
-    await cloud.saveFamilia(id, { nombre, nombrePor: "", dirigentes, integrantes, uids: uidsOf(dirigentes, integrantes) });
+    await cloud.saveFamilia(id, { nombre, nombrePor: "", etapa, dirigentes, integrantes, uids: uidsOf(dirigentes, integrantes) });
     document.getElementById("famDlg")?.close();
     rows = await cloud.listFamilias(); await sync(edJovenes);
     toast("Familia guardada 👨‍👩‍👧‍👦", "ok"); paint();
@@ -159,5 +172,8 @@ function registerActions() {
   };
   if (wired) return; wired = true;
   document.addEventListener("submit", (e) => { if (e.target.id === "famForm") { e.preventDefault(); saveEditor(e.target); } });
-  document.addEventListener("change", (e) => { if (e.target.name === "dir" && e.target.closest("#famForm")) previewInts(); });
+  document.addEventListener("change", (e) => {
+    if (e.target.name === "dir" && e.target.closest("#famForm")) previewInts();
+    if (e.target.id === "famEtapa") e.target.dataset.touched = "1";
+  });
 }

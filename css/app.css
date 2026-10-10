@@ -2742,3 +2742,7 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .fam-pick { border: 2px dashed var(--line, #c9d3e6); border-radius: 16px; padding: 10px 14px; display: grid; gap: 6px; max-height: 260px; overflow: auto; }
 .fam-pick legend { font-weight: 800; padding: 0 6px; }
 .fam-pick label { display: flex; gap: 8px; align-items: center; }
+.fam-etapa { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+.fam-et { display: inline-block; padding: 4px 12px; border-radius: 999px; background: var(--ec); color: #fff; font-weight: 800; font-size: .8rem; letter-spacing: .04em; }
+.fam-et[style*="#8ad2fa"] { color: #0b2566; }
+.fam-card .chip-link { background: #fff; color: #0b2566; padding: 5px 12px; font-size: .82rem; }
