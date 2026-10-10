@@ -63,6 +63,7 @@ const routes = [
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
   [/^\/encuentros$/, () => camino.viewHub(), "comunidad"],
   [/^\/encuentros\/([a-z]+)$/, (k) => camino.viewRevista(k), "comunidad"],
+  [/^\/encuentros\/([a-z]+)\/(\d+)$/, (k, n) => camino.viewRevista(k, null, n), "comunidad"],
   [/^\/archivo\/(\d{4})$/, async (y) => (await camino.viewHub(y)) ?? viewNotFound(), "materiales"],
   [/^\/archivo\/(\d{4})\/([a-z]+)$/, async (y, k) => (await camino.viewRevista(k, y)) ?? viewNotFound(), "materiales"],
   [/^\/comunidad$/, () => { location.replace("presentaciones/guia-de-servicio.html"); return null; }, "comunidad"],

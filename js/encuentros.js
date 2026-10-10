@@ -121,7 +121,7 @@ export async function viewHub(year) {
 // ---------------------------------------------------------------------------
 // Una revista  (#/encuentros/:k)
 // ---------------------------------------------------------------------------
-export async function viewRevista(k, year) {
+export async function viewRevista(k, year, nArg) {
   const d = await load(year);
   const r = REVISTAS[k];
   if (!r || !d) return null;
@@ -136,6 +136,8 @@ export async function viewRevista(k, year) {
       <button class="btn btn-primary" style="margin-top:16px" data-action="signIn">Ingresar</button></div>`;
   }
   if (sel.rev !== (year || "") + k) sel = { rev: (year || "") + k, n: 0 };
+  // Enlace directo a un encuentro (#/encuentros/ingreso/12), por ejemplo desde Nuestras familias
+  if (nArg != null && d.encuentros.some((e) => e.n === +nArg) && k !== "principal") sel.n = +nArg;
   const paged = k !== "principal";
   const front = cover(d, k) + (k === "principal" ? principalPages(d) : k === "coordinacion" ? guideIntro(d) : stageIntro(d, k));
   const body = paged ? d.tramos.map((t) => {

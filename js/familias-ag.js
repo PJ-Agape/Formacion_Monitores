@@ -13,11 +13,38 @@ const IDS = Array.from({ length: N }, (_, i) => `f${i + 1}`);
 const COLORS = ["#1351a4", "#ef591c", "#c98a00", "#2e8b57", "#7b4fc4", "#d6336c", "#0f8a8a", "#8a5a3c", "#3d7fd1", "#e48a68"];
 const SOFT = ["#e1f3fd", "#fde0d2", "#fff0c2", "#dcf3e4", "#ece3fa", "#fbe0ea", "#d8f2f2", "#efe3d6", "#dfeafb", "#fde8de"];
 const ETAPAS = { ingreso: ["Ingreso", "Etapa 1 · Bienvenido a casa", "#8ad2fa"], madurez: ["Madurez", "Etapa 2 · Mi fe en primera persona", "#1351a4"], aspirante: ["Aspirante", "Etapa 3 · Llamados a servir", "#ef591c"] };
-let rows = null, ctx = null;
+let rows = null, ctx = null, calData = null;
 // Etapa más común entre los integrantes (sugerencia al armar la familia)
 const etapaSugerida = (js, ids) => { const c = {}; (js || []).filter((j) => ids.has(j.id) && ETAPAS[j.etapa]).forEach((j) => { c[j.etapa] = (c[j.etapa] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || ""; };
 // La revista de la etapa: los jóvenes la leen en «Mi Camino»; el equipo, en Nuestra Revista
-const revistaHref = (e) => (st().isJoven ? "#/mi-camino" : `#/encuentros/${e}`);
+const revistaHref = (e, n) => (st().isJoven ? (n ? `#/mi-camino/${n}` : "#/mi-camino") : `#/encuentros/${e}${n ? "/" + n : ""}`);
+
+// Calendario de encuentros (data/encuentros.json): el encuentro de hoy, de esta semana o el próximo.
+let CAL = null;
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const fechaDe = (s) => { const m = String(s).match(/(\d+) de (\w+) de (\d{4})/); return m ? new Date(+m[3], MESES.indexOf(m[2]), +m[1]) : null; };
+async function loadCal() {
+  if (!CAL) CAL = fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json()).catch(() => { CAL = null; return null; });
+  return CAL;
+}
+function encuentroActual(d) {
+  if (!d) return null;
+  const hoy = new Date(); hoy.setHours(0, 0, 0, 0);
+  const list = (d.encuentros || []).map((e) => ({ ...e, date: fechaDe(e.fecha) })).filter((e) => e.date);
+  const e = list.find((x) => x.date >= hoy);
+  if (!e) return null; // terminó el año
+  const dias = Math.round((e.date - hoy) / 86400000);
+  return { e, total: list.length, cuando: dias === 0 ? "Hoy" : dias <= 6 ? "Esta semana" : "Próximo" };
+}
+function encHTML(f, cal) {
+  const a = encuentroActual(cal); if (!a) return "";
+  const { e } = a, x = (e.etapas || {})[f.etapa] || {};
+  const dm = `${e.date.getDate()} ${MESES[e.date.getMonth()].slice(0, 3)}`;
+  return `<a class="fam-enc" href="${revistaHref(f.etapa, e.n)}" style="--ec:${ETAPAS[f.etapa][2]}">
+    <span class="fam-enc-k">${a.cuando === "Hoy" ? `Hoy es el encuentro N° ${e.n} del año` : `${a.cuando} · encuentro N° ${e.n} del año · ${esc(dm)}`}</span>
+    <b>${esc(x.titulo || e.tema)}</b>
+    <span class="fam-enc-l">📰 Abrir en la Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</span></a>`;
+}
 
 export function setup(c) { ctx = c; registerActions(); }
 const corto = (n) => { const p = String(n || "").trim().split(/\s+/); return p.length > 1 ? `${p[0]} ${p[1][0].toUpperCase()}.` : p[0] || ""; };
@@ -68,7 +95,8 @@ export function view() {
 
 async function paint() {
   const box = document.getElementById("famGrid"); if (!box) return;
-  rows = await cloud.listFamilias();
+  const [r0, cal] = await Promise.all([cloud.listFamilias(), loadCal()]);
+  rows = r0; calData = cal;
   if (rows && st().isStaff && (await sync())) rows = await cloud.listFamilias();
   if (rows === null) { box.innerHTML = `<div class="note">No se pudieron cargar las familias. Revisa tu conexión.</div>`; return; }
   const by = Object.fromEntries(rows.map((r) => [r.id, r]));
@@ -85,7 +113,7 @@ function card(f) {
     <div class="fam-top"><span class="fam-n">${f.i + 1}</span>${yo ? `<span class="fam-yo">Tu familia</span>` : ""}
       ${st().isStaff ? `<button class="fam-edit" data-action="famEdit" data-id="${f.id}" aria-label="Armar la familia ${f.i + 1}">${icon("edit")}</button>` : ""}</div>
     <h3 class="fam-name">${f.nombre ? esc(f.nombre) : `<span class="muted">Familia ${f.i + 1}</span>`}</h3>
-    ${ETAPAS[f.etapa] ? `<div class="fam-etapa"><span class="fam-et" style="--ec:${ETAPAS[f.etapa][2]}">${esc(ETAPAS[f.etapa][0])}</span><a class="chip-link" href="${revistaHref(f.etapa)}">📰 Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</a></div>` : ""}
+    ${ETAPAS[f.etapa] ? `<div class="fam-etapa"><span class="fam-et" style="--ec:${ETAPAS[f.etapa][2]}">${esc(ETAPAS[f.etapa][0])}</span><a class="chip-link" href="${revistaHref(f.etapa)}">📰 Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</a></div>${encHTML(f, calData)}` : ""}
     ${!f.nombre ? `<p class="xs muted">${mine(f) ? "Aún no tiene nombre: ¡pónganle uno entre todos!" : st().isStaff ? "Aún no tiene nombre. Ármala con el lápiz." : "Aún no tiene nombre."}</p>` : ""}
     ${mine(f) ? `<form class="fam-nf" data-id="${f.id}" onsubmit="return false"><input class="input" maxlength="40" placeholder="Nombre de la familia" value="${esc(f.nombre || "")}" aria-label="Nombre de la familia ${f.i + 1}"><button class="btn btn-sm btn-soft" data-action="famName" data-id="${f.id}">Guardar</button></form>` : ""}
     <div class="fam-sec"><span class="fam-k">Dirigente${dir.length === 1 ? "" : "s"} a cargo</span>
