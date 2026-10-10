@@ -28,6 +28,7 @@ import * as grupo from "./grupo.js";
 import * as inicio from "./inicio.js";
 import * as novedades from "./novedades.js";
 import * as papa from "./papa.js";
+import * as familiasAg from "./familias-ag.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -75,6 +76,7 @@ const routes = [
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
+  [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
   [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); }); return inicio.viewRed(); }, "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
@@ -183,7 +185,7 @@ const NAV = [
   ["oracion", "#/oracion", "Espiritualidad", "flame"],
 ];
 // Cada sección se marca en su bloque
-const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", agenda: "red", comunidad: "formacion", difusion: "formacion", pasaporte: "red", acompanar: "red" };
+const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", agenda: "red", comunidad: "formacion", difusion: "formacion", pasaporte: "red", acompanar: "red", familiasag: "red" };
 const navFor = () => NAV;
 // Franja «Ver como…» (solo equipo): recuerda que es una vista de prueba y cómo volver.
 const VER_COMO = [["visitante", "Visitante sin cuenta"], ["ingreso", "Joven · Ingreso"], ["madurez", "Joven · Madurez"], ["aspirante", "Aspirante"], ["dirigente", "Dirigente"], ["coordinador", "Coordinador"]];
@@ -1365,6 +1367,7 @@ ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);
+familiasAg.setup({ actions, onAfterRender });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

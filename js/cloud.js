@@ -692,6 +692,13 @@ export const saveJoven = saveIn("jovenes");
 export const patchJoven = (id, data) => fb.updateDoc(fb.doc(db, "jovenes", id), data);
 export const deleteJoven = (id) => fb.deleteDoc(fb.doc(db, "jovenes", id));
 export const listJovenes = () => all("jovenes");
+// Nuestras familias: 10 grupos (familias/f1..f10). El equipo los arma; sus integrantes eligen el nombre.
+export async function listFamilias() {
+  if (!enabled || !db) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "familias")), 8000)); } catch { return null; }
+}
+export const saveFamilia = (id, data) => fb.setDoc(fb.doc(db, "familias", id), { ...data, updatedAt: fb.serverTimestamp() });
+export const nombrarFamilia = (id, nombre) => fb.updateDoc(fb.doc(db, "familias", id), { nombre, nombrePor: account ? account.name || "" : "", updatedAt: fb.serverTimestamp() });
 // Grupo de WhatsApp de la app (privado/whatsapp): lo ven solo cuentas activas; lo edita el equipo.
 let waCache;
 export async function getGrupoWA(force) {

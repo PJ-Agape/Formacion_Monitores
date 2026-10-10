@@ -54,8 +54,8 @@ const ITEMS = [
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta", ok: () => true },
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido", ok: () => true },
   { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true },
-  { b: "red", e: "👥", t: "Nuestros grupos", d: "Familias y comunidades: tu pasaporte y la asistencia de cada encuentro.", href: "#/pasaporte", kw: "grupos familias comunidades", ok: (w) => w.cuenta && cloud.enabled,
-    links: [["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
+  { b: "red", e: "👨‍👩‍👧‍👦", t: "Nuestras familias", d: "Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.", href: "#/nuestras-familias", kw: "grupos familias comunidades equipos nombre", ok: (w) => w.cuenta && cloud.enabled,
+    links: [["👨‍👩‍👧‍👦 Ver las familias", "#/nuestras-familias"], ["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
   { b: "red", e: "🛂", t: "Mi pasaporte", d: "Tus encuentros, tu racha y tus sellos.", href: "#/pasaporte", kw: "pasaporte sellos racha asistencia", ok: (w) => w.cuenta && cloud.enabled, hub: false },
   { b: "red", e: "🤝", t: "Asistencia", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled, hub: false },
   // El equipo encuentra la difusión y la guía de servicio en Materiales; los jóvenes (sin Materiales) siguen viendo la difusión aquí.

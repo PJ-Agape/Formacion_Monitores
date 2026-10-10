@@ -294,6 +294,17 @@ service cloud.firestore {
 
     // Contador de visitas anónimo: una visita por dispositivo y día (v total, c con cuenta, g visitantes).
     // Cualquiera suma 1; solo el equipo lo lee. No guarda datos personales.
+    // Nuestras familias: 10 grupos pequeños (f1..f10). Los ven quienes tienen cuenta.
+    // El equipo arma cada familia; sus integrantes y dirigentes (uids) solo pueden cambiarle el nombre.
+    match /familias/{fid} {
+      allow read: if isMember();
+      allow create, update: if isStaff() && fid.matches('^f([1-9]|10)$')
+        && request.resource.data.get('nombre', '') is string && request.resource.data.get('nombre', '').size() <= 40;
+      allow update: if isMember() && request.auth.uid in resource.data.get('uids', [])
+        && changed().hasOnly(['nombre', 'nombrePor', 'updatedAt'])
+        && validText(request.resource.data.nombre, 40);
+      allow delete: if isStaff();
+    }
     // Rosarios por la intención del Papa: contador público por mes; quienes tienen cuenta suman de a uno.
     match /rosarios/{mes} {
       allow read: if true;
