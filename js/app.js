@@ -290,9 +290,10 @@ function viewHome() {
       ${illus("apostoles", "car-illus")}
     </article>`;
   const carousel = () => {
-    const slides = portada.current();
+    const slides = [...portada.current()];
+    if (papa.enCarrusel()) slides.splice(Math.min(1, slides.length), 0, { papa: true, label: "Con el Papa" });
     return `<section class="carousel" id="homeCarousel" aria-roledescription="carrusel" aria-label="Bienvenida">
-    <div class="car-track" id="carTrack">${slides.map((x) => (x.course ? courseSlide : portada.slideHTML(x))).join("")}</div>
+    <div class="car-track" id="carTrack">${slides.map((x) => (x.papa ? papa.slideHTML() : x.course ? courseSlide : portada.slideHTML(x))).join("")}</div>
     ${slides.length > 1 ? `<div class="car-ctrl">
       <button class="icon-btn" data-action="carGo" data-d="-1" aria-label="Anterior">${icon("left")}</button>
       <div class="car-dots" role="tablist">${slides.map((x, i) => `<button role="tab" aria-label="${esc((x.label || x.title || "").replace(/\*/g, ""))}" data-action="carTo" data-i="${i}" class="${i ? "" : "on"}"></button>`).join("")}</div>
@@ -307,7 +308,11 @@ function viewHome() {
   }));
   onAfterRender(startCarousel);
 
-  onAfterRender(() => papa.paintHome());
+  onAfterRender(() => papa.paintHome().then((r) => {
+    // si el equipo la ocultó (o la apagó en Gestión), se rehace el carrusel sin ella
+    const has = !!document.querySelector(".papa-slide");
+    if (r && has !== (r.on && !!r.it)) { const el = document.getElementById("homeCarousel"); if (el) { el.outerHTML = carousel(); startCarousel(); papa.paintHome(); } }
+  }));
   onAfterRender(async () => {
     const list = cuenta.pickAll(await cloud.listAgenda(), 3);
     const slot = document.getElementById("countSlot");
@@ -319,7 +324,6 @@ function viewHome() {
   ${inicio.greetHTML()}
   <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
-  ${papa.homeHTML()}
   <div id="agendaSlot" style="margin-top:16px"></div>
   ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>

@@ -4,6 +4,7 @@
 
 import * as cloud from "./cloud.js";
 import { esc, toast } from "./util.js";
+import { illus } from "./ilustraciones.js";
 
 // Intenciones 2026 del papa León XIV (popesprayer.va). Título y texto de cada mes.
 const INT = {
@@ -38,26 +39,32 @@ export function intencion(k = mesKey()) {
 }
 const on = () => !cfg || cfg.on !== false;
 
-// Tarjeta para Inicio
-export function homeHTML() { return `<div id="papaSlot"></div>`; }
+// Diapositiva del carrusel de Inicio: se arma sola con la intención del mes (y el texto del equipo, si lo cambió).
+export const enCarrusel = () => on() && !!intencion();
+export function slideHTML() {
+  const it = intencion(); if (!it) return "";
+  const member = cloud.state().ready;
+  return `<article class="car-slide papa-slide" data-theme-c="rose" aria-roledescription="diapositiva">
+      <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
+      <div class="car-body">
+        <span class="eyebrow">🌍 Con el Papa · ${esc(it.mes)}</span>
+        <span class="car-hand">recemos con la Iglesia</span>
+        <h2 class="car-title" id="papaT0">${esc(it.t)}</h2>
+        <p class="lead papa-lead" id="papaX0" data-action="papaLead" title="Toca para leer completa">${esc(it.x)}</p>
+        <p class="papa-sn"><b id="papaN">·</b> <span id="papaNl">rosarios rezados este mes</span></p>
+        <div class="actions"><a class="btn btn-gold" href="#/oracion/rosario">📿 Rezar el Rosario</a>${member ? `<button class="btn btn-ghost" data-action="papaSumar">✔ Ya recé uno</button>` : ""}</div>
+      </div>
+      ${illus("juanpablo", "car-illus")}
+    </article>`;
+}
+// Completa el número (y el texto del equipo) una vez que llegan los datos
 export async function paintHome() {
-  const slot = document.getElementById("papaSlot"); if (!slot) return;
   await load(); const it = intencion();
-  if (!on() || !it) { slot.innerHTML = ""; return; }
-  count = await cloud.rosariosMes(it.k);
-  if (count === null) { slot.innerHTML = ""; return; } // sin conexión o sin permiso de lectura: no se muestra
-  const n = count || 0, meta = +(cfg && cfg.meta) || 0, member = cloud.state().ready;
-  slot.innerHTML = `<section class="card papa-card">
-    <div class="papa-top"><span class="papa-k">🌍 Con el Papa · ${esc(it.mes)}</span></div>
-    <h3>${esc(it.t)}</h3>
-    <p class="papa-x" id="papaX0">${esc(it.x)}</p>
-    <button type="button" class="papa-more" data-action="papaMore" aria-controls="papaX0" aria-expanded="false">Leer completa</button>
-    <div class="papa-n"><b id="papaN">${n}</b><span>${n === 1 ? "rosario rezado" : "rosarios rezados"} por esta intención${n ? " hasta hoy" : ". ¡Sé el primero!"}</span></div>
-    ${meta ? `<div class="papa-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${meta}" aria-valuenow="${n}"><i style="width:${Math.min(100, (n / meta) * 100)}%"></i></div><p class="xs muted">Meta del mes: ${meta} rosarios</p>` : ""}
-    <div class="row-wrap" style="gap:8px;margin-top:12px">
-      <a class="btn btn-gold btn-sm" href="#/oracion/rosario">📿 Rezar el Rosario</a>
-      ${member ? `<button class="btn btn-soft btn-sm" data-action="papaSumar">✔ Ya recé uno</button>` : `<span class="xs muted">Para sumar tu rosario, ingresa con tu cuenta.</span>`}
-    </div></section>`;
+  const n = it ? await cloud.rosariosMes(it.k) : null;
+  const t = document.getElementById("papaT0"), x = document.getElementById("papaX0"), nb = document.getElementById("papaN"), nl = document.getElementById("papaNl");
+  if (it && t) { t.textContent = it.t; x.textContent = it.x; }
+  if (nb) { nb.textContent = n === null ? "" : String(n); if (nl) nl.textContent = n === null ? "Reza un Rosario por esta intención" : n === 1 ? "rosario rezado este mes" : n ? "rosarios rezados este mes" : "rosarios este mes: ¡sé el primero!"; }
+  return { on: on(), it };
 }
 
 // Sumar un rosario (desde Inicio o al terminar el Rosario en la app). Un toque cada 15 minutos por dispositivo.
@@ -93,6 +100,7 @@ export async function adminHTML() {
 }
 
 export function registerActions(actions) {
+  actions.papaLead = (el) => { el.classList.toggle("open"); document.getElementById("homeCarousel")?.dispatchEvent(new Event("mouseenter")); }; // pausa el carrusel mientras se lee
   actions.papaMore = (el) => { const x = document.getElementById("papaX0"); if (!x) return; const open = x.classList.toggle("open"); el.textContent = open ? "Mostrar menos" : "Leer completa"; el.setAttribute("aria-expanded", String(open)); };
   actions.papaSumar = async (el) => { const ok = await sumar(); if (ok && el && el.classList.contains("papa-ros")) { el.disabled = true; el.textContent = "✔ Sumado a la intención del Papa"; } };
   actions.papaSave = async () => {

@@ -2674,3 +2674,14 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .home-news .car-ctrl .icon-btn { width: 32px; height: 32px; min-width: 0; padding: 0; }
 @media (max-width: 760px) { .home-news .car-slide { flex-direction: row; } .home-news .car-body { max-width: 70%; } }
 .home-news .car-slide .eyebrow { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: .68rem; }
+.papa-sn { margin-top: 8px; font-weight: 700; font-size: .92rem; display: flex; align-items: baseline; gap: 8px; }
+.papa-sn b { font-family: var(--font-display, inherit); font-size: 2rem; line-height: 1; color: #ef591c; font-variant-numeric: tabular-nums; }
+.home-news .papa-slide .actions .btn + .btn { display: inline-flex; }
+.home-news .papa-slide .car-title { font-size: clamp(1.45rem, 5.4vw, 2.3rem); line-height: .95; }
+.home-news .papa-slide .lead.open { -webkit-line-clamp: unset; display: block; }
+.papa-lead { cursor: pointer; }
+.home-news .papa-slide .car-hand { display: none; }
+.home-news .papa-slide .papa-sn { margin-top: 4px; font-size: .84rem; }
+.home-news .papa-slide .papa-sn b { font-size: 1.6rem; }
+.home-news .papa-slide .actions { flex-wrap: nowrap; }
+.home-news .papa-slide .actions .btn { white-space: nowrap; padding: 7px 12px; font-size: .82rem; }
