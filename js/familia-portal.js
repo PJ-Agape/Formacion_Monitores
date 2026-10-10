@@ -9,6 +9,7 @@ import { illus } from "./ilustraciones.js";
 import { svg as avatarSvg } from "./avatares.js";
 import { IDS, COLORS, SOFT, ETAPAS, corto, revistaHref, loadCal, fechaDe, MESES } from "./familias-ag.js";
 import * as reg from "./familias-registro.js";
+import * as evalua from "./evaluacion.js";
 
 let ctx = null;
 export function setup(c) { ctx = c; registerActions(); }
@@ -98,7 +99,12 @@ function inicioHTML(f) {
   const ev = eventos(hoyIso()).slice(0, 3);
   const posts = [...(muro || [])].sort((a, b) => tsMs(b.createdAt) - tsMs(a.createdAt)).slice(0, 2);
   const int = f.integrantes || [];
-  return `
+  // Evaluación: el último encuentro, durante la semana siguiente (solo integrantes jóvenes)
+  const hoyT = dIso(hoyIso()).getTime();
+  const ult = cal ? (cal.encuentros || []).map((x) => ({ ...x, date: fechaDe(x.fecha) })).filter((x) => x.date && x.date.getTime() <= hoyT && hoyT - x.date.getTime() <= 6 * 86400000).pop() : null;
+  const evSlot = ult && mine(f) && !st().isGuide ? `<div class="ev-slot" data-ev-fid="${f.id}" data-ev-n="${ult.n}" data-ev-year="${esc(String(cal.year || ult.date.getFullYear()))}" data-ev-tema="${esc(((ult.etapas || {})[f.etapa] || {}).titulo || ult.tema)}"></div>` : "";
+  setTimeout(() => evalua.mount(), 0);
+  return `${evSlot}
   ${e ? `<a class="fam-enc fp-enc" href="${ETAPAS[f.etapa] ? revistaHref(f.etapa, e.n) : "#/encuentros"}" style="--ec:${ETAPAS[f.etapa] ? ETAPAS[f.etapa][2] : "#1351a4"}">
     <span class="fam-enc-k">${e.date.getTime() === dIso(hoyIso()).getTime() ? "Hoy" : "Próximo"} · encuentro N° ${e.n} del año · ${esc(diaLargo(iso(e.date)))}</span>
     <b>${esc(x.titulo || e.tema)}</b><span class="fam-enc-l">📰 ${ETAPAS[f.etapa] ? `Abrir en la Revista ${esc(ETAPAS[f.etapa][0])}` : "Ver la revista"} ${icon("right")}</span></a>` : ""}

@@ -4,6 +4,7 @@
 // Antes del encuentro solo se ve el tema y el Evangelio (las dinámicas son sorpresa);
 // al marcar «Ya viví este encuentro» se abren la frase, las preguntas y el desafío.
 
+import * as evalua from "./evaluacion.js";
 import { esc, icon, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
 import * as a11y from "./accesible.js";
@@ -131,6 +132,7 @@ export async function view(nArg) {
           <textarea class="textarea" rows="2" data-mcnote="${esc(`${et}:${e.n}`)}" data-qi="${k}" placeholder="Escribe aquí…">${esc(notes[k] || "")}</textarea></label>`).join("")}</div>` : ""}
         ${x.desafio ? `<div class="mc-reto"><span class="eyebrow">🎯 Tu desafío de la semana</span><p>${esc(x.desafio)}</p>
           ${st().ready ? `<button class="btn btn-gold btn-sm" data-action="mcReto" data-n="${e.n}">¡Lo cumplí!</button>` : ""}</div>` : ""}
+        ${st().ready ? `<div class="ev-slot" data-ev-n="${e.n}" data-ev-year="${esc(String(d.year || e.date.getFullYear()))}" data-ev-tema="${esc(e.tema)}"></div>` : ""}
         <button class="btn btn-ghost btn-sm" data-action="mcVivido" data-n="${e.n}" data-on="0">Desmarcar «ya lo viví»</button>`
       : `<div class="mc-gate"><p>${isCur ? "¿Ya fuiste al encuentro de esta semana?" : "¿Viviste este encuentro?"} Al marcarlo se abren la frase para llevar, las preguntas para pensar y tu desafío.</p>
           <button class="btn btn-primary" data-action="mcVivido" data-n="${e.n}" data-on="1">${icon("check")} Ya viví este encuentro</button></div>`}
@@ -141,6 +143,7 @@ export async function view(nArg) {
     return `<a class="mc-dot ${o ? "open" : "lock"} ${v ? "done" : ""} ${i === idx ? "sel" : ""}" ${o ? `href="#/mi-camino/${y.n}"` : ""} title="${esc(`Encuentro ${y.n}: ${y.tema}`)}">
       <b>${y.n}</b><span>${o ? esc(((y.etapas || {})[et] || {}).titulo || y.tema) : esc(`${y.date.getDate()} ${MESES[y.date.getMonth()].slice(0, 3)}`)}</span>${v ? "✓" : o ? "" : icon("lock")}</a>`;
   }).join("")}</div>`;
+  if (ctx.onAfterRender) ctx.onAfterRender(() => evalua.mount());
   return `${head}${progress}${nArg == null ? endCard : ""}${card}
     <div class="row-wrap" style="margin-top:12px">${idx > 0 ? `<a class="btn btn-ghost btn-sm" href="#/mi-camino/${list[idx - 1].n}">${icon("left")} Anterior</a>` : ""}
       ${idx < cur ? `<a class="btn btn-ghost btn-sm" href="#/mi-camino/${list[idx + 1].n}">Siguiente ${icon("right")}</a>` : ""}

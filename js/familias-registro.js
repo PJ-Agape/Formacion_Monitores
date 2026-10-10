@@ -7,6 +7,7 @@
 import * as cloud from "./cloud.js";
 import { esc, icon, toast, download } from "./util.js";
 import { autoSellos, SELLOS } from "./acompanar.js";
+import * as evalua from "./evaluacion.js";
 import { IDS, COLORS, SOFT, ETAPAS, corto, revistaHref, loadCal, fechaDe, MESES } from "./familias-ag.js";
 
 let ctx = null;
@@ -140,8 +141,15 @@ function encBox(f, fecha) {
     <h3>${esc(x.titulo || e.tema)}</h3><p class="small muted">Tema del grupo: <b>${esc(e.tema)}</b> · 📖 ${esc(e.evangelio?.ref || "")}</p>
     ${et ? `<a class="chip-link" href="${revistaHref(f.etapa, e.n)}">📰 Abrir en la Revista ${esc(et[0])} ${icon("right")}</a>` : `<span class="xs muted">Define la etapa de la familia para enlazar su revista.</span>`}</div>`;
 }
+function paintEval(f, fecha) {
+  const e = encDe(fecha), year = (D.cal && D.cal.year) || (e && e.date.getFullYear());
+  if (!e) return;
+  evalua.results(f.id, year, e.n).then((rows) => { const b = document.getElementById("frEval"); if (b && sel.fecha === fecha) b.innerHTML = evalua.resultsHTML(rows); })
+    .catch(() => { const b = document.getElementById("frEval"); if (b) b.innerHTML = `<p class="muted small">No se pudieron cargar las evaluaciones.</p>`; });
+}
 function paintFam() {
   const box = document.getElementById("frBody"); if (!box) return;
+  setTimeout(() => paintEval(famOf(sel.fid), sel.fecha), 0);
   if (!D.ok) { box.innerHTML = `<div class="note">No se pudo cargar la asistencia. Revisa tu conexión.</div>`; return; }
   const f = famOf(sel.fid), fecha = sel.fecha, c = COLORS[f.i], soft = SOFT[f.i];
   const cr = document.getElementById("frCrumb"); if (cr) cr.textContent = famNombre(f);
@@ -170,6 +178,7 @@ function paintFam() {
         <p class="xs muted">Toca un nombre para ver su pasaporte.</p>`
       : `<p class="muted small">${futuro ? "Este encuentro aún no llega." : "Ese día no se pasó lista."}</p>`}
   </section>
+  ${encDe(fecha) ? `<section class="card"><h2 class="fr-h">⭐ Evaluación del encuentro N° ${encDe(fecha).n}</h2><div id="frEval"><p class="muted small">Cargando…</p></div></section>` : ""}
   <section class="card"><h2 class="fr-h">🏆 Cuadro de honor · ${MESES[hm - 1]} ${hy}</h2>
     ${hon.length ? `<div class="honor-list">${hon.map((x) => `<a class="honor-i" href="${pasaporte(x.j)}"><div style="flex:1"><b>${esc(corto(x.j.nombre))}</b>
       <span class="honor-m">${x.perfect ? `<span class="chip ok">🎯 Asistencia perfecta</span>` : ""}${x.nuevos.map((k) => `<span class="chip">${(SELLO[k] || {}).e || ""} ${esc((SELLO[k] || {}).l || k)}</span>`).join("")}</span></div></a>`).join("")}</div>`
@@ -226,7 +235,8 @@ function paintReg() {
     ${years.length > 1 ? `<select class="select" id="frYear" style="width:auto">${years.map((y) => `<option ${y === regYear ? "selected" : ""}>${y}</option>`).join("")}</select>` : `<span class="chip">${esc(regYear)}</span>`}
     <span class="spacer"></span>
     <button class="btn btn-sm btn-soft" data-action="frCsvJ">${icon("dl")} Planilla por joven</button>
-    <button class="btn btn-sm btn-soft" data-action="frCsvE">${icon("dl")} Resumen por encuentro</button></div>
+    <button class="btn btn-sm btn-soft" data-action="frCsvE">${icon("dl")} Resumen por encuentro</button>
+    <button class="btn btn-sm btn-soft" data-action="frCsvEv">${icon("dl")} Evaluaciones</button></div>
   ${!dates.length ? `<div class="card" style="text-align:center;padding:26px"><p class="muted">Aún no hay listas registradas en ${esc(regYear)}. Se pasa lista desde cada familia o en Acompañar.</p></div>` : `
   <section class="fr-kpis">
     <div class="card"><span class="fam-k">Asistencia promedio</span><b class="fr-big">${gen ?? "–"}%</b><span class="xs muted">${encStats.length} encuentros con lista</span></div>
@@ -288,6 +298,14 @@ function registerActions() {
   };
   A.frCsvFam = () => { const f = famOf(sel.fid), dates = sesIds(); download(`asistencia-${slugF(famNombre(f))}.csv`, csv(filasJovenes([f], dates)), "text/csv;charset=utf-8"); };
   A.frCsvJ = () => download(`asistencia-por-joven-${regYear}.csv`, csv(filasJovenes(famsList(), datesYear(regYear))), "text/csv;charset=utf-8");
+  A.frCsvEv = async (el) => {
+    el.disabled = true;
+    try {
+      const fams = await Promise.all(famsList().map(async (f) => ({ f, rows: (await cloud.listFamEvals(f.id).catch(() => [])) || [] })));
+      download(`evaluaciones-encuentros.csv`, csv(evalua.csvRows(fams, D.cal)), "text/csv;charset=utf-8");
+    } catch { toast("No se pudo preparar la planilla", ""); }
+    el.disabled = false;
+  };
   A.frCsvE = () => download(`asistencia-por-encuentro-${regYear}.csv`, csv(filasEncuentros(famsList(), datesYear(regYear))), "text/csv;charset=utf-8");
   document.addEventListener("change", (e) => {
     if (e.target.dataset && e.target.dataset.frsel === "frGo") A.frGo({ dataset: { f: e.target.value } });

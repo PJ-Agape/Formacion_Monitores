@@ -2846,3 +2846,22 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .fp-opt.ill svg { width: 100%; height: 100%; }
 .fp-opt input:checked + span { border-color: #ef591c; box-shadow: 0 0 0 3px #ffba03; }
 .fp-opt input:focus-visible + span { outline: 3px solid #1351a4; }
+/* Evaluación de los encuentros */
+.ev-card { display: grid; gap: 10px; margin: 0 0 12px; border-left: 6px solid #ffba03; }
+.ev-card h3 { margin: 0; font-size: 1.1rem; }
+.ev-qs { margin: 0; padding-left: 1.2rem; display: grid; gap: 10px; }
+.ev-qs li { display: flex; flex-wrap: wrap; gap: 6px 10px; align-items: center; justify-content: space-between; }
+.ev-qs li > span:first-child { flex: 1 1 180px; font-weight: 600; }
+.ev-yn { display: inline-flex; gap: 6px; }
+.ev-yn input { position: absolute; opacity: 0; pointer-events: none; }
+.ev-yn span { display: inline-block; padding: 6px 12px; border-radius: 999px; border: 2px solid rgba(11,37,102,.15); cursor: pointer; font-weight: 700; font-size: .9rem; background: #fff; }
+.ev-yn input:checked + span { background: #0b2566; color: #fff; border-color: #0b2566; }
+.ev-yn input:focus-visible + span { outline: 3px solid #ffba03; }
+.ev-cnt { justify-self: end; }
+.ev-res { list-style: none; padding: 0; margin: 6px 0 12px; display: grid; gap: 10px; }
+.ev-res li { display: grid; grid-template-columns: 1fr auto; gap: 2px 10px; align-items: center; }
+.ev-res li > span:first-child { grid-column: 1 / -1; font-size: .9rem; }
+.ev-bar { height: 10px; border-radius: 999px; background: rgba(11,37,102,.08); overflow: hidden; }
+.ev-bar i { display: block; height: 100%; background: linear-gradient(90deg, #ffba03, #ef591c); border-radius: inherit; }
+.ev-res small { grid-column: 1 / -1; opacity: .65; font-size: .75rem; }
+.ev-coms { margin: 4px 0 0; padding-left: 1.1rem; display: grid; gap: 6px; font-size: .9rem; }

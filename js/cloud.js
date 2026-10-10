@@ -711,6 +711,9 @@ export const postFamMuro = (fid, texto) => fb.setDoc(fb.doc(famCol(fid, "muro"))
 export const likeFamMuro = (fid, pid, on) => toggleMark(["familias", fid, "muro", pid], "likes", on);
 export const deleteFamMuro = (fid, pid) => fb.deleteDoc(fb.doc(db, "familias", fid, "muro", pid));
 export const saveFamEvento = (fid, id, data) => fb.setDoc(id ? fb.doc(db, "familias", fid, "agenda", id) : fb.doc(famCol(fid, "agenda")), { ...data, porUid: user.uid, porNombre: shortName(account.name), updatedAt: fb.serverTimestamp() });
+export async function getFamEval(fid, id) { const s = await fb.getDoc(fb.doc(db, "familias", fid, "evals", id)); return s.exists() ? s.data() : null; }
+export const saveFamEval = (fid, id, data) => fb.setDoc(fb.doc(db, "familias", fid, "evals", id), { ...data, at: fb.serverTimestamp() });
+export const listFamEvals = (fid) => fb.getDocs(famCol(fid, "evals")).then(snapRows);
 export const deleteFamEvento = (fid, id) => fb.deleteDoc(fb.doc(db, "familias", fid, "agenda", id));
 export const nombrarFamilia = (id, nombre) => fb.updateDoc(fb.doc(db, "familias", id), { nombre, nombrePor: account ? account.name || "" : "", updatedAt: fb.serverTimestamp() });
 // Grupo de WhatsApp de la app (privado/whatsapp): lo ven solo cuentas activas; lo edita el equipo.

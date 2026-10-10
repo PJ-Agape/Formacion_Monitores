@@ -31,6 +31,7 @@ import * as papa from "./papa.js";
 import * as familiasAg from "./familias-ag.js";
 import * as famReg from "./familias-registro.js";
 import * as famPortal from "./familia-portal.js";
+import * as evalua from "./evaluacion.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -1369,7 +1370,7 @@ dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 difusion.setup({ actions, onAfterRender });
 viva.setup({ actions, render: () => render(), onLeave, S });
-camJ.setup({ actions, render: () => render(), cloud, S });
+camJ.setup({ actions, render: () => render(), cloud, S, onAfterRender });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
@@ -1377,6 +1378,7 @@ papa.registerActions(actions);
 familiasAg.setup({ actions, onAfterRender });
 famReg.setup({ actions, onAfterRender });
 famPortal.setup({ actions, onAfterRender, onLeave });
+evalua.setup({ actions });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

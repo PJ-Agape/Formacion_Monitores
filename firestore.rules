@@ -328,6 +328,19 @@ service cloud.firestore {
           && request.resource.data.porUid == request.auth.uid;
         allow delete: if famMod();
       }
+      // Evaluación de cada encuentro: 5 respuestas sí/no y un comentario de hasta 150 caracteres.
+      // Cada integrante escribe la suya ({año}-{n}-{uid}); la familia la ven sus dirigentes y el equipo.
+      match /evals/{eid} {
+        allow read: if famMod() || (signedIn() && resource.data.uid == request.auth.uid);
+        allow create, update: if inFam() && request.resource.data.uid == request.auth.uid
+          && eid == string(request.resource.data.year) + '-' + string(request.resource.data.n) + '-' + request.auth.uid
+          && request.resource.data.keys().hasOnly(['n', 'year', 'r', 'c', 'uid', 'at'])
+          && request.resource.data.n is int && request.resource.data.year is int
+          && request.resource.data.r is list && request.resource.data.r.size() == 5
+          && request.resource.data.c is string && request.resource.data.c.size() <= 150
+          && request.resource.data.at == request.time;
+        allow delete: if isStaff();
+      }
     }
     // Rosarios por la intención del Papa: contador público por mes; quienes tienen cuenta suman de a uno.
     match /rosarios/{mes} {
