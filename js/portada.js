@@ -122,7 +122,7 @@ export function slideHTML(x) {
         ${x.kicker ? `<span class="eyebrow">${esc(x.kicker)}</span>` : ""}
         ${x.hand ? `<span class="car-hand">${esc(x.hand)}</span>` : ""}
         <h2 class="car-title">${titleHTML(x.title)}</h2>
-        ${x.text ? `<p class="lead">${esc(x.text)}</p>` : ""}
+        ${x.text ? `<p class="lead">${esc(x.text)}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>` : ""}
         ${chips.length ? `<div class="car-chips">${chips.map((c) => `<span>${esc(c)}</span>`).join("")}</div>` : ""}
         <div class="actions">${btn(x.b1, true)}${btn(x.b2, false)}</div>
       </div>

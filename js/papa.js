@@ -50,7 +50,7 @@ export function slideHTML() {
         <span class="eyebrow">🌍 Con el Papa · ${esc(it.mes)}</span>
         <span class="car-hand">recemos con la Iglesia</span>
         <h2 class="car-title" id="papaT0">${esc(it.t)}</h2>
-        <p class="lead papa-lead" id="papaX0" data-action="papaLead" title="Toca para leer completa">${esc(it.x)}</p>
+        <p class="lead" id="papaX0">${esc(it.x)}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
         <p class="papa-sn"><b id="papaN">·</b> <span id="papaNl">rosarios rezados este mes</span></p>
         <div class="actions"><a class="btn btn-gold" href="#/oracion/rosario">📿 Rezar el Rosario</a>${member ? `<button class="btn btn-ghost" data-action="papaSumar">✔ Ya recé uno</button>` : ""}</div>
       </div>

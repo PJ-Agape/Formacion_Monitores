@@ -278,7 +278,7 @@ function viewHome() {
       <div class="car-body">
         <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Curso de formación de dirigentes</span>
         <h2 class="car-title">${heroTitle(course.title)}</h2>
-        <p class="lead">${esc(course.description)}</p>
+        <p class="lead">${esc(course.description)}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
         <div class="actions">
           <a class="btn btn-gold" href="${nx.href}" ${nx.quiz != null ? `data-action="goQuiz" data-phase="${nx.quiz}"` : ""}>${esc(nx.label)} ${icon("arrowR")}</a>
         </div>
@@ -348,6 +348,8 @@ function startCarousel() {
   };
   const play = () => { clearInterval(carTimer); if (!reduce && n > 1) carTimer = setInterval(() => { if (!document.getElementById("carTrack")) return clearInterval(carTimer); show(carI + 1); }, 7000); };
   actions.carGo = (el) => { show(carI + +el.dataset.d); play(); };
+  // «Leer más» en una diapositiva: abre el texto completo y detiene el carrusel mientras se lee
+  actions.carLead = (el) => { const p = el.previousElementSibling; if (!p) return; const o = p.classList.toggle("open"); el.textContent = o ? "Mostrar menos" : "Leer más"; clearInterval(carTimer); if (!o) play(); };
   actions.carTo = (el) => { show(+el.dataset.i); play(); };
   const box = track.parentElement;
   box.onmouseenter = () => clearInterval(carTimer);
@@ -357,6 +359,8 @@ function startCarousel() {
   box.addEventListener("touchstart", (e) => { sx = e.touches[0].clientX; }, { passive: true });
   box.addEventListener("touchend", (e) => { if (sx == null) return; const dx = e.changedTouches[0].clientX - sx; if (Math.abs(dx) > 50) { show(carI + (dx < 0 ? 1 : -1)); play(); } sx = null; }, { passive: true });
   show(0); play();
+  // «Leer más» solo donde el texto quedó cortado
+  requestAnimationFrame(() => track.querySelectorAll(".car-more").forEach((b) => { const p = b.previousElementSibling; if (p && !p.classList.contains("open")) b.hidden = p.scrollHeight <= p.clientHeight + 2; }));
 }
 function tile(href, ic, title, text) {
   return `<a class="card link" href="${href}">
