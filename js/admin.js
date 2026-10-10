@@ -5,6 +5,7 @@ import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
 import * as saludos from "./saludos.js";
 import * as papa from "./papa.js";
+import * as familiasAg from "./familias-ag.js";
 import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as familiasAdmin from "./familias-admin.js";
@@ -989,7 +990,9 @@ function bindActions() {
     try {
       await Promise.all(ch.map((j) => { const a = asg[j.id], g2 = a.guia2 && a.guia2 !== a.guia ? a.guia2 : "";
         return api.cloud.patchJoven(j.id, { nombre: j.nombre, etapa: j.etapa, guia: a.guia, guiaNombre: a.guia ? names[a.guia] || "" : "", guia2: g2, guia2Nombre: g2 ? names[g2] || "" : "" }); }));
-      asg = null; await loadJovenes(true); api.render(); toast(`Asignación guardada (${ch.length})`, "ok");
+      asg = null; await loadJovenes(true);
+      const nf = await familiasAg.sync(jovenesAll).catch(() => 0); // las familias toman a sus integrantes de esta asignación
+      api.render(); toast(`Asignación guardada (${ch.length})${nf ? ` · ${nf} familia${nf === 1 ? "" : "s"} al día` : ""}`, "ok");
     } catch (e) { console.warn(e); toast("No se pudo guardar. Revisa la conexión o las reglas de Firestore.", ""); }
   };
   A.aPeopleCsv = () => peopleCsv();
