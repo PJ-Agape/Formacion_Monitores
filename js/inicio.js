@@ -54,10 +54,13 @@ const ITEMS = [
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta", ok: () => true },
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido", ok: () => true },
   { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true },
-  { b: "red", e: "🛂", t: "Mi pasaporte", d: "Tus encuentros, tu racha y tus sellos.", href: "#/pasaporte", kw: "pasaporte sellos racha asistencia", ok: (w) => w.cuenta && cloud.enabled },
-  { b: "red", e: "🤝", t: "Acompañar", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled },
-  { b: "red", e: "📣", t: "Estudio de difusión", d: "Marco de foto, historias, fondos y stickers.", href: "#/difusion", kw: "difusion stickers fondos de pantalla marco foto historias invitacion afiche", ok: (w) => w.cuenta },
-  { b: "red", e: "🏛️", t: "Guía de servicio", d: "Identidad, roles, cargos y reuniones.", href: "#/comunidad", kw: "guia servicio pastoral identidad roles cargos reuniones comunidad", ok: (w) => w.equipo },
+  { b: "red", e: "👥", t: "Nuestros grupos", d: "Familias y comunidades: tu pasaporte y la asistencia de cada encuentro.", href: "#/pasaporte", kw: "grupos familias comunidades", ok: (w) => w.cuenta && cloud.enabled,
+    links: [["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
+  { b: "red", e: "🛂", t: "Mi pasaporte", d: "Tus encuentros, tu racha y tus sellos.", href: "#/pasaporte", kw: "pasaporte sellos racha asistencia", ok: (w) => w.cuenta && cloud.enabled, hub: false },
+  { b: "red", e: "🤝", t: "Asistencia", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled, hub: false },
+  // El equipo encuentra la difusión y la guía de servicio en Materiales; los jóvenes (sin Materiales) siguen viendo la difusión aquí.
+  { b: "red", e: "📣", t: "Estudio de difusión", d: "Marco de foto, historias, fondos y stickers.", href: "#/difusion", kw: "difusion stickers fondos de pantalla marco foto historias invitacion afiche", ok: (w) => w.cuenta, hub: (w) => !w.equipo },
+  { b: "red", e: "🏛️", t: "Guía de servicio", d: "Identidad, roles, cargos y reuniones.", href: "#/comunidad", kw: "guia servicio pastoral identidad roles cargos reuniones comunidad", ok: (w) => w.equipo, hub: false },
   { b: "espiritu", e: "⛪", t: "Nuestra Capilla", d: "Silencio, intenciones, la Palabra y María: un lugar para estar con Jesús.", href: "#/oracion", kw: "capilla oracion rezar velas intenciones espiritualidad", ok: () => true },
   { b: "espiritu", e: "📖", t: "Evangelio del día", d: "La Palabra de hoy.", href: "#/evangelio", kw: "evangelio palabra lectura hoy biblia", ok: () => true },
   { b: "espiritu", e: "🙏", t: "Oraciones de siempre", d: "Padre nuestro, Ave María, Credo y más.", href: "#/oracion/siempre", kw: "oraciones devocionario rezar", ok: () => true },
@@ -72,9 +75,10 @@ const descFor = (k, w) => k !== "formacion" ? BLOCKS[k].d
   : w.camino ? (w.curso ? "Tu Camino Ágape y el curso de dirigentes." : "Tu Camino Ágape: el encuentro de tu etapa, semana a semana.")
   : "Crecer en la fe y aprender a acompañar a otros.";
 export const itemsFor = (b) => { const w = who(); return ITEMS.filter((x) => x.b === b && x.ok(w)); };
+const inHub = (x) => { const h = x.hub; return h === undefined ? true : typeof h === "function" ? h(who()) : h; };
 const itemCard = (x) => x.links ? `<div class="card hub-item hub-multi">
     <span class="hub-e" aria-hidden="true">${x.e}</span><span><strong>${esc(x.t)}</strong><span class="muted small">${esc(x.d)}</span>
-    <span class="hub-links">${x.links.map(([l, h]) => `<a class="chip-link" href="${esc(h)}">${esc(l)} ${icon("right")}</a>`).join("")}</span></span></div>`
+    <span class="hub-links">${x.links.filter((l) => !l[2] || l[2](who())).map(([l, h]) => `<a class="chip-link" href="${esc(h)}">${esc(l)} ${icon("right")}</a>`).join("")}</span></span></div>`
   : `<a class="card link hub-item" href="${esc(x.href)}" ${x.ext ? 'target="_blank" rel="noopener"' : ""}>
     <span class="hub-e" aria-hidden="true">${x.e}</span><span><strong>${esc(x.t)}</strong><span class="muted small">${esc(x.d)}</span></span>${icon("right")}</a>`;
 
@@ -149,14 +153,14 @@ export function viewFormacion() {
       <span class="eyebrow">Curso de formación de dirigentes</span><strong>${esc(course.title)}</strong>
       <span class="hub-prog"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></span>
       <span class="muted small"><b>${st.readSessions}/${st.totalSessions}</b> unidades · ${st.complete ? "¡Curso completado! 🎉" : "sigue donde quedaste"}</span></a>` : ""}
-  <div class="hub-grid">${itemsFor("formacion").filter((x) => x.hub !== false && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
+  <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
   ${w.guest ? `<p class="muted small" style="margin-top:14px">Para ver el curso y los encuentros, <a href="#/perfil">ingresa con tu cuenta</a>.</p>` : ""}`;
 }
 export function viewRed() {
   const w = who(), b = BLOCKS.red;
   ctx.onAfterRender(() => { ctx.agenda.homeNext(); ctx.wall.homeHighlight(); });
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
-  <div class="hub-grid">${itemsFor("red").map(itemCard).join("")}</div>
+  <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>

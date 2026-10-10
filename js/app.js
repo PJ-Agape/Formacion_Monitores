@@ -183,7 +183,7 @@ const NAV = [
   ["oracion", "#/oracion", "Espiritualidad", "flame"],
 ];
 // Cada sección se marca en su bloque
-const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", agenda: "red", comunidad: "red", difusion: "red" };
+const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", agenda: "red", comunidad: "formacion", difusion: "formacion", pasaporte: "red", acompanar: "red" };
 const navFor = () => NAV;
 // Franja «Ver como…» (solo equipo): recuerda que es una vista de prueba y cómo volver.
 const VER_COMO = [["visitante", "Visitante sin cuenta"], ["ingreso", "Joven · Ingreso"], ["madurez", "Joven · Madurez"], ["aspirante", "Aspirante"], ["dirigente", "Dirigente"], ["coordinador", "Coordinador"]];
@@ -1005,6 +1005,10 @@ function viewMaterials() {
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
       row("presentaciones/mes-de-maria.html", "flame", "Mes de María", "Con María, puente hacia Jesús · 31 días", true),
       row("presentaciones/sacramentos.html", "sparkle", "Los Sacramentos", "Qué es un sacramento y los siete, explicados en simple", true),
+      row("#/comunidad", "users", "Guía de servicio", "Identidad, roles, cargos y reuniones de la pastoral"),
+    ]],
+    ["difusion", "Difusión", "#9bbf8a", "Para invitar y compartir en Estados, historias y grupos.", [
+      row("#/difusion", "sparkle", "Estudio de difusión", "Marco de foto, historias, invitaciones, fondos de pantalla y stickers"),
     ]],
     ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
       row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),
