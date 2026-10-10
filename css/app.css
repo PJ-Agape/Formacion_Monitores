@@ -2656,3 +2656,21 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .home-gospel .hg-go { font-size: .82rem; font-weight: 800; color: #ef591c; display: inline-flex; align-items: center; gap: 4px; }
 .home-gospel .hg-go svg { width: 14px; height: 14px; }
 #countSlot .cd-card + .cd-card { margin-top: 12px; }
+/* Inicio: diapositivas compactas (no más de un tercio de la pantalla) */
+.home-news { margin-top: 14px; }
+.home-news .car-slide { min-height: 0; padding: 18px 20px 52px; align-items: flex-start; }
+.home-news .car-body { max-width: 72%; }
+.home-news .car-hand { font-size: 1.25rem; margin-top: 4px; }
+.home-news .car-title { font-size: clamp(1.7rem, 6.4vw, 2.7rem); margin: 4px 0 6px; }
+.home-news .car-slide .lead { font-size: .9rem; line-height: 1.4; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.home-news .car-chips { display: none; }
+.home-news .car-slide .actions { margin-top: 10px; gap: 8px; }
+.home-news .car-slide .actions .btn { padding: 8px 14px; font-size: .88rem; min-height: 0; }
+.home-news .car-slide .actions .btn + .btn { display: none; }
+.home-news .car-slide .hero-progress { margin-top: 10px; }
+.home-news .car-illus { position: absolute; right: 10px; bottom: 44px; width: 30%; max-width: 170px; margin: 0; }
+.home-news .car-logo { position: absolute; right: 14px; top: 14px; width: 64px; margin: 0; }
+.home-news .car-ctrl { bottom: 10px; }
+.home-news .car-ctrl .icon-btn { width: 32px; height: 32px; min-width: 0; padding: 0; }
+@media (max-width: 760px) { .home-news .car-slide { flex-direction: row; } .home-news .car-body { max-width: 70%; } }
+.home-news .car-slide .eyebrow { display: block; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; max-width: 100%; font-size: .68rem; }
