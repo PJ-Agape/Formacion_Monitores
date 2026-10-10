@@ -50,7 +50,8 @@ export async function paintHome() {
   slot.innerHTML = `<section class="card papa-card">
     <div class="papa-top"><span class="papa-k">🌍 Con el Papa · ${esc(it.mes)}</span></div>
     <h3>${esc(it.t)}</h3>
-    <p class="papa-x">${esc(it.x)}</p>
+    <p class="papa-x" id="papaX0">${esc(it.x)}</p>
+    <button type="button" class="papa-more" data-action="papaMore" aria-controls="papaX0" aria-expanded="false">Leer completa</button>
     <div class="papa-n"><b id="papaN">${n}</b><span>${n === 1 ? "rosario rezado" : "rosarios rezados"} por esta intención${n ? " hasta hoy" : ". ¡Sé el primero!"}</span></div>
     ${meta ? `<div class="papa-bar" role="progressbar" aria-valuemin="0" aria-valuemax="${meta}" aria-valuenow="${n}"><i style="width:${Math.min(100, (n / meta) * 100)}%"></i></div><p class="xs muted">Meta del mes: ${meta} rosarios</p>` : ""}
     <div class="row-wrap" style="gap:8px;margin-top:12px">
@@ -92,6 +93,7 @@ export async function adminHTML() {
 }
 
 export function registerActions(actions) {
+  actions.papaMore = (el) => { const x = document.getElementById("papaX0"); if (!x) return; const open = x.classList.toggle("open"); el.textContent = open ? "Mostrar menos" : "Leer completa"; el.setAttribute("aria-expanded", String(open)); };
   actions.papaSumar = async (el) => { const ok = await sumar(); if (ok && el && el.classList.contains("papa-ros")) { el.disabled = true; el.textContent = "✔ Sumado a la intención del Papa"; } };
   actions.papaSave = async () => {
     const t = (document.getElementById("papaT")?.value || "").trim(), x = (document.getElementById("papaX")?.value || "").trim();
