@@ -699,6 +699,19 @@ export async function listFamilias() {
   try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "familias")), 8000)); } catch { return null; }
 }
 export const saveFamilia = (id, data) => fb.setDoc(fb.doc(db, "familias", id), { ...data, updatedAt: fb.serverTimestamp() });
+// Familia elige su ícono: «e:🐟» (emoji) o «i:buenpastor» (ilustración de la app)
+export const iconoFamilia = (id, icono) => fb.updateDoc(fb.doc(db, "familias", id), { icono, updatedAt: fb.serverTimestamp() });
+// Mini portal de cada familia: su muro y su agenda (solo la familia y el equipo)
+const famCol = (fid, c) => fb.collection(db, "familias", fid, c);
+export function watchFam(fid, c, cb, onErr) {
+  if (!enabled || !db) { onErr && onErr(new Error("offline")); return () => {}; }
+  return fb.onSnapshot(famCol(fid, c), (qs) => cb(snapRows(qs)), (e) => { console.warn("Familia:", e); onErr && onErr(e); });
+}
+export const postFamMuro = (fid, texto) => fb.setDoc(fb.doc(famCol(fid, "muro")), { texto, autorUid: user.uid, autorNombre: shortName(account.name), autorAvatar: account.avatar || "", likes: {}, createdAt: fb.serverTimestamp() });
+export const likeFamMuro = (fid, pid, on) => toggleMark(["familias", fid, "muro", pid], "likes", on);
+export const deleteFamMuro = (fid, pid) => fb.deleteDoc(fb.doc(db, "familias", fid, "muro", pid));
+export const saveFamEvento = (fid, id, data) => fb.setDoc(id ? fb.doc(db, "familias", fid, "agenda", id) : fb.doc(famCol(fid, "agenda")), { ...data, porUid: user.uid, porNombre: shortName(account.name), updatedAt: fb.serverTimestamp() });
+export const deleteFamEvento = (fid, id) => fb.deleteDoc(fb.doc(db, "familias", fid, "agenda", id));
 export const nombrarFamilia = (id, nombre) => fb.updateDoc(fb.doc(db, "familias", id), { nombre, nombrePor: account ? account.name || "" : "", updatedAt: fb.serverTimestamp() });
 // Grupo de WhatsApp de la app (privado/whatsapp): lo ven solo cuentas activas; lo edita el equipo.
 let waCache;

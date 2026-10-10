@@ -76,7 +76,7 @@ export function cardAsis(f, fecha) {
   if (!D || !D.ok) return "";
   const a = asis(f, fecha);
   if (!a.total) return "";
-  if (!a.reg) return `<div class="fam-asis none"><span>📋 ${fecha > hoyIso() ? "Aún no llega esta fecha" : "Sin lista ese día"}</span><a href="#/nuestras-familias/${f.id}/${fecha}">${fecha > hoyIso() ? "Ver familia" : "Pasar lista"} ${icon("right")}</a></div>`;
+  if (!a.reg) return `<div class="fam-asis none"><span>📋 ${fecha > hoyIso() ? "Aún no llega esta fecha" : "Sin lista ese día"}</span><a href="#/nuestras-familias/${f.id}/registro/${fecha}">${fecha > hoyIso() ? "Ver familia" : "Pasar lista"} ${icon("right")}</a></div>`;
   return `<div class="fam-asis"><span class="fam-asis-n"><b>${a.pres.length}</b> de ${a.total} presentes</span>
     <div class="fam-chips">${a.pres.map((j) => jChip(j, "pres")).join("")}${a.aus.map((j) => jChip(j, "aus")).join("")}</div></div>`;
 }
@@ -121,7 +121,7 @@ export function viewFamilia(fid, fecha) {
   if (!IDS.includes(fid)) return null;
   const g = gate();
   if (!g) ctx.onAfterRender(async () => { await load(true); if (!sel.fecha || sel.fid !== fid || fecha) { sel.fecha = fecha || fechaPorDefecto(); } sel.fid = fid; sel.roll = null; paintFam(); });
-  return `<nav class="crumbs"><a href="#/nuestras-familias">Nuestras familias</a>${icon("right")}<span id="frCrumb">Familia ${IDS.indexOf(fid) + 1}</span></nav>
+  return `<nav class="crumbs"><a href="#/nuestras-familias">Nuestras familias</a>${icon("right")}<a href="#/nuestras-familias/${fid}" id="frCrumb">Familia ${IDS.indexOf(fid) + 1}</a>${icon("right")}<span>Registro</span></nav>
     ${g || `<div id="frBody"><p class="muted" style="padding:30px;text-align:center">Cargando el registro…</p></div>`}`;
 }
 function navFechas(cur, action) {
@@ -237,7 +237,7 @@ function paintReg() {
   <section class="card"><h2 class="fr-h">Por familia y fecha</h2><div class="fr-tablewrap"><table class="fr-table fr-reg">
     <thead><tr><th>Fecha</th>${fams.map((f) => `<th><a href="#/nuestras-familias/${f.id}" style="--fc:${COLORS[f.i]}"><span class="fr-dot"></span>${esc(famNombre(f))}</a></th>`).join("")}<th>Total</th></tr></thead>
     <tbody>${[...dates].reverse().map((d) => { const x = encStats.find((y) => y.d === d); return `<tr><th>${corta(d)}${encDe(d) ? `<small>N° ${encDe(d).n} · ${esc(encDe(d).tema)}</small>` : ""}</th>${fams.map((f) => { const a = asis(f, d), p = cellPct(a);
-      return `<td class="${tone(p)}"><a href="#/nuestras-familias/${f.id}/${d}">${a.total ? `${a.pres.length}/${a.total}` : ""}</a></td>`; }).join("")}<td class="${tone(x && x.pct)}">${x ? `${x.p}/${x.t}` : ""}</td></tr>`; }).join("")}
+      return `<td class="${tone(p)}"><a href="#/nuestras-familias/${f.id}/registro/${d}">${a.total ? `${a.pres.length}/${a.total}` : ""}</a></td>`; }).join("")}<td class="${tone(x && x.pct)}">${x ? `${x.p}/${x.t}` : ""}</td></tr>`; }).join("")}
     <tr class="tot"><th>Promedio</th>${famStats.map((x) => `<td class="${tone(x.avg)}">${x.avg ?? ""}${x.avg != null ? "%" : ""}</td>`).join("")}<td>${gen ?? ""}${gen != null ? "%" : ""}</td></tr></tbody></table></div>
     <p class="xs muted">Toca una celda para ver quiénes vinieron y quiénes faltaron. Verde: 80% o más · amarillo: 60–79% · rojo: menos de 60%.</p></section>`}
   <p class="xs muted">Las planillas se abren en Excel o Google Sheets. Por cuidado de los datos de menores, los jóvenes aparecen con nombre e inicial del apellido.</p>`;
@@ -276,7 +276,7 @@ const slugF = (s) => String(s).normalize("NFD").replace(/[̀-ͯ]/g, "").toLowerC
 
 function registerActions() {
   const A = ctx.actions;
-  A.frGo = (el) => { if (!el.dataset.f) return; sel.fecha = el.dataset.f; sel.roll = null; history.replaceState(null, "", `#/nuestras-familias/${sel.fid}/${sel.fecha}`); paintFam(); };
+  A.frGo = (el) => { if (!el.dataset.f) return; sel.fecha = el.dataset.f; sel.roll = null; history.replaceState(null, "", `#/nuestras-familias/${sel.fid}/registro/${sel.fecha}`); paintFam(); };
   A.frRoll = () => { const f = famOf(sel.fid); sel.roll = new Set(miembros(f).filter((j) => fechasOf(j).includes(sel.fecha)).map((j) => j.id)); paintFam(); };
   A.frToggle = (el) => { const id = el.dataset.id; if (sel.roll.has(id)) sel.roll.delete(id); else sel.roll.add(id); paintFam(); };
   A.frRollAll = () => { miembros(famOf(sel.fid)).forEach((j) => sel.roll.add(j.id)); paintFam(); };

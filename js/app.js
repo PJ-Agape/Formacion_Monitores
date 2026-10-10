@@ -30,6 +30,7 @@ import * as novedades from "./novedades.js";
 import * as papa from "./papa.js";
 import * as familiasAg from "./familias-ag.js";
 import * as famReg from "./familias-registro.js";
+import * as famPortal from "./familia-portal.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -80,7 +81,9 @@ const routes = [
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
   [/^\/nuestras-familias\/registro$/, () => famReg.viewRegistro(), "familiasag"],
-  [/^\/nuestras-familias\/(f\d+)(?:\/(\d{4}-\d{2}-\d{2}))?$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
+  [/^\/nuestras-familias\/(f\d+)\/registro(?:\/(\d{4}-\d{2}-\d{2}))?$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
+  [/^\/nuestras-familias\/(f\d+)\/(\d{4}-\d{2}-\d{2})$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
+  [/^\/nuestras-familias\/(f\d+)(?:\/(muro|agenda))?$/, (id, t) => famPortal.view(id, t), "familiasag"],
   [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); }); return inicio.viewRed(); }, "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
@@ -1373,6 +1376,7 @@ inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wal
 papa.registerActions(actions);
 familiasAg.setup({ actions, onAfterRender });
 famReg.setup({ actions, onAfterRender });
+famPortal.setup({ actions, onAfterRender, onLeave });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

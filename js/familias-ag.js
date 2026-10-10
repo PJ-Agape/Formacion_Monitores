@@ -8,6 +8,7 @@
 import * as cloud from "./cloud.js";
 import { esc, icon, toast } from "./util.js";
 import * as reg from "./familias-registro.js";
+import { famIcon } from "./familia-portal.js";
 
 const N = 10;
 export const IDS = Array.from({ length: N }, (_, i) => `f${i + 1}`);
@@ -73,7 +74,7 @@ export async function sync(jovenes) {
     const others = new Set(fams.filter((x) => x.id !== f.id).flatMap((x) => (x.dirigentes || []).map((d) => d.uid)));
     const ints = derive(dir.map((d) => d.uid), js, others);
     if (same(ints, f.integrantes) && JSON.stringify(uidsOf(dir, ints)) === JSON.stringify(f.uids || [])) continue;
-    await cloud.saveFamilia(f.id, { nombre: f.nombre || "", nombrePor: f.nombrePor || "", etapa: f.etapa || "", dirigentes: dir, integrantes: ints, uids: uidsOf(dir, ints) }).catch(() => {});
+    await cloud.saveFamilia(f.id, { nombre: f.nombre || "", nombrePor: f.nombrePor || "", icono: f.icono || "", etapa: f.etapa || "", dirigentes: dir, integrantes: ints, uids: uidsOf(dir, ints) }).catch(() => {});
     n++;
   }
   if (n) rows = null;
@@ -119,12 +120,12 @@ function card(f) {
   const c = COLORS[f.i], soft = SOFT[f.i], yo = mine(f);
   const dir = f.dirigentes || [], int = f.integrantes || [];
   return `<article class="fam-card ${yo ? "is-mine" : ""}" style="--fc:${c};--fs:${soft}" id="fam-${f.id}">
-    <div class="fam-top"><span class="fam-n">${f.i + 1}</span>${yo ? `<span class="fam-yo">Tu familia</span>` : ""}
+    <div class="fam-top">${famIcon(f)}${yo ? `<span class="fam-yo">Tu familia</span>` : ""}
       ${st().isStaff ? `<button class="fam-edit" data-action="famEdit" data-id="${f.id}" aria-label="Armar la familia ${f.i + 1}">${icon("edit")}</button>` : ""}</div>
     <h3 class="fam-name">${f.nombre ? esc(f.nombre) : `<span class="muted">Familia ${f.i + 1}</span>`}</h3>
     ${ETAPAS[f.etapa] ? `<div class="fam-etapa"><span class="fam-et" style="--ec:${ETAPAS[f.etapa][2]}">${esc(ETAPAS[f.etapa][0])}</span><a class="chip-link" href="${revistaHref(f.etapa)}">📰 Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</a></div>${encHTML(f, calData)}` : ""}
-    ${!f.nombre ? `<p class="xs muted">${mine(f) ? "Aún no tiene nombre: ¡pónganle uno entre todos!" : st().isStaff ? "Aún no tiene nombre. Ármala con el lápiz." : "Aún no tiene nombre."}</p>` : ""}
-    ${mine(f) ? `<form class="fam-nf" data-id="${f.id}" onsubmit="return false"><input class="input" maxlength="40" placeholder="Nombre de la familia" value="${esc(f.nombre || "")}" aria-label="Nombre de la familia ${f.i + 1}"><button class="btn btn-sm btn-soft" data-action="famName" data-id="${f.id}">Guardar</button></form>` : ""}
+    ${!f.nombre ? `<p class="xs muted">${mine(f) ? "Aún no tiene nombre: ¡pónganle uno entre todos, con su ícono!" : st().isStaff ? "Aún no tiene nombre. Ármala con el lápiz." : "Aún no tiene nombre."}</p>` : ""}
+    ${mine(f) && !f.nombre ? `<a class="btn btn-sm btn-gold" href="#/nuestras-familias/${f.id}">✨ Elegir nombre e ícono</a>` : ""}
     <div class="fam-sec"><span class="fam-k">Dirigente${dir.length === 1 ? "" : "s"} a cargo</span>
       <div class="fam-chips">${dir.length ? dir.map((d) => `<span class="fam-chip dir">⭐ ${esc(corto(d.nombre))}</span>`).join("") : `<span class="xs muted">Por asignar</span>`}</div></div>
     ${guiaVe() ? `<div class="fam-sec"><span class="fam-k">Integrantes · ${int.length}${verFecha ? "" : ` · asistencia del ${diaCorto(asisFecha())}`}</span>
@@ -132,7 +133,8 @@ function card(f) {
     : `<div class="fam-sec"><span class="fam-k">Integrantes · ${int.length}</span>
       <div class="fam-chips">${int.length ? int.map((j) => `<span class="fam-chip">${esc(j.nombre)}</span>`).join("") : `<span class="xs muted">Por asignar</span>`}</div></div>`}
     ${reg.cardHonor(f)}
-    ${guiaVe() ? `<a class="fam-more" href="#/nuestras-familias/${f.id}${verFecha ? "/" + verFecha : ""}">📋 Registro de la familia ${icon("right")}</a>` : ""}
+    <div class="fam-links">${mine(f) || st().isStaff || st().isGuide ? `<a class="btn btn-sm btn-primary fam-go" href="#/nuestras-familias/${f.id}">🏠 Entrar a la familia</a>` : `<a class="fam-more" href="#/nuestras-familias/${f.id}">Conocer a la familia ${icon("right")}</a>`}
+      ${guiaVe() ? `<a class="fam-more" href="#/nuestras-familias/${f.id}/registro${verFecha ? "/" + verFecha : ""}">📋 Registro ${icon("right")}</a>` : ""}</div>
   </article>`;
 }
 
@@ -190,9 +192,9 @@ async function saveEditor(form) {
     const mine = new Set(dirigentes.map((d) => d.uid));
     for (const r of (rows || []).filter((r) => r.id !== id && (r.dirigentes || []).some((d) => mine.has(d.uid)))) {
       const dir = (r.dirigentes || []).filter((d) => !mine.has(d.uid));
-      await cloud.saveFamilia(r.id, { nombre: r.nombre || "", nombrePor: r.nombrePor || "", etapa: r.etapa || "", dirigentes: dir, integrantes: r.integrantes || [], uids: r.uids || [] });
+      await cloud.saveFamilia(r.id, { nombre: r.nombre || "", nombrePor: r.nombrePor || "", icono: r.icono || "", etapa: r.etapa || "", dirigentes: dir, integrantes: r.integrantes || [], uids: r.uids || [] });
     }
-    await cloud.saveFamilia(id, { nombre, nombrePor: "", etapa, dirigentes, integrantes, uids: uidsOf(dirigentes, integrantes) });
+    await cloud.saveFamilia(id, { nombre, nombrePor: f.nombre === nombre ? f.nombrePor || "" : "", icono: f.icono || "", etapa, dirigentes, integrantes, uids: uidsOf(dirigentes, integrantes) });
     document.getElementById("famDlg")?.close();
     rows = await cloud.listFamilias(); await sync(edJovenes);
     toast("Familia guardada 👨‍👩‍👧‍👦", "ok"); paint();
