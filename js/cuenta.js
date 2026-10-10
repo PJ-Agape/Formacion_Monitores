@@ -10,6 +10,7 @@ const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate(
 const at = (date, time) => { const [y, m, d] = date.split("-").map(Number); const [h, mi] = /^\d{1,2}:\d{2}$/.test(time || "") ? time.split(":").map(Number) : [0, 0]; return new Date(y, m - 1, d, h, mi); };
 
 // El hito más próximo que esté vigente (desde «countFrom» hasta que termina su día).
+export function pickAll(list, n = 3) { const out = [], rest = [...(list || [])]; for (let i = 0; i < n; i++) { const e = pick(rest); if (!e) break; out.push(e); rest.splice(rest.findIndex((x) => x.id === e.id), 1); } return out; }
 export function pick(list) {
   const now = new Date(), today = iso(now);
   const c = (list || []).filter((e) => e.count && e.date).map((e) => {

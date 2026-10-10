@@ -77,6 +77,14 @@ const itemCard = (x) => `<a class="card link hub-item" href="${esc(x.href)}" ${x
 // ---------------------------------------------------------------------------
 // Inicio: saludo + buscador + los tres bloques
 // ---------------------------------------------------------------------------
+// Cita del Evangelio del día bajo el saludo
+export async function paintGospel() {
+  const el = document.getElementById("homeGospel"); if (!el) return;
+  const g = await todayGospel().catch(() => null);
+  if (!g || !g.cita) return;
+  el.innerHTML = `<span class="hg-k">📖 Evangelio de hoy · ${esc(g.cita)}</span>${g.frase ? `<span class="hg-f">«${esc(g.frase)}»</span>` : ""}<span class="hg-go">Leer ${icon("arrowR")}</span>`;
+  el.hidden = false;
+}
 export function greetHTML() {
   const w = who();
   const name = (cloud.enabled ? (w.s.account || {}).name : S.getProfile().name) || "";
@@ -85,7 +93,7 @@ export function greetHTML() {
   return `<section class="home-hi">
     <span class="home-hand">${w.guest ? "bienvenido a casa" : "qué bueno verte"}</span>
     <h1>${esc(saludo)}${first ? `, <em>${esc(first)}</em>` : ""} 👋</h1>
-    ${searchBox("homeQ")}
+    <a class="home-gospel" id="homeGospel" href="#/evangelio" hidden></a>
   </section>`;
 }
 const searchBox = (id, val = "") => `<form class="home-search" role="search" data-search="${id}" onsubmit="return false">
@@ -141,6 +149,8 @@ export function viewRed() {
   ctx.onAfterRender(() => { ctx.agenda.homeNext(); ctx.wall.homeHighlight(); });
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   <div class="hub-grid">${itemsFor("red").map(itemCard).join("")}</div>
+  <div id="acHomeSlot"></div>
+  <div id="desafioSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
   ${w.cuenta ? `<div id="wallSlot"></div>` : ""}`;
 }

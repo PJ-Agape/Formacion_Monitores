@@ -75,7 +75,7 @@ const routes = [
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
-  [/^\/red$/, () => inicio.viewRed(), "red"],
+  [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); }); return inicio.viewRed(); }, "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
@@ -235,7 +235,7 @@ function renderChrome(section) {
     : `${cloud.enabled && AV.isValid((cloud.state().account || {}).avatar) ? `<span class="chip-av">${AV.svg(cloud.state().account.avatar)}</span>` : `<span class="avatar">${esc(initials(p.name))}</span>`}<span class="name">${esc(p.name || "Mi perfil")}</span>`;
   $("#profileChip").setAttribute("href", inAdmin ? "#/admin" : "#/perfil");
   if (!$("#hdrSearch")) $("#profileChip").insertAdjacentHTML("beforebegin", `<a class="hdr-search" id="hdrSearch" href="#/buscar" aria-label="Buscar en la app" title="Buscar">${icon("search")}</a>`);
-  $("#hdrSearch").toggleAttribute("hidden", section === "buscar" || section === "inicio");
+  $("#hdrSearch").toggleAttribute("hidden", section === "buscar");
   novedades.mount();
 }
 
@@ -266,7 +266,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); novedades.refresh(); });
+  onAfterRender(() => { novedades.refresh(); inicio.paintGospel(); agenda.homeNext(); });
   const course = S.activeCourse();
   const st = S.courseState(course);
   const p = S.getProfile();
@@ -309,23 +309,22 @@ function viewHome() {
 
   onAfterRender(() => papa.paintHome());
   onAfterRender(async () => {
-    const e = cuenta.pick(await cloud.listAgenda());
+    const list = cuenta.pickAll(await cloud.listAgenda(), 3);
     const slot = document.getElementById("countSlot");
-    if (e && slot) { slot.innerHTML = cuenta.html(e, { href: `#/agenda/${e.when}` }); cuenta.start(); }
+    if (list.length && slot) { slot.innerHTML = list.map((e) => cuenta.html(e, { href: `#/agenda/${e.when}` })).join(""); cuenta.start(); }
   });
+  // Inicio liviano: saludo + Evangelio, lo destacado (diapositivas), cuentas regresivas, la intención del Papa y la agenda.
+  // El resto vive en las pestañas de abajo (Formación, Comunidad, Espiritualidad).
   return `
   ${inicio.greetHTML()}
+  <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
   ${papa.homeHTML()}
-  <div id="velaStrip"></div>
-  ${inicio.blocksHTML()}
+  <div id="agendaSlot" style="margin-top:16px"></div>
   ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
     <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
     <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : ""}
-  <div id="acHomeSlot"></div>
-  <div id="desafioSlot"></div>
-  <section class="home-news"><h2 class="home-h2">Novedades</h2>${carousel()}</section>
   <div id="installSlot"></div>
   `;
 }
