@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-08": {
-   "titulo": "Jueves de la 27.ª semana del Tiempo Ordinario",
-   "cita": "Lc 11,5-13",
-   "frase": "Porque el que pide, recibe; el que busca, encuentra; y al que llama, se le abre."
-  },
   "2026-10-09": {
    "titulo": "Viernes de la 27.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,15-26",
@@ -55,6 +50,11 @@
    "titulo": "29.º domingo del Tiempo Ordinario",
    "cita": "Mt 22,15-21",
    "frase": "Den al César lo que es del César, y a Dios, lo que es de Dios."
+  },
+  "2026-10-19": {
+   "titulo": "Lunes de la 29.ª semana del Tiempo Ordinario",
+   "cita": "Lc 12,13-21",
+   "frase": "Maestro, dile a mi hermano que comparta conmigo la herencia."
   }
  }
 }
