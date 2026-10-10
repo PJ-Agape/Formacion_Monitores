@@ -692,6 +692,7 @@ export const saveJoven = saveIn("jovenes");
 export const patchJoven = (id, data) => fb.updateDoc(fb.doc(db, "jovenes", id), data);
 export const deleteJoven = (id) => fb.deleteDoc(fb.doc(db, "jovenes", id));
 export const listJovenes = () => all("jovenes");
+export const listSesiones = () => all("sesiones");
 // Nuestras familias: 10 grupos (familias/f1..f10). El equipo los arma; sus integrantes eligen el nombre.
 export async function listFamilias() {
   if (!enabled || !db) return [];

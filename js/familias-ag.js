@@ -7,23 +7,24 @@
 
 import * as cloud from "./cloud.js";
 import { esc, icon, toast } from "./util.js";
+import * as reg from "./familias-registro.js";
 
 const N = 10;
-const IDS = Array.from({ length: N }, (_, i) => `f${i + 1}`);
-const COLORS = ["#1351a4", "#ef591c", "#c98a00", "#2e8b57", "#7b4fc4", "#d6336c", "#0f8a8a", "#8a5a3c", "#3d7fd1", "#e48a68"];
-const SOFT = ["#e1f3fd", "#fde0d2", "#fff0c2", "#dcf3e4", "#ece3fa", "#fbe0ea", "#d8f2f2", "#efe3d6", "#dfeafb", "#fde8de"];
-const ETAPAS = { ingreso: ["Ingreso", "Etapa 1 · Bienvenido a casa", "#8ad2fa"], madurez: ["Madurez", "Etapa 2 · Mi fe en primera persona", "#1351a4"], aspirante: ["Aspirante", "Etapa 3 · Llamados a servir", "#ef591c"] };
+export const IDS = Array.from({ length: N }, (_, i) => `f${i + 1}`);
+export const COLORS = ["#1351a4", "#ef591c", "#c98a00", "#2e8b57", "#7b4fc4", "#d6336c", "#0f8a8a", "#8a5a3c", "#3d7fd1", "#e48a68"];
+export const SOFT = ["#e1f3fd", "#fde0d2", "#fff0c2", "#dcf3e4", "#ece3fa", "#fbe0ea", "#d8f2f2", "#efe3d6", "#dfeafb", "#fde8de"];
+export const ETAPAS = { ingreso: ["Ingreso", "Etapa 1 · Bienvenido a casa", "#8ad2fa"], madurez: ["Madurez", "Etapa 2 · Mi fe en primera persona", "#1351a4"], aspirante: ["Aspirante", "Etapa 3 · Llamados a servir", "#ef591c"] };
 let rows = null, ctx = null, calData = null;
 // Etapa más común entre los integrantes (sugerencia al armar la familia)
 const etapaSugerida = (js, ids) => { const c = {}; (js || []).filter((j) => ids.has(j.id) && ETAPAS[j.etapa]).forEach((j) => { c[j.etapa] = (c[j.etapa] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || ""; };
 // La revista de la etapa: los jóvenes la leen en «Mi Camino»; el equipo, en Nuestra Revista
-const revistaHref = (e, n) => (st().isJoven ? (n ? `#/mi-camino/${n}` : "#/mi-camino") : `#/encuentros/${e}${n ? "/" + n : ""}`);
+export const revistaHref = (e, n) => (st().isJoven ? (n ? `#/mi-camino/${n}` : "#/mi-camino") : `#/encuentros/${e}${n ? "/" + n : ""}`);
 
 // Calendario de encuentros (data/encuentros.json): el encuentro de hoy, de esta semana o el próximo.
 let CAL = null;
-const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-const fechaDe = (s) => { const m = String(s).match(/(\d+) de (\w+) de (\d{4})/); return m ? new Date(+m[3], MESES.indexOf(m[2]), +m[1]) : null; };
-async function loadCal() {
+export const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+export const fechaDe = (s) => { const m = String(s).match(/(\d+) de (\w+) de (\d{4})/); return m ? new Date(+m[3], MESES.indexOf(m[2]), +m[1]) : null; };
+export async function loadCal() {
   if (!CAL) CAL = fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json()).catch(() => { CAL = null; return null; });
   return CAL;
 }
@@ -36,18 +37,19 @@ function encuentroActual(d) {
   const dias = Math.round((e.date - hoy) / 86400000);
   return { e, total: list.length, cuando: dias === 0 ? "Hoy" : dias <= 6 ? "Esta semana" : "Próximo" };
 }
+let verFecha = ""; // vista por fecha (guías): "" = la semana actual
 function encHTML(f, cal) {
-  const a = encuentroActual(cal); if (!a) return "";
+  const a = verFecha ? ((e) => e && { e, cuando: "Fecha" })(reg.encDe(verFecha)) : encuentroActual(cal); if (!a) return "";
   const { e } = a, x = (e.etapas || {})[f.etapa] || {};
   const dm = `${e.date.getDate()} ${MESES[e.date.getMonth()].slice(0, 3)}`;
   return `<a class="fam-enc" href="${revistaHref(f.etapa, e.n)}" style="--ec:${ETAPAS[f.etapa][2]}">
-    <span class="fam-enc-k">${a.cuando === "Hoy" ? `Hoy es el encuentro N° ${e.n} del año` : `${a.cuando} · encuentro N° ${e.n} del año · ${esc(dm)}`}</span>
+    <span class="fam-enc-k">${a.cuando === "Fecha" ? `Encuentro N° ${e.n} del año · ${esc(dm)}` : a.cuando === "Hoy" ? `Hoy es el encuentro N° ${e.n} del año` : `${a.cuando} · encuentro N° ${e.n} del año · ${esc(dm)}`}</span>
     <b>${esc(x.titulo || e.tema)}</b>
     <span class="fam-enc-l">📰 Abrir en la Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</span></a>`;
 }
 
 export function setup(c) { ctx = c; registerActions(); }
-const corto = (n) => { const p = String(n || "").trim().split(/\s+/); return p.length > 1 ? `${p[0]} ${p[1][0].toUpperCase()}.` : p[0] || ""; };
+export const corto = (n) => { const p = String(n || "").trim().split(/\s+/); return p.length > 1 ? `${p[0]} ${p[1][0].toUpperCase()}.` : p[0] || ""; };
 const st = () => cloud.state();
 const activos = (js) => (js || []).filter((j) => j.activo !== false && j.etapa !== "equipo");
 // Integrantes de una familia = jóvenes cuyo dirigente a cargo (o de apoyo) es uno de los suyos. Si alguien queda
@@ -88,15 +90,22 @@ export function view() {
     <p>Cada familia es un grupo pequeño que camina junto, con su dirigente a cargo. El nombre lo eligen sus integrantes.</p></header>
     <div class="row-wrap" style="gap:8px;margin-bottom:14px">
       <a class="chip-link" href="#/pasaporte">🛂 Mi pasaporte ${icon("right")}</a>
-      ${s.isGuide ? `<a class="chip-link" href="#/acompanar">🤝 Asistencia ${icon("right")}</a>` : ""}
+      ${s.isGuide ? `<a class="chip-link" href="#/acompanar">🤝 Asistencia ${icon("right")}</a><a class="chip-link" href="#/nuestras-familias/registro">📊 Registro y planillas ${icon("right")}</a>` : ""}
     </div>
+    ${s.isGuide ? `<div class="fam-fecha" id="famFechaBox"></div>` : ""}
     <div class="fam-grid" id="famGrid"><p class="muted">Cargando las familias…</p></div>`;
 }
 
 async function paint() {
   const box = document.getElementById("famGrid"); if (!box) return;
-  const [r0, cal] = await Promise.all([cloud.listFamilias(), loadCal()]);
+  const [r0, cal] = await Promise.all([cloud.listFamilias(), loadCal(), reg.load(true)]);
   rows = r0; calData = cal;
+  const fb = document.getElementById("famFechaBox");
+  if (fb && reg.D && reg.D.ok) {
+    const list = reg.fechas(), cur = verFecha || "";
+    fb.innerHTML = `<label class="small"><b>📅 Ver las tarjetas del</b> <select class="select" id="famFecha">
+      <option value="">encuentro de esta semana</option>${list.map((x) => { const e = reg.encDe(x); const [yy, mm, dd] = x.split("-"); return `<option value="${x}" ${x === cur ? "selected" : ""}>${+dd} ${MESES[+mm - 1].slice(0, 3)} ${yy}${e ? ` · N° ${e.n}` : ""}</option>`; }).join("")}</select></label>`;
+  }
   if (rows && st().isStaff && (await sync())) rows = await cloud.listFamilias();
   if (rows === null) { box.innerHTML = `<div class="note">No se pudieron cargar las familias. Revisa tu conexión.</div>`; return; }
   const by = Object.fromEntries(rows.map((r) => [r.id, r]));
@@ -118,10 +127,18 @@ function card(f) {
     ${mine(f) ? `<form class="fam-nf" data-id="${f.id}" onsubmit="return false"><input class="input" maxlength="40" placeholder="Nombre de la familia" value="${esc(f.nombre || "")}" aria-label="Nombre de la familia ${f.i + 1}"><button class="btn btn-sm btn-soft" data-action="famName" data-id="${f.id}">Guardar</button></form>` : ""}
     <div class="fam-sec"><span class="fam-k">Dirigente${dir.length === 1 ? "" : "s"} a cargo</span>
       <div class="fam-chips">${dir.length ? dir.map((d) => `<span class="fam-chip dir">⭐ ${esc(corto(d.nombre))}</span>`).join("") : `<span class="xs muted">Por asignar</span>`}</div></div>
-    <div class="fam-sec"><span class="fam-k">Integrantes · ${int.length}</span>
-      <div class="fam-chips">${int.length ? int.map((j) => `<span class="fam-chip">${esc(j.nombre)}</span>`).join("") : `<span class="xs muted">Por asignar</span>`}</div></div>
+    ${guiaVe() ? `<div class="fam-sec"><span class="fam-k">Integrantes · ${int.length}${verFecha ? "" : ` · asistencia del ${diaCorto(asisFecha())}`}</span>
+      ${int.length ? reg.cardAsis(f, asisFecha()) || `<div class="fam-chips">${int.map((j) => `<a class="fam-chip" href="#/acompanar/joven/${encodeURIComponent(j.id)}">${esc(j.nombre)}</a>`).join("")}</div>` : `<span class="xs muted">Por asignar</span>`}</div>`
+    : `<div class="fam-sec"><span class="fam-k">Integrantes · ${int.length}</span>
+      <div class="fam-chips">${int.length ? int.map((j) => `<span class="fam-chip">${esc(j.nombre)}</span>`).join("") : `<span class="xs muted">Por asignar</span>`}</div></div>`}
+    ${reg.cardHonor(f)}
+    ${guiaVe() ? `<a class="fam-more" href="#/nuestras-familias/${f.id}${verFecha ? "/" + verFecha : ""}">📋 Registro de la familia ${icon("right")}</a>` : ""}
   </article>`;
 }
+
+const guiaVe = () => st().isGuide && reg.D && reg.D.ok;
+const asisFecha = () => verFecha || reg.fechaPorDefecto();
+const diaCorto = (x) => { const [, mm, dd] = x.split("-"); return `${+dd} ${MESES[+mm - 1].slice(0, 3)}`; };
 
 // ---- Armar una familia (equipo): se eligen sus dirigentes; los integrantes vienen de la asignación ----
 let edJovenes = [];
@@ -203,5 +220,6 @@ function registerActions() {
   document.addEventListener("change", (e) => {
     if (e.target.name === "dir" && e.target.closest("#famForm")) previewInts();
     if (e.target.id === "famEtapa") e.target.dataset.touched = "1";
+    if (e.target.id === "famFecha") { verFecha = e.target.value; paint(); }
   });
 }

@@ -2751,3 +2751,54 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .fam-enc b { font-size: 1.02rem; line-height: 1.25; }
 .fam-enc-l { font-size: .82rem; font-weight: 700; color: var(--brand, #1351a4); display: inline-flex; align-items: center; gap: 4px; }
 .fam-enc:hover .fam-enc-l { text-decoration: underline; }
+/* Registro de las familias */
+.fam-fecha { margin: -4px 0 14px; }
+.fam-fecha .select { width: auto; display: inline-block; margin-left: 6px; }
+.fam-chip.pres { background: #dcf3e4; color: #1d5e36; text-decoration: none; }
+.fam-chip.aus { background: #fde0d2; color: #8a2d0b; text-decoration: none; }
+a.fam-chip { text-decoration: none; }
+.fam-asis { display: grid; gap: 6px; }
+.fam-asis-n { font-size: .85rem; }
+.fam-asis.none { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; justify-content: space-between; font-size: .85rem; padding: 8px 10px; border-radius: 12px; background: rgba(11,37,102,.05); }
+.fam-asis.none a { font-weight: 700; }
+.fam-honor { font-size: .85rem; padding: 8px 12px; border-radius: 12px; background: #fff1cc; color: #0b2566; }
+.fam-more { font-weight: 800; font-size: .9rem; color: var(--fc); display: inline-flex; align-items: center; gap: 4px; margin-top: 2px; }
+.fr-head { display: flex; gap: 14px; align-items: center; padding: 18px; border-radius: 22px; background: var(--fs); border: 3px solid var(--fc); margin: 6px 0 14px; flex-wrap: wrap; }
+.fr-head h1 { font-family: var(--font-display, inherit); font-size: 1.6rem; line-height: 1.1; margin: 0 0 6px; }
+.fr-head .fam-n { background: var(--fc); }
+.fr-nav { display: flex; gap: 8px; align-items: center; }
+.fr-nav .select { flex: 1; min-width: 0; }
+.fr-date { margin: 8px 2px 10px; font-weight: 700; }
+a.honor-i { color: inherit; text-decoration: none; }
+.fr-h { font-size: 1.1rem; margin: 0 0 10px; }
+.fr-enc h3 { font-size: 1.25rem; margin: 4px 0; }
+.fr-enc .chip-link { margin-top: 8px; }
+.fr-asis { margin-top: 12px; }
+.fr-count { font-size: 1.05rem; margin: 0 0 10px; }
+.fr-cols { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 6px; }
+@media (max-width: 520px) { .fr-cols { grid-template-columns: 1fr; } }
+main .card + .card, #frBody > .card { margin-top: 12px; }
+.fr-ints { display: grid; gap: 8px; grid-template-columns: repeat(auto-fill, minmax(200px, 1fr)); }
+.fr-int { display: grid; gap: 2px; padding: 10px 12px; border-radius: 14px; background: rgba(11,37,102,.05); color: inherit; text-decoration: none; }
+.fr-int .chip { justify-self: start; }
+.fr-pass { font-size: .8rem; font-weight: 700; color: var(--brand, #1351a4); display: inline-flex; align-items: center; gap: 2px; }
+.chip.warn { background: #fde0d2; color: #8a2d0b; }
+.fr-tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; margin: 0 -4px; }
+.fr-table { border-collapse: collapse; font-size: .82rem; min-width: 100%; }
+.fr-table th, .fr-table td { padding: 6px 7px; text-align: center; border-bottom: 1px solid rgba(11,37,102,.1); white-space: nowrap; }
+.fr-table tbody th { text-align: left; position: sticky; left: 0; background: var(--surface, #fff); }
+.fr-table thead th button { background: none; border: 0; font: inherit; font-weight: 700; color: inherit; cursor: pointer; padding: 2px 4px; border-radius: 8px; }
+.fr-table thead th button.on { background: #ffba03; color: #0b2566; }
+.fr-table small { display: block; font-weight: 500; opacity: .7; font-size: .7rem; white-space: normal; max-width: 140px; }
+.fr-table td.p { color: #1d7a45; font-weight: 800; }
+.fr-table td.a { color: #c0461a; }
+.fr-table td.na { background: rgba(11,37,102,.03); }
+.fr-table tr.tot th, .fr-table tr.tot td { font-weight: 800; border-top: 2px solid rgba(11,37,102,.2); }
+.fr-reg td a { color: inherit; text-decoration: none; display: block; font-weight: 700; }
+.fr-reg td.hi { background: #dcf3e4; } .fr-reg td.mid { background: #fff0c2; } .fr-reg td.lo { background: #fde0d2; }
+.fr-reg thead a { color: inherit; text-decoration: none; display: inline-flex; align-items: center; gap: 4px; }
+.fr-dot { width: 10px; height: 10px; border-radius: 50%; background: var(--fc); display: inline-block; }
+.fr-kpis { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 10px; margin-bottom: 12px; }
+.fr-kpis .card { display: grid; gap: 4px; padding: 14px; }
+.fr-kpis b { font-size: 1.5rem; }
+.fr-big { font-size: 2rem !important; }
