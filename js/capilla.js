@@ -4,6 +4,7 @@
 
 import { esc, rich, icon, toast } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
+import * as papa from "./papa.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -155,9 +156,10 @@ export function view(opt = {}) {
   const own = cards.filter((c) => c !== lectio);
   const member = st().ready;
   ctx.onAfterRender(() => {
+    if (opt.focus === "rosario") setTimeout(() => openRosary(), 50);
     loadGospel().then(() => {
       paintGospel();
-      if (!opt.focus || opt.vela) return;
+      if (!opt.focus || opt.vela || opt.focus === "rosario") return;
       const box = document.getElementById(opt.focus === "gospel" ? "capGospel" : "cap-" + opt.focus); if (!box) return;
       if (opt.focus !== "gospel") { box.scrollIntoView({ behavior: "auto", block: "start" }); return; }
       box.scrollIntoView({ behavior: "auto", block: "center" });
@@ -572,6 +574,7 @@ function rosPaint() {
       <strong class="ros-t">${esc(title)}</strong>${count}${extra}
       ${text ? `<p class="ros-txt">${esc(s.k === "fin" ? text : text.replace(/\n\n/g, "¶").replace(/\n/g, " ").replace(/¶/g, "\n\n")).replace(/\n/g, "<br>")}</p>` : ""}
       ${nextK ? `<button class="ros-next-pr" data-action="rosNext">${esc(PR[nextK][0])} ${icon("right")}</button>` : ""}
+      ${s.k === "fin" ? papa.finHTML() : ""}
     </div>`;
   el.querySelector(".ros-center").scrollTop = 0;
   const decade = s.d != null ? `Decena ${s.d + 1} de 5` : s.k === "fin" ? "Terminado" : s.k === "sa" ? "Salve" : "Inicio";

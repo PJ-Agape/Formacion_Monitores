@@ -329,6 +329,17 @@ export async function countVisit() {
     try { localStorage.setItem(lk, k); } catch {}
   } catch {}
 }
+// Rosarios por la intención del Papa: un contador por mes (rosarios/AAAA-MM, campo n). Lo ve todo el mundo; suman quienes tienen cuenta.
+export async function rosariosMes(mes) {
+  if (!enabled || !db) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "rosarios", mes)), 6000); return s.exists() ? +s.data().n || 0 : 0; } catch { return null; }
+}
+export async function sumarRosario(mes) {
+  if (!enabled || !db || !state().ready) throw new Error("no-account");
+  await fb.setDoc(fb.doc(db, "rosarios", mes), { n: fb.increment(1) }, { merge: true });
+}
+export const getPapaCfg = () => getContent("papa");
+export const savePapaCfg = (d) => setContent("papa", d);
 export async function visitStats(days = 30) {
   if (!enabled || !db) return [];
   const out = [];

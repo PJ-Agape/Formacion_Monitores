@@ -4,6 +4,7 @@
 import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
 import * as saludos from "./saludos.js";
+import * as papa from "./papa.js";
 import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as familiasAdmin from "./familias-admin.js";
@@ -161,6 +162,7 @@ async function summaryView(d) {
   ${cloudOn ? await visitsCard() : ""}
   ${cloudOn ? await grupo.adminHTML() : ""}
   ${cloudOn ? await novedades.adminHTML() : ""}
+  ${cloudOn ? await papa.adminHTML() : ""}
   ${legacy ? `<div class="card" style="border-color:var(--gold)">
     <h3>Encontramos contenido editado con la versión anterior</h3>
     <p class="muted small" style="margin-top:6px">Este navegador guarda cambios hechos con el panel antiguo (${legacy.join(", ")}). ¿Quieres traerlos al borrador para publicarlos?</p>

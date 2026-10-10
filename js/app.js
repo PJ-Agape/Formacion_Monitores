@@ -27,6 +27,7 @@ import * as a11y from "./accesible.js";
 import * as grupo from "./grupo.js";
 import * as inicio from "./inicio.js";
 import * as novedades from "./novedades.js";
+import * as papa from "./papa.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -306,6 +307,7 @@ function viewHome() {
   }));
   onAfterRender(startCarousel);
 
+  onAfterRender(() => papa.paintHome());
   onAfterRender(async () => {
     const e = cuenta.pick(await cloud.listAgenda());
     const slot = document.getElementById("countSlot");
@@ -314,6 +316,7 @@ function viewHome() {
   return `
   ${inicio.greetHTML()}
   <div id="countSlot"></div>
+  ${papa.homeHTML()}
   <div id="velaStrip"></div>
   ${inicio.blocksHTML()}
   ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
@@ -1431,6 +1434,7 @@ camJ.setup({ actions, render: () => render(), cloud, S });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
+papa.registerActions(actions);
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

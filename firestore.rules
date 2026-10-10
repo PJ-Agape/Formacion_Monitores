@@ -294,6 +294,14 @@ service cloud.firestore {
 
     // Contador de visitas anónimo: una visita por dispositivo y día (v total, c con cuenta, g visitantes).
     // Cualquiera suma 1; solo el equipo lo lee. No guarda datos personales.
+    // Rosarios por la intención del Papa: contador público por mes; quienes tienen cuenta suman de a uno.
+    match /rosarios/{mes} {
+      allow read: if true;
+      allow create: if isMember() && mes.matches('^[0-9]{4}-[0-9]{2}$')
+        && request.resource.data.keys().hasOnly(['n']) && request.resource.data.n == 1;
+      allow update: if isMember() && request.resource.data.keys().hasOnly(['n'])
+        && request.resource.data.n == resource.data.n + 1;
+    }
     match /stats/{day} {
       allow read: if isStaff();
       allow create: if day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')

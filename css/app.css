@@ -2628,3 +2628,19 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .fc-mob { border-radius: 10px; overflow: hidden; background: #0b2566; color: #fff6e5; display: grid; gap: 4px; padding-bottom: 8px; font-size: .62rem; }
 .fc-mob img { width: 100%; display: block; }
 .fc-mob b, .fc-mob i { margin: 0 8px; justify-self: start; }
+/* Rosarios por la intención del Papa */
+.papa-card { margin-top: 16px; background: linear-gradient(135deg, #fff6e5 0%, #e1f3fd 100%); border-color: var(--navy, #0b2566); }
+.papa-k { font-size: .72rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #1351a4; }
+.papa-card h3 { margin-top: 6px; font-size: 1.25rem; line-height: 1.15; }
+.papa-x { font-size: .9rem; margin-top: 6px; color: #24406e; line-height: 1.45; }
+.papa-n { display: flex; align-items: baseline; gap: 10px; flex-wrap: wrap; margin-top: 12px; }
+.papa-n b { font-family: var(--font-display, inherit); font-size: 2.6rem; line-height: 1; color: #ef591c; font-variant-numeric: tabular-nums; }
+.papa-n span { font-weight: 700; font-size: .92rem; }
+.papa-bar { height: 10px; border-radius: 9px; background: rgba(11,37,102,.12); overflow: hidden; margin-top: 10px; }
+.papa-bar i { display: block; height: 100%; background: #ffba03; border-radius: 9px; }
+.papa-ros { margin-top: 14px; }
+.ros-papa-t { display: block; font-size: .78rem; opacity: .8; margin-top: 6px; }
+@media (prefers-color-scheme: dark) { :root:not([data-mode="light"]) .papa-card { background: linear-gradient(135deg, #14244d 0%, #0e1a3a 100%); } :root:not([data-mode="light"]) .papa-x, :root:not([data-mode="light"]) .papa-k { color: inherit; opacity: .85; } }
+:root[data-mode="dark"] .papa-card { background: linear-gradient(135deg, #14244d 0%, #0e1a3a 100%); }
+:root[data-mode="dark"] .papa-x, :root[data-mode="dark"] .papa-k { color: inherit; opacity: .85; }
+.papa-x { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
