@@ -2718,3 +2718,7 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .top-nav a[data-k="oracion"][aria-current="page"] { background: #ffba03; color: #0b2566; }
 .door strong { font-size: clamp(.92rem, 4vw, 1.35rem); overflow-wrap: normal; white-space: nowrap; font-stretch: 75%; }
 .door-h { font-size: .92rem; }
+.hub-multi { align-items: flex-start !important; }
+.hub-links { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 10px; }
+.chip-link { display: inline-flex; align-items: center; gap: 4px; padding: 7px 14px; border-radius: 999px; border: 2px solid var(--z-b, #0b2566); background: var(--surface-2, #f3f6fb); color: inherit; font-weight: 800; font-size: .88rem; text-decoration: none; box-shadow: 2px 2px 0 var(--z-b, #0b2566); }
+.chip-link svg { width: 14px; height: 14px; }

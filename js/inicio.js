@@ -45,10 +45,11 @@ export const BLOCKS = {
 const ITEMS = [
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
   { b: "formacion", e: "🎓", t: "Curso de dirigentes", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
-  { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso },
-  { b: "formacion", e: "📰", t: "Camino Ágape", d: "Revistas de los encuentros semanales.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo },
-  { b: "formacion", e: "🧰", t: "Materiales", d: "Caja de recursos para el equipo.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links", ok: (w) => w.equipo },
-  { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo },
+  { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
+  { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Camino Ágape: los encuentros semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo },
+  { b: "formacion", e: "🧰", t: "Materiales y dinámicas", d: "Recursos para preparar y juegos, rompehielos y dinámicas de oración.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links", ok: (w) => w.equipo,
+    links: [["🧰 Materiales", "#/materiales"], ["🎲 Dinámicas", "#/dinamicas"]] },
+  { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta", ok: () => true },
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido", ok: () => true },
@@ -71,7 +72,10 @@ const descFor = (k, w) => k !== "formacion" ? BLOCKS[k].d
   : w.camino ? (w.curso ? "Tu Camino Ágape y el curso de dirigentes." : "Tu Camino Ágape: el encuentro de tu etapa, semana a semana.")
   : "Crecer en la fe y aprender a acompañar a otros.";
 export const itemsFor = (b) => { const w = who(); return ITEMS.filter((x) => x.b === b && x.ok(w)); };
-const itemCard = (x) => `<a class="card link hub-item" href="${esc(x.href)}" ${x.ext ? 'target="_blank" rel="noopener"' : ""}>
+const itemCard = (x) => x.links ? `<div class="card hub-item hub-multi">
+    <span class="hub-e" aria-hidden="true">${x.e}</span><span><strong>${esc(x.t)}</strong><span class="muted small">${esc(x.d)}</span>
+    <span class="hub-links">${x.links.map(([l, h]) => `<a class="chip-link" href="${esc(h)}">${esc(l)} ${icon("right")}</a>`).join("")}</span></span></div>`
+  : `<a class="card link hub-item" href="${esc(x.href)}" ${x.ext ? 'target="_blank" rel="noopener"' : ""}>
     <span class="hub-e" aria-hidden="true">${x.e}</span><span><strong>${esc(x.t)}</strong><span class="muted small">${esc(x.d)}</span></span>${icon("right")}</a>`;
 
 // ---------------------------------------------------------------------------
@@ -145,8 +149,7 @@ export function viewFormacion() {
       <span class="eyebrow">Curso de formación de dirigentes</span><strong>${esc(course.title)}</strong>
       <span class="hub-prog"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></span>
       <span class="muted small"><b>${st.readSessions}/${st.totalSessions}</b> unidades · ${st.complete ? "¡Curso completado! 🎉" : "sigue donde quedaste"}</span></a>` : ""}
-  ${st.complete && w.curso ? `<a class="card link hub-item" href="#/constancia"><span class="hub-e">🏅</span><span><strong>Mi constancia</strong><span class="muted small">Tu constancia de formación y envío.</span></span>${icon("right")}</a>` : ""}
-  <div class="hub-grid">${itemsFor("formacion").filter((x) => x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
+  <div class="hub-grid">${itemsFor("formacion").filter((x) => x.hub !== false && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
   ${w.guest ? `<p class="muted small" style="margin-top:14px">Para ver el curso y los encuentros, <a href="#/perfil">ingresa con tu cuenta</a>.</p>` : ""}`;
 }
 export function viewRed() {

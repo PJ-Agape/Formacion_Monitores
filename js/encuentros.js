@@ -105,7 +105,7 @@ export async function viewHub(year) {
   if (!next.length) next = d.encuentros.slice(-4);
   return `
   ${year ? `<div class="note" style="margin-bottom:10px">${icon("book")} Estás viendo una <b>edición archivada</b>. <a href="#/encuentros">Ir a la edición actual</a></div>` : ""}
-  <header class="page-head"><span class="eyebrow">${esc(d.ciclo)}</span><h1>Camino <em>Ágape</em></h1>
+  <header class="page-head"><span class="eyebrow">Camino Ágape · ${esc(d.ciclo)}</span><h1>Nuestra <em>Revista</em></h1>
     <p>${esc(d.subtitle)}. ${esc(d.claim)}</p></header>
   <div class="grid grid-2" style="margin-top:18px">${card("principal")}${card("coordinacion")}</div>
   <h2 class="mag-hub-sub">Revistas del joven</h2>
@@ -128,7 +128,7 @@ export async function viewRevista(k, year) {
   data = d;
   const base = baseOf(year);
   if (k === "coordinacion" && !canSeeGuide()) {
-    return `<a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino Ágape${year ? " " + esc(year) : ""}</a>
+    return `<a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Nuestra Revista${year ? " " + esc(year) : ""}</a>
       <div class="card" style="text-align:center;padding:32px;margin-top:14px">
       <div class="tile-ico tile-brand" style="margin:0 auto 12px">${icon("lock")}</div>
       <h2 class="display">La guía de coordinación es para el equipo</h2>

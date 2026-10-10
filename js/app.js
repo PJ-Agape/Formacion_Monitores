@@ -386,7 +386,7 @@ function viewCommunity() {
   </header>
   <a class="card link camino-banner no-print" href="#/encuentros" style="margin:6px 0 10px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("route")}</span>
-    <span style="flex:1"><span class="eyebrow">Encuentros semanales</span><strong>Camino Ágape</strong>
+    <span style="flex:1"><span class="eyebrow">Camino Ágape · encuentros semanales</span><strong>Nuestra Revista</strong>
     <span class="muted small">El itinerario del grupo en tres etapas: ingreso, madurez y aspirante.</span></span>${icon("right")}
   </a>
 

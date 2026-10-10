@@ -58,7 +58,7 @@ const T = [
 
   // Formación
   { t: "itinerario", q: "¿Cómo avanzo en el curso?", who: ["aspirante", ...GUIAS], a: ["En Formación, toca la unidad que sigue: se abre como presentación.", "En la última lámina toca «Marcar unidad como completada». Al completar todas las de un módulo se abre su evaluación."], go: "#/itinerario" },
-  { t: "itinerario", q: "¿Dónde quedan mis respuestas del cuaderno?", who: ["aspirante", ...GUIAS], a: ["En Formación → «Mi cuaderno». Solo tú las lees.", "Puedes descargarlas como texto."], go: "#/cuaderno", el: "[data-action=downloadNotes]" },
+  { t: "itinerario", q: "¿Dónde quedan mis respuestas del cuaderno?", who: ["aspirante", ...GUIAS], a: ["En Formación → Curso de dirigentes → «Mi cuaderno». Solo tú las lees.", "Puedes descargarlas como texto."], go: "#/cuaderno", el: "[data-action=downloadNotes]" },
   { t: "itinerario", q: "¿Puedo leer la unidad completa en vez de la presentación?", who: ["aspirante", ...GUIAS], a: ["Sí. Dentro de la presentación toca «📄 Texto completo» arriba a la derecha."] },
 
   // Acompañar
