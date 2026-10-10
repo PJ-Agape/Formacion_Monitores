@@ -6,7 +6,7 @@ import * as cloud from "./cloud.js";
 import { esc, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
 
-// Intenciones 2026 del papa León XIV (popesprayer.va). Título y texto de cada mes.
+// Intenciones 2026 y 2027 del papa León XIV (popesprayer.va). Título y texto de cada mes.
 const INT = {
   "2026-01": ["Por la oración con la Palabra de Dios", "Para que la oración con la Palabra de Dios sea alimento y esperanza, y nos ayude a construir una Iglesia más fraterna y misionera."],
   "2026-02": ["Por los niños con enfermedades incurables", "Por los niños con enfermedades incurables y sus familias, para que reciban la atención y el apoyo que necesitan."],
@@ -20,6 +20,19 @@ const INT = {
   "2026-10": ["Por la pastoral de la salud mental", "Recemos para que la pastoral de la salud mental se integre en toda la Iglesia, ayudando a superar el estigma y la discriminación hacia las personas con enfermedades mentales."],
   "2026-11": ["Por el buen uso de la riqueza", "Oremos por un buen uso de la riqueza para que, no cediendo a la tentación del egoísmo, esté siempre al servicio del bien común y la solidaridad con los que tienen menos."],
   "2026-12": ["Por las familias monoparentales", "Oremos por las familias que experimentan la ausencia de una madre o de un padre, para que encuentren en la Iglesia apoyo y acompañamiento, y en la fe ayuda y fuerza en los momentos difíciles."],
+  // 2027 (popesprayer.va; marzo a noviembre, igual que en Nuestra Revista)
+  "2027-01": ["Por el descubrimiento de la fuerza de la oración", "Para que la Iglesia redescubra la oración como un encuentro personal con el Señor, que transforma el corazón y el mundo."],
+  "2027-02": ["Por el cuidado de quienes cuidan", "Por quienes cuidan la salud de otros, para que reciban el apoyo que necesitan y sigan adelante con paciencia y fortaleza."],
+  "2027-03": ["Por el respeto de la dignidad de la vida humana", "Oremos para que, ante una cultura centrada en la productividad y la inmediatez, seamos capaces de descubrir y valorar la dignidad única de cada persona."],
+  "2027-04": ["Por el arte como don que humaniza", "Oremos para que el arte sea acogido como un verdadero don que nos humaniza, eleva el espíritu y ayuda a contemplar la belleza de Dios en la creación."],
+  "2027-05": ["Por las oportunidades laborales para todos", "Oremos para que el desarrollo tecnológico abra caminos de trabajo digno y la colaboración entre generaciones fortalezca un futuro donde cada persona pueda ofrecer sus talentos."],
+  "2027-06": ["Por un buen uso de la inteligencia artificial", "Oremos para que el desarrollo de la inteligencia artificial esté siempre al servicio de la dignidad humana y sepamos usarla con sabiduría."],
+  "2027-07": ["Por los abuelos y ancianos", "Oremos para que los miembros de la Iglesia valoremos el tesoro de fe y de sabiduría que nos ofrecen los abuelos y ancianos, dispuestos a aprender de su experiencia."],
+  "2027-08": ["Por la vocación de los jóvenes", "Oremos para que los jóvenes en búsqueda de su vocación propia reconozcan a Jesucristo como compañero de camino a quien pueden abrir su corazón."],
+  "2027-09": ["Por una conversión ecológica integral", "Oremos para que aprendamos a vivir una relación nueva con la creación, protegiéndola con justicia y encontrando en la contemplación de lo creado el camino hacia una vida más armoniosa y agradecida."],
+  "2027-10": ["Por las comunidades cristianas", "Oremos para que cada parroquia, comunidad o grupo cristiano sea un centro de irradiación misionera que forme nuevos discípulos al servicio del Evangelio."],
+  "2027-11": ["Por la integración de los migrantes", "Oremos para que los migrantes y desplazados, acompañados y consolados por la Sagrada Familia en su propio camino de desarraigo, encuentren comunidades que los acojan con dignidad, solidaridad y verdadera integración."],
+  "2027-12": ["Por la vocación cristiana de la familia", "Para que las familias cristianas sean testigos del Evangelio y hogares donde crezcan la fe, la esperanza y el amor."],
 };
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const pad = (n) => String(n).padStart(2, "0");

@@ -50,7 +50,8 @@ function myEtapa() { const e = etapaOf(st().role); return e || preview; }
 const canPreview = () => !etapaOf(st().role);
 
 // Avance: «ya viví este encuentro» se guarda como nota (viaja con la cuenta).
-const NOTE_COURSE = () => `camino-${(DATA && DATA.version) || "2027"}`;
+// Una clave por año (2027 conserva la que ya usaba), para que lo marcado un año no aparezca el siguiente
+const NOTE_COURSE = () => { const y = (DATA && DATA.year) || 2027; return y === 2027 ? `camino-${(DATA && DATA.version) || "2027"}` : `camino-${y}`; };
 const vividos = (et) => ctx.S.getNotes(NOTE_COURSE(), `vividos-${et}`);
 const setVivido = (et, n, on) => ctx.S.setNote(NOTE_COURSE(), `vividos-${et}`, n, on ? "1" : "");
 
