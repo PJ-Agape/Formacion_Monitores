@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-10": {
-   "titulo": "Sábado de la 27.ª semana del Tiempo Ordinario",
-   "cita": "Lc 11,27-28",
-   "frase": "Felices más bien los que escuchan la Palabra de Dios y la practican."
-  },
   "2026-10-11": {
    "titulo": "28.º domingo del Tiempo Ordinario",
    "cita": "Mt 22,1-14",
@@ -55,6 +50,11 @@
    "titulo": "Martes de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,35-38",
    "frase": "¡Felices los servidores a quienes el señor encuentra velando a su llegada!"
+  },
+  "2026-10-21": {
+   "titulo": "Miércoles de la 29.ª semana del Tiempo Ordinario",
+   "cita": "Lc 12,39-48",
+   "frase": "¡Feliz aquel a quien su señor, al llegar, encuentre ocupado en este trabajo!"
   }
  }
 }
