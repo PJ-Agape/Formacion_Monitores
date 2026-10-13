@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-11": {
-   "titulo": "28.º domingo del Tiempo Ordinario",
-   "cita": "Mt 22,1-14",
-   "frase": "Envió entonces a sus servidores para avisar a los invitados, pero estos se negaron a ir."
-  },
   "2026-10-12": {
    "titulo": "Lunes de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,29-32",
@@ -55,6 +50,11 @@
    "titulo": "Miércoles de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,39-48",
    "frase": "¡Feliz aquel a quien su señor, al llegar, encuentre ocupado en este trabajo!"
+  },
+  "2026-10-22": {
+   "titulo": "Jueves de la 29.ª semana del Tiempo Ordinario",
+   "cita": "Lc 12,49-53",
+   "frase": "Yo he venido a traer fuego sobre la tierra, ¡y cómo desearía que ya estuviera ardiendo!"
   }
  }
 }
