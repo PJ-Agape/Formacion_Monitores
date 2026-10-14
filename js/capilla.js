@@ -94,19 +94,53 @@ const RADIOS = [
   { name: "Radio Regina Coeli", where: "Los Ángeles · Diócesis Santa María de Los Ángeles", url: "https://reinadelcielo.cl/radio/" },
 ];
 
-function devocionarioHTML() {
-  const item = (o) => `<details class="card cap-pr" data-dq="${esc((o.t + " " + (o.x || "") + " " + (o.note || "")).toLowerCase())}">
-    <summary><span>${esc(o.t)}</span>${icon("down")}</summary>
-    <div class="cap-pr-body">
-      ${o.note ? `<p class="cap-pr-note">${esc(o.note)}</p>` : ""}
-      ${o.x ? `<p class="cap-prayer">${prayerHTML(o.x)}</p>` : ""}
+// Las oraciones de siempre se agrupan por tema para elegirlas en una lista (una sola tarjeta abierta a la vez).
+const DEV_GROUPS = [
+  ["Las de cada día", ["Padre nuestro", "Ave María", "Gloria al Padre", "Credo", "Ángel de Dios", "Acto de Contrición"]],
+  ["Con Jesús", ["Alma de Cristo", "Comunión espiritual", "Coronilla de la Divina Misericordia", "Acto de caridad", "Benedictus", "Te Deum", "El eterno reposo"]],
+  ["Con María", ["Rosario", "Salve Regina", "Bajo tu amparo", "Acordaos", "Ángelus", "Regina Coeli", "Magnificat", "Acto de Consagración al Corazón Inmaculado de María"]],
+  ["Al Espíritu Santo", ["Ven Santo Espíritu", "Veni Creator"]],
+  ["Por la Iglesia y los santos", ["Oración por el Papa", "Oración a San José", "Oración a la Sagrada Familia", "San Miguel Arcángel"]],
+];
+const QUICK = ["Padre nuestro", "Ave María", "Gloria al Padre", "Credo", "Ángel de Dios"];
+const devFind = (t) => ORACIONES.find((o) => o.t === t);
+const devGroups = () => {
+  const used = new Set(), out = DEV_GROUPS.map(([g, ts]) => [g, ts.map(devFind).filter(Boolean)]);
+  out.forEach(([, xs]) => xs.forEach((o) => used.add(o.t)));
+  const rest = ORACIONES.filter((o) => !used.has(o.t)); // si se agrega una oración nueva, igual aparece
+  if (rest.length) out.push(["Otras", rest]);
+  return out.filter(([, xs]) => xs.length);
+};
+const DEV_KEY = "agape_cap_oracion";
+const devCurrent = () => { let t = ""; try { t = sessionStorage.getItem(DEV_KEY) || ""; } catch {} return devFind(t) ? t : "Padre nuestro"; };
+function devCardHTML(o) {
+  if (!o) return "";
+  const grp = (devGroups().find(([, xs]) => xs.includes(o)) || [""])[0];
+  return `<span class="eyebrow">${esc(grp)}</span><h3>${esc(o.t)}</h3>
+    ${o.note ? `<p class="cap-pr-note">${esc(o.note)}</p>` : ""}
+    ${o.x ? `<p class="cap-prayer">${prayerHTML(o.x)}</p>` : ""}
+    ${o.url || o.go ? `<div class="row-wrap">
       ${o.url ? `<a class="btn btn-sm btn-soft" href="${o.url}" target="_blank" rel="noopener">${icon("book")} Rezarla en Vatican News</a>` : ""}
       ${o.go ? `<button type="button" class="btn btn-sm btn-gold" data-action="capRosario">${icon("right")} Rezarlo con el rosario virtual</button>` : ""}
-    </div></details>`;
-  return `<label class="cap-dsearch"><span class="sr-only">Buscar una oración</span>${icon("search")}<input class="input" type="search" id="capDq" placeholder="Buscar una oración…" autocomplete="off"></label>
-    <div class="cap-classic" id="capDev">${ORACIONES.map(item).join("")}</div>
-    <p class="muted small cap-dnone" id="capDnone" hidden>No encontramos esa oración.</p>
-    <p class="muted small" style="margin-top:12px">En el orden del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;
+    </div>` : ""}`;
+}
+function devocionarioHTML() {
+  const cur = devCurrent();
+  return `<div class="cap-devpick">
+      <div class="cap-quick" role="group" aria-label="Las más rezadas">${QUICK.filter(devFind).map((t) => `<button type="button" class="chip-btn" data-action="capDev" data-t="${esc(t)}" aria-pressed="${t === cur}">${esc(t)}</button>`).join("")}</div>
+      <label class="cap-devsel"><span>Elige una oración</span>
+        <select class="input" id="capDevSel">${devGroups().map(([g, xs]) => `<optgroup label="${esc(g)}">${xs.map((o) => `<option value="${esc(o.t)}" ${o.t === cur ? "selected" : ""}>${esc(o.t)}</option>`).join("")}</optgroup>`).join("")}</select>
+      </label>
+    </div>
+    <article class="card cap-devcard" id="capDevCard" aria-live="polite">${devCardHTML(devFind(cur))}</article>
+    <p class="muted small" style="margin-top:12px">${ORACIONES.length} oraciones del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;
+}
+function devShow(t) {
+  if (!devFind(t)) return;
+  try { sessionStorage.setItem(DEV_KEY, t); } catch {}
+  const card = document.getElementById("capDevCard"); if (card) card.innerHTML = devCardHTML(devFind(t));
+  const sel = document.getElementById("capDevSel"); if (sel && sel.value !== t) sel.value = t;
+  document.querySelectorAll(".cap-quick [data-t]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.t === t)));
 }
 
 // ---------------------------------------------------------------------------
@@ -268,7 +302,7 @@ export function view(opt = {}) {
 
   <section class="cap-room" id="cap-siempre">
     <div class="cap-room-head"><span class="cap-num">05</span><h2>Oraciones de <em>siempre</em></h2></div>
-    <p class="cap-lead">El devocionario de la Iglesia: las oraciones que rezamos en todo el mundo. Toca una para abrirla.</p>
+    <p class="cap-lead">Las oraciones que rezamos en todo el mundo. Elige una y rézala con calma.</p>
     ${devocionarioHTML()}
   </section>
 
@@ -606,15 +640,9 @@ function rosMove(n) {
 
 function registerActions() {
   const A = ctx.actions;
-  // Buscador del devocionario
-  document.addEventListener("input", (e) => {
-    if (e.target.id !== "capDq") return;
-    const fold = (t) => t.normalize("NFD").replace(/[\u0300-\u036f]/g, "");
-    const q = fold(e.target.value.trim().toLowerCase());
-    let n = 0;
-    document.querySelectorAll("#capDev .cap-pr").forEach((d) => { const ok = !q || fold(d.dataset.dq).includes(q); d.hidden = !ok; if (ok) n++; });
-    const none = document.getElementById("capDnone"); if (none) none.hidden = n > 0;
-  });
+  // Devocionario: un selector y una sola tarjeta con la oración elegida
+  document.addEventListener("change", (e) => { if (e.target.id === "capDevSel") devShow(e.target.value); });
+  A.capDev = (el) => devShow(el.dataset.t);
   A.capRosario = (el) => openRosary(el.dataset.set);
   A.rosClose = () => closeRosary();
   A.rosNext = () => rosMove(1);
