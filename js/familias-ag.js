@@ -17,7 +17,7 @@ export const SOFT = ["#e1f3fd", "#fde0d2", "#fff0c2", "#dcf3e4", "#ece3fa", "#fb
 export const ETAPAS = { ingreso: ["Ingreso", "Etapa 1 · Bienvenido a casa", "#8ad2fa"], madurez: ["Madurez", "Etapa 2 · Mi fe en primera persona", "#1351a4"], aspirante: ["Aspirante", "Etapa 3 · Llamados a servir", "#ef591c"] };
 let rows = null, ctx = null, calData = null;
 // Etapa más común entre los integrantes (sugerencia al armar la familia)
-const etapaSugerida = (js, ids) => { const c = {}; (js || []).filter((j) => ids.has(j.id) && ETAPAS[j.etapa]).forEach((j) => { c[j.etapa] = (c[j.etapa] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || ""; };
+export const etapaSugerida = (js, ids) => { const c = {}; (js || []).filter((j) => ids.has(j.id) && ETAPAS[j.etapa]).forEach((j) => { c[j.etapa] = (c[j.etapa] || 0) + 1; }); return Object.entries(c).sort((a, b) => b[1] - a[1])[0]?.[0] || ""; };
 // La revista de la etapa: los jóvenes la leen en «Mi Camino»; el equipo, en Nuestra Revista
 export const revistaHref = (e, n) => (st().isJoven ? (n ? `#/mi-camino/${n}` : "#/mi-camino") : `#/encuentros/${e}${n ? "/" + n : ""}`);
 
@@ -55,13 +55,13 @@ const st = () => cloud.state();
 const activos = (js) => (js || []).filter((j) => j.activo !== false && j.etapa !== "equipo");
 // Integrantes de una familia = jóvenes cuyo dirigente a cargo (o de apoyo) es uno de los suyos. Si alguien queda
 // en dos familias (a cargo en una y apoyo en otra), cuenta en la del dirigente a cargo.
-function derive(dirUids, js, otherDir = new Set()) {
+export function derive(dirUids, js, otherDir = new Set()) {
   const d = new Set(dirUids);
   return activos(js).filter((j) => d.has(j.guia) || (d.has(j.guia2) && !otherDir.has(j.guia)))
     .sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es"))
     .map((j) => ({ id: j.id, nombre: corto(j.nombre), uid: j.uid || "" }));
 }
-const uidsOf = (dir, ints) => [...new Set([...dir.map((d) => d.uid), ...ints.map((j) => j.uid)].filter(Boolean))];
+export const uidsOf = (dir, ints) => [...new Set([...dir.map((d) => d.uid), ...ints.map((j) => j.uid)].filter(Boolean))];
 const same = (a, b) => JSON.stringify((a || []).map((x) => x.id)) === JSON.stringify((b || []).map((x) => x.id));
 // Recalcula los integrantes de todas las familias (lo llama el equipo al abrir la página y al guardar la asignación).
 export async function sync(jovenes) {

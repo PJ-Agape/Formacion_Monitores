@@ -587,6 +587,14 @@ export function watchPresence(sala, cb) {
   return fb.onSnapshot(fb.collection(db, "chat", sala, "presence"), (qs) => cb(snapRows(qs)), (e) => console.warn("Presencia:", e));
 }
 export const deleteChat = (sala, id) => fb.deleteDoc(fb.doc(db, "chat", sala, "msgs", id));
+// Moderación: mensajes del chat con reportes (equipo), sala por sala
+export async function reportedChat(salas) {
+  const out = [];
+  for (const k of salas) {
+    try { (await withTimeout(fb.getDocs(fb.collection(db, "chat", k, "msgs")), 6000)).docs.forEach((d) => { const m = d.data({ serverTimestamps: "estimate" }); if (Object.keys(m.reports || {}).length) out.push({ sala: k, id: d.id, ...m }); }); } catch {}
+  }
+  return out;
+}
 export const reportChat = (sala, id, on) => toggleMark(["chat", sala, "msgs", id], "reports", on);
 
 // ---------------------------------------------------------------------------

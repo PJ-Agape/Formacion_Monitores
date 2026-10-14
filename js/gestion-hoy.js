@@ -76,7 +76,7 @@ async function pendientes() {
       return { j, n };
     }).filter((x) => x.n >= 3 && !(x.j.contactado && x.j.contactado >= last));
     if (faltan.length) out.push(item("urgente", "🤝", `${faltan.length} joven${faltan.length > 1 ? "es" : ""} para llamar`,
-      faltan.slice(0, 4).map((x) => `${esc(corto(x.j.nombre))} (${x.n} seguidos)`).join(", ") + (faltan.length > 4 ? "…" : ""), "#/acompanar/asistencia", "Acompañar"));
+      faltan.slice(0, 4).map((x) => `${esc(corto(x.j.nombre))} (${x.n} seguidos)`).join(", ") + (faltan.length > 4 ? "…" : ""), "#/admin/acompanar", "Acompañar"));
     // 4) Evaluaciones de la última semana
     const ev = await Promise.all(misFams.map((f) => cloud.listFamEvals(f.id).catch(() => [])));
     const semana = Date.now() - 7 * 86400000;
@@ -89,12 +89,13 @@ async function pendientes() {
 
   // 5) Moderación: publicaciones y respuestas reportadas (equipo)
   if (s.isStaff) {
-    const [wall, flag] = await Promise.all([cloud.latestWall().catch(() => []), s.isAdmin ? cloud.flaggedReplies().catch(() => []) : []]);
-    const rep = wall.filter((p) => Object.keys(p.reports || {}).length && !p.hidden).length + flag.filter((r) => !r.hidden).length;
-    if (rep) out.push(item("urgente", "🚩", `${rep} reporte${rep > 1 ? "s" : ""} en el muro`, "Alguien marcó una publicación o respuesta. Revísala y ocúltala si corresponde.", "#/muro", "Moderar"));
+    await cloud.loadSalas().catch(() => {});
+    const [wall, flag, chat] = await Promise.all([cloud.latestWall().catch(() => []), cloud.flaggedReplies().catch(() => []), cloud.reportedChat(cloud.allSalas().map((x) => x.key)).catch(() => [])]);
+    const rep = wall.filter((p) => Object.keys(p.reports || {}).length && !p.hidden).length + flag.filter((r) => !r.hidden && Object.keys(r.reports || {}).length).length + chat.length;
+    if (rep) out.push(item("urgente", "🚩", `${rep} reporte${rep > 1 ? "s" : ""} en el muro o el chat`, "Alguien marcó un mensaje. Revísalo y ocúltalo o bórralo si corresponde.", "#/admin/moderacion", "Moderar"));
     // 6) Cuadro de honor del mes anterior
     const h = D && D.honor, now = new Date(), prev = iso(new Date(now.getFullYear(), now.getMonth() - 1, 1)).slice(0, 7);
-    if (!h || (h.mes !== prev && h.mes !== iso(now).slice(0, 7))) out.push(item("revisar", "🏆", `Publicar el cuadro de honor de ${MESES[+prev.slice(5) - 1]}`, "Asistencia perfecta y sellos del mes. Solo aparece quien tiene autorización de su familia.", "#/acompanar/honor", "Cuadro de honor"));
+    if (!h || (h.mes !== prev && h.mes !== iso(now).slice(0, 7))) out.push(item("revisar", "🏆", `Publicar el cuadro de honor de ${MESES[+prev.slice(5) - 1]}`, "Asistencia perfecta y sellos del mes. Solo aparece quien tiene autorización de su familia.", "#/admin/honor", "Cuadro de honor"));
     // 7) Intención del Papa del mes
     if (!(await papa.intencionCargada())) out.push(item("revisar", "🙏", "Falta la intención del Papa de este mes", "Cárgala para que salga en Inicio y en el rosario.", "#/admin/resumen", "Cargar"));
     // 8) La revista del año siguiente (de agosto en adelante)

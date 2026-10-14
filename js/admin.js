@@ -3,6 +3,10 @@
 
 import * as hoy from "./gestion-hoy.js";
 import * as evAdmin from "./evangelio-admin.js";
+import * as gEq from "./gestion-equipo.js";
+import * as agenda from "./agenda.js";
+import * as acompanar from "./acompanar.js";
+import * as famReg from "./familias-registro.js";
 import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
 import * as saludos from "./saludos.js";
@@ -21,6 +25,13 @@ let cloudOn = false;
 const THEMES = [["amanecer", "Amanecer · luz y calidez"], ["cenaculo", "Cenáculo · oración"], ["esperanza", "Esperanza · vida"]];
 
 // ---------------------------------------------------------------------------
+// Pantallas que viven en la app y se muestran también dentro de Gestión (mismo contenido, con el menú al lado)
+const EMBED = {
+  agenda: () => agenda.viewAgenda(),
+  honor: () => acompanar.viewMain("honor"),
+  acompanar: () => acompanar.viewMain("asistencia"),
+  registro: () => famReg.viewRegistro(),
+};
 export async function renderAdmin(sub, _api) {
   api = _api;
   bindActions();
@@ -36,8 +47,10 @@ export async function renderAdmin(sub, _api) {
         <p class="muted" style="margin-top:8px">Si necesitas acceso, pídelo al equipo coordinador.</p>
         <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
       const pg = sub.split("/").filter(Boolean)[0] || "hoy";
-      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), asignar: () => asignarView() };
-      const ok = st.isStaff ? COORD[pg] : pg === "hoy" ? COORD.hoy : null;
+      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), asignar: () => asignarView(),
+        grupos: () => gEq.familiasHTML(), moderacion: () => gEq.moderacionHTML(), ...EMBED };
+      const GUIA = { hoy: COORD.hoy, acompanar: EMBED.acompanar };
+      const ok = st.isStaff ? COORD[pg] : GUIA[pg];
       return shell(ok ? pg : "hoy", await (ok || COORD.hoy)());
     }
   } else if (!S.isAdmin()) return loginView();
@@ -54,6 +67,10 @@ export async function renderAdmin(sub, _api) {
     case "portada": body = portada.adminView(); break;
     case "saludos": body = await saludos.adminView(); break;
     case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
+    case "grupos": body = cloudOn ? gEq.familiasHTML() : summaryView(draft); break;
+    case "moderacion": body = cloudOn ? gEq.moderacionHTML() : summaryView(draft); break;
+    case "consentimientos": body = cloudOn ? gEq.consentHTML() : summaryView(draft); break;
+    case "agenda": case "honor": case "acompanar": case "registro": body = await EMBED[page](); break;
     case "evangelio": body = cloudOn ? await evAdmin.adminView() : summaryView(draft); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
@@ -79,21 +96,22 @@ function navGroups() {
     ["Personas", [
       ["dirigentes", "#/admin/dirigentes", "Cuentas e invitaciones", "users", cloudOn && A],
       ["asignar", "#/admin/asignar", "Asignar jóvenes", "check", cloudOn && C],
-      ["", "#/nuestras-familias", "Nuestras familias", "users", cloudOn && C, true],
+      ["grupos", "#/admin/grupos", "Las 10 familias", "users", cloudOn && C],
+      ["consentimientos", "#/admin/consentimientos", "Consentimientos", "lock", cloudOn && A],
       ["", fam ? `#/nuestras-familias/${fam}` : "#/nuestras-familias", "Mi familia", "users", cloudOn && !C, true],
     ]],
     ["Seguimiento", [
-      ["", "#/nuestras-familias/registro", "Asistencia y planillas", "grid", cloudOn && C, true],
+      ["registro", "#/admin/registro", "Asistencia y planillas", "grid", cloudOn && C],
       ["", fam ? `#/nuestras-familias/${fam}/registro` : "#/nuestras-familias", "Registro de mi familia", "grid", cloudOn && !C, true],
-      ["", "#/acompanar", "Acompañar y pasaportes", "check", cloudOn, true],
-      ["", "#/acompanar/honor", "Cuadro de honor", "award", cloudOn && C, true],
+      ["acompanar", "#/admin/acompanar", "Acompañar y pasaportes", "check", cloudOn],
+      ["honor", "#/admin/honor", "Cuadro de honor", "award", cloudOn && C],
       ["resumen", "#/admin/resumen", "Estadísticas e intención del Papa", "grid", A],
     ]],
     ["Comunicación", [
       ["portada", "#/admin/portada", "Portada de Inicio", "sparkle", cloudOn && C],
-      ["", "#/agenda", "Agenda", "grid", C, true],
+      ["agenda", "#/admin/agenda", "Agenda", "grid", C],
       ["saludos", "#/admin/saludos", "Saludos WhatsApp", "send", C],
-      ["", "#/muro", "Muro, chat y moderación", "chat", cloudOn && C, true],
+      ["moderacion", "#/admin/moderacion", "Moderación de muro y chat", "chat", cloudOn && C],
       ["familias", "#/admin/familias", "Página para familias", "users", cloudOn && C],
     ]],
     ["Contenidos", [

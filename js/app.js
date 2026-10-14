@@ -32,6 +32,7 @@ import * as familiasAg from "./familias-ag.js";
 import * as famReg from "./familias-registro.js";
 import * as famPortal from "./familia-portal.js";
 import * as evalua from "./evaluacion.js";
+import * as gEq from "./gestion-equipo.js";
 import { illus } from "./ilustraciones.js";
 
 qrcode.stringToBytes = utf8Bytes;
@@ -1379,6 +1380,7 @@ familiasAg.setup({ actions, onAfterRender });
 famReg.setup({ actions, onAfterRender });
 famPortal.setup({ actions, onAfterRender, onLeave });
 evalua.setup({ actions });
+gEq.setup({ actions });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

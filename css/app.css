@@ -2890,3 +2890,22 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .ev-list { list-style: none; padding: 0; margin: 0; display: grid; gap: 8px; }
 .ev-row { display: flex; gap: 10px; align-items: center; }
 .ev-row small { display: block; }
+/* Gestión etapa 2: tablas del equipo y moderación */
+.gf-tablewrap { overflow-x: auto; -webkit-overflow-scrolling: touch; border-radius: 16px; border: 2px solid var(--line); background: var(--surface, #fff); }
+.gf-table { border-collapse: collapse; width: 100%; font-size: .88rem; }
+.gf-table th, .gf-table td { padding: 8px 10px; border-bottom: 1px solid var(--line); text-align: left; vertical-align: middle; }
+.gf-table thead th { font-size: .72rem; text-transform: uppercase; letter-spacing: .06em; color: var(--ink-3, #6b7591); background: var(--surface-2); white-space: nowrap; }
+.gf-table tbody th { position: sticky; left: 0; background: var(--surface, #fff); }
+.gf-table tr.dirty td, .gf-table tr.dirty th { background: #fff8e1; }
+.gf-table .input, .gf-table .select { min-width: 130px; padding: 6px 8px; }
+.gf-n .fam-ico { width: 34px; height: 34px; font-size: 1.1rem; border-radius: 10px; }
+.gf-sug { display: block; margin-top: 4px; border: 0; background: none; color: #c0461a; font: inherit; font-size: .75rem; font-weight: 700; cursor: pointer; padding: 0; text-decoration: underline; }
+.gf-x { border: 0; background: none; cursor: pointer; font-weight: 800; padding: 0 2px; color: inherit; }
+.gf-add { min-width: 120px !important; font-size: .8rem; }
+.gf-save { margin: 12px 0 6px; align-items: center; }
+.gm-i { display: flex; gap: 12px; align-items: flex-start; flex-wrap: wrap; margin-bottom: 8px; }
+.gm-i.off { opacity: .6; }
+.gm-t { margin: 4px 0 0; overflow-wrap: anywhere; }
+.gm-a { display: flex; gap: 6px; flex-wrap: wrap; }
+.gm-rep { color: #c0461a; }
+.gc-table td, .gc-table th { white-space: nowrap; }
