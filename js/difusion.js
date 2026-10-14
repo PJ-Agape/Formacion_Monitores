@@ -145,28 +145,32 @@ function stickersHTML() {
 let gifBg = "cream", gifRaf = 0;
 function gifsHTML() {
   const items = E.STICKERS.map(([k, t], i) => ({ k, t, i, g: stkGroup(k) }));
-  return `<div class="card" style="margin-bottom:14px"><p class="small">Los stickers de Ágape, con movimiento. Toca uno para compartirlo o guardarlo como GIF. En WhatsApp, Instagram o el chat del grupo se mueve solo.</p>
+  return `<div class="card" style="margin-bottom:14px"><p class="small">Los monitos de Ágape en movimiento: caminan, saludan, celebran o rezan según el dibujo. Toca uno para compartirlo o guardarlo como GIF. En WhatsApp, Instagram o el chat del grupo se mueve solo.</p>
     <div class="field" style="margin-top:10px"><label>Fondo</label><div class="seg" role="radiogroup" aria-label="Fondo del GIF">${G.BGS.map(([k, l]) => `<label><input type="radio" name="difGifBg" value="${k}" ${gifBg === k ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
       <span class="xs muted">«Transparente» queda bien en el chat del grupo; en WhatsApp conviene un fondo de color.</span></div>
     <div class="row-wrap" style="gap:6px;margin-top:8px">${STK_GROUPS.map((g, n) => `<a class="chip" href="#" data-action="difStkGo" data-g="${n}">${g}</a>`).join("")}</div></div>
     ${STK_GROUPS.map((g, n) => `<h3 class="dif-stk-h" id="stkg${n}">${g} <small class="muted">${items.filter((x) => x.g === n).length}</small></h3>
-    <div class="dif-stk dif-gif">${items.filter((x) => x.g === n).map(({ k, t, i }) => `<button type="button" data-action="difGif" data-i="${i}" title="${esc(t)}"><canvas data-gif="${i}" width="200" height="200" aria-label="${esc(t)} (animado)"></canvas><small>${G.MOTION_LABEL[G.motionOf(k, i)]}</small></button>`).join("")}</div>`).join("")}`;
+    <div class="dif-stk dif-gif">${items.filter((x) => x.g === n).map(({ t, i }) => `<button type="button" data-action="difGif" data-i="${i}" title="${esc(t)}"><canvas data-gif="${i}" width="200" height="200" aria-label="${esc(t)} (animado)"></canvas></button>`).join("")}</div>`).join("")}`;
 }
 const GIF_BG = () => (G.BGS.find((b) => b[0] === gifBg) || G.BGS[0])[2];
 async function animateGifs() {
   cancelAnimationFrame(gifRaf);
-  await G.prepare();
-  const cvs = [...document.querySelectorAll("[data-gif]")];
-  // Primero se dibujan quietos (poco a poco), luego se animan solo los que están a la vista.
-  for (const [n, c] of cvs.entries()) { if (st.tab !== "gifs") return; G.base(+c.dataset.gif); G.frame(c.getContext("2d"), c.width, +c.dataset.gif, 0, GIF_BG()); if (n % 6 === 5) await new Promise((r) => setTimeout(r)); }
-  const seen = new Set();
-  const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target))));
+  await E.ready();
+  const cvs = [...document.querySelectorAll("[data-gif]")], live = new Map(), loading = new Set();
+  // Cada sticker prepara sus cuadros recién cuando aparece en pantalla.
+  const io = new IntersectionObserver((es) => es.forEach(async (e) => {
+    const c = e.target, i = +c.dataset.gif;
+    if (!e.isIntersecting) { live.delete(c); return; }
+    if (loading.has(c)) return; loading.add(c);
+    try { const fr = await G.frames(i, 12); if (st.tab !== "gifs") return; live.set(c, fr); G.draw(c.getContext("2d"), c.width, i, fr, 0, GIF_BG()); }
+    catch (err) { console.warn(err); } finally { loading.delete(c); }
+  }), { rootMargin: "120px" });
   cvs.forEach((c) => io.observe(c));
   const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
   const t0 = performance.now();
   const loop = (now) => {
     if (st.tab !== "gifs" || !document.querySelector("[data-gif]")) { io.disconnect(); return; }
-    if (!reduce) { const p = ((now - t0) / 1440) % 1; for (const c of seen) G.frame(c.getContext("2d"), c.width, +c.dataset.gif, p, GIF_BG()); }
+    if (!reduce) { const f = Math.floor((now - t0) / 110); for (const [c, fr] of live) G.draw(c.getContext("2d"), c.width, +c.dataset.gif, fr, f % fr.length, GIF_BG()); }
     gifRaf = requestAnimationFrame(loop);
   };
   gifRaf = requestAnimationFrame(loop);
@@ -269,7 +273,7 @@ function registerActions() {
   document.addEventListener("change", (e) => {
     const t = e.target;
     if (t.name === "difTab") return A.difTab(t);
-    if (t.name === "difGifBg") { gifBg = t.value; document.querySelectorAll("[data-gif]").forEach((c) => G.frame(c.getContext("2d"), c.width, +c.dataset.gif, 0, GIF_BG())); return; }
+    if (t.name === "difGifBg") { gifBg = t.value; return; }
     if (t.name === "difFsize") { st.fsize = t.value; $("#difBody").innerHTML = body(); return paint(); }
     if (t.id === "difPhoto" && t.files[0]) return loadPhoto(t.files[0]);
     const k = t.dataset && t.dataset.dif; if (!k) return;

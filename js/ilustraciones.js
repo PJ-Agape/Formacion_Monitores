@@ -8,6 +8,51 @@ const C = (cx, cy, r, extra = "") => `<circle cx="${cx}" cy="${cy}" r="${r}" ${e
 const FILL = 'fill="currentColor" stroke="none"';
 const POP = 'fill="var(--il-pop, #ffba03)" stroke="currentColor"';
 
+// ---------------------------------------------------------------------------
+// Animación (solo para los GIF del Estudio de difusión): illusAt(clave, p) dibuja la escena
+// en el instante p (0..1). Los monitos caminan, saludan, celebran o se mecen según su pose.
+// ---------------------------------------------------------------------------
+let AN = null;
+export function illusAt(key, p) { AN = { p }; try { return illus(key); } finally { AN = null; } }
+const TAU = Math.PI * 2;
+const rotPt = (px, py, cx, cy, deg) => { const t = (deg * Math.PI) / 180, c = Math.cos(t), sn = Math.sin(t), dx = px - cx, dy = py - cy; return [+(cx + dx * c - dy * sn).toFixed(1), +(cy + dx * sn + dy * c).toFixed(1)]; };
+const parseLimbs = (d) => d.split("M").filter((x) => x.trim()).map((seg) => seg.trim().split(/\s*L\s*/).map((pt) => pt.trim().split(/\s+/).map(Number)));
+const joinLimbs = (ls) => ls.map((l) => "M" + l.map(([a, b]) => `${a} ${b}`).join(" L")).join(" ");
+// a: giro del miembro completo (positivo = hacia el cuerpo); b: giro del antebrazo.
+function bend(d, cx, fn) {
+  return joinLimbs(parseLimbs(d).map((l) => {
+    const side = Math.sign(l[0][0] - cx) || 1, [a = 0, b = 0] = fn(side, l.length);
+    const pts = l.map((pt, j) => (j && a ? rotPt(pt[0], pt[1], l[0][0], l[0][1], a * side) : pt));
+    if (pts.length > 2 && b) pts[2] = rotPt(pts[2][0], pts[2][1], pts[1][0], pts[1][1], b * side);
+    return pts;
+  }));
+}
+function motion(arms, legs, robe, X, Y) {
+  const cx = X(0), fy = Y(0), off = ((cx * 0.0137) % 1 + 1) % 1, p = AN.p;
+  const w = Math.sin(TAU * (p * 2 + off)), w3 = Math.sin(TAU * (p * 3 + off));
+  const sitting = legs === "sit" || legs === "kneel";
+  const mode = arms === "pray" ? "sway" : ["wave", "bless", "raise"].includes(arms) ? "wave" : arms === "up" ? "cheer"
+    : ["out", "open", "hug"].includes(arms) ? "flap" : arms === "give" ? "give" : sitting ? "swing" : "walk";
+  const ARM = {
+    walk: () => [-24 * w, 0], swing: () => [10 * w, 0], cheer: () => [22 * w, 0], flap: () => [18 * w, 0],
+    wave: (side, n) => (n > 2 ? [0, 40 * w3] : [6 * w, 0]), give: (side, n) => (n > 2 ? [0, 16 * w] : [0, 0]), sway: () => [0, 0],
+  }[mode];
+  return {
+    arms: (d) => bend(d, cx, ARM),
+    legs: (d) => {
+      if (mode !== "walk" || sitting || robe) return mode === "cheer" && !sitting ? bend(d, cx, () => [-6 * Math.max(0, w), 0]) : d;
+      // Paso: un pie adelante y el otro atrás, y luego al revés.
+      return [-1, 1].map((sg) => { const u = w * sg, hx = sg * 3.5;
+        return `M${X(hx)} ${Y(21)} L${X(hx + 6 * u + (u > 0 ? 2 : 0))} ${Y(12)} L${X(hx + 12 * u)} ${Y(4 + Math.max(0, u) * 2)}`; }).join(" ");
+    },
+    wrap: (out) => {
+      if (mode === "sway") return `<g transform="rotate(${(4.5 * Math.sin(TAU * (p + off))).toFixed(2)} ${cx} ${fy})">${out}</g>`;
+      const bob = mode === "walk" ? Math.abs(w) * 2.2 : mode === "cheer" ? Math.max(0, w) * 6 : mode === "flap" ? Math.max(0, w) * 2 : mode === "wave" ? Math.max(0, w3) * 1 : 0;
+      return bob ? `<g transform="translate(0 ${(-bob).toFixed(2)})">${out}</g>` : out;
+    },
+  };
+}
+
 // Monito: x = centro, y = pies. arms: down | up | out | pray | give | wave | hold | hug
 // Cuerpo «relleno»: cabeza grande, torso redondeado y brazos y piernas como tubos con contorno.
 function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip = 1 } = {}) {
@@ -33,8 +78,9 @@ function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip 
     hug: `M${X(-8)} ${Y(42)} L${X(-21)} ${Y(39)} M${X(8)} ${Y(42)} L${X(21)} ${Y(39)}`,
   };
   const front = arms === "pray" || arms === "give";
-  let out = tube(L[legs] || L.stand);
-  if (!front) out += tube(A[arms] || A.down);
+  const M = AN ? motion(arms, legs, false, X, Y) : null;
+  let out = tube(M ? M.legs(L[legs] || L.stand) : L[legs] || L.stand);
+  if (!front) out += tube(M ? M.arms(A[arms] || A.down) : A[arms] || A.down);
   // torso redondeado
   out += P(`M${X(-9.5)} ${Y(43)} Q${X(-10)} ${Y(49)} ${X(0)} ${Y(49)} Q${X(10)} ${Y(49)} ${X(9.5)} ${Y(43)} L${X(9)} ${Y(25)} Q${X(9)} ${Y(18)} ${X(0)} ${Y(18)} Q${X(-9)} ${Y(18)} ${X(-9)} ${Y(25)} Z`, 'fill="var(--il-bg, #fff)"');
   if (front) out += tube(A[arms]);
@@ -47,7 +93,7 @@ function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip 
   if (face === "calm") out += P(`M${X(-7.5)} ${Y(64)} q2.5 -2.4 5 0 M${X(2.5)} ${Y(64)} q2.5 -2.4 5 0 M${X(-4.5)} ${Y(57.5)} Q${X(0)} ${Y(54)} ${X(4.5)} ${Y(57.5)}`);
   if (face === "wow") out += eyes + C(X(0), Y(56), k(2.8));
   if (face === "worry") out += eyes + P(`M${X(-5.5)} ${Y(55)} Q${X(0)} ${Y(59.5)} ${X(5.5)} ${Y(55)}`);
-  return out;
+  return M ? M.wrap(out) : out;
 }
 // Jesús: mismo estilo de monito, con túnica larga, estola, cabello a los hombros, barba y aureola.
 const HAIR = 'fill="#8a5a3c" stroke="currentColor"';
@@ -69,7 +115,8 @@ function jesus(x, y, { arms = "out", face = "smile", s = 1, flip = 1 } = {}) {
   out += P(`M${X(0)} ${Y(85)} L${X(0)} ${Y(80)} M${X(-22)} ${Y(63)} L${X(-18)} ${Y(63)} M${X(22)} ${Y(63)} L${X(18)} ${Y(63)}`, `stroke="var(--il-pop, #ffba03)" stroke-width="${k(2.4)}"`);
   // cabello largo (detrás)
   out += P(`M${X(-16)} ${Y(66)} Q${X(-18)} ${Y(50)} ${X(-15)} ${Y(42)} L${X(15)} ${Y(42)} Q${X(18)} ${Y(50)} ${X(16)} ${Y(66)} Z`, HAIR);
-  out += tube(A[arms] || A.out);
+  const M = AN ? motion(arms, "robe", true, X, Y) : null;
+  out += tube(M ? M.arms(A[arms] || A.out) : A[arms] || A.out);
   // túnica larga y pies
   out += C(X(-6), Y(3), k(3.2), 'fill="var(--il-bg, #fff)"') + C(X(6), Y(3), k(3.2), 'fill="var(--il-bg, #fff)"');
   out += P(`M${X(-9.5)} ${Y(44)} Q${X(-10)} ${Y(49)} ${X(0)} ${Y(49)} Q${X(10)} ${Y(49)} ${X(9.5)} ${Y(44)} L${X(15)} ${Y(6)} Q${X(0)} ${Y(3)} ${X(-15)} ${Y(6)} Z`, 'fill="var(--il-bg, #fff)"');
@@ -82,7 +129,7 @@ function jesus(x, y, { arms = "out", face = "smile", s = 1, flip = 1 } = {}) {
   if (face === "calm") out += P(`M${X(-7.5)} ${Y(63)} q2.5 -2.4 5 0 M${X(2.5)} ${Y(63)} q2.5 -2.4 5 0`);
   else out += C(X(-5), Y(63), k(1.7), FILL) + C(X(5), Y(63), k(1.7), FILL);
   out += P(`M${X(-4)} ${Y(57.5)} Q${X(0)} ${Y(54.5)} ${X(4)} ${Y(57.5)}`);
-  return out;
+  return M ? M.wrap(out) : out;
 }
 // Personajes de la fe (María, José, santos): mismo monito, con vestimenta propia.
 // robe: color de la túnica (larga) · len: dónde termina (0 = a los pies; >0 deja ver piernas)
@@ -118,9 +165,10 @@ function person(x, y, o = {}) {
   if (veil) out += P(`M${X(-14)} ${Y(72)} Q${X(-22)} ${Y(50)} ${X(-20)} ${Y(len ? 30 : 12)} L${X(20)} ${Y(len ? 30 : 12)} Q${X(22)} ${Y(50)} ${X(14)} ${Y(72)} Z`, F(veil));
   else if (long && hair) out += P(`M${X(-16)} ${Y(66)} Q${X(-18)} ${Y(50)} ${X(-15)} ${Y(42)} L${X(15)} ${Y(42)} Q${X(18)} ${Y(50)} ${X(16)} ${Y(66)} Z`, F(hair));
   const front = arms === "pray";
-  if (!front) out += tube(A[arms] || A.down, armC);
+  const M = AN ? motion(arms, robe && !len ? "robe" : "stand", !!robe && !len, X, Y) : null;
+  if (!front) out += tube(M ? M.arms(A[arms] || A.down) : A[arms] || A.down, armC);
   // piernas o pies
-  if (!robe || len) out += tube(`M${X(-4)} ${Y(21)} L${X(-6)} ${Y(4)} M${X(4)} ${Y(21)} L${X(6)} ${Y(4)}`, pants || "var(--il-bg, #fff)");
+  if (!robe || len) { const d = `M${X(-4)} ${Y(21)} L${X(-6)} ${Y(4)} M${X(4)} ${Y(21)} L${X(6)} ${Y(4)}`; out += tube(M ? M.legs(d) : d, pants || "var(--il-bg, #fff)"); }
   else out += C(X(-6), Y(3), k(3.2), 'fill="var(--il-bg, #fff)"') + C(X(6), Y(3), k(3.2), 'fill="var(--il-bg, #fff)"');
   // cuerpo
   if (robe) { const b = len ? len : 6, w = len ? 12 : 15;
@@ -143,7 +191,7 @@ function person(x, y, o = {}) {
   if (face === "calm") out += P(`M${X(-7.5)} ${Y(63)} q2.5 -2.4 5 0 M${X(2.5)} ${Y(63)} q2.5 -2.4 5 0`);
   else out += C(X(-5), Y(63), k(1.7), FILL) + C(X(5), Y(63), k(1.7), FILL);
   out += P(`M${X(-4.5)} ${Y(57.5)} Q${X(0)} ${Y(54)} ${X(4.5)} ${Y(57.5)}`);
-  return out;
+  return M ? M.wrap(out) : out;
 }
 const MANTO = "#8ad2fa", CAFE = "#8a5a3c", CANA = "#d9d4cc", ROJO = "#e48a68", NAVY = "#1d2c55";
 const lily = (x, y, h = 46) => P(`M${x} ${y} L${x} ${y - h}`, 'stroke-width="2.4"') + P(`M${x} ${y - h} q-8 -4 -6 -12 q4 4 6 4 q2 0 6 -4 q2 8 -6 12 Z`, 'fill="var(--il-bg,#fff)"') + P(`M${x} ${y - h * .55} q-8 -2 -10 -8 M${x} ${y - h * .4} q8 -2 10 -8`, 'stroke-width="2"');
