@@ -93,7 +93,12 @@ export async function paintGospel() {
   const el = document.getElementById("homeGospel"); if (!el) return;
   const g = await todayGospel().catch(() => null);
   if (!g || !g.cita) return;
-  el.innerHTML = `<span class="hg-k">📖 Evangelio de hoy · ${esc(g.cita)}</span>${g.frase ? `<span class="hg-f">«${esc(g.frase)}»</span>` : ""}<span class="hg-go">Leer ${icon("arrowR")}</span>`;
+  const f = String(g.frase || "").trim().replace(/^[«"“]+|[»"”]+$/g, "");
+  el.classList.toggle("is-long", f.length > 110);
+  el.innerHTML = `<i class="hg-mark" aria-hidden="true">“</i>
+    <span class="hg-k">${icon("book")} Evangelio de hoy <b>${esc(g.cita)}</b></span>
+    ${f ? `<span class="hg-f">${esc(f)}</span>` : `<span class="hg-f">Escucha hoy la Palabra de Jesús</span>`}
+    <span class="hg-go">Leer el Evangelio ${icon("arrowR")}</span>`;
   el.hidden = false;
 }
 export function greetHTML() {
@@ -103,7 +108,7 @@ export function greetHTML() {
   const h = new Date().getHours(), saludo = h < 12 ? "Buenos días" : h < 20 ? "Buenas tardes" : "Buenas noches";
   return `<section class="home-hi">
     <span class="home-hand">${w.guest ? "bienvenido a casa" : "qué bueno verte"}</span>
-    <h1>${esc(saludo)}${first ? `, <em>${esc(first)}</em>` : ""} 👋</h1>
+    <h1>${esc(saludo)}${first ? `, <em>${esc(first)}</em>` : ""}</h1>
     <a class="home-gospel" id="homeGospel" href="#/evangelio" hidden></a>
   </section>`;
 }

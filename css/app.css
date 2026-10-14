@@ -2645,11 +2645,21 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 @media (prefers-color-scheme: dark) { :root:not([data-mode="light"]) .papa-more { color: #8ad2fa; } }
 :root[data-mode="dark"] .papa-more { color: #8ad2fa; }
 /* Inicio: cita del Evangelio bajo el saludo */
-.home-gospel { display: grid; gap: 4px; margin-top: 12px; padding: 12px 16px; border-radius: 18px; background: var(--surface, #fff); border: 2px dashed var(--line, #c9d3e6); text-decoration: none; color: inherit; }
-.home-gospel .hg-k { font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-2, #3b4f78); }
-.home-gospel .hg-f { font-family: var(--font-display, inherit); font-weight: 700; font-size: 1.08rem; line-height: 1.25; }
-.home-gospel .hg-go { font-size: .82rem; font-weight: 800; color: #ef591c; display: inline-flex; align-items: center; gap: 4px; }
-.home-gospel .hg-go svg { width: 14px; height: 14px; }
+.home-gospel { position: relative; overflow: hidden; isolation: isolate; display: grid; gap: 8px; margin-top: 14px; padding: clamp(18px, 3.5vw, 26px) clamp(18px, 4vw, 30px) clamp(16px, 3vw, 22px);
+  border-radius: 24px; background: #0b2566; border: 3px solid #0b2566; box-shadow: 5px 5px 0 #ef591c; color: #fff; text-decoration: none; transition: transform .15s, box-shadow .15s; }
+.home-gospel::before { content: ""; position: absolute; z-index: -1; right: -46px; top: -46px; width: 150px; height: 150px; border-radius: 50%; background: #ffba03; }
+.home-gospel::after { content: ""; position: absolute; z-index: -1; left: -40px; bottom: -60px; width: 150px; height: 150px; border-radius: 50%; background: #1351a4; opacity: .55; }
+.home-gospel:hover { transform: translate(-2px, -2px); box-shadow: 7px 7px 0 #ef591c; }
+.home-gospel:focus-visible { outline: 3px solid #ffba03; outline-offset: 4px; }
+.home-gospel .hg-mark { position: absolute; z-index: -1; right: 18px; top: -6px; font-family: Georgia, "Times New Roman", serif; font-style: normal; font-weight: 700; font-size: 6.2rem; line-height: 1; color: #0b2566; pointer-events: none; }
+.home-gospel .hg-k { padding-right: 90px; display: inline-flex; align-items: center; gap: 8px; flex-wrap: wrap; font-size: .74rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #8ad2fa; }
+.home-gospel .hg-k svg { width: 16px; height: 16px; }
+.home-gospel .hg-k b { letter-spacing: .06em; color: #0b2566; background: #8ad2fa; border-radius: 999px; padding: 2px 10px; }
+.home-gospel .hg-f { font-family: var(--font-hand); font-weight: 700; font-size: clamp(1.75rem, 4.6vw, 2.5rem); line-height: 1.12; color: #ffba03; max-width: 34ch; text-wrap: balance; padding-right: clamp(0px, 6vw, 70px); }
+.home-gospel.is-long .hg-f { font-size: clamp(1.45rem, 3.6vw, 1.95rem); max-width: 46ch; }
+.home-gospel .hg-go { justify-self: start; margin-top: 4px; display: inline-flex; align-items: center; gap: 6px; font-size: .88rem; font-weight: 800; color: #0b2566; background: #fff6e5; border-radius: 999px; padding: 7px 14px; box-shadow: 2px 2px 0 #ef591c; }
+.home-gospel .hg-go svg { width: 15px; height: 15px; }
+@media (prefers-reduced-motion: reduce) { .home-gospel:hover { transform: none; } }
 #countSlot .cd-card + .cd-card { margin-top: 12px; }
 /* Inicio: diapositivas compactas (no más de un tercio de la pantalla) */
 .home-news { margin-top: 14px; }
