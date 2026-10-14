@@ -18,6 +18,7 @@ import * as AV from "./avatares.js";
 import * as dinamicas from "./dinamicas.js";
 import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
+import * as momentos from "./momentos.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -87,7 +88,8 @@ const routes = [
   [/^\/nuestras-familias\/(f\d+)\/registro(?:\/(\d{4}-\d{2}-\d{2}))?$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
   [/^\/nuestras-familias\/(f\d+)\/(\d{4}-\d{2}-\d{2})$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
   [/^\/nuestras-familias\/(f\d+)(?:\/(muro|agenda))?$/, (id, t) => famPortal.view(id, t), "familiasag"],
-  [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); }); return inicio.viewRed(); }, "red"],
+  [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); momentos.homeStrip(); }); return inicio.viewRed(); }, "red"],
+  [/^\/momentos$/, () => momentos.view(), "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
@@ -1430,6 +1432,7 @@ viva.setup({ actions, render: () => render(), onLeave, S });
 camJ.setup({ actions, render: () => render(), cloud, S, onAfterRender });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
+momentos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);
 familiasAg.setup({ actions, onAfterRender });

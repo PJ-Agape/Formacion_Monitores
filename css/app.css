@@ -3117,3 +3117,47 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .car-link-ico img { position: absolute; inset: 0; margin: auto; background: #e1edfb; }
 @media (max-width: 760px) { .home-news .car-link:not(.is-yt) { grid-template-columns: 1fr; padding: 8px 10px; } .home-news .car-link:not(.is-yt) .car-link-ico { display: none; } }
 .cum-card h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; }
+
+/* Momentos Ágape: feed de fotos de la comunidad */
+.mom-head h1 em { font-style: normal; font-family: var(--font-hand); color: #ef591c; }
+.mom-new { margin: 6px 0 4px; }
+.mom-list { display: grid; gap: 22px; max-width: 620px; margin: 16px auto 0; }
+.mom-empty { text-align: center; padding: 24px; }
+.mom-card { background: #fff; color: #0b2566; border: 2px solid #0b2566; border-radius: 22px; box-shadow: 4px 4px 0 #0b2566; overflow: hidden; }
+.mom-by { display: flex; align-items: center; gap: 10px; padding: 12px 14px; }
+.mom-by > span:not(.mom-tools):not(.avatar) { display: grid; line-height: 1.15; flex: 1; min-width: 0; }
+.mom-by small { color: #4a5d7a; font-size: .78rem; }
+.mom-av { width: 38px !important; height: 38px !important; min-width: 38px; }
+.mom-av.sm { width: 28px !important; height: 28px !important; min-width: 28px; font-size: .7rem !important; }
+.mom-tools { display: flex; gap: 4px; }
+.mom-tools .icon-btn { width: 34px; height: 34px; }
+.mom-img { background: #0b2566; border-block: 2px solid #0b2566; }
+.mom-img img { display: block; width: 100%; height: auto; max-height: 78vh; object-fit: contain; margin: auto; }
+.mom-txt { margin: 0; padding: 12px 16px 0; font-size: 1.02rem; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+.mom-reacts { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; padding: 12px 14px 4px; }
+.mom-r { display: inline-flex; align-items: center; gap: 4px; font: inherit; font-size: 1.1rem; line-height: 1; padding: 6px 10px; border-radius: 999px; border: 2px solid #c2d5e8; background: #fff; cursor: pointer; }
+.mom-r b { font-size: .8rem; color: #0b2566; }
+.mom-r:hover { border-color: #0b2566; }
+.mom-r.on { border-color: #0b2566; background: #ffe9b0; box-shadow: 2px 2px 0 #0b2566; }
+.mom-c { margin-left: auto; display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800; font-size: .85rem; color: #1351a4; background: none; border: 0; cursor: pointer; padding: 6px 4px; }
+.mom-c svg { width: 18px; height: 18px; }
+.mom-total { margin: 0; padding: 0 16px 10px; }
+.mom-coms { border-top: 2px dashed rgba(11,37,102,.15); padding: 12px 14px 14px; display: grid; gap: 10px; background: #fbfdff; }
+.mom-com { display: flex; gap: 8px; align-items: flex-start; }
+.mom-com p { margin: 0; background: #e1edfb; border-radius: 4px 14px 14px 14px; padding: 7px 11px; font-size: .92rem; line-height: 1.4; overflow-wrap: anywhere; }
+.mom-com small { color: #7f90aa; font-size: .72rem; margin-left: 4px; }
+.mom-cdel { background: none; border: 0; padding: 0 0 0 6px; font: inherit; font-size: .72rem; color: #7f90aa; text-decoration: underline; cursor: pointer; }
+.mom-cform { display: flex; gap: 8px; }
+.mom-cform .input { flex: 1; min-width: 0; }
+.mom-more { justify-self: center; }
+.mom-pick { display: grid; place-items: center; min-height: 160px; border: 3px dashed #1351a4; border-radius: 18px; background: #e1edfb; cursor: pointer; color: #0b2566; font-weight: 800; position: relative; overflow: hidden; }
+.mom-pick span { display: inline-flex; align-items: center; gap: 6px; }
+.mom-pick img { width: 100%; max-height: 50vh; object-fit: contain; display: block; background: #0b2566; }
+.mom-pick .mom-change { position: absolute; bottom: 10px; right: 10px; background: #fff; border: 2px solid #0b2566; border-radius: 999px; padding: 4px 12px; font-size: .85rem; }
+.mom-pick.busy { opacity: .6; pointer-events: none; }
+.mom-strip { display: grid !important; gap: 10px; margin-top: 16px; }
+.mom-strip-head { display: grid; gap: 2px; }
+.mom-strip-head strong { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; }
+.mom-strip-pics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
+.mom-strip-pics img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 2px solid #0b2566; display: block; }
+.mom-by .avatar { flex: 0 0 auto; }

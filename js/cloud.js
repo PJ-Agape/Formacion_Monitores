@@ -860,3 +860,41 @@ export async function markDesafio(key, on) {
   if (on) await fb.setDoc(ref, { n: shortName(account.name), a: account.avatar || "", at: fb.serverTimestamp() });
   else await fb.deleteDoc(ref);
 }
+
+// ---------------------------------------------------------------------------
+// Momentos: fotos que suben coordinadores y administradores; la comunidad reacciona y comenta.
+// La imagen va comprimida dentro del documento (sin Storage). Reacciones: { uid: "amen" | … }.
+// ---------------------------------------------------------------------------
+export const MOM_REACTS = ["amen", "corazon", "alegria", "fuerza"];
+export async function listMomentos(n = 6, after = null) {
+  const cons = [fb.orderBy("createdAt", "desc"), fb.limit(n)];
+  const q = fb.query(fb.collection(db, "momentos"), ...cons);
+  const rows = snapRows(await withTimeout(fb.getDocs(q), 10000));
+  return after ? rows.filter((r) => (r.createdAt?.toMillis?.() || 0) < after) : rows;
+}
+export async function olderMomentos(beforeMs, n = 6) {
+  const q = fb.query(fb.collection(db, "momentos"), fb.orderBy("createdAt", "desc"), fb.where("createdAt", "<", fb.Timestamp.fromMillis ? fb.Timestamp.fromMillis(beforeMs) : new Date(beforeMs)), fb.limit(n));
+  return snapRows(await withTimeout(fb.getDocs(q), 10000));
+}
+export async function addMomento({ img, texto }) {
+  const a = author();
+  await fb.setDoc(fb.doc(fb.collection(db, "momentos")), {
+    img, texto: String(texto || "").slice(0, 1000), authorUid: a.authorUid, authorName: a.authorName, authorAvatar: a.authorAvatar,
+    reacts: {}, commentCount: 0, createdAt: fb.serverTimestamp(),
+  });
+}
+export const editMomento = (id, texto) => fb.updateDoc(fb.doc(db, "momentos", id), { texto: String(texto || "").slice(0, 1000), editedAt: fb.serverTimestamp() });
+export const deleteMomento = (id) => fb.deleteDoc(fb.doc(db, "momentos", id));
+export const reactMomento = (id, r) => fb.updateDoc(fb.doc(db, "momentos", id), { [`reacts.${user.uid}`]: r && MOM_REACTS.includes(r) ? r : fb.deleteField() });
+export async function listComentarios(id) {
+  return snapRows(await withTimeout(fb.getDocs(fb.query(fb.collection(db, "momentos", id, "comentarios"), fb.orderBy("createdAt", "asc"), fb.limit(200))), 8000));
+}
+export async function addComentario(id, texto) {
+  const a = author();
+  await fb.setDoc(fb.doc(fb.collection(db, "momentos", id, "comentarios")), { texto: String(texto).slice(0, 500), authorUid: a.authorUid, authorName: a.authorName, authorAvatar: a.authorAvatar, createdAt: fb.serverTimestamp() });
+  await fb.updateDoc(fb.doc(db, "momentos", id), { commentCount: fb.increment(1) }).catch(() => {});
+}
+export async function deleteComentario(id, cid) {
+  await fb.deleteDoc(fb.doc(db, "momentos", id, "comentarios", cid));
+  await fb.updateDoc(fb.doc(db, "momentos", id), { commentCount: fb.increment(-1) }).catch(() => {});
+}

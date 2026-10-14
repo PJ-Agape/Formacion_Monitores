@@ -240,6 +240,41 @@ service cloud.firestore {
       allow delete: if (isMember() && request.auth.uid == uid) || isStaff();
     }
 
+    // Momentos: fotos con descripción que suben coordinadores y administradores (la imagen va
+    // comprimida dentro del documento). Quienes tienen cuenta reaccionan (una reacción cada uno)
+    // y comentan; cada uno borra sus comentarios y el equipo modera.
+    match /momentos/{mid} {
+      allow read: if isMember();
+      allow create: if isStaff()
+        && request.resource.data.keys().hasOnly(['img', 'texto', 'authorUid', 'authorName', 'authorAvatar', 'reacts', 'commentCount', 'createdAt'])
+        && request.resource.data.authorUid == request.auth.uid
+        && request.resource.data.img is string && request.resource.data.img.size() > 100 && request.resource.data.img.size() <= 900000
+        && request.resource.data.texto is string && request.resource.data.texto.size() <= 1000
+        && request.resource.data.authorName is string && request.resource.data.authorName.size() <= 60
+        && request.resource.data.reacts.size() == 0 && request.resource.data.commentCount == 0
+        && request.resource.data.createdAt == request.time;
+      allow update: if (isStaff() && changed().hasOnly(['texto', 'editedAt'])
+          && request.resource.data.texto is string && request.resource.data.texto.size() <= 1000)
+        || (isMember() && changed().hasOnly(['reacts']) && onlyMyKey('reacts')
+          && (!(request.auth.uid in request.resource.data.reacts)
+              || request.resource.data.reacts[request.auth.uid] in ['amen', 'corazon', 'alegria', 'fuerza']))
+        || (isMember() && changed().hasOnly(['commentCount'])
+          && (request.resource.data.commentCount - resource.data.commentCount) in [1, -1]);
+      allow delete: if isStaff();
+
+      match /comentarios/{cid} {
+        allow read: if isMember();
+        allow create: if isMember()
+          && request.resource.data.keys().hasOnly(['texto', 'authorUid', 'authorName', 'authorAvatar', 'createdAt'])
+          && request.resource.data.authorUid == request.auth.uid
+          && validText(request.resource.data.texto, 500)
+          && request.resource.data.authorName is string && request.resource.data.authorName.size() <= 60
+          && request.resource.data.createdAt == request.time
+          && exists(/databases/$(database)/documents/momentos/$(mid));
+        allow delete: if isStaff() || (isMember() && resource.data.authorUid == request.auth.uid);
+      }
+    }
+
     match /velas/{velaId} {
       allow read: if isMember();
       allow create: if isMember() && request.resource.data.authorUid == request.auth.uid

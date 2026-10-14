@@ -180,6 +180,7 @@ export function viewRed() {
   ctx.onAfterRender(() => { ctx.agenda.homeNext(); ctx.wall.homeHighlight(); });
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
+  <div id="momSlot"></div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
