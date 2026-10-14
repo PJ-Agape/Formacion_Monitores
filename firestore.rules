@@ -222,6 +222,24 @@ service cloud.firestore {
 
     // Velas de la capilla: intenciones que solo ve la comunidad con cuenta.
     // Cada uno enciende la suya; todos pueden marcar «rezo por esto»; la apaga su autor o el equipo.
+    // Cumpleaños que cada persona comparte desde «Mi cuenta» (solo día y mes, con nombre corto).
+    // Lo ven quienes tienen cuenta; cada uno guarda o quita solo el suyo. Los jóvenes menores
+    // solo pueden compartirlo si su familia lo autorizó en el consentimiento (consent.cumple).
+    function puedeMostrarCumple() {
+      return !(me().role in ['ingreso', 'madurez', 'aspirante'])
+        || me().get('consent', {}).get('mayor', false) == true
+        || me().get('consent', {}).get('cumple', false) == true;
+    }
+    match /cumpleanos/{uid} {
+      allow read: if isMember();
+      allow create, update: if isMember() && request.auth.uid == uid && puedeMostrarCumple()
+        && request.resource.data.keys().hasOnly(['n', 'md', 'at'])
+        && request.resource.data.n is string && request.resource.data.n.size() > 0 && request.resource.data.n.size() <= 40
+        && request.resource.data.md is string && request.resource.data.md.matches('^(0[1-9]|1[0-2])-(0[1-9]|[12][0-9]|3[01])$')
+        && request.resource.data.at == request.time;
+      allow delete: if (isMember() && request.auth.uid == uid) || isStaff();
+    }
+
     match /velas/{velaId} {
       allow read: if isMember();
       allow create: if isMember() && request.resource.data.authorUid == request.auth.uid

@@ -3116,3 +3116,4 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .car-link-ico b { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; color: #1351a4; }
 .car-link-ico img { position: absolute; inset: 0; margin: auto; background: #e1edfb; }
 @media (max-width: 760px) { .home-news .car-link:not(.is-yt) { grid-template-columns: 1fr; padding: 8px 10px; } .home-news .car-link:not(.is-yt) .car-link-ico { display: none; } }
+.cum-card h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.25rem; }

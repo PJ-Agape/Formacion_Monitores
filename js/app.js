@@ -1260,6 +1260,7 @@ function viewAccount() {
       <button class="btn btn-primary btn-block" type="submit">Guardar cambios</button>
     </form>
     <section class="card av-card" id="avCard">${avPicker()}</section>
+    <section class="card cum-card" id="cumCard" ${myCum === false ? "hidden" : ""}>${cumCardHTML()}</section>
     ${a11y.panelHTML()}
     <div class="row-wrap" style="justify-content:center;margin-top:14px">
       <a class="btn btn-soft" href="#/pasaporte">${icon("award")} Mi pasaporte</a>
@@ -1274,6 +1275,41 @@ function viewAccount() {
     <div id="installSlot" style="margin-top:14px"></div>
   </div>`;
 }
+// Mi cumpleaños (Mi cuenta): cada uno elige si lo comparte con la comunidad (solo día y mes).
+let myCum = undefined; // undefined: cargando · null: no compartido · "MM-DD"
+function cumCardHTML() {
+  if (myCum === undefined) onAfterRender(() => cloud.getMyCumple().then((md) => { myCum = md; const c = document.getElementById("cumCard"); if (c) { c.innerHTML = cumCardHTML(); c.hidden = md === false; } }));
+  if (myCum === false) return ""; // las reglas aún no están publicadas: la tarjeta no se muestra
+  const head = `<h3>🎂 Mi cumpleaños</h3><p class="muted small">Si lo compartes, aparece en la Agenda y en Inicio para que la comunidad te salude. Solo se ve el día y el mes, con tu nombre e inicial.</p>`;
+  if (!cloud.canShareCumple()) return `${head}<p class="note small" style="margin-top:10px">Para mostrar tu cumpleaños, tu familia tiene que autorizarlo en el consentimiento. Pídeselo a tu dirigente.</p>`;
+  if (myCum === undefined) return `${head}<p class="muted small" style="margin-top:10px">Cargando…</p>`;
+  const [mm, dd] = myCum ? myCum.split("-") : ["", ""];
+  const MES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+  return `${head}
+    <form id="cumForm" class="row-wrap" style="margin-top:12px;gap:8px;align-items:flex-end">
+      <div class="field" style="min-width:90px"><label for="cumD">Día</label><select class="select" id="cumD" name="d" required><option value="">—</option>${Array.from({ length: 31 }, (_, i) => String(i + 1).padStart(2, "0")).map((d) => `<option value="${d}" ${d === dd ? "selected" : ""}>${+d}</option>`).join("")}</select></div>
+      <div class="field" style="min-width:150px"><label for="cumM">Mes</label><select class="select" id="cumM" name="m" required><option value="">—</option>${MES.map((m, i) => { const v = String(i + 1).padStart(2, "0"); return `<option value="${v}" ${v === mm ? "selected" : ""}>${m}</option>`; }).join("")}</select></div>
+      <button class="btn btn-primary" type="submit">${myCum ? "Actualizar" : "Compartir mi cumpleaños"}</button>
+      ${myCum ? `<button class="btn btn-ghost" type="button" data-action="cumDel">Dejar de compartirlo</button>` : ""}
+    </form>
+    ${myCum ? `<p class="xs muted" style="margin-top:8px">Compartido: ${+dd} de ${MES[+mm - 1]}.</p>` : ""}`;
+}
+const DIAS_MES = [31, 29, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+document.addEventListener("submit", async (e) => {
+  if (e.target.id !== "cumForm") return;
+  e.preventDefault();
+  const f = new FormData(e.target), d = String(f.get("d") || ""), m = String(f.get("m") || "");
+  if (!d || !m) return;
+  if (+d > DIAS_MES[+m - 1]) { toast("Ese mes no tiene ese día. Revisa la fecha.", ""); return; }
+  try { await cloud.setMyCumple(`${m}-${d}`); myCum = `${m}-${d}`; toast("¡Listo! Tu cumpleaños quedó en la Agenda 🎂", "ok"); }
+  catch (err) { console.warn(err); toast("No se pudo guardar todavía. Avísale al equipo.", ""); }
+  const c = document.getElementById("cumCard"); if (c) c.innerHTML = cumCardHTML();
+});
+actions.cumDel = async () => {
+  if (!confirm("¿Dejar de compartir tu cumpleaños?")) return;
+  try { await cloud.setMyCumple(null); myCum = null; toast("Tu cumpleaños ya no se muestra"); } catch { toast("No se pudo quitar", ""); }
+  const c = document.getElementById("cumCard"); if (c) c.innerHTML = cumCardHTML();
+};
 // Selector de avatar (Mi cuenta): arma tu monito, elige un personaje o un sticker de la comunidad
 let avDraft = null, avKey = null, avTab = null;
 function avPicker() {

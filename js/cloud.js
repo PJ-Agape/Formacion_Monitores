@@ -800,9 +800,40 @@ async function getContent(name) {
 }
 const setContent = (name, data) => fb.setDoc(fb.doc(db, "content", name), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
 // Cumpleaños: solo para quienes tienen cuenta (ya no en la zona pública «content»).
+// Cumpleaños compartidos por cada persona desde «Mi cuenta» (colección «cumpleanos», un documento por cuenta).
+// Devuelve «MM-DD», null (no lo comparte) o false (las reglas de «cumpleanos» aún no están publicadas).
+export async function getMyCumple() {
+  if (!user) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "cumpleanos", user.uid)), 6000); return s.exists() ? s.data().md || null : null; }
+  catch (e) { return e && e.code === "permission-denied" ? false : null; }
+}
+export async function setMyCumple(md) {
+  const ref = fb.doc(db, "cumpleanos", user.uid);
+  if (!md) return fb.deleteDoc(ref);
+  return fb.setDoc(ref, { n: shortName(account.name), md, at: fb.serverTimestamp() });
+}
+async function cuentaCumples() {
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "cumpleanos")), 6000)).filter((x) => x.n && /^\d{2}-\d{2}$/.test(x.md || "")).map((x) => ({ n: x.n, md: x.md })); } catch { return []; }
+}
+// La familia autorizó (o es mayor de edad, o no es joven): puede compartir su cumpleaños.
+export function canShareCumple() {
+  if (!account) return false;
+  if (!JOVEN.includes(account.role) && account.role !== "aspirante") return true;
+  const c = account.consent || {};
+  return c.mayor === true || c.cumple === true;
+}
 export async function getCumples() {
   if (!enabled || !db) return null;
-  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "privado", "cumples")), 6000); return s.exists() ? safeJSON(s.data().json, null) : null; } catch { return null; }
+  // Junta los cumpleaños autorizados de la lista de jóvenes (privado/cumples) y los que cada persona compartió.
+  // Si las reglas de «cumpleanos» aún no están publicadas, esa parte llega vacía y todo sigue como antes.
+  const [lista, propios] = await Promise.all([
+    withTimeout(fb.getDoc(fb.doc(db, "privado", "cumples")), 6000).then((s) => (s.exists() ? safeJSON(s.data().json, null) : null)).catch(() => null),
+    user ? cuentaCumples() : [],
+  ]);
+  if (!lista && !propios.length) return null;
+  const items = [...((lista && lista.items) || [])], seen = new Set(items.map((x) => `${x.n}|${x.md}`));
+  for (const x of propios) if (!seen.has(`${x.n}|${x.md}`)) { seen.add(`${x.n}|${x.md}`); items.push(x); }
+  return { ...(lista || {}), items };
 }
 export async function saveCumples(d) {
   await fb.setDoc(fb.doc(db, "privado", "cumples"), { json: JSON.stringify(d), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
