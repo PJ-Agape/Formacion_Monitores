@@ -63,20 +63,58 @@ export const publishedContent = () => published;
 export function setPublished(c) { published = c; write(K.cache, c); }
 
 // Borrador del administrador
-export const getDraft = () => read(K.draft);
-export const hasDraft = () => !!read(K.draft);
+// El borrador es una copia del contenido publicado. Se guarda también una «firma» de esa versión de
+// partida: así se sabe si el admin cambió algo de verdad o si el borrador solo quedó viejo porque
+// después se publicó contenido nuevo (cursos, módulos o unidades). Un borrador viejo sin cambios
+// propios se descarta solo; si tiene cambios y quedó viejo, se avisa antes de publicar.
+const DRAFT_BASE = "agape_draft_base";
+const strip = (o) => { const c = clone(o); delete c.version; delete c.updatedAt; return JSON.stringify(c); };
+const sig = (o) => { const s = strip(o); let h = 5381; for (let i = 0; i < s.length; i++) h = ((h << 5) + h + s.charCodeAt(i)) | 0; return s.length + ":" + (h >>> 0).toString(36); };
+function tidyDraft() {
+  const d = read(K.draft);
+  if (!d || !published) return d;
+  const base = read(DRAFT_BASE);
+  const mine = sig(d);
+  // Sin cambios propios (igual a su versión de partida) o idéntico a lo publicado: no hay nada pendiente.
+  if ((base && base.sig === mine) || mine === sig(published)) { del(K.draft); del(DRAFT_BASE); return null; }
+  return d;
+}
+export const getDraft = () => tidyDraft();
+export const hasDraft = () => !!tidyDraft();
 export function ensureDraft() {
-  let d = read(K.draft);
-  if (!d) { d = clone(published); write(K.draft, d); }
+  let d = tidyDraft();
+  if (!d) { d = clone(published); write(K.draft, d); write(DRAFT_BASE, { sig: sig(published), version: published.version || "", updatedAt: published.updatedAt || "" }); }
   return d;
 }
 export const saveDraft = (d) => write(K.draft, d);
-export const discardDraft = () => { del(K.draft); setPreview(false); };
+export const discardDraft = () => { del(K.draft); del(DRAFT_BASE); setPreview(false); };
 export function draftIsDirty() {
-  const d = read(K.draft);
+  return !!tidyDraft();
+}
+// El borrador tiene cambios, pero partió de una versión anterior a la publicada ahora
+// (o es de antes de este control y no se sabe de cuál partió).
+export function draftIsOutdated() {
+  const d = tidyDraft();
   if (!d) return false;
-  const strip = (o) => { const c = clone(o); delete c.version; delete c.updatedAt; return JSON.stringify(c); };
-  return strip(d) !== strip(published);
+  const base = read(DRAFT_BASE);
+  return !base || base.sig !== sig(published);
+}
+// Lo que se perdería al publicar el borrador: cursos, módulos y unidades que están publicados y no en el borrador.
+export function draftRemovals() {
+  const d = tidyDraft();
+  if (!d || !published) return [];
+  const out = [];
+  const t = (x) => String((x && x.title) || "").trim();
+  for (const c of published.courses || []) {
+    const dc = (d.courses || []).find((x) => x.id === c.id);
+    if (!dc) { out.push(`Curso «${t(c)}»`); continue; }
+    for (const p of c.phases || []) {
+      const dp = (dc.phases || []).find((x) => t(x) === t(p));
+      if (!dp) { out.push(`Módulo «${t(p)}» (${t(c)})`); continue; }
+      for (const s of p.sessions || []) if (!(dp.sessions || []).some((x) => t(x) === t(s))) out.push(`Unidad «${t(s)}» (${t(p)})`);
+    }
+  }
+  return out;
 }
 
 // Contenido editado con la versión anterior de la página (vivía solo en el navegador).

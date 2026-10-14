@@ -54,7 +54,8 @@ export async function renderAdmin(sub, _api) {
       return shell(ok ? pg : "hoy", await (ok || COORD.hoy)());
     }
   } else if (!S.isAdmin()) return loginView();
-  const draft = S.ensureDraft();
+  // Mirar Gestión no crea un borrador: se crea recién al editar algo (así no queda una copia vieja guardada).
+  const draft = S.getDraft() || S.publishedContent();
   const parts = sub.split("/").filter(Boolean);
   const page = parts[0] || (cloudOn ? "hoy" : "resumen");
   let body = "";
@@ -160,7 +161,7 @@ function navHTML(page, dirty, st) {
 function draftBar(dirty) {
   if (!dirty && !undo) return "";
   return `<div class="draft-bar">
-    ${dirty ? `${icon("edit")} Tienes cambios sin publicar. Los dirigentes aún ven la versión anterior.` : "Cambio aplicado."}
+    ${dirty ? (S.draftIsOutdated() ? `${icon("edit")} Tienes un borrador anterior a la versión publicada ahora. Revísalo en Publicar antes de usarlo.` : `${icon("edit")} Tienes cambios sin publicar. Los dirigentes aún ven la versión anterior.`) : "Cambio aplicado."}
     <span class="spacer"></span>
     ${undo ? `<button class="btn btn-sm btn-ghost" data-action="aUndo">${icon("undo")} Deshacer</button>` : ""}
     ${dirty ? `<button class="btn btn-sm btn-ghost" data-action="aPreview">${icon("eye")} Vista previa</button>
@@ -423,9 +424,17 @@ function publishView(d) {
   const dirty = S.draftIsDirty();
   const pub = S.publishedContent();
   const repoUpload = "https://github.com/PJ-Agape/Formacion_Monitores/upload/main/data";
+  const outdated = S.draftIsOutdated(), lost = dirty ? S.draftRemovals() : [];
+  const warn = outdated || lost.length ? `<div class="card" style="border-left:4px solid var(--warn, #e8892b)">
+    <h3>${outdated ? "Este borrador quedó atrás" : "Ojo: publicar quitaría contenido"}</h3>
+    <p class="small" style="margin-top:6px">${outdated ? "Se empezó antes de la versión que está publicada ahora. Si lo publicas, se pierde lo que se agregó después. Si no hiciste cambios que quieras guardar, lo mejor es descartarlo." : "Tu borrador no tiene lo siguiente, que sí está publicado:"}</p>
+    ${lost.length ? `<ul class="small" style="margin:8px 0 0 18px">${lost.slice(0, 12).map((x) => `<li>${esc(x)}</li>`).join("")}${lost.length > 12 ? `<li>y ${lost.length - 12} más</li>` : ""}</ul>` : ""}
+    <div class="row-wrap" style="margin-top:12px"><button class="btn btn-sm btn-primary" data-action="aDiscard">${icon("undo")} Descartar borrador</button></div>
+  </div>` : "";
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Publicar cambios</h1>
     <p>${cloudOn ? "Al publicar, todos los dirigentes ven los cambios la próxima vez que abran la app." : `La página lee su contenido desde <span class="kbd">data/contenido.json</span>. Publicar es reemplazar ese archivo por tu borrador.`}</p></header>
+  ${warn}
   <div class="card">
     <div class="row-wrap"><span class="chip ${dirty ? "warn" : "ok"}">${dirty ? "Borrador con cambios" : "Sin cambios pendientes"}</span>
       <span class="xs muted">Versión publicada: ${esc(pub.version || 1)} · ${esc(pub.updatedAt || "")}</span></div>
@@ -1016,6 +1025,10 @@ function bindActions() {
 
   // Publicar en la nube
   A.aPublishCloud = async (el) => {
+    const lost = S.draftRemovals();
+    const aviso = (S.draftIsOutdated() ? "ATENCIÓN: este borrador es anterior a la versión publicada ahora.\n\n" : "")
+      + (lost.length ? `Al publicar se quitará:\n- ${lost.slice(0, 10).join("\n- ")}${lost.length > 10 ? `\n- y ${lost.length - 10} más` : ""}\n\n` : "");
+    if (aviso && !confirm(aviso + "¿Seguro que quieres quitarlo?")) return;
     if (!confirm("¿Publicar el borrador para todos los dirigentes?")) return;
     el.disabled = true;
     try {
