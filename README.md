@@ -25,3 +25,7 @@ Aula virtual para la formación de dirigentes: curso de 5 módulos y 21 unidades
 ## Cambios en el código
 
 Si modificas archivos de `css/` o `js/`, sube el número de `VERSION` en `sw.js` para que los celulares con la app instalada reciban la actualización.
+
+## Licencia
+
+Los contenidos (curso, revista, presentaciones, dinámicas, juegos) se comparten con licencia **CC BY-NC-SA 4.0**: puedes usarlos citando a la Pastoral Juvenil Ágape, sin fines comerciales y compartiendo igual. El código, con licencia **MIT**. El nombre, el logo y las fotos no se licencian. Detalles en [LICENSE.md](LICENSE.md).
