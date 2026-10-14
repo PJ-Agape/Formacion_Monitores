@@ -169,11 +169,14 @@ async function pullAndMerge() {
   S.setLocalOwner(uid);
 
   const [ps, ns] = await Promise.all([
-    withTimeout(fb.getDoc(fb.doc(db, "progress", uid))).catch(() => null),
-    withTimeout(fb.getDoc(fb.doc(db, "notes", uid))).catch(() => null),
+    withTimeout(fb.getDoc(fb.doc(db, "progress", uid)), 15000).catch(() => null),
+    withTimeout(fb.getDoc(fb.doc(db, "notes", uid)), 15000).catch(() => null),
   ]);
-  const cloudProg = ps && ps.exists() ? safeJSON(ps.data().json, {}) : {};
-  const cloudNotes = ns && ns.exists() ? safeJSON(ns.data().json, {}) : {};
+  // Si no se pudo leer la nube (conexión lenta), NO se toca nada ni se sube: se reintenta en unos segundos.
+  // Antes se tomaba como «nube vacía» y el celular podía pisar el avance hecho en el computador.
+  if (!ps || !ns) { lastPull = 0; setTimeout(() => refreshProgress(true).then((c) => { if (c) emit(); }).catch(() => {}), 6000); return; }
+  const cloudProg = ps.exists() ? safeJSON(ps.data().json, {}) : {};
+  const cloudNotes = ns.exists() ? safeJSON(ns.data().json, {}) : {};
   const mergedProg = mergeProgress(cloudProg, S.allProgressRaw());
   const mergedNotes = mergeNotes(cloudNotes, S.allNotesRaw());
   S.setAllProgress(mergedProg, true);
@@ -182,17 +185,6 @@ async function pullAndMerge() {
   if (JSON.stringify(mergedNotes) !== JSON.stringify(cloudNotes)) dirty.notes = true;
   if (dirty.progress || dirty.notes) queuePush();
   lastPull = Date.now();
-}
-// Al volver a la app (otra pestaña, el celular que estaba en segundo plano) se trae de nuevo el avance:
-// así lo hecho en el computador aparece en el celular sin cerrar sesión. Devuelve true si algo cambió.
-let lastPull = 0;
-export async function refreshProgress(force) {
-  if (!user || !account || account.active === false) return false;
-  if (!force && Date.now() - lastPull < 20000) return false;
-  const before = JSON.stringify([S.allProgressRaw(), S.allNotesRaw()]);
-  await flushPush();
-  try { await pullAndMerge(); } catch { return false; }
-  return JSON.stringify([S.allProgressRaw(), S.allNotesRaw()]) !== before;
 }
 const safeJSON = (s, d) => { try { return JSON.parse(s); } catch { return d; } };
 
@@ -240,10 +232,15 @@ export async function flushPush() {
   clearTimeout(pushTimer);
   if (!user || !account || account.active === false) return;
   const uid = user.uid;
+  // Antes de subir se lee lo que hay en la nube y se junta: ningún dispositivo borra lo que avanzó otro.
+  const read = async (col) => { const sn = await withTimeout(fb.getDoc(fb.doc(db, col, uid)), 15000); return sn.exists() ? safeJSON(sn.data().json, {}) : {}; };
   try {
     if (dirty.progress) {
       dirty.progress = false;
-      const all = S.allProgressRaw();
+      let cloudProg;
+      try { cloudProg = await read("progress"); } catch (e) { dirty.progress = true; throw e; }
+      const all = mergeProgress(S.allProgressRaw(), cloudProg);
+      S.setAllProgress(all, true);
       await fb.setDoc(fb.doc(db, "progress", uid), {
         json: JSON.stringify(all), summary: summarize(all),
         name: account.name, parish: account.parish || "", email: account.email, updatedAt: fb.serverTimestamp(),
@@ -251,9 +248,16 @@ export async function flushPush() {
     }
     if (dirty.notes) {
       dirty.notes = false;
-      await fb.setDoc(fb.doc(db, "notes", uid), { json: JSON.stringify(S.allNotesRaw()), updatedAt: fb.serverTimestamp() });
+      let cloudNotes;
+      try { cloudNotes = await read("notes"); } catch (e) { dirty.notes = true; throw e; }
+      const all = mergeNotes(S.allNotesRaw(), cloudNotes); // lo escrito en este dispositivo gana
+      S.setAllNotes(all, true);
+      await fb.setDoc(fb.doc(db, "notes", uid), { json: JSON.stringify(all), updatedAt: fb.serverTimestamp() });
     }
-  } catch (e) { console.warn("Sincronización:", e); }
+  } catch (e) {
+    console.warn("Sincronización:", e);
+    if (dirty.progress || dirty.notes) { clearTimeout(pushTimer); pushTimer = setTimeout(flushPush, 8000); }
+  }
 }
 window.addEventListener("pagehide", () => { flushPush(); });
 // En el celular, cerrar o cambiar de app no siempre dispara «pagehide»: se guarda también al ocultarse.
