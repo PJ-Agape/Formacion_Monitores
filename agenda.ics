@@ -84,7 +84,7 @@ CATEGORIES:Encuentro
 END:VEVENT
 BEGIN:VEVENT
 UID:n4QBNirFcM8F1nJzY9CW@pj-agape
-DTSTAMP:20261009T154634Z
+DTSTAMP:20261010T130207Z
 DTSTART;TZID=America/Santiago:20261022T190000
 DTEND;TZID=America/Santiago:20261022T210000
 SUMMARY:Proyección The Chosen
@@ -141,10 +141,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-1@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270307
 DTEND;VALUE=DATE:20270308
-SUMMARY:Camino Ágape · Encuentro 1: Amados sin condiciones
+SUMMARY:Encuentro N° 1: Amados sin condiciones
 DESCRIPTION:IV Domingo de Cuaresma. Evangelio: Juan 3\, 14-21. El encuentro
   se realiza durante esta semana\; el equipo confirma día y hora.\n\nAgend
  a Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -153,10 +153,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-2@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270314
 DTEND;VALUE=DATE:20270315
-SUMMARY:Camino Ágape · Encuentro 2: El grano de trigo
+SUMMARY:Encuentro N° 2: El grano de trigo
 DESCRIPTION:V Domingo de Cuaresma. Evangelio: Juan 12\, 20-33. El encuentro
   se realiza durante esta semana\; el equipo confirma día y hora.\n\nAgend
  a Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -165,10 +165,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-3@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270321
 DTEND;VALUE=DATE:20270322
-SUMMARY:Camino Ágape · Encuentro 3: ¡Hosanna!
+SUMMARY:Encuentro N° 3: ¡Hosanna!
 DESCRIPTION:Domingo de Ramos. Evangelio: Marcos 11\, 1-10. El encuentro se 
  realiza durante esta semana\; el equipo confirma día y hora.\n\nAgenda Á
  gape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -177,10 +177,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-4@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270404
 DTEND;VALUE=DATE:20270405
-SUMMARY:Camino Ágape · Encuentro 4: Paz a ustedes
+SUMMARY:Encuentro N° 4: Paz a ustedes
 DESCRIPTION:II Domingo de Pascua (de la Divina Misericordia). Evangelio: Ju
  an 20\, 19-31. El encuentro se realiza durante esta semana\; el equipo con
  firma día y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monito
@@ -190,10 +190,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-5@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270411
 DTEND;VALUE=DATE:20270412
-SUMMARY:Camino Ágape · Encuentro 5: Al partir el pan
+SUMMARY:Encuentro N° 5: Al partir el pan
 DESCRIPTION:III Domingo de Pascua. Evangelio: Lucas 24\, 35-48. El encuentr
  o se realiza durante esta semana\; el equipo confirma día y hora.\n\nAgen
  da Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -202,10 +202,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-6@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270418
 DTEND;VALUE=DATE:20270419
-SUMMARY:Camino Ágape · Encuentro 6: El Buen Pastor
+SUMMARY:Encuentro N° 6: El Buen Pastor
 DESCRIPTION:IV Domingo de Pascua (del Buen Pastor). Evangelio: Juan 10\, 11
  -18. El encuentro se realiza durante esta semana\; el equipo confirma día
   y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agen
@@ -215,10 +215,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-7@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270425
 DTEND;VALUE=DATE:20270426
-SUMMARY:Camino Ágape · Encuentro 7: La vid y los sarmientos
+SUMMARY:Encuentro N° 7: La vid y los sarmientos
 DESCRIPTION:V Domingo de Pascua. Evangelio: Juan 15\, 1-8. El encuentro se 
  realiza durante esta semana\; el equipo confirma día y hora.\n\nAgenda Á
  gape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -227,10 +227,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-8@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270502
 DTEND;VALUE=DATE:20270503
-SUMMARY:Camino Ágape · Encuentro 8: Amigos
+SUMMARY:Encuentro N° 8: Amigos
 DESCRIPTION:VI Domingo de Pascua. Evangelio: Juan 15\, 9-17. El encuentro s
  e realiza durante esta semana\; el equipo confirma día y hora.\n\nAgenda 
  Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -239,10 +239,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-9@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270509
 DTEND;VALUE=DATE:20270510
-SUMMARY:Camino Ágape · Encuentro 9: Vayan
+SUMMARY:Encuentro N° 9: Vayan
 DESCRIPTION:Ascensión del Señor. Evangelio: Marcos 16\, 15-20. El encuent
  ro se realiza durante esta semana\; el equipo confirma día y hora.\n\nAge
  nda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -251,10 +251,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-10@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270516
 DTEND;VALUE=DATE:20270517
-SUMMARY:Camino Ágape · Encuentro 10: Reciban el Espíritu
+SUMMARY:Encuentro N° 10: Reciban el Espíritu
 DESCRIPTION:Domingo de Pentecostés. Evangelio: Juan 20\, 19-23. El encuent
  ro se realiza durante esta semana\; el equipo confirma día y hora.\n\nAge
  nda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -263,10 +263,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-11@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270523
 DTEND;VALUE=DATE:20270524
-SUMMARY:Camino Ágape · Encuentro 11: Dios es comunidad
+SUMMARY:Encuentro N° 11: Dios es comunidad
 DESCRIPTION:Santísima Trinidad. Evangelio: Mateo 28\, 16-20. El encuentro 
  se realiza durante esta semana\; el equipo confirma día y hora.\n\nAgenda
   Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -275,10 +275,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-12@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270530
 DTEND;VALUE=DATE:20270531
-SUMMARY:Camino Ágape · Encuentro 12: Esto es mi cuerpo
+SUMMARY:Encuentro N° 12: Esto es mi cuerpo
 DESCRIPTION:Santísimo Cuerpo y Sangre de Cristo. Evangelio: Marcos 14\, 12
  -16. 22-26. El encuentro se realiza durante esta semana\; el equipo confir
  ma día y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores
@@ -288,10 +288,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-13@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270606
 DTEND;VALUE=DATE:20270607
-SUMMARY:Camino Ágape · Encuentro 13: Mi familia
+SUMMARY:Encuentro N° 13: Mi familia
 DESCRIPTION:X Domingo del Tiempo Ordinario. Evangelio: Marcos 3\, 20-35. El
   encuentro se realiza durante esta semana\; el equipo confirma día y hora
  .\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -300,10 +300,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-14@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270613
 DTEND;VALUE=DATE:20270614
-SUMMARY:Camino Ágape · Encuentro 14: Lo pequeño crece
+SUMMARY:Encuentro N° 14: Lo pequeño crece
 DESCRIPTION:XI Domingo del Tiempo Ordinario. Evangelio: Marcos 4\, 26-34. E
  l encuentro se realiza durante esta semana\; el equipo confirma día y hor
  a.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -312,10 +312,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-15@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270620
 DTEND;VALUE=DATE:20270621
-SUMMARY:Camino Ágape · Encuentro 15: En medio de la tormenta
+SUMMARY:Encuentro N° 15: En medio de la tormenta
 DESCRIPTION:XII Domingo del Tiempo Ordinario. Evangelio: Marcos 4\, 35-41. 
  El encuentro se realiza durante esta semana\; el equipo confirma día y ho
  ra.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -324,10 +324,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-16@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270627
 DTEND;VALUE=DATE:20270628
-SUMMARY:Camino Ágape · Encuentro 16: Levántate
+SUMMARY:Encuentro N° 16: Levántate
 DESCRIPTION:XIII Domingo del Tiempo Ordinario. Evangelio: Marcos 5\, 21-43.
   El encuentro se realiza durante esta semana\; el equipo confirma día y h
  ora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -336,10 +336,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-17@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270718
 DTEND;VALUE=DATE:20270719
-SUMMARY:Camino Ágape · Encuentro 17: Vengan a descansar
+SUMMARY:Encuentro N° 17: Vengan a descansar
 DESCRIPTION:XVI Domingo del Tiempo Ordinario. Evangelio: Marcos 6\, 30-34. 
  El encuentro se realiza durante esta semana\; el equipo confirma día y ho
  ra.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -348,10 +348,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-18@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270725
 DTEND;VALUE=DATE:20270726
-SUMMARY:Camino Ágape · Encuentro 18: Cinco panes y dos peces
+SUMMARY:Encuentro N° 18: Cinco panes y dos peces
 DESCRIPTION:XVII Domingo del Tiempo Ordinario. Evangelio: Juan 6\, 1-15. El
   encuentro se realiza durante esta semana\; el equipo confirma día y hora
  .\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -360,10 +360,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-19@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270801
 DTEND;VALUE=DATE:20270802
-SUMMARY:Camino Ágape · Encuentro 19: Pan de vida
+SUMMARY:Encuentro N° 19: Pan de vida
 DESCRIPTION:XVIII Domingo del Tiempo Ordinario. Evangelio: Juan 6\, 24-35. 
  El encuentro se realiza durante esta semana\; el equipo confirma día y ho
  ra.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -372,10 +372,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-20@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270808
 DTEND;VALUE=DATE:20270809
-SUMMARY:Camino Ágape · Encuentro 20: Fuerza para el camino
+SUMMARY:Encuentro N° 20: Fuerza para el camino
 DESCRIPTION:XIX Domingo del Tiempo Ordinario. Evangelio: Juan 6\, 41-51. El
   encuentro se realiza durante esta semana\; el equipo confirma día y hora
  .\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -384,10 +384,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-21@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270815
 DTEND;VALUE=DATE:20270816
-SUMMARY:Camino Ágape · Encuentro 21: María se puso en camino
+SUMMARY:Encuentro N° 21: María se puso en camino
 DESCRIPTION:Asunción de la Virgen María. Evangelio: Lucas 1\, 39-56. El e
  ncuentro se realiza durante esta semana\; el equipo confirma día y hora.\
  n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -396,10 +396,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-22@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270822
 DTEND;VALUE=DATE:20270823
-SUMMARY:Camino Ágape · Encuentro 22: ¿A quién iremos?
+SUMMARY:Encuentro N° 22: ¿A quién iremos?
 DESCRIPTION:XXI Domingo del Tiempo Ordinario. Evangelio: Juan 6\, 60-69. El
   encuentro se realiza durante esta semana\; el equipo confirma día y hora
  .\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -408,10 +408,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-23@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270829
 DTEND;VALUE=DATE:20270830
-SUMMARY:Camino Ágape · Encuentro 23: Desde el corazón
+SUMMARY:Encuentro N° 23: Desde el corazón
 DESCRIPTION:XXII Domingo del Tiempo Ordinario. Evangelio: Marcos 7\, 1-8. 1
  4-15. 21-23. El encuentro se realiza durante esta semana\; el equipo confi
  rma día y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitore
@@ -421,10 +421,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-24@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270905
 DTEND;VALUE=DATE:20270906
-SUMMARY:Camino Ágape · Encuentro 24: Ábrete
+SUMMARY:Encuentro N° 24: Ábrete
 DESCRIPTION:XXIII Domingo del Tiempo Ordinario. Evangelio: Marcos 7\, 31-37
  . El encuentro se realiza durante esta semana\; el equipo confirma día y 
  hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -433,10 +433,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-25@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270912
 DTEND;VALUE=DATE:20270913
-SUMMARY:Camino Ágape · Encuentro 25: ¿Quién dicen que soy yo?
+SUMMARY:Encuentro N° 25: ¿Quién dicen que soy yo?
 DESCRIPTION:XXIV Domingo del Tiempo Ordinario. Evangelio: Marcos 8\, 27-35.
   El encuentro se realiza durante esta semana\; el equipo confirma día y h
  ora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -445,10 +445,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-26@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20270926
 DTEND;VALUE=DATE:20270927
-SUMMARY:Camino Ágape · Encuentro 26: Todos suman
+SUMMARY:Encuentro N° 26: Todos suman
 DESCRIPTION:XXVI Domingo del Tiempo Ordinario. Evangelio: Marcos 9\, 38-43.
   45. 47-48. El encuentro se realiza durante esta semana\; el equipo confir
  ma día y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores
@@ -458,10 +458,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-27@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271003
 DTEND;VALUE=DATE:20271004
-SUMMARY:Camino Ágape · Encuentro 27: Dejen que vengan a mí
+SUMMARY:Encuentro N° 27: Dejen que vengan a mí
 DESCRIPTION:XXVII Domingo del Tiempo Ordinario. Evangelio: Marcos 10\, 2-16
  . El encuentro se realiza durante esta semana\; el equipo confirma día y 
  hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -470,10 +470,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-28@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271010
 DTEND;VALUE=DATE:20271011
-SUMMARY:Camino Ágape · Encuentro 28: Te falta una cosa
+SUMMARY:Encuentro N° 28: Te falta una cosa
 DESCRIPTION:XXVIII Domingo del Tiempo Ordinario. Evangelio: Marcos 10\, 17-
  30. El encuentro se realiza durante esta semana\; el equipo confirma día 
  y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agend
@@ -483,10 +483,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-29@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271017
 DTEND;VALUE=DATE:20271018
-SUMMARY:Camino Ágape · Encuentro 29: El que quiera ser grande
+SUMMARY:Encuentro N° 29: El que quiera ser grande
 DESCRIPTION:XXIX Domingo del Tiempo Ordinario. Evangelio: Marcos 10\, 35-45
  . El encuentro se realiza durante esta semana\; el equipo confirma día y 
  hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -495,10 +495,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-30@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271024
 DTEND;VALUE=DATE:20271025
-SUMMARY:Camino Ágape · Encuentro 30: ¿Qué quieres que haga por ti?
+SUMMARY:Encuentro N° 30: ¿Qué quieres que haga por ti?
 DESCRIPTION:XXX Domingo del Tiempo Ordinario. Evangelio: Marcos 10\, 46-52.
   El encuentro se realiza durante esta semana\; el equipo confirma día y h
  ora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -507,10 +507,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-31@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271031
 DTEND;VALUE=DATE:20271101
-SUMMARY:Camino Ágape · Encuentro 31: El mandamiento más grande
+SUMMARY:Encuentro N° 31: El mandamiento más grande
 DESCRIPTION:XXXI Domingo del Tiempo Ordinario. Evangelio: Marcos 12\, 28-34
  . El encuentro se realiza durante esta semana\; el equipo confirma día y 
  hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -519,10 +519,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-32@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271107
 DTEND;VALUE=DATE:20271108
-SUMMARY:Camino Ágape · Encuentro 32: Dar todo
+SUMMARY:Encuentro N° 32: Dar todo
 DESCRIPTION:XXXII Domingo del Tiempo Ordinario. Evangelio: Marcos 12\, 38-4
  4. El encuentro se realiza durante esta semana\; el equipo confirma día y
   hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
@@ -531,10 +531,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-33@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271114
 DTEND;VALUE=DATE:20271115
-SUMMARY:Camino Ágape · Encuentro 33: Lo que no pasa
+SUMMARY:Encuentro N° 33: Lo que no pasa
 DESCRIPTION:XXXIII Domingo del Tiempo Ordinario. Evangelio: Marcos 13\, 24-
  32. El encuentro se realiza durante esta semana\; el equipo confirma día 
  y hora.\n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agend
@@ -544,10 +544,10 @@ TRANSP:TRANSPARENT
 END:VEVENT
 BEGIN:VEVENT
 UID:camino-34@pj-agape
-DTSTAMP:20261009T162058Z
+DTSTAMP:20261014T004936Z
 DTSTART;VALUE=DATE:20271121
 DTEND;VALUE=DATE:20271122
-SUMMARY:Camino Ágape · Encuentro 34: Un rey que sirve
+SUMMARY:Encuentro N° 34: Un rey que sirve
 DESCRIPTION:Jesucristo\, Rey del Universo. Evangelio: Juan 18\, 33-37. El e
  ncuentro se realiza durante esta semana\; el equipo confirma día y hora.\
  n\nAgenda Ágape · pj-agape.github.io/Formacion_Monitores/#/agenda
