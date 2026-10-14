@@ -103,7 +103,6 @@ const DEV_GROUPS = [
   ["Al Espíritu Santo", ["Ven Santo Espíritu", "Veni Creator"]],
   ["Por la Iglesia y los santos", ["Oración por el Papa", "Oración a San José", "Oración a la Sagrada Familia", "San Miguel Arcángel"]],
 ];
-const QUICK = ["Padre nuestro", "Ave María", "Gloria al Padre", "Credo", "Ángel de Dios"];
 // Las oraciones propias de la comunidad (Gestión → Oración) van en el mismo selector, con su etiqueta.
 let OWN = [];
 const OWN_LABEL = "Nuestras oraciones";
@@ -138,7 +137,6 @@ function devCardHTML(o) {
 function devocionarioHTML() {
   const cur = devCurrent();
   return `<div class="cap-devpick">
-      <div class="cap-quick" role="group" aria-label="Las más rezadas">${[...OWN.slice(0, 1).map((o) => o.t), ...QUICK].filter(devFind).map((t) => `<button type="button" class="chip-btn" data-action="capDev" data-t="${esc(t)}" aria-pressed="${t === cur}">${esc(t)}</button>`).join("")}</div>
       <label class="cap-devsel"><span>Elige una oración</span>
         <select class="input" id="capDevSel">${devGroups().map(([g, xs]) => `<optgroup label="${esc(g)}">${xs.map((o) => `<option value="${esc(o.t)}" ${o.t === cur ? "selected" : ""}>${esc(o.t)}</option>`).join("")}</optgroup>`).join("")}</select>
       </label>
@@ -151,7 +149,6 @@ function devShow(t) {
   try { sessionStorage.setItem(DEV_KEY, t); } catch {}
   const card = document.getElementById("capDevCard"); if (card) card.innerHTML = devCardHTML(devFind(t));
   const sel = document.getElementById("capDevSel"); if (sel && sel.value !== t) sel.value = t;
-  document.querySelectorAll(".cap-quick [data-t]").forEach((b) => b.setAttribute("aria-pressed", String(b.dataset.t === t)));
 }
 
 // ---------------------------------------------------------------------------
@@ -621,7 +618,6 @@ function registerActions() {
   const A = ctx.actions;
   // Devocionario: un selector y una sola tarjeta con la oración elegida
   document.addEventListener("change", (e) => { if (e.target.id === "capDevSel") devShow(e.target.value); });
-  A.capDev = (el) => devShow(el.dataset.t);
   A.capRosario = (el) => openRosary(el.dataset.set);
   A.rosClose = () => closeRosary();
   A.rosNext = () => rosMove(1);
