@@ -106,6 +106,12 @@ const DEV_GROUPS = [
 ];
 // Las oraciones propias de la comunidad (Gestión → Oración) van en el mismo selector, con su etiqueta.
 let OWN = [];
+// Oraciones propias (Gestión → Oración), sin la guía «Orar con la Palabra», que ahora es una presentación.
+function loadOwn() {
+  const cards = ((ctx.content().devotional || {}).cards) || [];
+  const lectio = cards.find((c) => c.type === "list" && /palabra|biblia/i.test((c.title || "") + (c.tag || "")));
+  OWN = cards.filter((c) => c !== lectio && c.title).map((c) => ({ t: c.title, own: c }));
+}
 const OWN_LABEL = "Nuestras oraciones";
 const devAll = () => [...OWN, ...ORACIONES];
 const devFind = (t) => devAll().find((o) => o.t === t);
@@ -144,6 +150,17 @@ function devocionarioHTML() {
     </div>
     <article class="card cap-devcard" id="capDevCard" aria-live="polite">${devCardHTML(devFind(cur))}</article>
     <p class="muted small" style="margin-top:12px">${OWN.length ? `${OWN.length} oraciones nuestras y ` : ""}${ORACIONES.length} del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;
+}
+// Oremus: página propia con el selector de oraciones (está en Materiales y se abre desde la Capilla).
+export function oremusView(t) {
+  loadOwn();
+  if (t && devFind(t)) { try { sessionStorage.setItem(DEV_KEY, t); } catch {} }
+  return `<div class="oremus">
+    <a class="back-link" href="#/oracion">${icon("left")} Capilla</a>
+    <header class="page-head"><span class="eyebrow">Oración</span><h1>Oremus</h1>
+      <p>Nuestras oraciones, para antes y después de cada encuentro, y las que rezamos en toda la Iglesia. Elige una y rézala con calma.</p></header>
+    ${devocionarioHTML()}
+  </div>`;
 }
 function devShow(t) {
   if (!devFind(t)) return;
@@ -194,8 +211,7 @@ export function view(opt = {}) {
   const s = season(), m = moment(), now = new Date();
   const mk = MYST_BY_DAY[now.getDay()], my = MYST[mk];
   const cards = d.cards || [];
-  const lectio = cards.find((c) => c.type === "list" && /palabra|biblia/i.test((c.title || "") + (c.tag || "")));
-  OWN = cards.filter((c) => c !== lectio && c.title).map((c) => ({ t: c.title, own: c }));
+  loadOwn();
   const member = st().ready;
   ctx.onAfterRender(() => {
     if (opt.focus === "rosario") setTimeout(() => openRosary(), 50);
@@ -230,6 +246,7 @@ export function view(opt = {}) {
       <span class="eyebrow">${esc(m.label)}</span>
       <span class="cap-hand sm">${esc(m.hand)}</span>
       <p class="cap-prayer">${esc(m.text).replace(/\n/g, "<br>")}</p>
+      <a class="btn cap-oremus" href="#/oremus">${icon("book")} Oremus <small>nuestras oraciones y las de siempre</small></a>
     </article>
   </section>
 
@@ -278,12 +295,6 @@ export function view(opt = {}) {
         ${ctx.cloud.enabled ? `<button class="btn cap-light-btn" data-action="signIn">Ingresar</button>` : ""}</div></div>`}
   </section>
 
-
-  <section class="cap-room" id="cap-siempre">
-    <div class="cap-room-head"><span class="cap-num">05</span><h2>Nuestras oraciones y las de <em>siempre</em></h2></div>
-    <p class="cap-lead">Las nuestras, para antes y después de cada encuentro, y las que rezamos en todo el mundo. Elige una y rézala con calma.</p>
-    ${devocionarioHTML()}
-  </section>
 
   <section class="cap-room" id="cap-cantar">
     <div class="cap-room-head"><span class="cap-num">07</span><h2>Cantar es rezar <em>dos veces</em></h2></div>

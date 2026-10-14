@@ -79,6 +79,7 @@ const routes = [
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
+  [/^\/oremus(?:\/([^/?]+))?$/, (t) => capilla.oremusView(t ? decodeURIComponent(t) : ""), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
@@ -942,6 +943,9 @@ function viewMaterials() {
     ]],
     ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
       row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),
+    ]],
+    ["oracion", "Oración", "#1351a4", "Para rezar solos o en el encuentro.", [
+      row("#/oremus", "book", "Oremus", "Nuestras oraciones y las de siempre, en un solo lugar"),
     ]],
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],

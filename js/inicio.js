@@ -63,7 +63,7 @@ const ITEMS = [
   { b: "red", e: "🏛️", t: "Guía de servicio", d: "Presentación: identidad, roles, cargos y reuniones.", href: "presentaciones/guia-de-servicio.html", ext: true, kw: "guia servicio pastoral identidad roles cargos reuniones comunidad presentacion", ok: (w) => w.equipo, hub: false },
   { b: "espiritu", e: "⛪", t: "Nuestra Capilla", d: "Silencio, intenciones, la Palabra y María: un lugar para estar con Jesús.", href: "#/oracion", kw: "capilla oracion rezar velas intenciones espiritualidad", ok: () => true },
   { b: "espiritu", e: "📖", t: "Evangelio del día", d: "La Palabra de hoy.", href: "#/evangelio", kw: "evangelio palabra lectura hoy biblia", ok: () => true },
-  { b: "espiritu", e: "🙏", t: "Oraciones de siempre", d: "Padre nuestro, Ave María, Credo y más.", href: "#/oracion/siempre", kw: "oraciones devocionario rezar", ok: () => true },
+  { b: "espiritu", e: "🙏", t: "Oremus", d: "Nuestras oraciones y las de siempre: Padre nuestro, Ave María, Credo y más.", href: "#/oremus", kw: "oraciones devocionario rezar oremus", ok: () => true },
   { b: "espiritu", e: "🌹", t: "Rezar el Rosario", d: "Paso a paso, cuenta a cuenta, con María.", href: "#/oracion/rosario", kw: "maria virgen rosario misterios", ok: () => true },
   { b: "espiritu", e: "🕯️", t: "Nuestras intenciones", d: "Comparte tu intención y reza por las de otros.", href: "#/oracion/velas", kw: "vela intencion rezar por", ok: () => true },
   { b: "espiritu", e: "🎶", t: "Cancionero", d: "Canciones con acordes para la misa.", href: "#/cancionero", kw: "cancionero canciones acordes misa cantos guitarra", ok: () => true },
@@ -183,7 +183,7 @@ function index() {
     const c = S.activeCourse();
     (c.phases || []).forEach((p, pi) => (p.sessions || []).forEach((s) => add("Unidades del curso", "🎓", `${s.id} ${s.title}`, p.title, `#/unidad/${pi}/${encodeURIComponent(s.id)}`, s.summary || "")));
   }
-  ORACIONES.forEach((o) => add("Oraciones", "🙏", o.t, o.note || "Oraciones de siempre", "#/oracion/siempre"));
+  ORACIONES.forEach((o) => add("Oraciones", "🙏", o.t, o.note || "Oremus", `#/oremus/${encodeURIComponent(o.t)}`));
   try { songList().forEach((s) => add("Canciones", "🎶", s.title, s.author || "Cancionero", `#/cancionero/${encodeURIComponent(s.id)}`, (s.momentos || []).join(" "))); } catch {}
   if (w.equipo) BANCO.forEach((d) => add("Dinámicas", "🎲", d.title, d.objetivo, `#/dinamicas/${encodeURIComponent(d.id)}`, (d.tags || []).join(" ")));
   helpFor(perfil()).forEach((h) => add("Ayuda", "❓", h.q, h.a[0] || "", `#/ayuda?t=${h.t}`));
