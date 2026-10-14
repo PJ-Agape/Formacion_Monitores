@@ -175,7 +175,18 @@ async function pullAndMerge() {
   ]);
   // Si no se pudo leer la nube (conexión lenta), NO se toca nada ni se sube: se reintenta en unos segundos.
   // Antes se tomaba como «nube vacía» y el celular podía pisar el avance hecho en el computador.
-  if (!ps || !ns) { lastPull = 0; setTimeout(() => refreshProgress(true).then((c) => { if (c) emit(); }).catch(() => {}), 6000); return; }
+  // Con conexión débil, Firestore entrega la copia guardada en el teléfono («fromCache») en vez de la nube:
+  // esa copia puede ser vieja (no trae lo avanzado en el computador), así que se trata como no leída y se reintenta.
+  const stale = (s) => !s || (s.metadata && s.metadata.fromCache);
+  if (stale(ps) || stale(ns)) {
+    lastPull = 0;
+    const wait = [6000, 15000, 30000, 60000][Math.min(pullRetries++, 3)];
+    clearTimeout(pullTimer);
+    pullTimer = setTimeout(() => refreshProgress(true).then((c) => { if (c) emit(); }).catch(() => {}), wait);
+    // Mientras tanto se muestra lo que ya hay en el dispositivo (sin subir nada).
+    return;
+  }
+  pullRetries = 0;
   const cloudProg = ps.exists() ? safeJSON(ps.data().json, {}) : {};
   const cloudNotes = ns.exists() ? safeJSON(ns.data().json, {}) : {};
   const mergedProg = mergeProgress(cloudProg, S.allProgressRaw());
@@ -189,7 +200,7 @@ async function pullAndMerge() {
 }
 // Al volver a la app (otra pestaña, el celular que estaba en segundo plano) se trae de nuevo el avance:
 // así lo hecho en el computador aparece en el celular sin cerrar sesión. Devuelve true si algo cambió.
-let lastPull = 0;
+let lastPull = 0, pullRetries = 0, pullTimer = null;
 export async function refreshProgress(force) {
   if (!user || !account || account.active === false) return false;
   if (!force && Date.now() - lastPull < 20000) return false;
@@ -245,7 +256,12 @@ export async function flushPush() {
   if (!user || !account || account.active === false) return;
   const uid = user.uid;
   // Antes de subir se lee lo que hay en la nube y se junta: ningún dispositivo borra lo que avanzó otro.
-  const read = async (col) => { const sn = await withTimeout(fb.getDoc(fb.doc(db, col, uid)), 15000); return sn.exists() ? safeJSON(sn.data().json, {}) : {}; };
+  // Si lo leído es la copia guardada del teléfono (no la nube), no se sube: podría pisar lo hecho en otro dispositivo.
+  const read = async (col) => {
+    const sn = await withTimeout(fb.getDoc(fb.doc(db, col, uid)), 15000);
+    if (sn.metadata && sn.metadata.fromCache) throw new Error("sin conexión con la nube");
+    return sn.exists() ? safeJSON(sn.data().json, {}) : {};
+  };
   try {
     if (dirty.progress) {
       dirty.progress = false;
