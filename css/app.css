@@ -3479,3 +3479,14 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .foot-social a:hover { background: #0b2566; color: #ffba03; transform: translateY(-2px); }
 .foot-social a:focus-visible { outline: 3px solid #ef591c; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .foot-social a:hover { transform: none; } }
+
+/* Credenciales para encuentros */
+.cred-prev canvas { border-radius: 10px; max-width: 300px; }
+.cred-h { font-family: var(--font-display); font-size: 1.15rem; margin: 0; }
+.cred-list { display: grid; gap: 8px; }
+.cred-item { display: grid; grid-template-columns: 54px minmax(0, 1fr) auto auto; gap: 10px; align-items: center; padding: 6px 8px; border: 2px solid var(--line, #c9d3e6); border-radius: 14px; background: var(--surface, #fff); }
+.cred-item.on { border-color: #0b2566; box-shadow: 2px 2px 0 #ffba03; }
+.cred-item canvas { width: 54px; height: auto; border-radius: 4px; display: block; }
+.cred-item-t { display: grid; min-width: 0; }
+.cred-item-t b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cred-item-t small { color: var(--ink-3, #5a6b88); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }

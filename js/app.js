@@ -25,6 +25,7 @@ import * as trivia from "./trivia.js";
 import * as podcast from "./podcast.js";
 import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
+import * as credenciales from "./credenciales.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -101,6 +102,7 @@ const routes = [
   [/^\/juegos\/frente$/, () => frente.view(), "red"],
   [/^\/juegos\/trivia$/, () => trivia.view(), "red"],
   [/^\/podcast$/, () => podcast.view(), "red"],
+  [/^\/credenciales$/, () => credenciales.view(), "formacion"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
@@ -1465,6 +1467,7 @@ chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
+credenciales.setup({ actions, onAfterRender });
 familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
