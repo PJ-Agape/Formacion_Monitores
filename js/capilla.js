@@ -157,7 +157,7 @@ export function view(opt = {}) {
   const member = st().ready;
   ctx.onAfterRender(() => {
     if (opt.focus === "rosario") setTimeout(() => openRosary(), 50);
-    loadGospel().then(() => {
+    Promise.all([loadGospel(), loadPropio()]).then(() => {
       paintGospel();
       if (!opt.focus || opt.vela || opt.focus === "rosario") return;
       const box = document.getElementById(opt.focus === "gospel" ? "capGospel" : "cap-" + opt.focus); if (!box) return;
@@ -317,23 +317,36 @@ async function loadGospel() {
   } catch {}
 }
 const READ_URL = "https://www.vaticannews.va/es/evangelio-de-hoy.html";
+// Fiesta propia de Chile o de la parroquia (Gestión → Evangelio y fiestas): manda sobre la fuente automática
+let propio = null;
+async function loadPropio() {
+  if (propio === null) propio = (ctx && ctx.cloud && ctx.cloud.enabled ? await ctx.cloud.getEvPropio().catch(() => null) : null) || {};
+  return propio;
+}
+export function aplicarPropio(iso, base) {
+  const o = propio && propio.dias && propio.dias[iso];
+  return o && o.cita ? { ...(base || {}), ...o, propio: true } : base;
+}
+const pick = () => aplicarPropio(todayKey(), (gospel && gospel.days && gospel.days[todayKey()]) || null);
 // Para Inicio: la cita y la frase del Evangelio de hoy (o null)
 export async function todayGospel() {
-  const pick = () => (gospel && gospel.days && gospel.days[todayKey()]) || null;
-  if (pick()) return pick();
+  await loadPropio();
+  if (pick() && (pick().propio || (gospel && gospel.days && gospel.days[todayKey()]))) return pick();
   await loadGospel(); return pick();
 }
+export const propioDe = async (iso) => { await loadPropio(); return (propio.dias || {})[iso] || null; };
+export const resetPropio = () => { propio = null; };
 function gospelHTML(s) {
-  const g = gospel && gospel.days && gospel.days[todayKey()];
+  const g = pick();
   if (!g || !g.frase) return `<p class="cap-hint">${esc(s.hint)}</p>`;
-  return `<a class="cap-gq" href="${READ_URL}" target="_blank" rel="noopener">
+  return `<a class="cap-gq" href="${esc(g.url || READ_URL)}" target="_blank" rel="noopener">
       <span class="cap-gq-t">${esc(g.titulo || "Evangelio del día")}</span>
       <span class="cap-gq-f">«${esc(g.frase)}»</span>
       <span class="cap-gq-r">${esc(g.cita)} · Leer el Evangelio completo ↗</span></a>`;
 }
 function paintGospel() {
   const box = document.getElementById("capGospel"); if (box) box.innerHTML = gospelHTML(season());
-  const g = gospel && gospel.days && gospel.days[todayKey()];
+  const g = pick();
   const ref = document.getElementById("capWordRef"); if (ref && g) ref.textContent = `Evangelio del día · ${g.cita}`;
 }
 

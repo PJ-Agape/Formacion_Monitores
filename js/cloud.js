@@ -754,6 +754,9 @@ export const saveHonor = (d) => setContent("honor", d);
 export const getFamilias = () => getContent("familias");
 export const saveFamilias = (d) => setContent("familias", d);
 export const getDesafio = () => getContent("desafio");
+// Evangelio propio (fiestas de Chile o de la parroquia): reemplaza el del día. content/evangelio = { dias: { "AAAA-MM-DD": {titulo, cita, frase, url} } }
+export const getEvPropio = () => getContent("evangelio");
+export const saveEvPropio = (d) => setContent("evangelio", d);
 export const saveDesafio = (d) => setContent("desafio", d);
 // Desafío de la semana: quién lo cumplió (cada uno marca el suyo).
 export async function listDesafio(key) {

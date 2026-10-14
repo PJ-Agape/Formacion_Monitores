@@ -68,11 +68,27 @@ const img = (k, iso) => `saludos/${k === "noche" ? "noche" : "manana"}/${iso}.jp
 async function load() {
   if (data) return data;
   try { data = await fetch("saludos/saludos.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)); } catch { data = null; }
+  // Fiestas propias (Gestión → Evangelio y fiestas): cambian la cita y la frase del saludo de buenos días
+  if (data) {
+    const pr = (await cloud.getEvPropio().catch(() => null)) || {};
+    data.dias.forEach((x) => {
+      const o = (pr.dias || {})[x.iso]; if (!o || !o.cita) return;
+      x.titulo = o.titulo || x.titulo; x.cita = o.cita; x.propio = true;
+      // El bloque del Evangelio se cambia y se quita la reflexión que venía después (era del Evangelio anterior)
+      const ps = x.dia.split("\n\n"), i = ps.findIndex((p) => p.startsWith("📖"));
+      if (i >= 0) {
+        ps[i] = `📖 *${o.titulo ? o.titulo + " · " : "Evangelio · "}${o.cita}*${o.frase ? `\n_«${o.frase.replace(/[«»]/g, "")}»_` : ""}`;
+        if (ps[i + 1] && !/^(🙏|📖|Revisar|Gracias)/.test(ps[i + 1]) && ps.length > i + 3) ps.splice(i + 1, 1);
+        x.dia = ps.join("\n\n");
+      }
+    });
+  }
   return data;
 }
 
 const part = (x, k) => `<article class="sal-part ${k}">
     <h3>${k === "noche" ? "🌙 Buenas noches" : "☀️ Buenos días"} <small>${esc(k === "noche" ? `${x.ref} · ${x.salmo}` : `Evangelio · ${x.cita}`)}</small></h3>
+    ${k === "dia" && x.propio ? `<p class="xs note">Fiesta propia: el texto ya trae su Evangelio. La imagen conserva el del calendario general.</p>` : ""}
     <img class="sal-img" src="${img(k, x.iso)}" alt="Imagen de ${k === "noche" ? "buenas noches" : "buenos días"} del ${esc(x.fecha)}" loading="lazy">
     <div class="row-wrap" style="gap:8px">
       <button class="btn btn-gold" data-action="salShare" data-iso="${x.iso}" data-k="${k}">📤 Enviar a WhatsApp</button>

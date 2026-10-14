@@ -2,6 +2,7 @@
 // y guía de comunidad. Todo se edita en un borrador y se publica al final.
 
 import * as hoy from "./gestion-hoy.js";
+import * as evAdmin from "./evangelio-admin.js";
 import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
 import * as saludos from "./saludos.js";
@@ -53,6 +54,7 @@ export async function renderAdmin(sub, _api) {
     case "portada": body = portada.adminView(); break;
     case "saludos": body = await saludos.adminView(); break;
     case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
+    case "evangelio": body = cloudOn ? await evAdmin.adminView() : summaryView(draft); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
     case "comunidad": body = communityView(draft); break;
@@ -99,6 +101,7 @@ function navGroups() {
       ["materiales", "#/admin/materiales", "Materiales", "book", A],
       ["oracion", "#/admin/oracion", "Oración", "flame", A],
       ["comunidad", "#/admin/comunidad", "Textos de comunidad", "grid", A],
+      ["evangelio", "#/admin/evangelio", "Evangelio y fiestas", "book", cloudOn && A],
       ["", "#/encuentros", "Nuestra Revista", "book", true, true],
       ["", "#/cancionero", "Cancionero", "flame", C, true],
       ["", "#/dinamicas", "Dinámicas", "sparkle", true, true],
@@ -957,6 +960,7 @@ function bindActions() {
   if (bound) return; bound = true;
   const A = api.actions;
   saludos.registerActions(A, () => api.render());
+  evAdmin.registerActions(A, () => api.render());
 
   document.addEventListener("submit", async (e) => {
     if (e.target.id === "loginForm") { e.preventDefault(); await doLogin($("#adminPass").value); }
