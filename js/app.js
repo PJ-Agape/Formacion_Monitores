@@ -23,6 +23,8 @@ import * as juegos from "./juegos.js";
 import * as frente from "./frente.js";
 import * as trivia from "./trivia.js";
 import * as podcast from "./podcast.js";
+import { cfg as inicioCfg } from "./inicio-config.js";
+import * as inicioAdmin from "./inicio-admin.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -92,7 +94,7 @@ const routes = [
   [/^\/nuestras-familias\/(f\d+)\/registro(?:\/(\d{4}-\d{2}-\d{2}))?$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
   [/^\/nuestras-familias\/(f\d+)\/(\d{4}-\d{2}-\d{2})$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
   [/^\/nuestras-familias\/(f\d+)(?:\/(muro|agenda))?$/, (id, t) => famPortal.view(id, t), "familiasag"],
-  [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); momentos.homeStrip(); }); return inicio.viewRed(); }, "red"],
+  [/^\/red$/, () => { onAfterRender(() => { acompanar.homeCards(); desafio.homeCard(); momentos.homeStrip(); inicio.refreshInicioCfg(() => { if (location.hash === "#/red") render(); }); }); return inicio.viewRed(); }, "red"],
   [/^\/momentos$/, () => momentos.view(), "red"],
   [/^\/juegos$/, () => juegos.view(), "red"],
   [/^\/juegos\/impostor$/, () => juegos.impostor(), "red"],
@@ -375,10 +377,12 @@ function viewHome() {
 // Radios católicas: una franja liviana en Inicio (se abren en la página de cada radio).
 const RADIO_ICO = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2.5"/><path d="M7 8 17 3.5"/><circle cx="15.5" cy="14" r="2.6"/><path d="M6.5 12.5h4M6.5 15.5h4"/></svg>`;
 function radiosHTML() {
+  const rs = inicioCfg().radios;
+  onAfterRender(() => inicio.refreshInicioCfg(() => { if (location.hash === "" || location.hash === "#/" || location.hash === "#/red") render(); }));
   onAfterRender(() => podcast.refreshQuiet(() => { if (podcast.hasEpisodes()) document.querySelector(".hr-pod small")?.remove(); }));
   return `<nav class="home-radios" aria-label="Radios católicas en vivo">
-    <span class="hr-lbl">${RADIO_ICO} Radios católicas</span>
-    <div class="hr-list">${capilla.RADIOS.map((r) => `<a href="${r.url}" target="_blank" rel="noopener" title="${esc(r.name)} · ${esc(r.where)}"><i class="hr-dot" aria-hidden="true"></i>${esc(r.short || r.name)}</a>`).join("")}</div>
+    ${rs.length ? `<span class="hr-lbl">${RADIO_ICO} Radios católicas</span>` : ""}
+    <div class="hr-list">${rs.map((r) => `<a href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc([r.name, r.where].filter(Boolean).join(" · "))}"><i class="hr-dot" aria-hidden="true"></i>${esc(r.short || r.name)}</a>`).join("")}</div>
     <a class="hr-pod" href="#/podcast">${podcast.MIC} Podcast Ágape${podcast.hasEpisodes() ? "" : ` <small>pronto</small>`}</a>
   </nav>`;
 }
@@ -1449,6 +1453,7 @@ camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
+inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });

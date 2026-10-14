@@ -10,6 +10,7 @@ import { BANCO } from "./dinamicas-banco.js";
 import { songList } from "./cancionero.js";
 import { helpFor, perfil } from "./ayuda.js";
 import { todayGospel } from "./capilla.js";
+import { cfg as inicioCfg, adopt as adoptInicio } from "./inicio-config.js";
 
 let ctx = null; // { actions, onAfterRender, render }
 export function setup(c) { ctx = c; registerActions(); }
@@ -107,7 +108,7 @@ export function greetHTML() {
   const first = String(name).split(" ")[0];
   const h = new Date().getHours(), saludo = h < 12 ? "Buenos días" : h < 20 ? "Buenas tardes" : "Buenas noches";
   return `<section class="home-hi">
-    <span class="home-hand">${w.guest ? "bienvenido a casa" : "qué bueno verte"}</span>
+    <span class="home-hand">${esc(w.guest ? inicioCfg().saludo.visita : inicioCfg().saludo.cuenta)}</span>
     <h1>${esc(saludo)}${first ? `, <em>${esc(first)}</em>` : ""}</h1>
     <a class="home-gospel" id="homeGospel" href="#/evangelio" hidden></a>
   </section>`;
@@ -185,42 +186,46 @@ export function viewFormacion() {
 }
 // La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)
 // y lo que nos decimos (Chat). Cada parte sigue funcionando igual; esto es solo la puerta de entrada.
-function plazaHTML() {
-  const door = (href, cls, kicker, title, text, ico, slot = "") => `<a class="plaza-door ${cls}" href="${href}">
+const emT = (t) => esc(t || "").replace(/\*(.+?)\*/g, "<em>$1</em>");
+const pdoor = (d, href, cls, ico, slot = "") => !d || d.on === false ? "" : `<a class="plaza-door ${cls}" href="${href}">
       <span class="plaza-ico" aria-hidden="true">${ico}</span>
-      <span class="plaza-dt"><small>${kicker}</small><b>${title}</b><span>${text}</span></span>${slot}${icon("right")}</a>`;
+      <span class="plaza-dt"><small>${esc(d.kicker)}</small><b>${esc(d.title)}</b><span>${esc(d.text)}</span></span>${slot}${icon("right")}</a>`;
+function plazaHTML() {
+  const c = inicioCfg().plaza, d = c.doors;
   return `<section class="plaza" aria-labelledby="plazaT">
     <div class="plaza-head">
-      <span class="plaza-hand">donde nos encontramos</span>
-      <h2 id="plazaT">La Plaza <em>Ágape</em></h2>
-      <p>Lo que vivimos, lo que conversamos y lo que nos decimos: todo en un mismo lugar.</p>
+      ${c.hand ? `<span class="plaza-hand">${esc(c.hand)}</span>` : ""}
+      <h2 id="plazaT">${emT(c.title)}</h2>
+      ${c.text ? `<p>${esc(c.text)}</p>` : ""}
     </div>
     <div class="plaza-doors">
-      ${door("#/momentos", "is-mom", "Lo que vivimos", "Momentos", "Las fotos del grupo, para reaccionar y comentar.", icon("sparkle"), `<span class="plaza-pics" id="plazaPics" aria-hidden="true"></span>`)}
-      ${door("#/muro", "is-muro", "Lo que conversamos", "Muro", "Avisos, temas, preguntas y encuestas.", icon("grid"))}
-      ${door("#/chat", "is-chat", "Lo que nos decimos", "Chat", "Salas para conversar en grupo.", icon("chat"))}
-      ${door("#/juegos", "is-jg", "Lo que jugamos", "Juegos", "El Impostor, mímicas, trivia y más.", icon("dice"))}
+      ${pdoor(d.momentos, "#/momentos", "is-mom", icon("sparkle"), `<span class="plaza-pics" id="plazaPics" aria-hidden="true"></span>`)}
+      ${pdoor(d.muro, "#/muro", "is-muro", icon("grid"))}
+      ${pdoor(d.chat, "#/chat", "is-chat", icon("chat"))}
+      ${pdoor(d.juegos, "#/juegos", "is-jg", icon("dice"))}
     </div>
   </section>`;
 }
 // Nuestras familias: tarjeta grande como La Plaza, con sus accesos (familias, pasaporte y asistencia).
 function familiasHTML(w) {
   if (!(w.cuenta && cloud.enabled)) return "";
-  const door = (href, cls, kicker, title, text, ico) => `<a class="plaza-door ${cls}" href="${href}">
-      <span class="plaza-ico" aria-hidden="true">${icon(ico)}</span>
-      <span class="plaza-dt"><small>${kicker}</small><b>${title}</b><span>${text}</span></span>${icon("right")}</a>`;
+  const c = inicioCfg().familias, d = c.doors;
   return `<section class="plaza fam-plaza" aria-labelledby="famPT">
     <div class="plaza-head">
-      <span class="plaza-hand">nadie camina solo</span>
-      <h2 id="famPT">Nuestras <em>familias</em></h2>
-      <p>Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.</p>
+      ${c.hand ? `<span class="plaza-hand">${esc(c.hand)}</span>` : ""}
+      <h2 id="famPT">${emT(c.title)}</h2>
+      ${c.text ? `<p>${esc(c.text)}</p>` : ""}
     </div>
     <div class="plaza-doors">
-      ${door("#/nuestras-familias", "is-fam", "Nuestro grupo", "Ver las familias", "Cada familia con su muro y su agenda.", "users")}
-      ${door("#/pasaporte", "is-pas", "Mi camino", "Mi pasaporte", "Tus encuentros, tu racha y tus sellos.", "award")}
-      ${w.guia ? door("#/acompanar", "is-asi", "Para guías", "Asistencia", "Pasar lista y acompañar a los jóvenes.", "check") : ""}
+      ${pdoor(d.familias, "#/nuestras-familias", "is-fam", icon("users"))}
+      ${pdoor(d.pasaporte, "#/pasaporte", "is-pas", icon("award"))}
+      ${w.guia ? pdoor(d.asistencia, "#/acompanar", "is-asi", icon("check")) : ""}
     </div>
   </section>`;
+}
+// Trae los cambios del equipo (textos y radios) y vuelve a pintar si algo cambió.
+export function refreshInicioCfg(repaint) {
+  cloud.getInicioCfg?.().then((v) => { if (v && adoptInicio(v) && repaint) repaint(); }).catch(() => {});
 }
 // Agenda: una franja delgada, del tamaño de la del grupo de WhatsApp.
 const CAL_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h2M14 14h2M8 17.5h2"/></svg>`;

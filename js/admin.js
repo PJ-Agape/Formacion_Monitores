@@ -14,6 +14,7 @@ import * as papa from "./papa.js";
 import * as familiasAg from "./familias-ag.js";
 import * as S from "./store.js";
 import * as portada from "./portada.js";
+import * as inicioAdmin from "./inicio-admin.js";
 import * as familiasAdmin from "./familias-admin.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
 
@@ -47,7 +48,7 @@ export async function renderAdmin(sub, _api) {
         <p class="muted" style="margin-top:8px">Si necesitas acceso, pídelo al equipo coordinador.</p>
         <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
       const pg = sub.split("/").filter(Boolean)[0] || "hoy";
-      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), asignar: () => asignarView(),
+      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), inicio: () => inicioAdmin.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), asignar: () => asignarView(),
         grupos: () => gEq.familiasHTML(), moderacion: () => gEq.moderacionHTML(), ...EMBED };
       const GUIA = { hoy: COORD.hoy, acompanar: EMBED.acompanar };
       const ok = st.isStaff ? COORD[pg] : GUIA[pg];
@@ -66,6 +67,7 @@ export async function renderAdmin(sub, _api) {
     case "asignar": body = cloudOn ? await asignarView() : summaryView(draft); break;
     case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
     case "portada": body = portada.adminView(); break;
+    case "inicio": body = cloudOn ? inicioAdmin.adminView() : summaryView(draft); break;
     case "saludos": body = await saludos.adminView(); break;
     case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
     case "grupos": body = cloudOn ? gEq.familiasHTML() : summaryView(draft); break;
@@ -110,6 +112,7 @@ function navGroups() {
     ]],
     ["Comunicación", [
       ["portada", "#/admin/portada", "Portada de Inicio", "sparkle", cloudOn && C],
+      ["inicio", "#/admin/inicio", "Inicio y enlaces", "home", cloudOn && C],
       ["agenda", "#/admin/agenda", "Agenda", "grid", C],
       ["saludos", "#/admin/saludos", "Saludos WhatsApp", "send", C],
       ["moderacion", "#/admin/moderacion", "Moderación de muro y chat", "chat", cloudOn && C],
