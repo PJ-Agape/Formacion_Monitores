@@ -3236,3 +3236,10 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 }
 @media (prefers-reduced-motion: reduce) { .wall-row-chev svg { transition: none; } }
 .wall-row-body > .wall-post { border-left: 0 !important; }
+/* El menú «…» de una publicación no debe quedar recortado dentro de la fila */
+.wall-row { overflow: visible; position: relative; }
+.wall-row-head { border-radius: 14px; }
+.wall-row.open .wall-row-head { border-radius: 14px 14px 0 0; }
+.wall-row-body { border-radius: 0 0 14px 14px; }
+.wall-row:has(details.wall-menu[open]) { z-index: 30; }
+.wall-row-body .card, .wall-row-body .wall-reply { overflow: visible; }
