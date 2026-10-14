@@ -270,6 +270,22 @@ function heroTitle(t) {
   const last = words.pop();
   return `${words.join(" ")} <em>${last}</em>`;
 }
+// Donde quedó cada persona: la unidad que abrió por última vez (en cualquier dispositivo, porque la
+// posición viaja con el avance) y, si no hay, la siguiente unidad pendiente.
+function resumeLink(course, st) {
+  if (st.complete) return "#/itinerario";
+  const pos = (S.progress(course.id).pos) || {};
+  let best = null;
+  for (const [k, v] of Object.entries(pos)) {
+    const [pi, sid] = [k.slice(0, k.indexOf(":")), k.slice(k.indexOf(":") + 1)];
+    const ph = course.phases[+pi]; if (!ph || !st.phases[+pi] || !st.phases[+pi].open) continue;
+    if (!(ph.sessions || []).some((x) => x.id === sid)) continue;
+    if (!best || String(v.at || "") > String(best.at || "")) best = { pi: +pi, sid, at: v.at };
+  }
+  if (best) return `#/vivir/${best.pi}/${encodeURIComponent(best.sid)}`;
+  const nx = nextLink(course, st);
+  return nx.quiz != null ? "#/itinerario" : nx.href;
+}
 function nextLink(course, st) {
   if (st.complete) return { href: "#/constancia", label: "Ver mi constancia" };
   if (!st.next) return { href: "#/itinerario", label: "Ver itinerario" };
@@ -287,7 +303,7 @@ function viewHome() {
   const first = (p.name || "").split(" ")[0];
   const nx = nextLink(course, st);
 
-  const courseSlide = `<article class="car-slide" data-theme-c="blue" aria-roledescription="diapositiva">
+  const courseSlide = `<article class="car-slide car-go" data-theme-c="blue" aria-roledescription="diapositiva" data-go="${resumeLink(course, st)}" title="Abrir el curso donde quedaste">
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
       <div class="car-body">
         <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Curso de formación de dirigentes</span>
@@ -1493,3 +1509,9 @@ async function boot() {
   }
 }
 boot();
+// Diapositiva del curso: tocar cualquier parte (que no sea un botón o enlace) abre el curso donde quedaste.
+document.addEventListener("click", (e) => {
+  const sl = e.target.closest && e.target.closest(".car-slide[data-go]");
+  if (!sl || e.target.closest("a, button, input, select, textarea")) return;
+  location.hash = sl.dataset.go;
+});

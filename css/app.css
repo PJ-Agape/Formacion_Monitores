@@ -3209,3 +3209,4 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .cap-altar.is-open .cap-altar-btn { background: transparent; color: #fff6e5; border-color: rgba(255,246,229,.6); box-shadow: none; font-size: .95rem; padding: 9px 18px; }
 @media (max-width: 560px) { .cap-altar-btn { justify-self: stretch; justify-content: center; } }
 .cap-altar .cap-altar-top > .cap-hand { color: #ffba03; display: block; }
+.car-slide.car-go { cursor: pointer; }
