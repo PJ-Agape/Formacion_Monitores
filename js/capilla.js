@@ -279,11 +279,6 @@ export function view(opt = {}) {
         ${ctx.cloud.enabled ? `<button class="btn btn-primary btn-sm" data-action="signIn">Ingresar</button>` : ""}</div>`}
   </section>
 
-  ${lectio ? `<section class="cap-room" id="cap-palabra">
-    <div class="cap-room-head"><span class="cap-num">03</span><h2>Orar con la <em>Palabra</em></h2></div>
-    <article class="card cap-lectio" style="max-width:720px"><span class="eyebrow">${esc(lectio.tag || "Orar con la Biblia")}</span><strong>${esc(lectio.title)}</strong>
-      <ol class="cap-steps">${(lectio.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol></article>
-  </section>` : ""}
 
   <section class="cap-room" id="cap-siempre">
     <div class="cap-room-head"><span class="cap-num">05</span><h2>Nuestras oraciones y las de <em>siempre</em></h2></div>
