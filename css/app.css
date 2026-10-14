@@ -3188,3 +3188,14 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 @media (max-width: 760px) { .plaza-doors { grid-template-columns: 1fr; } }
 @media (prefers-reduced-motion: reduce) { .plaza-door:hover { transform: none; } }
 @media (max-width: 760px) { .plaza { background: radial-gradient(circle at 100% 0%, #ffba03 0 46px, transparent 47px), radial-gradient(circle at 0% 100%, #cdeafd 0 90px, transparent 91px), #8ad2fa; } .plaza-head p { padding-right: 8px; } }
+
+/* Comunidad · Nuestras familias (como La Plaza) y la franja de la Agenda */
+.fam-plaza { background: radial-gradient(circle at 92% 8%, #ef591c 0 64px, transparent 65px), radial-gradient(circle at 4% 100%, #fff6e5 0 120px, transparent 121px), #fde0d2; }
+.fam-plaza .plaza-hand, .fam-plaza .plaza-head h2 em { color: #1351a4; }
+.is-fam .plaza-ico { background: #fde0d2; } .is-pas .plaza-ico { background: #ffba03; } .is-asi .plaza-ico { background: #cdeafd; }
+@media (max-width: 760px) { .fam-plaza { background: radial-gradient(circle at 100% 0%, #ef591c 0 44px, transparent 45px), radial-gradient(circle at 0% 100%, #fff6e5 0 90px, transparent 91px), #fde0d2; } }
+.card.link.ag-strip { display: flex; align-items: center; gap: 14px; flex-wrap: wrap; margin-top: 16px; border-left: 8px solid #8ad2fa !important; }
+.ag-strip-ico { width: 46px; height: 46px; border-radius: 50%; background: #1351a4; color: #fff; display: grid; place-items: center; flex-shrink: 0; }
+.ag-strip-ico svg { width: 24px; height: 24px; }
+.ag-strip-btn { background: #8ad2fa !important; color: #0b2566 !important; border-color: #0b2566 !important; }
+.card.link.ag-strip { padding-top: 14px; padding-bottom: 14px; }

@@ -53,8 +53,9 @@ const ITEMS = [
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido plaza", ok: () => true, hub: false }, // en La Plaza Ágape
-  { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true },
+  { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true, hub: false }, // franja propia en Comunidad
   { b: "red", e: "👨‍👩‍👧‍👦", t: "Nuestras familias", d: "Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.", href: "#/nuestras-familias", kw: "grupos familias comunidades equipos nombre", ok: (w) => w.cuenta && cloud.enabled,
+    hub: false, // tarjeta propia en Comunidad
     links: [["👨‍👩‍👧‍👦 Ver las familias", "#/nuestras-familias"], ["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
   { b: "red", e: "🛂", t: "Mi pasaporte", d: "Tus encuentros, tu racha y tus sellos.", href: "#/pasaporte", kw: "pasaporte sellos racha asistencia", ok: (w) => w.cuenta && cloud.enabled, hub: false },
   { b: "red", e: "🤝", t: "Asistencia", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled, hub: false },
@@ -194,10 +195,37 @@ function plazaHTML() {
     </div>
   </section>`;
 }
+// Nuestras familias: tarjeta grande como La Plaza, con sus accesos (familias, pasaporte y asistencia).
+function familiasHTML(w) {
+  if (!(w.cuenta && cloud.enabled)) return "";
+  const door = (href, cls, kicker, title, text, ico) => `<a class="plaza-door ${cls}" href="${href}">
+      <span class="plaza-ico" aria-hidden="true">${icon(ico)}</span>
+      <span class="plaza-dt"><small>${kicker}</small><b>${title}</b><span>${text}</span></span>${icon("right")}</a>`;
+  return `<section class="plaza fam-plaza" aria-labelledby="famPT">
+    <div class="plaza-head">
+      <span class="plaza-hand">nadie camina solo</span>
+      <h2 id="famPT">Nuestras <em>familias</em></h2>
+      <p>Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.</p>
+    </div>
+    <div class="plaza-doors">
+      ${door("#/nuestras-familias", "is-fam", "Nuestro grupo", "Ver las familias", "Cada familia con su muro y su agenda.", "users")}
+      ${door("#/pasaporte", "is-pas", "Mi camino", "Mi pasaporte", "Tus encuentros, tu racha y tus sellos.", "award")}
+      ${w.guia ? door("#/acompanar", "is-asi", "Para guías", "Asistencia", "Pasar lista y acompañar a los jóvenes.", "check") : ""}
+    </div>
+  </section>`;
+}
+// Agenda: una franja delgada, del tamaño de la del grupo de WhatsApp.
+const CAL_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h2M14 14h2M8 17.5h2"/></svg>`;
+const agendaStripHTML = () => `<a class="card link ag-strip" href="#/agenda">
+    <span class="ag-strip-ico">${CAL_ICO}</span>
+    <span style="flex:1;min-width:0"><strong>Agenda Ágape</strong> <span class="muted small">Encuentros, misas y actividades.</span></span>
+    <span class="btn btn-sm ag-strip-btn">Ver</span></a>`;
 export function viewRed() {
   const b = BLOCKS.red;
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   ${plazaHTML()}
+  ${familiasHTML(who())}
+  ${agendaStripHTML()}
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
