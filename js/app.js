@@ -20,6 +20,7 @@ import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
 import * as momentos from "./momentos.js";
 import * as juegos from "./juegos.js";
+import * as frente from "./frente.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -93,6 +94,7 @@ const routes = [
   [/^\/momentos$/, () => momentos.view(), "red"],
   [/^\/juegos$/, () => juegos.view(), "red"],
   [/^\/juegos\/impostor$/, () => juegos.impostor(), "red"],
+  [/^\/juegos\/frente$/, () => frente.view(), "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
@@ -1452,6 +1454,7 @@ ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
 momentos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 juegos.setup({ actions, render: () => render(), onAfterRender, onLeave });
+frente.setup({ actions, onAfterRender, onLeave });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);
 familiasAg.setup({ actions, onAfterRender });
