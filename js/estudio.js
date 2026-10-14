@@ -2,7 +2,7 @@
 // portadas, fondos, marcos de foto, invitaciones y stickers) con la identidad zine del grupo.
 // Lo usa el Estudio de difusión de la app y el exportador del paquete de archivos.
 
-import { illus, illusAt } from "./ilustraciones.js";
+import { illus } from "./ilustraciones.js";
 import { pjSvg } from "./personajes.js";
 import qrcode from "./qrcode.mjs";
 
@@ -19,7 +19,7 @@ export async function ready() {
   await Promise.all(["800 80px Bricolage", "700 80px Caveat", "700 40px Jakarta", "500 40px Jakarta"].map((f) => document.fonts.load(f).catch(() => {})));
   if (!LOGO) LOGO = await loadImg(BASE + "icons/logo-320.webp").catch(() => null);
 }
-function svgFor(key, color, bg, pop, outline, bare, at = null) {
+function svgFor(key, color, bg, pop, outline, bare) {
   // Personajes juveniles (los mismos de los avatares): un sello redondo dentro del cuadro 240×180
   if (String(key).startsWith("pj:")) {
     const head = '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" viewBox="0 0 240 180">';
@@ -27,7 +27,7 @@ function svgFor(key, color, bg, pop, outline, bare, at = null) {
     const inner = pjSvg(key.slice(3)); if (!inner) return "";
     return head + inner.replace("<svg ", '<svg x="34" y="4" width="172" height="172" ') + "</svg>";
   }
-  let s = at == null ? illus(key) : illusAt(key, at);
+  let s = illus(key);
   if (!s) return "";
   if (bare) { s = s.replace(/<path d="M\d+ 168 q30 -3 60 0[^"]*"[^>]*\/>/g, ""); if (!outline) s = s.replace(/stroke-width="[0-9.]+"/, 'stroke-width="3.6"'); }
   s = s.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" ')
@@ -386,34 +386,18 @@ export function frame(ctx, S, frameId, photo, { zoom = 1, dx = 0, dy = 0 } = {})
 // ---------------------------------------------------------------------------
 let TMP = null;
 export const stickerIlls = (key, color = C.sun) => [[key, C.navy, C.white, color, 0, 1], [key, "#ffffff", "#ffffff", "#ffffff", 22, 1]];
-// Sticker animado: las dos capas (monito y contorno blanco) del instante «at» como imágenes.
-export async function stickerLayers(key, color = C.sun, at = null) {
-  const src = (svg) => (svg ? loadImg("data:image/svg+xml;charset=utf-8," + encodeURIComponent(svg)).catch(() => null) : null);
-  const [fill, out] = await Promise.all([src(svgFor(key, C.navy, C.white, color, 0, 1, at)), src(svgFor(key, "#ffffff", "#ffffff", "#ffffff", 22, 1, at))]);
-  return { fill, out };
-}
-const TW = 960, TH = 720;
-function layersOn(fill, out) {
-  TMP = TMP || document.createElement("canvas"); TMP.width = TW; TMP.height = TH;
-  const t = TMP.getContext("2d", { willReadFrequently: true }); t.clearRect(0, 0, TW, TH);
-  if (out) for (let i = 0; i < 16; i++) { const an = (i / 16) * Math.PI * 2; t.drawImage(out, Math.cos(an) * 12, Math.sin(an) * 12, TW, TH); }
-  if (fill) t.drawImage(fill, 0, 0, TW, TH);
-  return t;
-}
-// Recorte al contenido (x0, y0, x1, y1) de unas capas.
-export function stickerCrop(fill, out) {
-  const t = layersOn(fill, out), px = t.getImageData(0, 0, TW, TH).data; let x0 = TW, y0 = TH, x1 = 0, y1 = 0;
-  for (let y = 0; y < TH; y += 2) for (let x = 0; x < TW; x += 2) if (px[(y * TW + x) * 4 + 3] > 20) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
-  return x1 > x0 ? [x0, y0, x1, y1] : null;
-}
-export function sticker(ctx, key, text, color = C.sun, layers = null, crop = null) {
+export function sticker(ctx, key, text, color = C.sun) {
   const S = 512; ctx.clearRect(0, 0, S, S);
   // 1) monito + contorno blanco en un lienzo grande, 2) recorte al contenido, 3) encaje en el sticker
-  const fill = layers ? layers.fill : IMG.get([key, C.navy, C.white, color, 0, 1].join("|")) || null;
-  const out = layers ? layers.out : IMG.get([key, "#ffffff", "#ffffff", "#ffffff", 22, 1].join("|"));
-  const box = crop || stickerCrop(fill, out); if (!box) return;
-  if (crop) layersOn(fill, out);
-  const [x0, y0, x1, y1] = box;
+  const TW = 960, TH = 720;
+  TMP = TMP || document.createElement("canvas"); TMP.width = TW; TMP.height = TH;
+  const t = TMP.getContext("2d", { willReadFrequently: true }); t.clearRect(0, 0, TW, TH);
+  const out = IMG.get([key, "#ffffff", "#ffffff", "#ffffff", 22, 1].join("|"));
+  if (out) for (let i = 0; i < 16; i++) { const an = (i / 16) * Math.PI * 2; t.drawImage(out, Math.cos(an) * 12, Math.sin(an) * 12, TW, TH); }
+  ill(t, key, 0, 0, TW, { bg: C.white, pop: color, bare: 1 });
+  const px = t.getImageData(0, 0, TW, TH).data; let x0 = TW, y0 = TH, x1 = 0, y1 = 0;
+  for (let y = 0; y < TH; y += 2) for (let x = 0; x < TW; x += 2) if (px[(y * TW + x) * 4 + 3] > 20) { if (x < x0) x0 = x; if (x > x1) x1 = x; if (y < y0) y0 = y; if (y > y1) y1 = y; }
+  if (x1 <= x0) return;
   const capH = text ? 120 : 0, bw = S - 24, bh = S - 24 - capH;
   const sc = Math.min(bw / (x1 - x0), bh / (y1 - y0)), dw = (x1 - x0) * sc, dh = (y1 - y0) * sc;
   ctx.drawImage(TMP, x0, y0, x1 - x0, y1 - y0, (S - dw) / 2, 12 + (bh - dh) / 2 + (text ? 6 : 0), dw, dh);
