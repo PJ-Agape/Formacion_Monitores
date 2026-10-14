@@ -2924,3 +2924,40 @@ a.fp-ev { color: inherit; text-decoration: none; }
   .cap-rosbanner-btn { width: 100%; justify-content: center; }
 }
 @media (prefers-reduced-motion: reduce) { .cap-rosbanner-btn:hover { transform: none; } }
+
+/* Capilla · «Un rato con Jesús»: invitación a la oración guiada (sobre el Rosario) */
+.cap-guide { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 220px) 1fr; align-items: center; gap: 18px 26px; margin-top: 22px; padding: 22px 26px; border-radius: var(--r-xl); background: radial-gradient(circle at 12% 30%, #cdeafd 0, transparent 55%), #8ad2fa; color: #0b2566; border: 3px solid #0b2566; box-shadow: 5px 5px 0 #0b2566; }
+.cap-guide-art { color: #0b2566; --il-bg: #fff6e5; }
+.cap-guide-il { width: 100%; height: auto; display: block; }
+.cap-guide-txt { display: grid; gap: 8px; justify-items: start; }
+.cap-guide .cap-hand { color: #c9460f; }
+.cap-guide h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.03em; font-size: clamp(2rem, 6vw, 3rem); line-height: .95; margin: 0; }
+.cap-guide h2 em { font-style: normal; font-family: var(--font-hand); color: #c9460f; font-size: 1.15em; letter-spacing: 0; }
+.cap-guide p { margin: 0; font-size: 1.02rem; max-width: 52ch; color: #0b2566; }
+.cap-guide-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 6px; }
+.cap-guide-btn { background: #0b2566; color: #fff6e5; border: 2px solid #0b2566; font-weight: 800; font-size: 1.02rem; padding: 12px 20px; border-radius: 999px; box-shadow: 3px 3px 0 #fff6e5; display: inline-flex; align-items: center; gap: 8px; }
+.cap-guide-btn.alt { background: #fff6e5; color: #0b2566; box-shadow: 3px 3px 0 #0b2566; }
+.cap-guide-btn:hover { transform: translate(-1px, -1px); }
+.cap-guide-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+@media (max-width: 640px) {
+  .cap-guide { grid-template-columns: 1fr; padding: 20px 18px 22px; }
+  .cap-guide-art { max-width: 170px; margin: -6px auto 0; }
+  .cap-guide-btns, .cap-guide-btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { .cap-guide-btn:hover { transform: none; } }
+
+/* Oración guiada a pantalla completa */
+.cap-gd { overflow-y: auto; align-items: start; }
+.cap-gd-in { width: 100%; max-width: 560px; margin: auto; text-align: center; padding: 8px 0 24px; }
+.cap-gd-top { width: 100%; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-weight: 800; font-size: .78rem; letter-spacing: .12em; text-transform: uppercase; color: #8ad2fa; }
+.cap-gd-x { background: none; border: 2px solid rgba(255,246,229,.5); color: #fff6e5; border-radius: 50%; width: 40px; height: 40px; display: grid; place-items: center; cursor: pointer; }
+.cap-gd-x svg { width: 18px; height: 18px; }
+.cap-gd-bar { width: 100%; height: 6px; border-radius: 99px; background: rgba(255,246,229,.18); overflow: hidden; margin-bottom: 8px; }
+.cap-gd-bar i { display: block; height: 100%; background: #ffba03; transition: width .4s; }
+.cap-gd-t { font-family: var(--font-display); font-weight: 800; font-size: clamp(1.7rem, 6vw, 2.3rem); line-height: 1.05; color: #fff; margin: 4px 0 0; }
+.cap-gd-txt { color: #e8f2fb; font-size: 1.08rem; line-height: 1.5; margin: 0; }
+.cap-gd-pr { background: rgba(255,246,229,.1); border: 2px solid rgba(255,186,3,.55); border-radius: 18px; padding: 16px 20px; color: #fff6e5; font-size: 1.15rem; line-height: 1.55; margin: 4px 0 0; }
+.cap-gd-ref { font-size: .9rem; color: #ffba03; font-weight: 700; margin: 0; }
+.cap-gd-note { font-size: .95rem; color: #cdeafd; background: rgba(138,210,250,.12); border-radius: 14px; padding: 10px 14px; margin: 0; }
+.cap-gd-nav { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
+.cap-gd-nav .btn { min-width: 140px; justify-content: center; }

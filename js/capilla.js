@@ -191,7 +191,6 @@ export function view(opt = {}) {
   focusVela = opt.vela || null; focusDone = false;
   const d = ctx.content().devotional || { title: "", desc: "", cards: [] };
   const s = season(), m = moment(), now = new Date();
-  const [vt, vr] = VERSES[dayIndex(VERSES.length)];
   const mk = MYST_BY_DAY[now.getDay()], my = MYST[mk];
   const cards = d.cards || [];
   const lectio = cards.find((c) => c.type === "list" && /palabra|biblia/i.test((c.title || "") + (c.tag || "")));
@@ -233,6 +232,19 @@ export function view(opt = {}) {
     </article>
   </section>
 
+  <section class="cap-guide" id="cap-silencio" aria-labelledby="capGuideT">
+    <div class="cap-guide-art">${illus("oracion", "cap-guide-il")}</div>
+    <div class="cap-guide-txt">
+      <span class="cap-hand">Él te está esperando</span>
+      <h2 id="capGuideT">Un rato con <em>Jesús</em></h2>
+      <p>Una oración guiada, paso a paso, para encontrarte con Él. Elige dónde estás y déjate acompañar. Son unos 10 minutos.</p>
+      <div class="cap-guide-btns">
+        <button class="btn cap-guide-btn" data-action="capGuide" data-k="casa">${icon("flame")} En casa o donde estés</button>
+        <button class="btn cap-guide-btn alt" data-action="capGuide" data-k="adoracion">${icon("sparkle")} Ante el Santísimo</button>
+      </div>
+    </div>
+  </section>
+
   <section class="cap-rosbanner" id="cap-maria" aria-labelledby="capRosT">
     <div class="cap-rosbanner-art">${illus("virgen", "cap-rosbanner-il")}</div>
     <div class="cap-rosbanner-txt">
@@ -243,20 +255,6 @@ export function view(opt = {}) {
     </div>
   </section>
 
-
-  <section class="cap-room" id="cap-silencio">
-    <div class="cap-room-head"><span class="cap-num">01</span><h2>Un minuto con <em>Jesús</em></h2></div>
-    <div class="card cap-silence">
-      ${candleSVG(true)}
-      <div style="flex:1;min-width:220px">
-        <p class="cap-verse">«${esc(vt)}»</p><span class="cap-ref">${esc(vr)}</span>
-        <p class="muted small" style="margin-top:12px">Apaga lo que te distrae, respira hondo y quédate en silencio. Deja que esta frase te acompañe.</p>
-        <div class="row-wrap" style="margin-top:14px">
-          ${[1, 3, 5].map((n) => `<button class="btn ${n === 1 ? "btn-primary" : "btn-ghost"}" data-action="capSilence" data-min="${n}">${n} minuto${n > 1 ? "s" : ""}</button>`).join("")}
-        </div>
-      </div>
-    </div>
-  </section>
 
   <section class="cap-room" id="cap-velas">
     <div class="cap-room-head"><span class="cap-num">02</span><h2>Nuestras <em>intenciones</em></h2></div>
@@ -408,41 +406,88 @@ function bell() {
     });
   } catch {}
 }
-function silence(min) {
+// Oración guiada «Un rato con Jesús»: en casa (o donde estés) o ante el Santísimo.
+// Se avanza paso a paso; el silencio tiene un minuto con respiración (se puede seguir antes).
+const COMUNION = (ORACIONES.find((o) => o.t === "Comunión espiritual") || {}).x || "";
+function guideSteps(k) {
   const [vt, vr] = VERSES[dayIndex(VERSES.length)];
+  const palabra = { t: "Escucha su Palabra", txt: "Lee esta frase despacio, dos o tres veces. ¿Qué palabra te toca el corazón? Quédate con ella.", verse: [vt, vr] };
+  const cuenta = { t: "Cuéntale cómo estás", txt: "Háblale como a un amigo: ¿qué te alegra hoy?, ¿qué te pesa?, ¿por quién quieres pedir? No necesitas palabras bonitas: Él te conoce y te quiere.",
+    note: "Si algo te pesa mucho, cuéntaselo también a alguien de confianza: tu dirigente o tu familia. No estás solo ni sola." };
+  if (k === "adoracion") return [
+    { t: "Al llegar", txt: "Haz una genuflexión (o una inclinación) y busca un lugar tranquilo. Jesús está realmente presente en la Eucaristía: estás frente a Él.", candle: true },
+    { t: "Adóralo", txt: "Reza despacio, con el corazón:", pr: "Dios mío, yo creo, adoro, espero y te amo.\nTe pido perdón por los que no creen, no adoran, no esperan y no te aman.", ref: "Oración del Ángel de Fátima" },
+    { t: "Míralo y déjate mirar", txt: "Un campesino le contó al santo cura de Ars cómo rezaba: «Yo lo miro y Él me mira». Haz lo mismo, en silencio.", breath: 60 },
+    palabra, cuenta,
+    { t: "Comunión espiritual", txt: "Pídele que entre en tu corazón:", pr: COMUNION },
+    { t: "Despídete", txt: "Antes de salir, agradécele y haz una genuflexión.", pr: "Gracias, Jesús, por este rato contigo.\nQuédate conmigo hoy.\nQue lo que haga y lo que diga hable de Ti.\nAmén.", end: true },
+  ];
+  return [
+    { t: "Prepárate", txt: "Busca un lugar tranquilo: tu pieza, la micro, una plaza. Silencia las notificaciones y ponte cómodo.", candle: true },
+    { t: "Ponte en su presencia", txt: "Haz la señal de la cruz y dile:", pr: "Jesús, aquí estoy.\nCreo que estás conmigo.\nQuiero estar un rato contigo.", ref: "En el nombre del Padre, y del Hijo, y del Espíritu Santo. Amén." },
+    { t: "Respira y haz silencio", txt: "Deja afuera el ruido. Respira con calma y sigue el círculo.", breath: 60 },
+    palabra, cuenta,
+    { t: "Agradece y pide", txt: "Termina tu conversación con dos frases:", pr: "Gracias, Jesús, por…\nTe pido por…" },
+    { t: "Quédate con Él", txt: "Reza un Padre nuestro y despídete:", pr: "Gracias, Jesús, por este rato contigo.\nQuédate conmigo hoy.\nQue lo que haga y lo que diga hable de Ti.\nAmén.", note: "Llévate la palabra que te tocó y repítela durante el día.", end: true },
+  ];
+}
+let gd = null; // { k, steps, i }
+function openGuide(k) {
+  gd = { k, steps: guideSteps(k), i: 0 };
   let ov = document.getElementById("capOverlay");
   if (!ov) { ov = document.createElement("div"); ov.id = "capOverlay"; document.body.appendChild(ov); }
-  ov.className = "cap-overlay";
-  ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", "Un momento de silencio");
-  ov.innerHTML = `<div class="cap-ov-in">
-    ${candleSVG(true, "big")}
-    <div class="cap-breath" aria-hidden="true"><i></i></div>
-    <p class="cap-breath-t" id="capBreathT">Inhala…</p>
-    <p class="cap-verse">«${esc(vt)}»</p><span class="cap-ref">${esc(vr)}</span>
-    <p class="cap-left" id="capLeft"></p>
-    <button class="btn btn-glass" data-action="capStop">Terminar</button></div>`;
+  ov.className = "cap-overlay cap-gd";
+  ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true");
+  ov.setAttribute("aria-label", k === "adoracion" ? "Adoración ante el Santísimo" : "Un rato con Jesús");
   document.body.classList.add("cap-quiet");
-  bell();
-  const end = Date.now() + min * 60000;
-  let k = 0;
-  const tick = () => {
-    const left = Math.max(0, end - Date.now()), s = Math.ceil(left / 1000);
-    const el = document.getElementById("capLeft"); if (el) el.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
-    const bt = document.getElementById("capBreathT"); if (bt) bt.textContent = Math.floor(k / 4) % 2 ? "Exhala…" : "Inhala…";
-    k++;
-    if (!left) { stopSilence(true); }
-  };
-  clearInterval(silTimer); silTimer = setInterval(tick, 1000); tick();
-  ov.querySelector("button").focus();
+  bell(); guidePaint();
 }
+function guidePaint() {
+  const ov = document.getElementById("capOverlay"); if (!ov || !gd) return;
+  clearInterval(silTimer); silTimer = null;
+  const s = gd.steps[gd.i], n = gd.steps.length;
+  ov.innerHTML = `<div class="cap-ov-in cap-gd-in">
+    <div class="cap-gd-top"><span>${gd.k === "adoracion" ? "Ante el Santísimo" : "Un rato con Jesús"} · ${gd.i + 1} de ${n}</span>
+      <button class="cap-gd-x" data-action="capStop" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="cap-gd-bar" aria-hidden="true"><i style="width:${((gd.i + 1) / n) * 100}%"></i></div>
+    ${s.candle ? candleSVG(true, "big") : ""}
+    ${s.breath ? `<div class="cap-breath" aria-hidden="true"><i></i></div><p class="cap-breath-t" id="capBreathT">Inhala…</p>` : ""}
+    <h2 class="cap-gd-t">${esc(s.t)}</h2>
+    <p class="cap-gd-txt">${esc(s.txt)}</p>
+    ${s.verse ? `<p class="cap-verse">«${esc(s.verse[0])}»</p><span class="cap-ref">${esc(s.verse[1])}</span>` : ""}
+    ${s.pr ? `<p class="cap-gd-pr">${esc(s.pr).replace(/\n/g, "<br>")}</p>` : ""}
+    ${s.ref ? `<p class="cap-gd-ref">${esc(s.ref)}</p>` : ""}
+    ${s.note ? `<p class="cap-gd-note">${esc(s.note)}</p>` : ""}
+    ${s.breath ? `<p class="cap-left" id="capLeft"></p>` : ""}
+    <div class="cap-gd-nav">
+      ${gd.i ? `<button class="btn btn-glass" data-action="capGdPrev">${icon("left")} Atrás</button>` : ""}
+      ${s.end ? `<button class="btn btn-gold" data-action="capGdEnd">Amén ${icon("right")}</button>` : `<button class="btn btn-gold" data-action="capGdNext" id="capGdNext">Seguir ${icon("right")}</button>`}
+    </div></div>`;
+  ov.scrollTop = 0;
+  (ov.querySelector("#capGdNext") || ov.querySelector("[data-action=capGdEnd]"))?.focus();
+  if (s.breath) {
+    const end = Date.now() + s.breath * 1000; let k = 0;
+    const tick = () => {
+      const left = Math.max(0, end - Date.now()), sec = Math.ceil(left / 1000);
+      const el = document.getElementById("capLeft"); if (el) el.textContent = left ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}` : "";
+      const bt = document.getElementById("capBreathT"); if (bt) bt.textContent = left ? (Math.floor(k / 4) % 2 ? "Exhala…" : "Inhala…") : "Cuando quieras, sigue.";
+      k++;
+      if (!left) { clearInterval(silTimer); silTimer = null; bell(); }
+    };
+    silTimer = setInterval(tick, 1000); tick();
+  }
+}
+function guideMove(d) { if (!gd) return; gd.i = Math.max(0, Math.min(gd.steps.length - 1, gd.i + d)); guidePaint(); }
 function stopSilence(done) {
   clearInterval(silTimer); silTimer = null;
   const ov = document.getElementById("capOverlay");
   if (done) {
     bell();
+    gd = null;
     if (ov) ov.querySelector(".cap-ov-in").innerHTML = `${candleSVG(true, "big")}<p class="cap-verse">Gracias por este momento.</p><p class="muted" style="color:#fff6e5;opacity:.85">Lleva esta paz a lo que viene.</p><button class="btn btn-gold" data-action="capStop">Volver a la capilla</button>`;
     return;
   }
+  gd = null;
   if (ov) ov.remove();
   document.body.classList.remove("cap-quiet");
 }
@@ -624,7 +669,10 @@ function registerActions() {
     else if (e.key === "ArrowLeft") { e.preventDefault(); rosMove(-1); }
   });
   A.velaMore = (el) => { const p = el.previousElementSibling; const open = p.classList.toggle("cap-clamp"); el.textContent = open ? "Leer todo" : "Mostrar menos"; };
-  A.capSilence = (el) => silence(+el.dataset.min || 1);
+  A.capGuide = (el) => openGuide(el.dataset.k);
+  A.capGdNext = () => guideMove(1);
+  A.capGdPrev = () => guideMove(-1);
+  A.capGdEnd = () => stopSilence(true);
   A.capStop = () => stopSilence(false);
   A.capPray = (el) => {
     const on = el.dataset.on === "1";
@@ -634,7 +682,12 @@ function registerActions() {
     if (!confirm("¿Retirar esta intención?")) return;
     ctx.cloud.deleteVela(el.dataset.id).catch(() => toast("No se pudo retirar", ""));
   };
-  document.addEventListener("keydown", (e) => { if (e.key === "Escape" && document.getElementById("capOverlay")) stopSilence(false); });
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("capOverlay")) return;
+    if (e.key === "Escape") stopSilence(false);
+    else if (gd && e.key === "ArrowRight") { e.preventDefault(); gd.i === gd.steps.length - 1 ? stopSilence(true) : guideMove(1); }
+    else if (gd && e.key === "ArrowLeft") { e.preventDefault(); guideMove(-1); }
+  });
   document.addEventListener("input", (e) => { if (e.target.id === "velaText") { const n = $("#velaN"); if (n) n.textContent = `${e.target.value.length}/1500`; } });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "velaForm") return;
