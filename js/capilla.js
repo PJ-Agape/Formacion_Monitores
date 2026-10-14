@@ -204,7 +204,7 @@ export function view(opt = {}) {
     ctx.onLeave(stop);
     paintVelas();
   });
-  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]];
+  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]].filter(([k]) => k !== "palabra" || lectio);
   return `
   <section class="cap-hero" style="--season:${s.hex}">
     <div class="cap-arch">
@@ -262,19 +262,11 @@ export function view(opt = {}) {
         ${ctx.cloud.enabled ? `<button class="btn btn-primary btn-sm" data-action="signIn">Ingresar</button>` : ""}</div>`}
   </section>
 
-  <section class="cap-room" id="cap-palabra">
-    <div class="cap-room-head"><span class="cap-num">03</span><h2>La <em>Palabra</em> de hoy</h2></div>
-    <div class="grid grid-2">
-      <a class="card link cap-word" href="https://www.vaticannews.va/es/evangelio-de-hoy.html" target="_blank" rel="noopener">
-        <span class="eyebrow" id="capWordRef">Evangelio del día</span>
-        <strong>Lee lo que Jesús nos dice hoy</strong>
-        <span class="muted small">Las lecturas de la misa de hoy, en Vatican News.</span>
-        <span class="go">Abrir el Evangelio ${icon("arrowR")}</span>
-      </a>
-      ${lectio ? `<article class="card cap-lectio"><span class="eyebrow">${esc(lectio.tag || "Orar con la Biblia")}</span><strong>${esc(lectio.title)}</strong>
-        <ol class="cap-steps">${(lectio.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol></article>` : ""}
-    </div>
-  </section>
+  ${lectio ? `<section class="cap-room" id="cap-palabra">
+    <div class="cap-room-head"><span class="cap-num">03</span><h2>Orar con la <em>Palabra</em></h2></div>
+    <article class="card cap-lectio" style="max-width:720px"><span class="eyebrow">${esc(lectio.tag || "Orar con la Biblia")}</span><strong>${esc(lectio.title)}</strong>
+      <ol class="cap-steps">${(lectio.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol></article>
+  </section>` : ""}
 
   <section class="cap-room" id="cap-maria">
     <div class="cap-room-head"><span class="cap-num">04</span><h2>Con <em>María</em></h2></div>
@@ -381,7 +373,6 @@ function gospelHTML(s) {
 function paintGospel() {
   const box = document.getElementById("capGospel"); if (box) box.innerHTML = gospelHTML(season());
   const g = pick();
-  const ref = document.getElementById("capWordRef"); if (ref && g) ref.textContent = `Evangelio del día · ${g.cita}`;
 }
 
 // ---------------------------------------------------------------------------

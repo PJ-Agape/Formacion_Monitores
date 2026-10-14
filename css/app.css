@@ -1585,11 +1585,8 @@ dialog.sheet { border: 3px solid var(--z-b); box-shadow: 8px 8px 0 var(--z-b); }
 .cap-vela-body { flex: 1; min-width: 0; } .cap-vela-body p { line-height: 1.45; overflow-wrap: anywhere; }
 .cap-empty { grid-column: 1 / -1; text-align: center; padding: 18px; }
 
-.card.link.cap-word { display: flex; flex-direction: column; gap: 6px; background: #8ad2fa; }
-.cap-word .eyebrow, .cap-lectio .eyebrow, .cap-myst .eyebrow, .cap-lectio strong, .cap-myst-name { display: block; }
-.cap-word strong { font-size: 1.6rem !important; }
-.cap-word strong, .cap-lectio strong, .cap-myst-name { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
-.cap-word .go { margin-top: auto; font-weight: 800; display: inline-flex; gap: 6px; align-items: center; padding-top: 10px; }
+.cap-lectio .eyebrow, .cap-myst .eyebrow, .cap-lectio strong, .cap-myst-name { display: block; }
+.cap-lectio strong, .cap-myst-name { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
 .cap-steps { counter-reset: s; list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
 .cap-steps li { counter-increment: s; position: relative; padding-left: 44px; line-height: 1.45; }
 .cap-steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;

@@ -100,7 +100,7 @@ export function say(text, el, btn) {
 }
 
 // Bloques que se pueden escuchar por separado
-const BLOCKS = [".mc-enc", ".mc-easy", ".cap-pr .cap-pr-body", ".din-sheet", ".cap-gospel", ".cap-word", ".mag-enc-head", ".unit-sec", ".help-item .help-a"];
+const BLOCKS = [".mc-enc", ".mc-easy", ".cap-devcard", ".din-sheet", ".cap-gospel", ".mag-enc-head", ".unit-sec", ".help-item .help-a"];
 // Se llama después de dibujar cada vista
 export function afterRender() {
   apply();
