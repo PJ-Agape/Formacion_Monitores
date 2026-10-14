@@ -3253,3 +3253,82 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .can-imp summary small { grid-column: 2; color: var(--ink-2, #4a5d7a); font-size: .78rem; }
 .can-imp-body { margin: 0; padding: 10px 12px; border-top: 1px dashed var(--line-2, #c2d5e8); font: .88rem/1.5 ui-monospace, SFMono-Regular, Menlo, monospace; white-space: pre-wrap; overflow-wrap: anywhere; max-height: 260px; overflow: auto; }
 .can-dup { color: #b4233c; font-weight: 700; }
+
+/* ---------- Juegos (La Plaza) ---------- */
+.is-jg .plaza-ico { background: #ef591c; color: #fff; }
+@media (min-width: 761px) { .plaza-doors:has(> :nth-child(4)) { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+.jg-card { display: grid; grid-template-columns: 96px minmax(0, 1fr) auto; align-items: center; gap: 16px; text-decoration: none; color: #0b2566; background: #fff; border: 2.5px solid #0b2566; border-radius: 20px; padding: 16px; box-shadow: 4px 4px 0 #0b2566; transition: transform .15s, box-shadow .15s; }
+.jg-card:hover { transform: translate(-2px, -2px); box-shadow: 6px 6px 0 #0b2566; }
+.jg-card-art { width: 96px; height: 96px; border-radius: 18px; background: #ffba03; border: 2.5px solid #0b2566; display: grid; place-items: center; padding: 12px; }
+.jg-card-txt { display: grid; gap: 2px; }
+.jg-card-txt small { font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #ef591c; }
+.jg-card-txt b { font-family: var(--font-display); font-size: 1.6rem; line-height: 1; }
+.jg-card-txt span { color: #24406e; }
+.jg-card > svg { width: 22px; height: 22px; }
+.jg-soon { text-align: center; margin-top: 18px; }
+
+.imp { max-width: 620px; margin: 0 auto; }
+.imp-back { display: inline-flex; align-items: center; gap: 4px; color: #1351a4; font-weight: 700; text-decoration: none; margin-bottom: 10px; }
+.imp-hero { display: grid; grid-template-columns: 92px minmax(0, 1fr); gap: 16px; align-items: center; background: #8ad2fa; border: 2.5px solid #0b2566; border-radius: 22px; padding: 18px; box-shadow: 4px 4px 0 #0b2566; color: #0b2566; }
+.imp-hero h1 { font-family: var(--font-display); font-size: 2.1rem; line-height: 1; margin: 0 0 6px; }
+.imp-hero h1 em { color: #ef591c; font-style: normal; }
+.imp-hero p { margin: 0; line-height: 1.35; }
+.imp-mask { width: 92px; height: 92px; background: #ffba03; border: 2.5px solid #0b2566; border-radius: 50%; padding: 12px; display: grid; place-items: center; }
+.imp-how { margin: 14px 0; background: #fff; border: 2px solid #0b2566; border-radius: 16px; padding: 10px 14px; }
+.imp-how summary { font-weight: 800; color: #0b2566; cursor: pointer; }
+.imp-how ol { margin: 10px 0 6px; padding-left: 20px; display: grid; gap: 6px; }
+.imp-setup { display: grid; gap: 14px; }
+.imp-setup section { background: #fff; border: 2px solid #0b2566; border-radius: 18px; padding: 14px; }
+.imp-setup h2 { font-family: var(--font-display); font-size: 1.15rem; margin: 0 0 10px; color: #0b2566; }
+.imp-step { display: flex; align-items: center; justify-content: center; gap: 18px; margin-bottom: 6px; }
+.imp-step output { font-family: var(--font-display); font-size: 2.4rem; font-weight: 800; min-width: 2ch; text-align: center; color: #0b2566; }
+.imp-pm { width: 48px; height: 48px; border-radius: 50%; border: 2.5px solid #0b2566; background: #ffba03; font-size: 1.6rem; font-weight: 800; color: #0b2566; cursor: pointer; box-shadow: 2px 2px 0 #0b2566; }
+.imp-pm:active { transform: translate(2px, 2px); box-shadow: none; }
+.imp-names { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; margin-top: 8px; }
+.imp-names input { width: 100%; padding: 9px 10px; border: 2px solid #cdd8ea; border-radius: 10px; font: inherit; }
+.imp-names input:focus { border-color: #1351a4; outline: none; }
+.imp-chips { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 8px; }
+.imp-chip input { position: absolute; opacity: 0; pointer-events: none; }
+.imp-chip span { display: grid; gap: 1px; padding: 10px 12px; border: 2px solid #cdd8ea; border-radius: 14px; cursor: pointer; height: 100%; }
+.imp-chip small { color: #5a6b88; font-size: .8rem; }
+.imp-chip input:checked + span { border-color: #0b2566; background: #fff3cf; box-shadow: 2px 2px 0 #0b2566; }
+.imp-chip input:focus-visible + span { outline: 3px solid #ef591c; outline-offset: 2px; }
+.imp-opts { display: grid; gap: 10px; }
+.imp-opt { display: flex; align-items: center; justify-content: space-between; gap: 12px; font-weight: 700; color: #0b2566; }
+.imp-opt[hidden] { display: none; }
+.imp-opt select { padding: 7px 10px; border-radius: 10px; border: 2px solid #cdd8ea; font: inherit; }
+.imp-check { justify-content: flex-start; }
+.imp-check input { width: 22px; height: 22px; accent-color: #ef591c; flex: none; }
+.imp-check small { display: block; font-weight: 400; color: #5a6b88; }
+.imp-go { width: 100%; justify-content: center; font-size: 1.05rem; padding: 14px; }
+
+.imp-stage { min-height: 62vh; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; gap: 14px; padding: 10px 4px 20px; color: #0b2566; }
+.imp-count { font-weight: 800; letter-spacing: .1em; text-transform: uppercase; font-size: .78rem; color: #1351a4; margin: 0; }
+.imp-big { font-family: var(--font-display); font-size: 1.5rem; line-height: 1.15; margin: 0; font-weight: 700; }
+.imp-big b { font-size: 2.3rem; color: #ef591c; overflow-wrap: anywhere; }
+.imp-reveal { width: min(320px, 100%); aspect-ratio: 4 / 3; border-radius: 24px; border: 3px solid #0b2566; background: repeating-linear-gradient(45deg, #1351a4 0 14px, #0b2566 14px 28px); color: #fff; box-shadow: 5px 5px 0 #ffba03; display: grid; place-content: center; gap: 6px; cursor: pointer; font: inherit; }
+.imp-reveal span { font-family: var(--font-display); font-size: 1.5rem; font-weight: 800; }
+.imp-reveal small { color: #ffba03; font-weight: 700; }
+.imp-reveal:active { transform: translate(3px, 3px); box-shadow: 2px 2px 0 #ffba03; }
+.imp-secret { width: min(360px, 100%); border-radius: 24px; border: 3px solid #0b2566; background: #fff8e6; box-shadow: 5px 5px 0 #0b2566; padding: 26px 18px; display: grid; gap: 6px; animation: impFlip .35s ease-out; }
+.imp-secret small { font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #1351a4; }
+.imp-secret b { font-family: var(--font-display); font-size: 2.2rem; line-height: 1.05; overflow-wrap: anywhere; }
+.imp-secret p { margin: 0; }
+.imp-secret.is-imp { background: #0b2566; color: #fff; box-shadow: 5px 5px 0 #ef591c; }
+.imp-secret.is-imp small { color: #8ad2fa; }
+.imp-secret.is-imp b { color: #ffba03; }
+.imp-secret-mask { width: 70px; height: 70px; margin: 0 auto 4px; background: #ffba03; border-radius: 50%; padding: 9px; display: grid; place-items: center; }
+.imp-tip { font-size: .9rem; opacity: .85; margin-top: 6px !important; }
+@keyframes impFlip { from { transform: rotateY(80deg); opacity: 0; } to { transform: none; opacity: 1; } }
+.imp-timer { font-family: var(--font-display); font-size: 3.4rem; font-weight: 800; background: #ffba03; border: 3px solid #0b2566; border-radius: 22px; padding: 6px 26px; box-shadow: 4px 4px 0 #0b2566; font-variant-numeric: tabular-nums; }
+.imp-timer.is-done { background: #ef591c; color: #fff; font-size: 2rem; padding: 16px 22px; }
+.imp-voters { display: grid; grid-template-columns: repeat(auto-fill, minmax(130px, 1fr)); gap: 8px; width: 100%; }
+.imp-voter { padding: 14px 8px; border: 2.5px solid #0b2566; border-radius: 14px; background: #fff; font: inherit; font-weight: 800; color: #0b2566; cursor: pointer; box-shadow: 2px 2px 0 #0b2566; overflow-wrap: anywhere; }
+.imp-voter:active { transform: translate(2px, 2px); box-shadow: none; background: #fff3cf; }
+.imp-result { font-size: 2.4rem; }
+.imp-result.is-win { color: #1351a4; } .imp-result.is-imp { color: #ef591c; }
+.imp-word { background: #fff; border: 2px solid #0b2566; border-radius: 14px; padding: 10px 16px; }
+.imp-word summary { cursor: pointer; font-weight: 700; }
+.imp-word b { display: block; font-family: var(--font-display); font-size: 1.6rem; margin-top: 6px; color: #ef591c; }
+@media (prefers-reduced-motion: reduce) { .imp-secret { animation: none; } .jg-card:hover { transform: none; } }
+@media (max-width: 480px) { .jg-card { grid-template-columns: 64px minmax(0, 1fr) auto; } .jg-card-art { width: 64px; height: 64px; padding: 8px; } .imp-hero { grid-template-columns: 64px minmax(0, 1fr); } .imp-mask { width: 64px; height: 64px; padding: 8px; } }
