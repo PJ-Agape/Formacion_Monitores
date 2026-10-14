@@ -299,7 +299,10 @@ export function view(opt = {}) {
       <span class="eyebrow">${esc(m.label)}</span>
       <span class="cap-hand sm">${esc(m.hand)}</span>
       <p class="cap-prayer">${esc(m.text).replace(/\n/g, "<br>")}</p>
-      <a class="btn cap-oremus" href="#/oremus">${icon("book")} Oremus <small>nuestras oraciones y las de siempre</small></a>
+      <div class="cap-moment-btns">
+        <a class="btn cap-oremus" href="#/oremus">${icon("book")} Oremus <small>nuestras oraciones y las de siempre</small></a>
+        <a class="btn cap-oremus" href="#/cancionero"><span aria-hidden="true">♪</span> Cancionero <small>cantar es rezar dos veces</small></a>
+      </div>
     </article>
   </section>
 
@@ -348,15 +351,6 @@ export function view(opt = {}) {
         ${ctx.cloud.enabled ? `<button class="btn cap-light-btn" data-action="signIn">Ingresar</button>` : ""}</div></div>`}
   </section>
 
-
-  <section class="cap-room" id="cap-cantar">
-    <div class="cap-room-head"><span class="cap-num">07</span><h2>Cantar es rezar <em>dos veces</em></h2></div>
-    <a class="card link cap-sing" href="#/cancionero">
-      <span class="cap-notes" aria-hidden="true">♪ ♫</span>
-      <span style="flex:1"><strong>Cancionero Ágape</strong>
-      <span class="muted small">Canciones con acordes para cada momento de la misa, en el tono que necesites, y los repertorios de cada celebración.</span></span>${icon("right")}
-    </a>
-  </section>
 
   <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`.replace(/<span class="cap-num">\d+<\/span>/g, () => `<span class="cap-num">${String(++num).padStart(2, "0")}</span>`);
 }
