@@ -2961,3 +2961,60 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .cap-gd-note { font-size: .95rem; color: #cdeafd; background: rgba(138,210,250,.12); border-radius: 14px; padding: 10px 14px; margin: 0; }
 .cap-gd-nav { display: flex; gap: 10px; justify-content: center; flex-wrap: wrap; margin-top: 10px; }
 .cap-gd-nav .btn { min-width: 140px; justify-content: center; }
+
+/* Capilla · Nuestras intenciones: un altar de velas cálido y comunitario */
+.cap-altar { position: relative; overflow: hidden; padding: 26px clamp(16px, 4vw, 34px) 30px; border-radius: var(--r-xl); border: 3px solid #0b2566; box-shadow: 5px 5px 0 #ffba03;
+  background: radial-gradient(ellipse 70% 45% at 50% 0%, rgba(255,186,3,.22), transparent 70%), radial-gradient(ellipse 60% 40% at 50% 100%, rgba(239,89,28,.18), transparent 70%), linear-gradient(#0b2566, #12307a); color: #fff6e5; }
+.cap-altar > .cap-hand { color: #ffba03; display: block; }
+.cap-altar .cap-room-head h2 { color: #fff; }
+.cap-altar .cap-room-head h2 em { color: #ffba03; }
+.cap-altar .cap-num { color: #8ad2fa; }
+.cap-altar .cap-lead { color: #cdeafd; max-width: 60ch; }
+.cap-altar-row { display: flex; align-items: flex-end; justify-content: center; flex-wrap: wrap; gap: 2px 6px; margin: 18px auto 0; padding: 0 8px 8px; border-bottom: 6px solid #1351a4; border-radius: 0 0 6px 6px; max-width: 760px; min-height: 30px; }
+.cap-altar-c { display: block; width: calc(22px + var(--h, 0) * 5px); }
+.cap-altar-c .cap-candle { width: 100%; }
+.cap-altar-c .flame, .cap-altar-c .flame-in { scale: var(--f, 1); }
+.cap-altar-c .glow { fill: #ffd25e; opacity: .4 !important; mix-blend-mode: screen; }
+.cap-altar-sum { text-align: center; margin: 10px 0 0; font-family: var(--font-hand); font-size: 1.35rem; color: #ffba03; min-height: 1em; }
+.cap-light { display: grid; grid-template-columns: 70px minmax(0, 1fr); gap: 16px; align-items: start; margin-top: 18px; background: #fff6e5; color: #0b2566; border: 3px solid #0b2566; border-radius: 22px; padding: 18px 20px; box-shadow: 4px 4px 0 #ffba03; }
+.cap-light-c { width: 64px; margin-top: 6px; }
+.cap-light-body { display: grid; gap: 8px; min-width: 0; }
+.cap-light-body label, .cap-vela-guest .cap-light-body { display: grid; gap: 2px; }
+.cap-light-body strong { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
+.cap-light-body label span, .cap-vela-guest .cap-light-body > span { font-size: .95rem; color: #24406e; }
+.cap-light-ta { min-height: 92px; font-size: 1.02rem; line-height: 1.45; resize: vertical; background: #fff; border: 2px solid #0b2566; border-radius: 14px; }
+.cap-light-foot { display: flex; justify-content: space-between; gap: 10px; font-size: .78rem; color: #4a5d7a; }
+.cap-light-btn { justify-self: start; background: #ffba03; color: #0b2566; border: 2px solid #0b2566; font-weight: 800; padding: 11px 20px; border-radius: 999px; box-shadow: 3px 3px 0 #0b2566; display: inline-flex; align-items: center; gap: 8px; }
+.cap-light-btn:hover { background: #ffd04d; }
+.cap-altar .cap-velas { display: block; columns: 3 250px; column-gap: 16px; margin-top: 22px; }
+.cap-altar .cap-empty { color: #cdeafd; text-align: center; padding: 16px; font-size: 1rem; }
+.cap-altar .cap-vela { break-inside: avoid; display: grid; grid-template-columns: 40px minmax(0, 1fr); gap: 12px; align-items: start; margin: 0 0 16px; padding: 16px 16px 14px;
+  background: linear-gradient(#fffaf0, #fff6e5); color: #0b2566; border: 2px solid #0b2566; border-radius: 18px; box-shadow: 3px 3px 0 rgba(255,186,3,.9), 0 10px 26px -12px rgba(255,186,3,.55); rotate: var(--r, 0deg); }
+.cap-vela-c { padding-top: 2px; }
+.cap-vela-c .cap-candle { width: 38px; }
+.cap-vela-c .flame, .cap-vela-c .flame-in { scale: var(--f, 1); transition: scale .6s cubic-bezier(.34,1.56,.64,1); }
+.cap-vela-joined .cap-vela-c .flame, .cap-vela-joined .cap-vela-c .flame-in { scale: calc(var(--f, 1) + .25); }
+.cap-vela-t { margin: 0; font-size: 1.05rem; line-height: 1.5; white-space: pre-line; overflow-wrap: anywhere; }
+.cap-vela-t.is-silent { font-family: var(--font-hand); font-size: 1.45rem; color: #1351a4; }
+.cap-vela-t.cap-clamp { display: -webkit-box; -webkit-line-clamp: 6; -webkit-box-orient: vertical; overflow: hidden; }
+.cap-vela-by { display: flex; align-items: center; gap: 8px; margin-top: 10px; font-size: .84rem; color: #4a5d7a; }
+.cap-vela-by b { color: #0b2566; }
+.cap-av { width: 28px !important; height: 28px !important; min-width: 28px; font-size: .7rem !important; border: 2px solid #fff6e5; }
+.cap-vela-act { display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 12px; padding-top: 10px; border-top: 2px dashed rgba(11,37,102,.18); }
+.cap-pray { display: inline-flex; align-items: center; gap: 6px; font: inherit; font-weight: 800; font-size: .9rem; cursor: pointer; padding: 7px 14px; border-radius: 999px; border: 2px solid #0b2566; background: #fff; color: #0b2566; box-shadow: 2px 2px 0 #0b2566; }
+.cap-pray svg { width: 16px; height: 16px; }
+.cap-pray:hover { background: #ffe9b0; }
+.cap-pray.on { background: #ffba03; }
+.cap-pray-who { display: inline-flex; align-items: center; gap: 8px; font-size: .82rem; color: #24406e; min-width: 0; }
+.cap-stack { display: inline-flex; }
+.cap-stack .avatar + .avatar { margin-left: -9px; }
+.cap-vela-del { justify-self: start; background: none; border: 0; padding: 6px 0 0; font: inherit; font-size: .78rem; color: #7f90aa; text-decoration: underline; cursor: pointer; }
+.cap-altar .cap-more { color: #1351a4; }
+@media (max-width: 560px) {
+  .cap-light { grid-template-columns: 1fr; }
+  .cap-light-c { width: 46px; margin: 0; }
+  .cap-light-btn { justify-self: stretch; justify-content: center; }
+  .cap-light-foot { flex-direction: column; }
+  .cap-altar .cap-vela { rotate: 0deg; }
+}
+@media (prefers-reduced-motion: reduce) { .cap-vela-c .flame, .cap-vela-c .flame-in { transition: none; } }

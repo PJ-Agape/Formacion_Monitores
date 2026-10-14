@@ -693,12 +693,17 @@ export async function recentVelas(n = 20) {
   if (!enabled || !db) return [];
   try { return snapRows(await withTimeout(fb.getDocs(fb.query(fb.collection(db, "velas"), fb.orderBy("createdAt", "desc"), fb.limit(n))), 6000)); } catch { return []; }
 }
+// Quien reza por una intención queda con su nombre corto y su avatar: así la vela muestra a la comunidad que la acompaña.
+const prayMark = () => ({ n: shortName(account.name), a: account.avatar || "" });
 export async function lightVela(text) {
-  await fb.setDoc(fb.doc(fb.collection(db, "velas")), {
+  const ref = fb.doc(fb.collection(db, "velas"));
+  await fb.setDoc(ref, {
     text: String(text || "").slice(0, 1500), authorUid: user.uid, authorName: shortName(account.name), prays: {}, createdAt: fb.serverTimestamp(),
   });
+  // Quien enciende la vela es el primero en rezar por ella (y así se ve su avatar).
+  await fb.updateDoc(ref, { [`prays.${user.uid}`]: prayMark() }).catch(() => {});
 }
-export const prayVela = (id, on) => toggleMark(["velas", id], "prays", on);
+export const prayVela = (id, on) => fb.updateDoc(fb.doc(db, "velas", id), { [`prays.${user.uid}`]: on ? prayMark() : fb.deleteField() });
 export const deleteVela = (id) => fb.deleteDoc(fb.doc(db, "velas", id));
 
 // ---------------------------------------------------------------------------

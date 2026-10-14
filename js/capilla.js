@@ -6,6 +6,7 @@ import { esc, rich, icon, toast } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
 import * as papa from "./papa.js";
 import { illus } from "./ilustraciones.js";
+import { avatar } from "./avatares.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -256,25 +257,25 @@ export function view(opt = {}) {
   </section>
 
 
-  <section class="cap-room" id="cap-velas">
-    <div class="cap-room-head"><span class="cap-num">02</span><h2>Nuestras <em>intenciones</em></h2></div>
-    <p class="cap-lead">Comparte por quién o por qué rezas, y acompaña con tu oración las intenciones de los demás. Cada intención queda una semana en la Capilla.</p>
-    ${member ? `<form class="card cap-vela-form" id="velaForm">
-        ${candleSVG(false, "sm")}
-        <div style="flex:1;min-width:200px">
-          <label class="xs muted" for="velaText">Mi intención (opcional)</label>
-          <textarea id="velaText" class="textarea cap-vela-ta" rows="5" maxlength="1500" placeholder="Por mi abuela que está enferma… Por mi curso… Por la paz…"></textarea>
-          <span class="xs muted cap-vela-n" id="velaN">0/1500</span>
-          <div class="row-wrap" style="margin-top:8px;justify-content:space-between">
-            <span class="xs muted">La ven solo quienes tienen cuenta. Lo muy personal, mejor conversarlo con tu acompañante.</span>
-            <button class="btn btn-gold" type="submit">${icon("flame")} Compartir mi intención</button>
-          </div>
+  <section class="cap-room cap-altar" id="cap-velas">
+    <span class="cap-hand">aquí nadie reza solo</span>
+    <div class="cap-room-head"><span class="cap-num">01</span><h2>Nuestras <em>intenciones</em></h2></div>
+    <p class="cap-lead">Enciende una vela por quien quieras y acompaña con tu oración las de los demás. Cada vela brilla una semana.</p>
+    ${member ? `<div class="cap-altar-row" id="velaAltar" aria-hidden="true"></div>
+      <p class="cap-altar-sum" id="velaSum"></p>
+      <form class="cap-light" id="velaForm">
+        ${candleSVG(false, "cap-light-c")}
+        <div class="cap-light-body">
+          <label for="velaText"><strong>Enciende tu vela</strong><span>¿Por quién o por qué quieres rezar? Si prefieres, déjala en silencio.</span></label>
+          <textarea id="velaText" class="textarea cap-light-ta" rows="3" maxlength="1500" placeholder="Por mi abuela… Por mi curso… Por la paz…"></textarea>
+          <div class="cap-light-foot"><span>La ve solo la comunidad con cuenta. Lo muy personal, mejor conversarlo con tu acompañante.</span><span id="velaN">0/1500</span></div>
+          <button class="btn cap-light-btn" type="submit">${icon("flame")} Encender mi vela</button>
         </div>
       </form>
-      <div class="cap-velas" id="velaList"><p class="muted small">Cargando…</p></div>`
-    : `<div class="card cap-vela-guest">${candleSVG(true, "sm")}<div style="flex:1"><strong>Las intenciones son para quienes tienen cuenta</strong>
-        <p class="muted small">Ingresa con la cuenta con que te invitaron para compartir tu intención y rezar por las de la comunidad.</p></div>
-        ${ctx.cloud.enabled ? `<button class="btn btn-primary btn-sm" data-action="signIn">Ingresar</button>` : ""}</div>`}
+      <div class="cap-velas" id="velaList"><p class="cap-empty">Encendiendo las velas…</p></div>`
+    : `<div class="cap-light cap-vela-guest">${candleSVG(true, "cap-light-c")}<div class="cap-light-body"><strong>Las intenciones son de la comunidad</strong>
+        <span>Ingresa con la cuenta con que te invitaron para encender tu vela y rezar por las de los demás.</span>
+        ${ctx.cloud.enabled ? `<button class="btn cap-light-btn" data-action="signIn">Ingresar</button>` : ""}</div></div>`}
   </section>
 
 
@@ -354,31 +355,55 @@ function paintGospel() {
 // ---------------------------------------------------------------------------
 // Velas
 // ---------------------------------------------------------------------------
-const ago = (ts) => {
-  const d = ts && ts.toDate ? ts.toDate() : null; if (!d) return "recién";
-  const h = Math.floor((Date.now() - d) / 3600000);
-  return h < 1 ? "recién" : h < 24 ? `hace ${h} h` : `hace ${Math.floor(h / 24)} día${h >= 48 ? "s" : ""}`;
-};
+// Quiénes rezan por una vela: { uid: {n, a} } (las antiguas guardaban solo «true»).
+function prayers(v, me) {
+  return Object.entries(v.prays || {}).map(([uid, x]) => ({ uid, me: uid === me, n: x && x.n ? x.n : "", a: x && x.a ? x.a : "" }))
+    .sort((p, q) => (q.me - p.me) || (!!q.n - !!p.n));
+}
+function whoText(ps) {
+  if (!ps.length) return "";
+  const names = ps.filter((p) => p.me || p.n).slice(0, 2).map((p) => (p.me ? "Tú" : p.n));
+  const rest = ps.length - names.length;
+  const list = rest > 0 ? `${names.join(", ")} y ${rest} más` : names.length === 2 ? `${names[0]} y ${names[1]}` : names[0] || `${ps.length} personas`;
+  if (ps.length === 1) return ps[0].me ? "Tú rezas por esto" : `${list} reza por esto`;
+  return `${list} rezan por esto`;
+}
+const DIAS = ["el domingo", "el lunes", "el martes", "el miércoles", "el jueves", "el viernes", "el sábado"];
+function dayLabel(t) {
+  const d = t && t.toDate ? t.toDate() : new Date(), now = new Date();
+  const days = Math.round((new Date(now.toDateString()) - new Date(d.toDateString())) / 86400000);
+  return days <= 0 ? "hoy" : days === 1 ? "ayer" : DIAS[d.getDay()];
+}
+const hashN = (s) => { let h = 0; for (const c of String(s)) h = (h * 31 + c.charCodeAt(0)) | 0; return Math.abs(h); };
 function paintVelas(err) {
   const box = $("#velaList"); if (!box) return;
   if (!velas) return;
   const week = Date.now() - 7 * 86400000;
   const list = velas.filter((v) => { const d = v.createdAt && v.createdAt.toDate ? v.createdAt.toDate() : new Date(); return d.getTime() >= week; });
-  if (err && !list.length) { box.innerHTML = `<div class="note">No pudimos cargar las intenciones. Revisa tu conexión.</div>`; return; }
-  if (!list.length) { box.innerHTML = `<p class="muted small cap-empty">Aún no hay intenciones esta semana. Comparte la primera.</p>`; return; }
   const me = ctx.cloud.myUid(), staff = st().isStaff;
-  box.innerHTML = `<p class="xs muted cap-count">${list.length} ${list.length > 1 ? "intenciones" : "intención"} esta semana</p>` + list.map((v) => {
-    const n = Object.keys(v.prays || {}).length, mine = !!(v.prays && v.prays[me]);
-    const focus = focusVela === v.id, clamp = v.text && v.text.length > 260 && !focus;
-    return `<article class="cap-vela${focus ? " cap-vela-focus" : ""}" data-vela="${esc(v.id)}">
-      ${candleSVG(true, "xs")}
+  // El altar: todas las velas de la semana juntas; la llama crece con cada persona que reza.
+  const altar = $("#velaAltar"), sum = $("#velaSum");
+  const total = list.reduce((a, v) => a + Object.keys(v.prays || {}).length, 0);
+  if (altar) altar.innerHTML = list.slice(0, 48).map((v) => { const n = Object.keys(v.prays || {}).length;
+    return `<span class="cap-altar-c" style="--h:${hashN(v.id) % 4};--f:${(1 + Math.min(n, 12) * 0.07).toFixed(2)}">${candleSVG(true)}</span>`; }).join("");
+  if (sum) sum.textContent = list.length ? `${list.length} ${list.length > 1 ? "velas encendidas" : "vela encendida"} esta semana${total ? ` · ${total} ${total > 1 ? "veces" : "vez"} alguien se unió a rezar` : ""}` : "";
+  if (err && !list.length) { box.innerHTML = `<p class="cap-empty">No pudimos cargar las intenciones. Revisa tu conexión.</p>`; return; }
+  if (!list.length) { box.innerHTML = `<p class="cap-empty">Esta semana todavía no hay velas encendidas. ¿Enciendes la primera?</p>`; return; }
+  box.innerHTML = list.map((v, i) => {
+    const ps = prayers(v, me), n = ps.length, mine = ps.some((p) => p.me);
+    const focus = focusVela === v.id, long = v.text && v.text.length > 260, clamp = long && !focus;
+    const author = ps.find((p) => p.uid === v.authorUid) || {};
+    return `<article class="cap-vela${focus ? " cap-vela-focus" : ""}" data-vela="${esc(v.id)}" style="--r:${[-0.8, 0.6, -0.3, 0.9][i % 4]}deg;--f:${(1 + Math.min(n, 12) * 0.06).toFixed(2)}">
+      <div class="cap-vela-c">${candleSVG(true)}</div>
       <div class="cap-vela-body">
-        ${v.text ? `<p class="${clamp ? "cap-clamp" : ""}">${esc(v.text)}</p>${v.text.length > 260 ? `<button class="cap-more" data-action="velaMore">${clamp ? "Leer todo" : "Mostrar menos"}</button>` : ""}` : `<p class="muted"><i>Una intención en silencio</i></p>`}
-        <span class="xs muted">${esc(v.authorName || "Alguien")} · ${ago(v.createdAt)}</span>
-        <div class="row-wrap" style="margin-top:6px;gap:6px">
-          <button class="btn btn-sm ${mine ? "btn-soft" : "btn-ghost"}" data-action="capPray" data-id="${esc(v.id)}" data-on="${mine ? 0 : 1}" aria-pressed="${mine}">🙏 ${mine ? "Estoy rezando" : "Rezo por esto"}${n ? ` · ${n}` : ""}</button>
-          ${v.authorUid === me || staff ? `<button class="btn btn-sm btn-ghost" data-action="capVelaDel" data-id="${esc(v.id)}" aria-label="Retirar intención">${icon("x")}</button>` : ""}
+        ${v.text ? `<p class="cap-vela-t${clamp ? " cap-clamp" : ""}">${esc(v.text)}</p>${long ? `<button class="cap-more" data-action="velaMore">${clamp ? "Leer todo" : "Mostrar menos"}</button>` : ""}`
+          : `<p class="cap-vela-t is-silent">Una intención en silencio</p>`}
+        <div class="cap-vela-by">${avatar(author.a || "", v.authorName || "Alguien", "cap-av")}<span><b>${esc(v.authorName || "Alguien")}</b> la encendió ${dayLabel(v.createdAt)}</span></div>
+        <div class="cap-vela-act">
+          <button class="cap-pray${mine ? " on" : ""}" data-action="capPray" data-id="${esc(v.id)}" data-on="${mine ? 0 : 1}" aria-pressed="${mine}">${icon("flame")} ${mine ? "Estás rezando" : "Rezo contigo"}</button>
+          ${n ? `<span class="cap-pray-who"><span class="cap-stack" aria-hidden="true">${ps.slice(0, 5).map((p) => avatar(p.a, p.me ? "Tú" : p.n || "Alguien", "cap-av")).join("")}</span><span>${esc(whoText(ps))}</span></span>` : ""}
         </div>
+        ${v.authorUid === me || staff ? `<button class="cap-vela-del" data-action="capVelaDel" data-id="${esc(v.id)}">Retirar ${v.authorUid === me ? "mi" : "esta"} vela</button>` : ""}
       </div>
     </article>`;
   }).join("");
@@ -676,10 +701,11 @@ function registerActions() {
   A.capStop = () => stopSilence(false);
   A.capPray = (el) => {
     const on = el.dataset.on === "1";
-    ctx.cloud.prayVela(el.dataset.id, on).then(() => { if (on) toast("Gracias por rezar 🙏"); }).catch(() => toast("No se pudo guardar", ""));
+    if (on) el.closest(".cap-vela")?.classList.add("cap-vela-joined");
+    ctx.cloud.prayVela(el.dataset.id, on).then(() => { if (on) toast("Gracias por rezar con la comunidad"); }).catch(() => toast("No se pudo guardar", ""));
   };
   A.capVelaDel = (el) => {
-    if (!confirm("¿Retirar esta intención?")) return;
+    if (!confirm("¿Retirar esta vela? Ya no se verá en la Capilla.")) return;
     ctx.cloud.deleteVela(el.dataset.id).catch(() => toast("No se pudo retirar", ""));
   };
   document.addEventListener("keydown", (e) => {
@@ -688,7 +714,11 @@ function registerActions() {
     else if (gd && e.key === "ArrowRight") { e.preventDefault(); gd.i === gd.steps.length - 1 ? stopSilence(true) : guideMove(1); }
     else if (gd && e.key === "ArrowLeft") { e.preventDefault(); guideMove(-1); }
   });
-  document.addEventListener("input", (e) => { if (e.target.id === "velaText") { const n = $("#velaN"); if (n) n.textContent = `${e.target.value.length}/1500`; } });
+  document.addEventListener("input", (e) => {
+    if (e.target.id !== "velaText") return;
+    const n = $("#velaN"); if (n) n.textContent = `${e.target.value.length}/1500`;
+    $("#velaForm .cap-candle")?.classList.toggle("lit", e.target.value.trim().length > 0);
+  });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "velaForm") return;
     e.preventDefault();
@@ -696,7 +726,7 @@ function registerActions() {
     btn.disabled = true;
     try {
       await ctx.cloud.lightVela(ta.value.trim());
-      ta.value = ""; toast("Tu intención ya está en la Capilla 🙏");
+      ta.value = ""; toast("Tu vela ya está encendida. La comunidad reza contigo.");
       e.target.querySelector(".cap-candle")?.classList.add("lit");
       const n = $("#velaN"); if (n) n.textContent = "0/1500";
     } catch (err) {
