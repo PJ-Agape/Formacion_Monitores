@@ -3,6 +3,7 @@
 // Las canciones originales de Ágape vienen incluidas; el equipo agrega las que canta la comunidad.
 
 import { esc, icon, toast } from "./util.js";
+import { toInline, splitSongs, findDuplicate } from "./acordes-import.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -147,6 +148,7 @@ export function viewList() {
     <button class="btn btn-sm ${tab === "canciones" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="canciones">${icon("book")} Canciones</button>
     <button class="btn btn-sm ${tab === "misas" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="misas">${icon("grid")} Misas y celebraciones</button>
     <span class="spacer"></span><button class="btn btn-sm btn-ghost" data-action="canExport">${icon("dl")} Exportar</button>
+    ${staff && tab !== "misas" ? `<button class="btn btn-sm btn-soft" data-action="canImport">${icon("ul")} Importar canciones</button>` : ""}
     ${staff ? `<button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
   </nav>
   <div class="can-wip">
@@ -354,6 +356,7 @@ function songEditor(s) {
         <div class="can-chips">${MOMENTOS.map(([k, l]) => `<label class="chip"><input type="checkbox" name="m" value="${k}" ${(v.momentos || []).includes(k) ? "checked" : ""}> ${esc(l)}</label>`).join("")}</div>
       </fieldset>
       <div class="field"><label>Letra con acordes</label>
+        <button type="button" class="btn btn-sm btn-soft can-fix" data-action="canFix">${icon("check")} Acomodar acordes pegados (acordes arriba de la letra)</button>
         <textarea class="textarea can-ta" name="body" rows="14" maxlength="20000" placeholder="Coro:\n[G]Amor que trans[D]forma,\n[Em]amor que se [C]da…">${esc(v.body || "")}</textarea>
         <span class="xs muted">Escribe cada acorde entre corchetes justo antes de la sílaba donde cambia: <code>[G]Amor que trans[D]forma</code>. Sirve <code>[Am]</code> o <code>[Lam]</code>. Una línea que termina en dos puntos (<code>Coro:</code>) es un título. Deja una línea en blanco entre estrofas.</span></div>
       <div class="field"><label>Enlace para escucharla (opcional)</label><input class="input" name="link" maxlength="400" value="${esc(v.link || "")}" placeholder="https://youtube.com/…"></div>
@@ -363,6 +366,43 @@ function songEditor(s) {
   </form>`;
   d.showModal();
 }
+// Importar varias canciones de una vez (pegadas desde un PDF o una página): se separan con «---».
+let imp = [];
+function importDialog() {
+  imp = [];
+  const d = dialog("canImpDlg");
+  d.innerHTML = `<form method="dialog" id="canImpForm">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Cancionero</span><h2>Importar canciones</h2></div>
+      <button type="button" class="icon-btn" data-action="canClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:12px">
+      <p class="small">Pega una o varias canciones tal como vienen, con los acordes arriba de la letra. Entre una canción y otra, escribe una línea con <code>---</code>. La primera línea de cada una es su título.</p>
+      <textarea class="textarea can-ta" id="canImpText" rows="12" placeholder="Título de la canción&#10;G        D&#10;Primera línea de la letra…&#10;---&#10;Título de otra canción&#10;…"></textarea>
+      <button type="button" class="btn btn-soft" data-action="canImpCheck">${icon("eye")} Revisar</button>
+      <div id="canImpPrev"></div>
+    </div>
+    <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="canClose">Cancelar</button>
+      <button class="btn btn-primary" type="submit" id="canImpSave" disabled>Guardar canciones</button></div>
+  </form>`;
+  d.showModal();
+}
+function importPreview() {
+  const box = document.getElementById("canImpPrev"); if (!box) return;
+  imp = splitSongs(document.getElementById("canImpText")?.value || "");
+  const save = document.getElementById("canImpSave");
+  if (!imp.length) { box.innerHTML = `<p class="note small">No encontré canciones. Revisa que la primera línea de cada una sea el título.</p>`; if (save) save.disabled = true; return; }
+  // Repetidas: contra el cancionero y también dentro de lo mismo que se pegó.
+  const seen = [];
+  imp.forEach((x) => { const d = findDuplicate(x, [...all(), ...seen]); x.dup = d ? `${d.why} que «${d.song.title}»` : ""; seen.push({ ...x, id: "" }); });
+  box.innerHTML = `<p class="small"><b>${imp.length} canci${imp.length > 1 ? "ones" : "ón"}</b> encontrada${imp.length > 1 ? "s" : ""}. Toca una para ver cómo quedó.${imp.some((x) => x.dup) ? ` Las que parecen repetidas quedan sin marcar; márcalas solo si de verdad son distintas.` : ""}</p>
+    <div class="field"><label>Autor o fuente (para todas, opcional)</label><input class="input" id="canImpAuthor" maxlength="120" placeholder="Ej: Cancionero parroquial 2019"></div>
+    <fieldset class="p-dates"><legend>Momentos (para todas, opcional)</legend>
+      <div class="can-chips">${MOMENTOS.map(([k, l]) => `<label class="chip"><input type="checkbox" name="im" value="${k}"> ${esc(l)}</label>`).join("")}</div></fieldset>
+    <div class="can-imp-list">${imp.map((x, i) => `<details class="can-imp"><summary><label onclick="event.stopPropagation()"><input type="checkbox" name="imok" value="${i}" ${x.dup ? "" : "checked"}></label>
+        <b>${esc(x.title)}</b><small>${x.chords ? `${x.chords} acordes` : "sin acordes"}${x.dup ? ` · <span class="can-dup">posible repetida: ${esc(x.dup)}</span>` : ""}</small></summary>
+        <pre class="can-imp-body">${esc(x.body)}</pre></details>`).join("")}</div>`;
+  if (save) save.disabled = false;
+}
+
 function misaEditor(r) {
   const d = dialog("canMisaDlg"), v = r || { name: "", date: "", note: "", slots: [] };
   const pick = Object.fromEntries((v.slots || []).map((x) => [x.m, x.id]));
@@ -544,10 +584,18 @@ function registerActions() {
   A.canNext = () => { si = Math.min(slides.length - 1, si + 1); paintProj(); };
   A.canProjClose = () => closeProj();
   A.canNew = () => songEditor(null);
+  A.canImport = () => importDialog();
+  A.canImpCheck = () => importPreview();
+  A.canFix = () => {
+    const ta = document.querySelector("#canForm textarea[name=body]"); if (!ta || !ta.value.trim()) { toast("Primero pega la canción en el cuadro de la letra", ""); return; }
+    const before = ta.value, after = toInline(before);
+    if (after === before.trim()) { toast("No encontré acordes arriba de la letra para acomodar"); return; }
+    ta.value = after; toast("Acordes acomodados. Revisa que cada uno quedó en su sílaba.");
+  };
   A.canEdit = (el) => songEditor(byId(el.dataset.id));
   A.canNewMisa = () => misaEditor(null);
   A.canEditMisa = (el) => misaEditor((misas || []).find((x) => x.id === el.dataset.id));
-  A.canClose = () => { ["canDlg", "canMisaDlg", "canExpDlg"].forEach((k) => document.getElementById(k)?.close()); };
+  A.canClose = () => { ["canDlg", "canMisaDlg", "canExpDlg", "canImpDlg"].forEach((k) => document.getElementById(k)?.close()); };
   A.canExport = (el) => exportDialog(el.dataset.misa || "");
   A.canDel = async (el) => {
     if (!confirm("¿Borrar esta canción del cancionero?")) return;
@@ -590,8 +638,31 @@ function registerActions() {
       const data = { title: String(f.get("title") || "").trim(), author: String(f.get("author") || "").trim(), momentos: f.getAll("m").map(String),
         body: String(f.get("body") || "").replace(/\r/g, ""), link: String(f.get("link") || "").trim() };
       if (!data.title) return;
+      const dupe = findDuplicate(data, all(), e.target.dataset.id || null);
+      if (dupe && !confirm(`Parece que «${dupe.song.title}» ya está en el cancionero (tiene ${dupe.why}). ¿Guardar igual?`)) return;
       try { const id = await ctx.cloud.saveCancion(e.target.dataset.id || null, data); document.getElementById("canDlg")?.close(); toast("Canción guardada"); location.hash = "#/cancionero/" + encodeURIComponent(id); }
       catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); }
+    }
+    if (e.target.id === "canImpForm") {
+      e.preventDefault();
+      const f = e.target, ok = [...f.querySelectorAll("input[name=imok]:checked")].map((x) => imp[+x.value]).filter(Boolean);
+      if (!ok.length) { toast("No hay canciones marcadas para guardar", ""); return; }
+      const author = String(f.querySelector("#canImpAuthor")?.value || "").trim(), momentos = [...f.querySelectorAll("input[name=im]:checked")].map((x) => x.value);
+      const btn = document.getElementById("canImpSave"); btn.disabled = true;
+      let n = 0, skip = 0;
+      for (const x of ok) {
+        btn.textContent = `Guardando ${n + skip + 1} de ${ok.length}…`;
+        // Por si alguien más la subió mientras revisabas (la lista se actualiza sola).
+        if (!x.dup && findDuplicate(x, all())) { skip++; continue; }
+        try { await ctx.cloud.saveCancion(null, { title: x.title.slice(0, 120), author, momentos, body: x.body.slice(0, 20000), link: "" }); n++; }
+        catch (err) { console.warn(err); }
+      }
+      document.getElementById("canImpDlg")?.close();
+      if (skip) toast(`${skip} ya las había subido otra persona mientras revisabas; no se duplicaron.`);
+      if (n + skip === ok.length && !n) { ctx.render(); return; }
+      toast(n + skip === ok.length ? `${n} canci${n > 1 ? "ones guardadas" : "ón guardada"} en el cancionero` : `Se guardaron ${n} de ${ok.length - skip}. Revisa tu conexión y vuelve a intentar las que faltan.`, n ? "ok" : "");
+      ctx.render();
+      return;
     }
     if (e.target.id === "canMisaForm") {
       e.preventDefault();
