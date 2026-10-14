@@ -51,8 +51,8 @@ const ITEMS = [
     links: [["🧰 Materiales", "#/materiales"], ["🎲 Dinámicas", "#/dinamicas"]] },
   { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
-  { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta", ok: () => true },
-  { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido", ok: () => true },
+  { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta plaza", ok: () => true, hub: false }, // en La Plaza Ágape
+  { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true },
   { b: "red", e: "👨‍👩‍👧‍👦", t: "Nuestras familias", d: "Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.", href: "#/nuestras-familias", kw: "grupos familias comunidades equipos nombre", ok: (w) => w.cuenta && cloud.enabled,
     links: [["👨‍👩‍👧‍👦 Ver las familias", "#/nuestras-familias"], ["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
@@ -175,12 +175,31 @@ export function viewFormacion() {
   <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
   ${w.guest ? `<p class="muted small" style="margin-top:14px">Para ver el curso y los encuentros, <a href="#/perfil">ingresa con tu cuenta</a>.</p>` : ""}`;
 }
+// La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)
+// y lo que nos decimos (Chat). Cada parte sigue funcionando igual; esto es solo la puerta de entrada.
+function plazaHTML() {
+  const door = (href, cls, kicker, title, text, ico, slot = "") => `<a class="plaza-door ${cls}" href="${href}">
+      <span class="plaza-ico" aria-hidden="true">${ico}</span>
+      <span class="plaza-dt"><small>${kicker}</small><b>${title}</b><span>${text}</span></span>${slot}${icon("right")}</a>`;
+  return `<section class="plaza" aria-labelledby="plazaT">
+    <div class="plaza-head">
+      <span class="plaza-hand">donde nos encontramos</span>
+      <h2 id="plazaT">La Plaza <em>Ágape</em></h2>
+      <p>Lo que vivimos, lo que conversamos y lo que nos decimos: todo en un mismo lugar.</p>
+    </div>
+    <div class="plaza-doors">
+      ${door("#/momentos", "is-mom", "Lo que vivimos", "Momentos", "Las fotos del grupo, para reaccionar y comentar.", icon("sparkle"), `<span class="plaza-pics" id="plazaPics" aria-hidden="true"></span>`)}
+      ${door("#/muro", "is-muro", "Lo que conversamos", "Muro", "Avisos, temas, preguntas y encuestas.", icon("grid"))}
+      ${door("#/chat", "is-chat", "Lo que nos decimos", "Chat", "Salas para conversar en grupo.", icon("chat"))}
+    </div>
+  </section>`;
+}
 export function viewRed() {
   const w = who(), b = BLOCKS.red;
   ctx.onAfterRender(() => { ctx.agenda.homeNext(); ctx.wall.homeHighlight(); });
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
+  ${plazaHTML()}
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
-  <div id="momSlot"></div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>

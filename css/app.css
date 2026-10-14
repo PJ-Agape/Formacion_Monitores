@@ -3161,3 +3161,30 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .mom-strip-pics { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 8px; }
 .mom-strip-pics img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 12px; border: 2px solid #0b2566; display: block; }
 .mom-by .avatar { flex: 0 0 auto; }
+
+/* Comunidad · La Plaza Ágape (nuestra red social: Momentos, Muro y Chat) */
+.plaza { margin-top: 16px; padding: 22px clamp(16px, 3.5vw, 28px) 24px; border-radius: var(--r-xl); border: 3px solid #0b2566; box-shadow: 5px 5px 0 #0b2566;
+  background: radial-gradient(circle at 92% 8%, #ffba03 0 70px, transparent 71px), radial-gradient(circle at 4% 100%, #cdeafd 0 120px, transparent 121px), #8ad2fa; color: #0b2566; }
+.plaza-head { display: grid; gap: 4px; max-width: 60ch; }
+.plaza-hand { font-family: var(--font-hand); font-weight: 700; font-size: 1.45rem; color: #c9460f; line-height: 1; }
+.plaza-head h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 82%; letter-spacing: -0.03em; font-size: clamp(2.1rem, 6vw, 3.1rem); line-height: .95; margin: 0; }
+.plaza-head h2 em { font-style: normal; font-family: var(--font-hand); color: #c9460f; font-size: 1.12em; letter-spacing: 0; }
+.plaza-head p { margin: 4px 0 0; font-size: 1rem; }
+.plaza-doors { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; margin-top: 16px; }
+.plaza-door { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; grid-template-areas: "ico txt go" "pics pics pics"; align-items: center; gap: 8px 12px; text-decoration: none; color: #0b2566; background: #fff; border: 2.5px solid #0b2566; border-radius: 18px; padding: 14px; box-shadow: 3px 3px 0 #0b2566; transition: transform .15s, box-shadow .15s; }
+.plaza-door:hover { transform: translate(-2px, -2px); box-shadow: 5px 5px 0 #0b2566; }
+.plaza-door:focus-visible { outline: 3px solid #ef591c; outline-offset: 3px; }
+.plaza-door > svg { grid-area: go; width: 18px; height: 18px; }
+.plaza-ico { grid-area: ico; width: 44px; height: 44px; border-radius: 14px; display: grid; place-items: center; border: 2px solid #0b2566; }
+.plaza-ico svg { width: 22px; height: 22px; }
+.is-mom .plaza-ico { background: #ffba03; } .is-muro .plaza-ico { background: #fde0d2; } .is-chat .plaza-ico { background: #cdeafd; }
+.plaza-dt { grid-area: txt; display: grid; gap: 1px; min-width: 0; }
+.plaza-dt small { font-size: .7rem; font-weight: 800; letter-spacing: .12em; text-transform: uppercase; color: #1351a4; }
+.plaza-dt b { font-family: var(--font-display); font-weight: 800; font-size: 1.3rem; line-height: 1.05; }
+.plaza-dt span { font-size: .86rem; color: #24406e; line-height: 1.3; }
+.plaza-pics { grid-area: pics; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+.plaza-pics:empty { display: none; }
+.plaza-pics img { width: 100%; aspect-ratio: 1; object-fit: cover; border-radius: 10px; border: 2px solid #0b2566; display: block; }
+@media (max-width: 760px) { .plaza-doors { grid-template-columns: 1fr; } }
+@media (prefers-reduced-motion: reduce) { .plaza-door:hover { transform: none; } }
+@media (max-width: 760px) { .plaza { background: radial-gradient(circle at 100% 0%, #ffba03 0 46px, transparent 47px), radial-gradient(circle at 0% 100%, #cdeafd 0 90px, transparent 91px), #8ad2fa; } .plaza-head p { padding-right: 8px; } }

@@ -41,16 +41,12 @@ async function load(reset) {
 // Franja en Comunidad (solo aparece cuando los Momentos están habilitados)
 // ---------------------------------------------------------------------------
 export async function homeStrip() {
-  const slot = document.getElementById("momSlot"); if (!slot || !ctx.cloud.enabled || !st().ready) return;
+  // Fotos recientes dentro de la puerta «Momentos» de La Plaza Ágape
+  const pics = document.getElementById("plazaPics"); if (!pics || !ctx.cloud.enabled || !st().ready) return;
   let rows = [];
-  try { rows = await ctx.cloud.listMomentos(4); } catch (e) { return; } // reglas aún no publicadas: no se muestra
-  if (!document.getElementById("momSlot")) return;
-  if (!rows.length && !st().isStaff) return;
-  slot.innerHTML = `<a class="card link mom-strip" href="#/momentos">
-    <span class="mom-strip-head"><span class="eyebrow">Momentos Ágape</span><strong>Lo que vivimos juntos</strong></span>
-    ${rows.length ? `<span class="mom-strip-pics">${rows.map((r) => `<img src="${esc(r.img)}" alt="" loading="lazy">`).join("")}</span>`
-      : `<span class="muted small">Aún no hay fotos. Sube la primera.</span>`}
-    <span class="go">Ver todos ${icon("arrowR")}</span></a>`;
+  try { rows = await ctx.cloud.listMomentos(3); } catch (e) { return; }
+  if (!document.getElementById("plazaPics") || !rows.length) return;
+  pics.innerHTML = rows.map((r) => `<img src="${esc(r.img)}" alt="" loading="lazy">`).join("");
 }
 
 // ---------------------------------------------------------------------------
