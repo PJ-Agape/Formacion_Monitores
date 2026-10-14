@@ -7,6 +7,8 @@ import * as fondo from "./fondo-cuenta.js";
 import { esc, icon, toast } from "./util.js";
 import { illus, SCENE_KEYS, sceneLabel } from "./ilustraciones.js";
 import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
+// Texto de cada opción según la fecha elegida: «Cada mes, el 3er sábado».
+const repLabel = (k, date) => (k && /^\d{4}-\d{2}-\d{2}$/.test(date || "") ? repeatText({ date, repeat: k }) : REPEATS[k]);
 import * as autz from "./autorizacion.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
@@ -210,7 +212,7 @@ function openForm(ev) {
         <div class="field"><label>Hasta</label><input class="input" type="time" name="end" value="${esc(e.end || "")}"></div>
       </div>
       <div class="ag-form-row">
-        <div class="field"><label>Se repite</label><select class="select" name="repeat" id="agRepeat">${Object.entries(REPEATS).map(([k, l]) => `<option value="${k}" ${(e.repeat || "") === k ? "selected" : ""}>${l}</option>`).join("")}</select></div>
+        <div class="field"><label>Se repite</label><select class="select" name="repeat" id="agRepeat">${Object.keys(REPEATS).map((k) => `<option value="${k}" ${(e.repeat || "") === k ? "selected" : ""}>${esc(repLabel(k, e.date))}</option>`).join("")}</select></div>
         <div class="field" id="agUntilBox" ${isRepeat(e) ? "" : "hidden"}><label>Hasta (opcional)</label><input class="input" type="date" name="until" value="${esc(e.until || "")}"><span class="xs muted">En blanco: sin fecha de término.</span></div>
       </div>
       ${(e.exdates || []).length ? `<p class="xs muted">Fechas saltadas: ${e.exdates.map((d) => esc(longDate(d))).join(" · ")}. <label class="row" style="display:inline-flex;gap:4px"><input type="checkbox" name="clearEx"> volver a incluirlas</label></p>` : ""}
@@ -353,6 +355,7 @@ function registerActions() {
     if (e.target.id === "agAuth") { const o = $("#agAuthOpts"); if (o) o.hidden = !e.target.checked; const fam = $("#agFam"); if (e.target.checked && fam) fam.checked = true; }
     if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
     if (e.target.id === "agRepeat") { const o = $("#agUntilBox"); if (o) o.hidden = !e.target.value; }
+    if (e.target.name === "date" && e.target.closest("#agForm")) { const sel = $("#agRepeat"); if (sel) [...sel.options].forEach((o) => { o.textContent = repLabel(o.value, e.target.value); }); }
   });
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "agForm") return;
