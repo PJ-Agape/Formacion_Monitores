@@ -72,7 +72,7 @@ function currentIdx(list) {
 // ---------------------------------------------------------------------------
 export async function view(nArg) {
   const d = await load();
-  if (!d) return `<div class="card" style="padding:30px;text-align:center"><p class="muted">No pudimos cargar el Camino Ágape. Revisa tu conexión.</p></div>`;
+  if (!d) return `<div class="card" style="padding:30px;text-align:center"><p class="muted">No pudimos cargar tu revista. Revisa tu conexión.</p></div>`;
   const et = myEtapa(), E = ETAPAS[et];
   const list = enriched(d), cur = currentIdx(list), done = vividos(et);
   const vivCount = Object.keys(done).length;

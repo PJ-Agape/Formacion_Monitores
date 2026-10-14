@@ -928,7 +928,7 @@ function viewMaterials() {
   };
   const guides = (m.cards || []).filter((c) => c.type !== "action"), prints = (m.cards || []).filter((c) => c.type === "action");
   const FILES = [
-    ["revistas", "Revistas", "#1351a4", "Las revistas del Camino Ágape, archivadas año tras año.", [archivoHTML()], null],
+    ["revistas", "Revistas", "#1351a4", "Nuestra Revista, archivada año tras año.", [archivoHTML()], null],
     ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
       row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
@@ -945,7 +945,7 @@ function viewMaterials() {
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
-      row("#/encuentros", "print", "Revistas Camino Ágape", "Se imprimen completas o solo el encuentro de la semana"),
+      row("#/encuentros", "print", "Nuestra Revista", "Se imprimen completas o solo el encuentro de la semana"),
       row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
       ...prints.map(guide),
     ]],
@@ -983,7 +983,7 @@ function archivoHTML() {
   const list = [...years.values()].sort((a, b) => b.year - a.year);
   return `<div id="fiArchivo" class="fi-years">
     ${list.map((y) => `<div class="fi-year"><span class="fi-y">${y.year}</span><div class="fi-y-items">${y.items.map((x) => x.ed ? `
-      <a class="fi-row" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}"><span class="fi-txt"><b>Camino Ágape ${x.ed.year} · ${esc(x.ed.ciclo)}</b>
+      <a class="fi-row" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}"><span class="fi-txt"><b>Nuestra Revista ${x.ed.year} · ${esc(x.ed.ciclo)}</b>
         <small>${x.ed.actual ? "Edición actual · " : ""}${esc(x.ed.rango)}</small></span>${icon("right")}</a>
       <div class="fi-revs">${REV_SHORT.map(([k, l]) => `<a class="chip" href="${x.ed.actual ? "#/encuentros" : `#/archivo/${x.ed.year}`}/${k}">${l}</a>`).join("")}</div>`
       : `<div class="fi-row-wrap"><a class="fi-row" href="${esc(x.link.url)}" target="_blank" rel="noopener"><span class="fi-txt"><b>${esc(x.link.title)}</b>${x.link.note ? `<small>${esc(x.link.note)}</small>` : ""}</span>${icon("arrowR")}</a>

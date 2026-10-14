@@ -147,7 +147,7 @@ export async function viewRevista(k, year, nArg) {
   const back = k === "coordinacion" ? "" : backPage(d);
   return `
   <div class="row-wrap no-print" style="margin-bottom:12px">
-    <a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Camino Ágape${year ? " " + esc(year) : ""}</a><span class="spacer"></span>
+    <a class="btn btn-sm btn-ghost" href="${base}">${icon("arrowL")} Nuestra Revista${year ? " " + esc(year) : ""}</a><span class="spacer"></span>
     ${paged ? `<button class="btn btn-sm btn-soft" data-action="magPrint" data-scope="one">${icon("print")} Solo este encuentro</button>` : ""}
     <button class="btn btn-sm btn-primary" data-action="magPrint" data-scope="all">${icon("dl")} Revista completa (PDF)</button>
   </div>

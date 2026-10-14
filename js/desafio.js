@@ -56,7 +56,7 @@ async function paint() {
   const items = pref && cur.items.some((i) => i.etapa === pref) ? cur.items.filter((i) => i.etapa === pref) : cur.items;
   const s = document.getElementById("desafioSlot"); if (!s) return;
   s.innerHTML = `<section class="card desafio">
-    <div class="desafio-head"><span class="desafio-ico">🎯</span><div style="flex:1"><span class="eyebrow">${cur.source === "camino" ? "Camino Ágape" : "Propuesto por el equipo"}</span><h3>${esc(cur.title)}</h3></div>
+    <div class="desafio-head"><span class="desafio-ico">🎯</span><div style="flex:1"><span class="eyebrow">${cur.source === "camino" ? "Nuestra Revista" : "Propuesto por el equipo"}</span><h3>${esc(cur.title)}</h3></div>
       ${st().isStaff ? `<button class="icon-btn" data-action="desNew" aria-label="Proponer otro desafío">${icon("edit")}</button>` : ""}</div>
     <div class="desafio-list">${items.map((i) => `<p>${i.etapa ? `<span class="chip">${esc(ETAPA_L[i.etapa] || i.etapa)}</span> ` : ""}${esc(i.text)}</p>`).join("")}</div>
     <div class="desafio-foot">
@@ -78,7 +78,7 @@ function editor() {
         <div class="field"><label>Desde</label><input class="input" type="date" name="desde" value="${w.desde}"></div>
         <div class="field"><label>Hasta</label><input class="input" type="date" name="hasta" value="${w.hasta}"></div>
       </div>
-      <p class="xs muted">Mientras esté vigente, reemplaza al desafío de la revista del Camino Ágape.</p>
+      <p class="xs muted">Mientras esté vigente, reemplaza al desafío de Nuestra Revista.</p>
     </div>
     <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="desClose">Cancelar</button><button class="btn btn-primary" type="submit">Publicar</button></div></form>`;
   d.showModal();

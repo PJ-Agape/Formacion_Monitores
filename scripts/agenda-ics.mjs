@@ -40,7 +40,7 @@ function camino() {
     const m = String(e.fecha).match(/(\d+) de (\w+) de (\d{4})/);
     if (!m) return null;
     return { id: "camino-" + e.n, date: `${m[3]}-${String(MESES.indexOf(m[2]) + 1).padStart(2, "0")}-${m[1].padStart(2, "0")}`,
-      title: `Camino Ágape · Encuentro ${e.n}: ${e.tema}`, type: "encuentro",
+      title: `Encuentro N° ${e.n}: ${e.tema}`, type: "encuentro",
       desc: `${e.domingo}. Evangelio: ${e.evangelio.ref}. El encuentro se realiza durante esta semana; el equipo confirma día y hora.` };
   }).filter(Boolean);
 }

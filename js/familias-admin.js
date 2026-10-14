@@ -30,7 +30,7 @@ export function adminView() {
     <section class="card stack" style="--gap:12px"><h3>Bienvenida y horarios</h3>
       <div class="field"><label>Quiénes somos (2 o 3 líneas)</label>${area("bienvenida", C.bienvenida, 3)}</div>
       <div class="field"><label>Cuándo y dónde nos reunimos</label>${area("horario", C.horario, 2, "Ej: Los sábados de 16:00 a 18:00 en el salón parroquial.")}</div>
-      <p class="xs muted">Las etapas (Ingreso, Madurez, Aspirante) se muestran solas desde el Camino Ágape.</p>
+      <p class="xs muted">Las etapas (Ingreso, Madurez, Aspirante) se muestran solas desde Nuestra Revista.</p>
     </section>
     <section class="card stack" style="--gap:12px"><h3>Carta a las familias <span class="chip">opcional</span></h3>
       <p class="small muted">Un saludo breve del equipo o del párroco. Se muestra arriba de todo hasta la fecha que elijas.</p>

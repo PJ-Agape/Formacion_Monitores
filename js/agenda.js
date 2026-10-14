@@ -41,7 +41,7 @@ async function loadCamino() {
       return {
         id: "camino-" + e.n, camino: true, type: "encuentro",
         date: `${m[3]}-${pad(MESES.indexOf(m[2]) + 1)}-${pad(+m[1])}`,
-        title: `Camino Ágape · Encuentro ${e.n}: ${e.tema}`,
+        title: `Encuentro N° ${e.n}: ${e.tema}`,
         desc: `${e.domingo}. Evangelio: ${e.evangelio.ref}. El encuentro se realiza durante esta semana; el equipo confirma día y hora.`,
         audience: "Todas las etapas",
       };
@@ -82,7 +82,7 @@ export function viewAgenda(day) {
     <p>Encuentros, celebraciones y actividades de la pastoral, siempre al día. Lo que está aquí es lo oficial.</p></header>
   <div class="row-wrap" style="margin:14px 0 4px">
     ${admin ? `<button class="btn btn-primary btn-sm" data-action="agNew">${icon("plus")} Nuevo evento</button>` : ""}
-    <label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar encuentros Camino Ágape</label>
+    <label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar los encuentros del grupo</label>
     <span class="spacer"></span><button class="btn btn-sm btn-gold" data-action="agSub">${icon("grid")} Suscribirme al calendario</button>
   </div>
   <div class="ag-layout">
@@ -264,7 +264,7 @@ function subDialog() {
   d.innerHTML = `<div class="sheet-head"><div style="flex:1"><span class="eyebrow">Agenda Ágape</span><h2>Suscríbete al calendario</h2></div>
       <button type="button" class="icon-btn" data-action="agSubClose" aria-label="Cerrar">${icon("x")}</button></div>
     <div class="sheet-body stack" style="--gap:14px">
-      <p>Se hace una sola vez. Desde ahí, los eventos de la Agenda y los encuentros del Camino Ágape aparecen solos en tu calendario, y se actualizan cuando el equipo los cambia.</p>
+      <p>Se hace una sola vez. Desde ahí, los eventos de la Agenda y los encuentros del grupo aparecen solos en tu calendario, y se actualizan cuando el equipo los cambia.</p>
       <a class="card link ag-sub-o" href="${google}" target="_blank" rel="noopener"><strong>Google Calendar</strong><span class="muted small">Se abre Google Calendar: toca «Agregar». En el celular, hazlo una vez desde el computador o desde calendar.google.com.</span></a>
       <a class="card link ag-sub-o" href="${webcal}"><strong>iPhone, iPad o Mac</strong><span class="muted small">Se abre Calendario: toca «Suscribirse».</span></a>
       <div class="card ag-sub-o"><strong>Outlook u otro calendario</strong><span class="muted small">Agrega un calendario «desde internet» con esta dirección:</span>

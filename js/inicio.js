@@ -35,7 +35,7 @@ function who() {
 // ---------------------------------------------------------------------------
 export const BLOCKS = {
   formacion: { t: "Formación", hand: "para crecer", href: "#/formacion", ill: "apostoles", c: "#1351a4", soft: "#e1f3fd",
-    d: "El curso de dirigentes, los encuentros del Camino Ágape y los recursos para preparar." },
+    d: "El curso de dirigentes, Nuestra Revista con los encuentros y los recursos para preparar." },
   red: { t: "Comunidad", hand: "para encontrarnos", href: "#/red", ill: "amigos", c: "#ef591c", soft: "#fde0d2",
     d: "El muro, el chat, la agenda y todo lo que compartimos como grupo." },
   espiritu: { t: "Espiritualidad", hand: "para rezar", href: "#/oracion", ill: "jesus", c: "#c98a00", soft: "#fff0c2",
@@ -46,7 +46,7 @@ const ITEMS = [
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
   { b: "formacion", e: "🎓", t: "Curso de dirigentes", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
-  { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Camino Ágape: los encuentros semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo },
+  { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo },
   { b: "formacion", e: "🧰", t: "Materiales y dinámicas", d: "Recursos para preparar y juegos, rompehielos y dinámicas de oración.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links", ok: (w) => w.equipo,
     links: [["🧰 Materiales", "#/materiales"], ["🎲 Dinámicas", "#/dinamicas"]] },
   { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
@@ -72,7 +72,7 @@ const ITEMS = [
 ];
 const descFor = (k, w) => k !== "formacion" ? BLOCKS[k].d
   : w.equipo ? BLOCKS.formacion.d
-  : w.camino ? (w.curso ? "Tu Camino Ágape y el curso de dirigentes." : "Tu Camino Ágape: el encuentro de tu etapa, semana a semana.")
+  : w.camino ? (w.curso ? "Mi Camino y el curso de dirigentes." : "Mi Camino: el encuentro de tu etapa, semana a semana.")
   : "Crecer en la fe y aprender a acompañar a otros.";
 export const itemsFor = (b) => { const w = who(); return ITEMS.filter((x) => x.b === b && x.ok(w)); };
 const inHub = (x) => { const h = x.hub; return h === undefined ? true : typeof h === "function" ? h(who()) : h; };

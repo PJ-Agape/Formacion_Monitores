@@ -136,7 +136,7 @@ async function main() {
     ${C.carta.titulo ? `<h2>${esc(C.carta.titulo)}</h2>` : ""}<div class="fam-carta-t">${esc(C.carta.texto).replace(/\n/g, "<br>")}</div>
     ${C.carta.firma ? `<p class="fam-firma">${esc(C.carta.firma)}</p>` : ""}</section>` : ""}
 
-  ${!sem && fuera(cam) ? `<section class="fam-sec fam-semana"><div><span class="fam-k">Camino Ágape</span>
+  ${!sem && fuera(cam) ? `<section class="fam-sec fam-semana"><div><span class="fam-k">Esta semana en el grupo</span>
       <h2>En estos meses nos estamos preparando para el año siguiente.</h2>
       <p>${esc(fuera(cam))}</p></div>${illus("familia")}</section>` : ""}
   ${sem ? `<section class="fam-sec fam-semana">
