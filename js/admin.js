@@ -77,7 +77,7 @@ export async function renderAdmin(sub, _api) {
     case "evangelio": body = cloudOn ? await evAdmin.adminView() : summaryView(draft); break;
     case "materiales": body = cardsView(draft, "materials"); break;
     case "oracion": body = cardsView(draft, "devotional"); break;
-    case "comunidad": body = communityView(draft); break;
+    case "comunidad": location.replace("#/admin"); return ""; // ya no se usa: la guía de servicio es una presentación
     case "publicar": body = publishView(draft); break;
     case "ajustes": body = settingsView(); break;
     default: body = summaryView(draft);
@@ -122,7 +122,6 @@ function navGroups() {
       ["itinerarios", "#/admin/itinerarios", "Cursos", "route", A],
       ["materiales", "#/admin/materiales", "Materiales", "book", A],
       ["oracion", "#/admin/oracion", "Oración", "flame", A],
-      ["comunidad", "#/admin/comunidad", "Textos de comunidad", "grid", A],
       ["evangelio", "#/admin/evangelio", "Evangelio y fiestas", "book", cloudOn && A],
       ["", "#/encuentros", "Nuestra Revista", "book", true, true],
       ["", "#/cancionero", "Cancionero", "flame", C, true],
@@ -392,33 +391,6 @@ function cardsView(d, key) {
 // ---------------------------------------------------------------------------
 // Comunidad
 // ---------------------------------------------------------------------------
-function communityView(d) {
-  const a = d.about;
-  const list = (key, label, items, titleOf) => `
-    <section class="tree-phase">
-      <div class="tree-phase-head"><div class="ttl"><strong>${label}</strong></div>
-        <div class="tools"><button class="btn btn-sm btn-ghost" data-action="aAddAbout" data-k="${key}">${icon("plus")} Agregar</button></div></div>
-      <div class="tree-items">${items.map((x, i) => `
-        <div class="tree-item">
-          <div class="t" data-action="aEditAbout" data-k="${key}" data-i="${i}"><strong>${esc(titleOf(x))}</strong><span>${esc(plain(x.text || x.responsibility || "").slice(0, 80))}</span></div>
-          <div class="tools">
-            ${iconBtn("up", "aMoveAbout", `data-k="${key}" data-i="${i}" data-d="-1"`, "Subir", i === 0)}
-            ${iconBtn("down", "aMoveAbout", `data-k="${key}" data-i="${i}" data-d="1"`, "Bajar", i === items.length - 1)}
-            ${iconBtn("trash", "aDelAbout", `data-k="${key}" data-i="${i}"`, "Eliminar", false, "danger")}
-          </div></div>`).join("")}</div>
-    </section>`;
-  return `
-  <header class="page-head"><span class="eyebrow">Gestión</span><h1>Comunidad</h1><p>La guía de servicio pastoral: identidad, métodos, roles, cargos y reuniones.</p></header>
-  <div class="card row-wrap"><div style="flex:1;min-width:220px"><span class="label">Introducción</span><p class="muted small" style="margin-top:4px">${esc(a.intro)}</p></div>
-    <button class="btn btn-sm btn-soft" data-action="aEditIntro">${icon("edit")} Editar</button></div>
-  <div class="tree">
-    ${list("identity", "Identidad y propósito", a.identity, (x) => x.title)}
-    ${list("methods", "Cómo trabajamos", a.methods, (x) => `${x.icon || ""} ${x.title}`)}
-    ${list("roles", "Roles y responsabilidades", d.roles, (x) => x.title)}
-    ${list("cargos", "Cargos y duración", a.cargos, (x) => x.title)}
-    ${list("meetings", "Reuniones", a.meetings, (x) => `${x.freq} · ${x.title}`)}
-  </div>`;
-}
 const aboutArr = (d, k) => (k === "roles" ? d.roles : d.about[k]);
 
 // ---------------------------------------------------------------------------
