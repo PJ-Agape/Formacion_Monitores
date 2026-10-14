@@ -1245,8 +1245,8 @@ function viewAccount() {
       ${st.isGuide ? `<a class="btn btn-soft" href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
     </div>
     <div class="row-wrap" style="justify-content:center;margin-top:16px">
-      ${st.isStaff ? `<a class="btn btn-soft" href="#/admin${st.isAdmin ? "" : "/portada"}">${icon("gear")} Gestión</a>
-        <button class="btn btn-soft" data-action="vaOpen">${icon("eye")} Ver como…</button>` : ""}
+      ${st.isGuide ? `<a class="btn btn-soft" href="#/admin">${icon("gear")} Gestión</a>` : ""}
+      ${st.isStaff ? `<button class="btn btn-soft" data-action="vaOpen">${icon("eye")} Ver como…</button>` : ""}
       <a class="btn btn-soft" href="#/ayuda">? Ayuda</a>
       <button class="btn btn-ghost" data-action="signOut">${icon("out")} Cerrar sesión</button>
     </div>

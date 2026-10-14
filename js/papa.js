@@ -51,6 +51,8 @@ export function intencion(k = mesKey()) {
   return it ? { k, t: it[0], x: it[1], mes: mesName(k) } : null;
 }
 const on = () => !cfg || cfg.on !== false;
+// ¿Hay intención cargada para ese mes? (oficial o del equipo) — la usa el tablero «Hoy» de Gestión
+export async function intencionCargada(k = mesKey()) { await load().catch(() => {}); return !!intencion(k); }
 
 // Diapositiva del carrusel de Inicio: se arma sola con la intención del mes (y el texto del equipo, si lo cambió).
 export const enCarrusel = () => on() && !!intencion();

@@ -1,6 +1,7 @@
 // Panel de Gestión: edición de itinerarios, evaluaciones, materiales, oraciones
 // y guía de comunidad. Todo se edita en un borrador y se publica al final.
 
+import * as hoy from "./gestion-hoy.js";
 import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
 import * as saludos from "./saludos.js";
@@ -26,19 +27,25 @@ export async function renderAdmin(sub, _api) {
   if (cloudOn) {
     const st = api.cloud.state();
     if (!st.ready) return cloudGate(st);
-    if (!st.isAdmin && st.isStaff) return sub.startsWith("saludos") ? coordShell("saludos", await saludos.adminView())
-      : coordShell(sub.startsWith("familias") ? "familias" : "portada", sub.startsWith("familias") ? familiasAdmin.adminView() : portada.adminView());
-    if (!st.isAdmin) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
-      <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
-      <h1 class="display" style="font-size:1.6rem">Solo para administradores</h1>
-      <p class="muted" style="margin-top:8px">Tu cuenta es de dirigente. Si necesitas acceso a Gestión, pídelo al equipo coordinador.</p>
-      <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
+    // Gestión se ajusta al rol: coordinación ve casi todo; los dirigentes, su tablero «Hoy» y su familia.
+    if (!st.isAdmin) {
+      if (!st.isGuide) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
+        <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
+        <h1 class="display" style="font-size:1.6rem">Gestión es para el equipo</h1>
+        <p class="muted" style="margin-top:8px">Si necesitas acceso, pídelo al equipo coordinador.</p>
+        <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
+      const pg = sub.split("/").filter(Boolean)[0] || "hoy";
+      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), asignar: () => asignarView() };
+      const ok = st.isStaff ? COORD[pg] : pg === "hoy" ? COORD.hoy : null;
+      return shell(ok ? pg : "hoy", await (ok || COORD.hoy)());
+    }
   } else if (!S.isAdmin()) return loginView();
   const draft = S.ensureDraft();
   const parts = sub.split("/").filter(Boolean);
-  const page = parts[0] || "resumen";
+  const page = parts[0] || (cloudOn ? "hoy" : "resumen");
   let body = "";
   switch (page) {
+    case "hoy": body = cloudOn ? hoy.html() : await summaryView(draft); break;
     case "resumen": body = await summaryView(draft); break;
     case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
     case "asignar": body = cloudOn ? await asignarView() : summaryView(draft); break;
@@ -56,57 +63,77 @@ export async function renderAdmin(sub, _api) {
   return shell(page, body);
 }
 
-// Coordinadores: Gestión reducida a la Portada (la Agenda y la moderación se hacen en sus propias páginas).
-function coordShell(page, body) {
+// Menú de Gestión, uno solo para todos los roles: cada uno ve lo que le toca.
+// Lo que todavía vive en su propia pantalla (Agenda, Acompañar, Muro…) se abre con ↗.
+async function myFamId() {
+  try { const me = api.cloud.myUid(); const r = (await api.cloud.listFamilias()) || []; return (r.find((f) => (f.uids || []).includes(me)) || {}).id || ""; } catch { return ""; }
+}
+let famIdCache = null;
+function navGroups() {
+  const st = cloudOn ? api.cloud.state() : { isAdmin: true, isStaff: true, isGuide: true };
+  const A = st.isAdmin, C = st.isStaff, fam = famIdCache;
+  const g = [
+    ["", [["hoy", "#/admin", "Hoy", "sparkle", cloudOn]]],
+    ["Personas", [
+      ["dirigentes", "#/admin/dirigentes", "Cuentas e invitaciones", "users", cloudOn && A],
+      ["asignar", "#/admin/asignar", "Asignar jóvenes", "check", cloudOn && C],
+      ["", "#/nuestras-familias", "Nuestras familias", "users", cloudOn && C, true],
+      ["", fam ? `#/nuestras-familias/${fam}` : "#/nuestras-familias", "Mi familia", "users", cloudOn && !C, true],
+    ]],
+    ["Seguimiento", [
+      ["", "#/nuestras-familias/registro", "Asistencia y planillas", "grid", cloudOn && C, true],
+      ["", fam ? `#/nuestras-familias/${fam}/registro` : "#/nuestras-familias", "Registro de mi familia", "grid", cloudOn && !C, true],
+      ["", "#/acompanar", "Acompañar y pasaportes", "check", cloudOn, true],
+      ["", "#/acompanar/honor", "Cuadro de honor", "award", cloudOn && C, true],
+      ["resumen", "#/admin/resumen", "Estadísticas e intención del Papa", "grid", A],
+    ]],
+    ["Comunicación", [
+      ["portada", "#/admin/portada", "Portada de Inicio", "sparkle", cloudOn && C],
+      ["", "#/agenda", "Agenda", "grid", C, true],
+      ["saludos", "#/admin/saludos", "Saludos WhatsApp", "send", C],
+      ["", "#/muro", "Muro, chat y moderación", "chat", cloudOn && C, true],
+      ["familias", "#/admin/familias", "Página para familias", "users", cloudOn && C],
+    ]],
+    ["Contenidos", [
+      ["itinerarios", "#/admin/itinerarios", "Cursos", "route", A],
+      ["materiales", "#/admin/materiales", "Materiales", "book", A],
+      ["oracion", "#/admin/oracion", "Oración", "flame", A],
+      ["comunidad", "#/admin/comunidad", "Textos de comunidad", "grid", A],
+      ["", "#/encuentros", "Nuestra Revista", "book", true, true],
+      ["", "#/cancionero", "Cancionero", "flame", C, true],
+      ["", "#/dinamicas", "Dinámicas", "sparkle", true, true],
+    ]],
+  ];
+  return g.map(([t, xs]) => [t, xs.filter((x) => x[4])]).filter(([, xs]) => xs.length);
+}
+function shell(page, body) {
+  const dirty = S.draftIsDirty();
+  const st = cloudOn ? api.cloud.state() : { isAdmin: true };
+  if (cloudOn && famIdCache === null) { famIdCache = ""; myFamId().then((id) => { famIdCache = id; if (id) { const n = document.querySelector(".admin-side"); if (n) n.outerHTML = navHTML(page, dirty, st); } }); }
   return `
   <div class="admin-shell">
-    <nav class="admin-side" aria-label="Gestión">
-      <a href="#/admin/portada" ${page === "portada" ? 'aria-current="page"' : ""}>${icon("sparkle")} Portada</a>
-      <a href="#/admin/familias" ${page === "familias" ? 'aria-current="page"' : ""}>${icon("users")} Familias</a>
-      <a href="#/admin/saludos" ${page === "saludos" ? 'aria-current="page"' : ""}>${icon("send")} Saludos WhatsApp</a>
-      <a href="#/agenda">${icon("grid")} Agenda</a>
-      <a href="#/acompanar">${icon("check")} Acompañar</a>
-      <a href="#/muro">${icon("chat")} Muro y chat</a>
-      <div class="side-extra"><a href="#" data-action="vaOpen">${icon("eye")} Ver la app como…</a><a href="#/">${icon("out")} Salir de Gestión</a></div>
-    </nav>
+    ${navHTML(page, dirty, st)}
     <div class="stack" style="--gap:18px;min-width:0">
-      <div class="note">Tu cuenta es de <b>coordinación</b>: editas la Portada, la página para familias y la Agenda, y moderas el muro y el chat. Cuentas, roles y contenido del curso los maneja un administrador.</div>
+      ${st.isAdmin ? draftBar(dirty) : ""}
       ${body}
     </div>
   </div>`;
 }
-
-function shell(page, body) {
-  const dirty = S.draftIsDirty();
-  const link = (k, href, label, ic, extra = "") =>
-    `<a href="${href}" ${page === k ? 'aria-current="page"' : ""}>${icon(ic)} ${label}${extra}</a>`;
-  return `
-  <div class="admin-shell">
-    <nav class="admin-side" aria-label="Gestión">
-      ${link("resumen", "#/admin", "Resumen", "grid")}
-      ${cloudOn ? link("dirigentes", "#/admin/dirigentes", "Dirigentes", "users") : ""}
-      ${cloudOn ? link("asignar", "#/admin/asignar", "Asignar jóvenes", "check") : ""}
-      ${cloudOn ? link("portada", "#/admin/portada", "Portada", "sparkle") : ""}
-      ${cloudOn ? link("familias", "#/admin/familias", "Familias", "users") : ""}
-      ${link("saludos", "#/admin/saludos", "Saludos WhatsApp", "send")}
-      ${cloudOn ? `<a href="#/acompanar">${icon("check")} Acompañar</a>` : ""}
-      ${link("itinerarios", "#/admin/itinerarios", "Cursos", "route")}
-      ${link("materiales", "#/admin/materiales", "Materiales", "book")}
-      ${link("oracion", "#/admin/oracion", "Oración", "flame")}
-      ${link("comunidad", "#/admin/comunidad", "Comunidad", "grid")}
-      ${link("publicar", "#/admin/publicar", "Publicar", "send", dirty ? '<span class="count">!</span>' : "")}
-      ${cloudOn ? "" : link("ajustes", "#/admin/ajustes", "Ajustes", "gear")}
+function navHTML(page, dirty, st) {
+  const link = ([k, href, label, ic, , ext]) => `<a href="${href}" ${k && page === k ? 'aria-current="page"' : ""}>${icon(ic)} ${label}${ext ? ' <span class="nav-ext" aria-label="abre su pantalla">↗</span>' : ""}</a>`;
+  const groups = navGroups(), cur = groups.flatMap(([, xs]) => xs).find((x) => x[0] && x[0] === page);
+  const mobile = typeof matchMedia === "function" && matchMedia("(max-width: 860px)").matches;
+  return `<nav class="admin-side" aria-label="Gestión"><details class="adm-menu" ${mobile ? "" : "open"}>
+      <summary>${icon("grid")} Menú de Gestión${cur ? ` · <span class="muted">${esc(cur[2])}</span>` : page === "publicar" ? ' · <span class="muted">Publicar</span>' : ""}</summary><div class="adm-links">
+      ${groups.map(([t, xs]) => `${t ? `<span class="side-grp">${t}</span>` : ""}${xs.map(link).join("")}`).join("")}
+      ${st.isAdmin ? `<span class="side-grp">Publicar</span><a href="#/admin/publicar" ${page === "publicar" ? 'aria-current="page"' : ""}>${icon("send")} Publicar cambios${dirty ? '<span class="count">!</span>' : ""}</a>` : ""}
+      ${cloudOn ? "" : `<a href="#/admin/ajustes" ${page === "ajustes" ? 'aria-current="page"' : ""}>${icon("gear")} Ajustes</a>`}
       <div class="side-extra">
-        <a href="#" data-action="vaOpen">${icon("eye")} Ver la app como…</a>
-        <a href="#" data-action="aPreview">${icon("eye")} Vista previa del borrador</a>
+        ${cloudOn && st.isStaff ? `<a href="#" data-action="vaOpen">${icon("eye")} Ver la app como…</a>` : ""}
+        ${st.isAdmin ? `<a href="#" data-action="aPreview">${icon("eye")} Vista previa del borrador</a>` : ""}
         <a href="#" data-action="aLogout">${icon("out")} Salir de Gestión</a>
-      </div>
-    </nav>
-    <div class="stack" style="--gap:18px;min-width:0">
-      ${draftBar(dirty)}
-      ${body}
-    </div>
-  </div>`;
+      </div></div></details>
+    </nav>`;
 }
 
 function draftBar(dirty) {

@@ -575,13 +575,23 @@ dialog.sheet[open] { animation: pop .25s cubic-bezier(.2,.8,.2,1); display: flex
    ========================================================= */
 body.is-admin .bottom-nav { display: none; }
 body.is-admin { --bottom-h: 0px; }
-.admin-shell { display: grid; grid-template-columns: 230px minmax(0, 1fr); gap: 24px; align-items: start; }
+.admin-shell { display: grid; grid-template-columns: 250px minmax(0, 1fr); gap: 24px; align-items: start; }
 @media (max-width: 860px) { .admin-shell { grid-template-columns: 1fr; } }
 .admin-side { position: sticky; top: calc(var(--header-h) + 16px); display: grid; gap: 4px; }
+.adm-menu { display: grid; gap: 4px; }
+.adm-menu > summary { display: none; }
+.adm-menu[open] > .adm-links, .adm-links { display: grid; gap: 2px; }
+.side-grp { display: block; margin: 12px 12px 2px; font-size: .7rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: var(--ink-3, #6b7591); }
+.nav-ext { margin-left: auto; font-size: .75rem; opacity: .5; flex: none; }
+.admin-side .adm-links a { white-space: normal; line-height: 1.25; min-width: 0; }
 @media (max-width: 860px) {
-  .admin-side { position: static; display: flex; align-items: center; overflow-x: auto; gap: 6px; padding-bottom: 4px; scrollbar-width: none; }
-  .admin-side a { flex-shrink: 0; }
-  .admin-shell .admin-side .side-extra { display: contents; }
+  .admin-side { position: static; display: block; }
+  .adm-menu { border: 2px solid var(--line); border-radius: 16px; background: var(--surface, #fff); padding: 4px; }
+  .adm-menu > summary { display: flex; align-items: center; gap: 8px; padding: 10px 12px; font-weight: 800; cursor: pointer; list-style: none; }
+  .adm-menu > summary::-webkit-details-marker { display: none; }
+  .adm-menu > summary::after { content: "▾"; margin-left: auto; transition: transform .2s; }
+  .adm-menu[open] > summary::after { transform: rotate(180deg); }
+  .adm-menu .adm-links { padding: 0 4px 8px; }
 }
 .admin-side a {
   display: flex; align-items: center; gap: 10px; padding: 10px 12px; border-radius: 12px;
@@ -2865,3 +2875,14 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .ev-bar i { display: block; height: 100%; background: linear-gradient(90deg, #ffba03, #ef591c); border-radius: inherit; }
 .ev-res small { grid-column: 1 / -1; opacity: .65; font-size: .75rem; }
 .ev-coms { margin: 4px 0 0; padding-left: 1.1rem; display: grid; gap: 6px; font-size: .9rem; }
+
+/* Gestión → Hoy */
+.gh-list { display: grid; gap: 10px; }
+.gh-h { margin-top: 10px !important; }
+.gh-h.urgente { color: #c0461a; }
+.gh-i { display: flex; gap: 14px; align-items: center; flex-wrap: wrap; padding: 14px 16px; border-left: 6px solid #8ad2fa; }
+.gh-i.urgente { border-left-color: #ef591c; }
+.gh-i.revisar { border-left-color: #ffba03; }
+.gh-ico { font-size: 1.6rem; line-height: 1; }
+.gh-txt { flex: 1 1 200px; display: grid; gap: 2px; }
+.gh-ok { text-align: center; padding: 26px; }
