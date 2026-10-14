@@ -938,7 +938,7 @@ function viewMaterials() {
   };
   const guides = (m.cards || []).filter((c) => c.type !== "action"), prints = (m.cards || []).filter((c) => c.type === "action");
   const FILES = [
-    ["revistas", "Revistas", "#1351a4", "Nuestra Revista, archivada año tras año.", [archivoHTML()], null],
+    ["revistas", "Revistas", "#1351a4", "Nuestra Revista de este año y las de años anteriores.", [row("#/encuentros", "book", "Nuestra Revista", "Los encuentros del grupo, semana a semana"), archivoHTML()], null],
     ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
       row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
