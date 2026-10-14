@@ -4,6 +4,7 @@
 // No usa internet ni guarda nada en la nube: los nombres quedan solo en este teléfono.
 import { esc, icon } from "./util.js";
 import { artSvg as frenteSvg } from "./frente.js";
+import { artSvg as triviaSvg } from "./trivia.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave }
 export function setup(c) { ctx = c; registerActions(); }
@@ -91,6 +92,10 @@ export function view() {
       <span class="jg-card-art" aria-hidden="true">${frenteSvg()}</span>
       <span class="jg-card-txt"><small>De a 2 o en equipos · mímicas</small><b>¡En la frente!</b>
         <span>Celular en la frente, sin mirar. Tus amigos actúan la palabra y tú adivinas.</span></span>${icon("right")}</a>
+    <a class="jg-card is-tv" href="#/juegos/trivia">
+      <span class="jg-card-art" aria-hidden="true">${triviaSvg()}</span>
+      <span class="jg-card-txt"><small>Para jugar solo o entre todos</small><b>Trivia Ágape</b>
+        <span>¿Cuánto sabes de nuestra comunidad, el Camino, la app y la fe?</span></span>${icon("right")}</a>
     <p class="muted small jg-soon">Pronto vendrán más juegos.</p>`;
 }
 

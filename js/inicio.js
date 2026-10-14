@@ -52,7 +52,7 @@ const ITEMS = [
   { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta plaza", ok: () => true, hub: false }, // en La Plaza Ágape
-  { b: "red", e: "🎲", t: "Juegos", d: "El Impostor, ¡En la frente! y más juegos para jugar en grupo.", href: "#/juegos", kw: "juegos jugar impostor mimica mimicas frente adivinar charadas dinamica plaza", ok: () => true, hub: false }, // en La Plaza Ágape
+  { b: "red", e: "🎲", t: "Juegos", d: "El Impostor, ¡En la frente!, Trivia Ágape y más.", href: "#/juegos", kw: "juegos jugar trivia preguntas impostor mimica mimicas frente adivinar charadas dinamica plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true, hub: false }, // franja propia en Comunidad
   { b: "red", e: "👨‍👩‍👧‍👦", t: "Nuestras familias", d: "Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.", href: "#/nuestras-familias", kw: "grupos familias comunidades equipos nombre", ok: (w) => w.cuenta && cloud.enabled,
@@ -193,7 +193,7 @@ function plazaHTML() {
       ${door("#/momentos", "is-mom", "Lo que vivimos", "Momentos", "Las fotos del grupo, para reaccionar y comentar.", icon("sparkle"), `<span class="plaza-pics" id="plazaPics" aria-hidden="true"></span>`)}
       ${door("#/muro", "is-muro", "Lo que conversamos", "Muro", "Avisos, temas, preguntas y encuestas.", icon("grid"))}
       ${door("#/chat", "is-chat", "Lo que nos decimos", "Chat", "Salas para conversar en grupo.", icon("chat"))}
-      ${door("#/juegos", "is-jg", "Lo que jugamos", "Juegos", "El Impostor, mímicas y más, para jugar en grupo.", icon("dice"))}
+      ${door("#/juegos", "is-jg", "Lo que jugamos", "Juegos", "El Impostor, mímicas, trivia y más.", icon("dice"))}
     </div>
   </section>`;
 }

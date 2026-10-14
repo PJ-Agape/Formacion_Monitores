@@ -21,6 +21,7 @@ import * as desafio from "./desafio.js";
 import * as momentos from "./momentos.js";
 import * as juegos from "./juegos.js";
 import * as frente from "./frente.js";
+import * as trivia from "./trivia.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -95,6 +96,7 @@ const routes = [
   [/^\/juegos$/, () => juegos.view(), "red"],
   [/^\/juegos\/impostor$/, () => juegos.impostor(), "red"],
   [/^\/juegos\/frente$/, () => frente.view(), "red"],
+  [/^\/juegos\/trivia$/, () => trivia.view(), "red"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
@@ -1455,6 +1457,7 @@ desafio.setup({ actions, render: () => render(), cloud });
 momentos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 juegos.setup({ actions, render: () => render(), onAfterRender, onLeave });
 frente.setup({ actions, onAfterRender, onLeave });
+trivia.setup({ actions, onAfterRender, onLeave });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);
 familiasAg.setup({ actions, onAfterRender });
