@@ -164,7 +164,7 @@ p { margin: 0; }
 .rotor-label { font-family: var(--hand); font-size: clamp(2.2rem, 4.2vw, 3.6rem); font-weight: 700; color: var(--ink-2); rotate: -3deg; display: inline-block; }
 .s3 .mega { font-size: clamp(3.6rem, 12vw, 11rem); }
 .rotor { display: inline-grid; vertical-align: bottom; height: 1.14em; overflow: hidden; color: var(--coral); padding-right: .05em; margin-bottom: -.14em; }
-.rotor span { grid-area: 1 / 1; transform: translateY(110%); transition: transform .7s var(--ease); }
+.rotor span { white-space: nowrap; grid-area: 1 / 1; transform: translateY(110%); transition: transform .7s var(--ease); }
 .rotor span.on { transform: none; }
 .rotor span.out { transform: translateY(-110%); }
 .note-card { display: inline-block; margin-top: 26px; background: var(--sky-soft); border: 3px solid var(--ink); border-radius: 20px; padding: 16px 20px; box-shadow: 6px 6px 0 var(--ink); rotate: 1deg; color: var(--ink); max-width: 46ch; }
@@ -768,7 +768,17 @@ canvas.confetti { position: absolute; inset: 0; width: 100%; height: 100%; point
     };
     el.textContent = pre + "0"; requestAnimationFrame(tick);
   }
+  // Las frases del rotor van en una sola línea: si la más larga no cabe, se achica la letra para que se lea completa.
+  function fitRotor() {
+    const r = document.getElementById("rotor"); if (!r) return;
+    r.style.fontSize = "";
+    const avail = (r.closest(".mega") || r.parentElement).clientWidth; if (!avail) return;
+    const w = Math.max(...[...r.children].map((x) => x.scrollWidth));
+    if (w > avail) r.style.fontSize = (avail / w * 0.97).toFixed(3) + "em";
+  }
+  addEventListener("resize", fitRotor);
   function startRotor() {
+    fitRotor();
     const items = [...document.querySelectorAll("#rotor span")];
     let k = items.findIndex((x) => x.classList.contains("on"));
     rotTimer = setInterval(() => {
