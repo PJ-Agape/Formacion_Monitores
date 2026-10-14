@@ -964,19 +964,18 @@ function viewMaterials() {
       ...prints.map(guide),
     ]],
   ].filter((f) => f[4].length);
-  const nav = [...FILES.map(([k, t]) => [k, t]), ["biblioteca", "Biblioteca"]];
   onAfterRender(() => loadArchivo().then((ch) => { const b = $("#fiArchivo"); if (ch && b) b.outerHTML = archivoHTML(); }));
   return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(m.title)}</h1><p>${esc(m.desc)}</p></header>
-    <nav class="cap-nav" aria-label="Ficheros">${nav.map(([k, t]) => `<a href="#" data-action="fiGo" data-k="${k}">${esc(t)}</a>`).join("")}</nav>
+    <p class="fi-hint">Toca un fichero para abrirlo.</p>
     <div class="fi-grid">${FILES.map(([k, t, col, d, items, count], i) => `
-      <section class="fichero" id="fi-${k}" style="--fi:${col}">
-        <span class="fi-tab">Fichero ${String(i + 1).padStart(2, "0")}</span>
-        <header class="fi-head"><h2>${esc(t)}</h2>${count === null ? "" : `<span class="fi-count">${items.length}</span>`}</header>
+      <details class="fichero" id="fi-${k}" style="--fi:${col}" ${fiOpen.has(k) ? "open" : ""} data-fi="${k}">
+        <summary class="fi-sum"><span class="fi-tab">Fichero ${String(i + 1).padStart(2, "0")}</span>
+          <span class="fi-head"><h2>${esc(t)}</h2>${count === null ? "" : `<span class="fi-count">${items.length}</span>`}<span class="fi-chev" aria-hidden="true">${icon("down")}</span></span></summary>
         <p class="fi-desc">${esc(d)}</p>
         <div class="fi-list">${items.join("")}</div>
-      </section>`).join("")}
-    </div>
-    ${libraryHTML(lib, FILES.length + 1)}`;
+      </details>`).join("")}
+      ${libraryHTML(lib, FILES.length + 1)}
+    </div>`;
 }
 // Revistas por año: las ediciones del Camino Ágape (en la app) y lo que el equipo archiva con enlace.
 let archivo = null;
@@ -1039,6 +1038,13 @@ document.addEventListener("submit", async (e) => {
   try { await cloud.saveArchivo({ items }); archivo = { items }; document.getElementById("arcDlg")?.close(); render(); toast("Revista archivada"); }
   catch { toast("No se pudo guardar. Revisa tu conexión.", ""); }
 });
+// Ficheros desplegables: se recuerda cuáles quedaron abiertos (en esta pestaña), así al volver siguen igual.
+const fiOpen = new Set((() => { try { return JSON.parse(sessionStorage.getItem("agape_fi_open") || "[]"); } catch { return []; } })());
+document.addEventListener("toggle", (e) => {
+  const d = e.target; if (!d.matches || !d.matches("details.fichero[data-fi]")) return;
+  d.open ? fiOpen.add(d.dataset.fi) : fiOpen.delete(d.dataset.fi);
+  try { sessionStorage.setItem("agape_fi_open", JSON.stringify([...fiOpen])); } catch {}
+}, true);
 actions.fiGo = (el) => document.getElementById("fi-" + el.dataset.k)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" });
 
 // ---------------------------------------------------------------------------
@@ -1115,9 +1121,9 @@ function libraryHTML(lib, num = 6) {
   if (!lib.total) return "";
   const host = (u) => { try { return new URL(u).hostname.replace(/^www\./, ""); } catch { return ""; } };
   return `
-  <section id="fi-biblioteca" class="fichero fi-lib" style="--fi:#0b2566">
-    <span class="fi-tab">Fichero ${String(num).padStart(2, "0")}</span>
-    <header class="fi-head"><h2>Biblioteca digital</h2><span class="fi-count">${lib.total}</span></header>
+  <details id="fi-biblioteca" class="fichero fi-lib" style="--fi:#0b2566" ${fiOpen.has("biblioteca") ? "open" : ""} data-fi="biblioteca">
+    <summary class="fi-sum"><span class="fi-tab">Fichero ${String(num).padStart(2, "0")}</span>
+      <span class="fi-head"><h2>Biblioteca digital</h2><span class="fi-count">${lib.total}</span><span class="fi-chev" aria-hidden="true">${icon("down")}</span></span></summary>
     <p class="fi-desc">Los documentos que citan los cursos, cada uno con el enlace a su fuente oficial.</p>
     <label class="search" style="display:block;margin:12px 0 4px">
       ${icon("search")}<span class="sr-only">Buscar en la biblioteca</span>
@@ -1130,7 +1136,7 @@ function libraryHTML(lib, num = 6) {
           <a href="${esc(it.url)}" target="_blank" rel="noopener"><b>${esc(it.title)}</b><span>${esc(host(it.url))} ↗</span></a></li>`).join("")}</ul>
       </div>`).join("")}</div>
     <p class="xs muted lib-empty" id="libEmpty" hidden>Nada coincide con la búsqueda.</p>
-  </section>`;
+  </details>`;
 }
 actions.libOpen = (el) => {
   S.setActiveCourse(el.dataset.course);
