@@ -59,6 +59,26 @@ function all() {
   const own = expand((events || []).filter((e) => e.date), from, to);
   return [...own, ...(showCamino ? camino : [])].sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")));
 }
+// Las fechas seguidas de una misma serie (cada día, de lunes a viernes…) se juntan en una sola tarjeta
+// «14 – 18 oct». Una serie semanal o mensual sigue mostrándose fecha por fecha.
+function groupRuns(list) {
+  const out = [], open = {};
+  for (const e of list) {
+    const g = e.baseId && open[e.baseId];
+    if (g && (parse(e.date) - parse(g.last)) / 86400000 <= 3) { g.last = e.date; g.n++; continue; }
+    const ng = { ...e, first: e.date, last: e.date, n: 1 };
+    if (e.baseId) open[e.baseId] = ng;
+    out.push(ng);
+  }
+  return out;
+}
+const MES3 = (d) => MESES[d.getMonth()].slice(0, 3);
+function rangeText(g) {
+  const a = parse(g.first), b = parse(g.last);
+  if (g.n < 2) return "";
+  if (!g.until) return `Desde el ${a.getDate()} ${MES3(a)}`;
+  return a.getMonth() === b.getMonth() ? `Del ${a.getDate()} al ${b.getDate()} ${MES3(b)}` : `Del ${a.getDate()} ${MES3(a)} al ${b.getDate()} ${MES3(b)}`;
+}
 const byDay = () => all().reduce((m, e) => ((m[e.date] = m[e.date] || []).push(e), m), {});
 
 // ---------------------------------------------------------------------------
@@ -130,16 +150,18 @@ function paintList() {
   const box = $("#agList"); if (!box) return;
   let list, title;
   if (selDay) { list = all().filter((e) => e.date === selDay); title = longDate(selDay); }
-  else { const t = todayIso(); list = all().filter((e) => e.date >= t).slice(0, 8); title = "Próximas fechas"; }
+  else { const t = todayIso(); list = groupRuns(all().filter((e) => e.date >= t)).slice(0, 8); title = "Próximas fechas"; }
   $("#agListTitle").innerHTML = `${esc(title)}${selDay ? ` <button class="btn btn-sm btn-ghost" data-action="agDay" data-day="">Ver próximas</button>` : ""}`;
   if (!list.length) { box.innerHTML = `<div class="ag-empty">${illus("descanso")}<p class="muted small">${selDay ? "Nada agendado este día." : "No hay fechas próximas agendadas."}</p></div>`; return; }
   const admin = ctx.cloud.state().isStaff;
   box.innerHTML = list.map((e) => {
-    const t = TYPES[e.type] || TYPES.otro, d = parse(e.date), open = openId === e.id;
+    const t = TYPES[e.type] || TYPES.otro, d = parse(e.date), open = openId === e.id, run = (e.n || 1) > 1, d2 = run ? parse(e.last) : d;
     return `<article class="ag-ev${open ? " open" : ""}" style="--c:${t.color}">
       <button class="ag-ev-head" data-action="agOpen" data-id="${esc(e.id)}" aria-expanded="${open}">
-        <span class="ag-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>
-        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}${e.familias ? " · 🏠" : ""}${e.count ? " · ⏳" : ""}${autz.hasAuth(e) ? " · ✍️ Autorización" : ""}</span><strong>${esc(e.title)}</strong>
+        ${run ? `<span class="ag-date ag-range"><b>${d.getDate()}</b><i aria-hidden="true">–</i><b>${e.until ? d2.getDate() : "…"}</b><small>${MES3(d)}${e.until && d2.getMonth() !== d.getMonth() ? `–${MES3(d2)}` : ""}</small></span>`
+          : `<span class="ag-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>`}
+        <span class="ag-ev-main"><span class="ag-type">${t.label}${e.camino ? " · Camino" : ""}${e.baseId && !run ? " · ↻" : ""}${e.feat ? ` · <span class="ag-feat">${icon("sparkle")} En Inicio</span>` : ""}${e.familias ? " · 🏠" : ""}${e.count ? " · ⏳" : ""}${autz.hasAuth(e) ? " · ✍️ Autorización" : ""}</span><strong>${esc(e.title)}</strong>
+          ${run ? `<span class="ag-run">${esc(rangeText(e))} · ${esc(repeatText(e).split(",")[0].toLowerCase())}</span>` : ""}
           <span class="muted small">${[e.start ? `${esc(e.start)}${e.end ? `–${esc(e.end)}` : ""}` : "", esc(e.place || e.audience || "")].filter(Boolean).join(" · ")}</span></span>
       </button>
       ${open ? `<div class="ag-ev-body">
@@ -246,11 +268,12 @@ export async function homeNext() {
   await loadCamino();
   const own = await ctx.cloud.listAgenda();
   const t = todayIso();
-  const list = [...expand(own.filter((e) => e.date), t, shiftIso(t, 120)), ...camino].filter((e) => e.date >= t).sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || ""))).slice(0, 3);
+  const list = groupRuns([...expand(own.filter((e) => e.date), t, shiftIso(t, 120)), ...camino].filter((e) => e.date >= t).sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")))).slice(0, 3);
   if (!list.length || !document.getElementById("agendaSlot")) return;
   document.getElementById("agendaSlot").innerHTML = `<a class="card link ag-home" href="#/agenda">
     <span class="eyebrow">${icon("grid")} Agenda Ágape</span>
-    <div class="ag-home-list">${list.map((e) => { const d = parse(e.date); return `<span class="ag-home-ev" style="--c:${(TYPES[e.type] || TYPES.otro).color}"><b>${d.getDate()} ${MESES[d.getMonth()].slice(0, 3)}</b>${esc(e.title.replace(/^Camino Ágape · /, ""))}${e.start ? ` · ${esc(e.start)}` : ""}</span>`; }).join("")}</div>
+    <div class="ag-home-list">${list.map((e) => { const d = parse(e.date); const d2 = parse(e.last || e.date), when = (e.n || 1) > 1 ? (e.until ? `${d.getDate()}${d2.getMonth() !== d.getMonth() ? " " + MES3(d) : ""}–${d2.getDate()} ${MES3(d2)}` : `desde ${d.getDate()} ${MES3(d)}`) : `${d.getDate()} ${MES3(d)}`;
+      return `<span class="ag-home-ev" style="--c:${(TYPES[e.type] || TYPES.otro).color}"><b>${when}</b>${esc(e.title.replace(/^Camino Ágape · /, ""))}${e.start ? ` · ${esc(e.start)}` : ""}</span>`; }).join("")}</div>
     <span class="go">Ver la agenda completa ${icon("arrowR")}</span></a>`;
 }
 
