@@ -301,7 +301,6 @@ function viewHome() {
   const st = S.courseState(course);
   const p = S.getProfile();
   const first = (p.name || "").split(" ")[0];
-  const nx = nextLink(course, st);
 
   const courseSlide = `<article class="car-slide car-go" data-theme-c="blue" aria-roledescription="diapositiva" data-go="${resumeLink(course, st)}" title="Abrir el curso donde quedaste">
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
@@ -310,7 +309,7 @@ function viewHome() {
         <h2 class="car-title">${heroTitle(course.title)}</h2>
         <p class="lead">${esc(course.description)}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
         <div class="actions">
-          <a class="btn btn-gold" href="${nx.href}" ${nx.quiz != null ? `data-action="goQuiz" data-phase="${nx.quiz}"` : ""}>${esc(nx.label)} ${icon("arrowR")}</a>
+          <a class="btn btn-gold" href="${resumeLink(course, st)}">Ir a la formación ${icon("arrowR")}</a>
         </div>
         <div class="hero-progress">
           <div class="bar"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></div>
