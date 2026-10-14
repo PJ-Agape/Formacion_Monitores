@@ -195,14 +195,13 @@ function plazaHTML() {
   </section>`;
 }
 export function viewRed() {
-  const w = who(), b = BLOCKS.red;
-  ctx.onAfterRender(() => { ctx.wall.homeHighlight(); }); // la agenda ya está en Inicio
+  const b = BLOCKS.red;
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   ${plazaHTML()}
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
-  ${w.cuenta ? `<div id="wallSlot"></div>` : ""}`;
+`;
 }
 
 // ---------------------------------------------------------------------------
