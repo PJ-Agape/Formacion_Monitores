@@ -138,7 +138,13 @@ function allProgress() {
 }
 export function progress(courseId) {
   const p = allProgress()[courseId] || {};
-  return { phases: p.phases || {}, read: p.read || {}, scores: p.scores || {}, completedDate: p.completedDate || "", certCode: p.certCode || "", pos: p.pos || {} };
+  return { phases: p.phases || {}, read: p.read || {}, scores: p.scores || {}, completedDate: p.completedDate || "", certCode: p.certCode || "", pos: p.pos || {}, best: p.best || {} };
+}
+// Mejor resultado de «Vivir la unidad» (viaja con el avance, así las estrellas se ven en todos los dispositivos)
+export const getBest = (courseId, key) => progress(courseId).best[key] || null;
+export function saveBest(courseId, key, r) {
+  const p = progress(courseId);
+  if (!p.best[key] || (r.xp || 0) >= (p.best[key].xp || 0)) { p.best[key] = { ...r, at: new Date().toISOString() }; saveProgress(courseId, p); }
 }
 // Dónde quedó cada persona dentro de una unidad (lámina, puntos y actividades hechas).
 // Viaja con el avance a la nube, así se retoma también desde otro dispositivo.

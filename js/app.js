@@ -1388,6 +1388,19 @@ async function boot() {
     if (cloud.enabled) await cloud.init();
     await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
     if (cloud.enabled) cloud.onChange(render); // después de cargar el contenido, para no dibujar sin datos
+    // Al volver a la app (celular en segundo plano, otra pestaña), se trae el avance hecho en otro dispositivo.
+    // Solo se vuelve a dibujar si algo cambió y la persona no está escribiendo ni en medio de una unidad.
+    if (cloud.enabled) {
+      const volver = async () => {
+        if (document.visibilityState !== "visible") return;
+        const changed = await cloud.refreshProgress().catch(() => false);
+        const a = document.activeElement, typing = a && /^(INPUT|TEXTAREA|SELECT)$/.test(a.tagName);
+        if (changed && !typing && !/^#\/(vivir|admin)/.test(location.hash) && !document.querySelector("dialog[open]")) render();
+      };
+      document.addEventListener("visibilitychange", volver);
+      window.addEventListener("focus", volver);
+      window.addEventListener("online", () => cloud.refreshProgress(true).catch(() => {}));
+    }
     if (cloud.enabled) setTimeout(() => cloud.countVisit(), 5000); // una visita por dispositivo y día (sin datos personales)
   } catch (e) {
     viewEl().innerHTML = `<div class="card" style="text-align:center;padding:40px"><h2 class="display">No se pudo cargar el contenido</h2>

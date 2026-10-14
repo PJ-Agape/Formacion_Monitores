@@ -181,6 +181,18 @@ async function pullAndMerge() {
   if (JSON.stringify(mergedProg) !== JSON.stringify(cloudProg)) dirty.progress = true;
   if (JSON.stringify(mergedNotes) !== JSON.stringify(cloudNotes)) dirty.notes = true;
   if (dirty.progress || dirty.notes) queuePush();
+  lastPull = Date.now();
+}
+// Al volver a la app (otra pestaña, el celular que estaba en segundo plano) se trae de nuevo el avance:
+// así lo hecho en el computador aparece en el celular sin cerrar sesión. Devuelve true si algo cambió.
+let lastPull = 0;
+export async function refreshProgress(force) {
+  if (!user || !account || account.active === false) return false;
+  if (!force && Date.now() - lastPull < 20000) return false;
+  const before = JSON.stringify([S.allProgressRaw(), S.allNotesRaw()]);
+  await flushPush();
+  try { await pullAndMerge(); } catch { return false; }
+  return JSON.stringify([S.allProgressRaw(), S.allNotesRaw()]) !== before;
 }
 const safeJSON = (s, d) => { try { return JSON.parse(s); } catch { return d; } };
 
@@ -198,6 +210,9 @@ function mergeProgress(a, b) {
     o.pos = { ...(o.pos || {}) };
     for (const [k, v] of Object.entries(p.pos || {})) if (!o.pos[k] || String(v.at || "") > String(o.pos[k].at || "")) o.pos[k] = v;
     for (const k of Object.keys(o.pos)) if (o.read && o.read[k]) delete o.pos[k];
+    // Mejor resultado de «Vivir la unidad» (estrellas y puntos): gana el de más puntos
+    o.best = { ...(o.best || {}) };
+    for (const [k, v] of Object.entries(p.best || {})) if (!o.best[k] || (v.xp || 0) > (o.best[k].xp || 0)) o.best[k] = v;
   }
   return out;
 }
@@ -241,6 +256,8 @@ export async function flushPush() {
   } catch (e) { console.warn("Sincronización:", e); }
 }
 window.addEventListener("pagehide", () => { flushPush(); });
+// En el celular, cerrar o cambiar de app no siempre dispara «pagehide»: se guarda también al ocultarse.
+document.addEventListener("visibilitychange", () => { if (document.visibilityState === "hidden") flushPush(); });
 
 // Resumen por curso que usa el panel de seguimiento (sin leer el detalle).
 function summarize(all) {

@@ -20,12 +20,19 @@ async function extras() {
 // ---------------------------------------------------------------------------
 // Puntaje guardado (mejor resultado por unidad)
 // ---------------------------------------------------------------------------
+// Antes se guardaba solo en este dispositivo (agape_uv_v1); ahora va con el avance a la nube.
 const LS = "agape_uv_v1";
-const loadBest = () => { try { return JSON.parse(localStorage.getItem(LS) || "{}"); } catch { return {}; } };
-export function best(courseId, key) { return loadBest()[`${courseId}|${key}`] || null; }
-function saveBest(courseId, key, r) {
-  try { const all = loadBest(), k = `${courseId}|${key}`; if (!all[k] || r.xp >= all[k].xp) all[k] = { ...r, at: new Date().toISOString() }; localStorage.setItem(LS, JSON.stringify(all)); } catch {}
+let migrated = false;
+function migrate() {
+  if (migrated || !ctx) return; migrated = true;
+  try {
+    const old = JSON.parse(localStorage.getItem(LS) || "{}");
+    for (const [k, r] of Object.entries(old)) { const i = k.indexOf("|"); if (i > 0) ctx.S.saveBest(k.slice(0, i), k.slice(i + 1), r); }
+    localStorage.removeItem(LS);
+  } catch {}
 }
+export function best(courseId, key) { migrate(); return ctx ? ctx.S.getBest(courseId, key) : null; }
+function saveBest(courseId, key, r) { migrate(); ctx.S.saveBest(courseId, key, r); }
 
 // ---------------------------------------------------------------------------
 // Construcción de las láminas
