@@ -61,17 +61,6 @@ DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
 CATEGORIES:Liturgia
 END:VEVENT
 BEGIN:VEVENT
-UID:sHWtm9NlcKRYoGcrmw18@pj-agape
-DTSTAMP:20261014T123106Z
-DTSTART;TZID=America/Santiago:20261014T080000
-DTEND;TZID=America/Santiago:20261014T080000
-RRULE:FREQ=DAILY;UNTIL=20261019T035959Z
-SUMMARY:Oremos por la salud del Papa
-DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
- es/familias/
-CATEGORIES:Otro
-END:VEVENT
-BEGIN:VEVENT
 UID:n4QBNirFcM8F1nJzY9CW@pj-agape
 DTSTAMP:20261010T130207Z
 DTSTART;TZID=America/Santiago:20261022T190000
