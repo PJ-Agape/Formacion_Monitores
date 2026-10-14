@@ -3479,3 +3479,9 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .foot-social a:hover { background: #0b2566; color: #ffba03; transform: translateY(-2px); }
 .foot-social a:focus-visible { outline: 3px solid #ef591c; outline-offset: 3px; }
 @media (prefers-reduced-motion: reduce) { .foot-social a:hover { transform: none; } }
+
+/* Estudio de difusión: GIF animados */
+.dif-gif button { position: relative; background: none; border-style: solid; }
+.dif-gif small { position: absolute; left: 8px; top: 8px; font-size: .68rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; background: #0b2566; color: #ffba03; border-radius: 999px; padding: 1px 7px; }
+.dif-gif button.is-busy { opacity: .55; cursor: progress; }
+.dif-gif button.is-busy::after { content: "Creando…"; position: absolute; inset: 0; display: grid; place-items: center; font-weight: 800; color: #0b2566; }

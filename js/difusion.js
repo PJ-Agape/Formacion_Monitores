@@ -8,6 +8,7 @@ import * as cloud from "./cloud.js";
 import * as S from "./store.js";
 import { esc, icon, toast } from "./util.js";
 import { nextOn } from "./repeat.js";
+import * as G from "./gifs.js";
 
 const $ = (s, r = document) => r.querySelector(s);
 // Los códigos QR siempre llevan al sitio oficial (también desde el sitio de prueba).
@@ -49,11 +50,11 @@ export async function view() {
   return `<header class="page-head"><span class="eyebrow">Difusión</span><h1>Estudio de <em>difusión</em></h1>
     <p>Arma piezas con la identidad de Ágape para tus Estados, historias y grupos. Se hacen en tu teléfono y las descargas o compartes al tiro.</p></header>
     <div class="dif-tabs seg" role="tablist" aria-label="Qué quieres hacer">
-      ${[["piezas", "Historias y posts"], ["marco", "Marco de foto"], ["stickers", "Stickers"], ["fondos", "Fondos de pantalla"]].map(([k, l]) => `<label><input type="radio" name="difTab" value="${k}" ${st.tab === k ? "checked" : ""}><span>${l}</span></label>`).join("")}
+      ${[["piezas", "Historias y posts"], ["marco", "Marco de foto"], ["stickers", "Stickers"], ["gifs", "GIF animados"], ["fondos", "Fondos de pantalla"]].map(([k, l]) => `<label><input type="radio" name="difTab" value="${k}" ${st.tab === k ? "checked" : ""}><span>${l}</span></label>`).join("")}
     </div>
     <div id="difBody" style="margin-top:16px">${body()}</div>`;
 }
-function body() { return st.tab === "marco" ? marcoHTML() : st.tab === "stickers" ? stickersHTML() : st.tab === "fondos" ? fondosHTML() : piezasHTML(); }
+function body() { return st.tab === "marco" ? marcoHTML() : st.tab === "stickers" ? stickersHTML() : st.tab === "gifs" ? gifsHTML() : st.tab === "fondos" ? fondosHTML() : piezasHTML(); }
 
 // --- Historias, posts e invitaciones ---------------------------------------
 const TPLS = [["frase", "Frase de Ágape"], ["evento", "Actividad de la agenda"], ["cuenta", "Cuenta regresiva"], ["invita", "Invitación personal"]];
@@ -140,6 +141,37 @@ function stickersHTML() {
     <div class="dif-stk">${items.filter((x) => x.g === n).map(({ t, i }) => `<button type="button" data-action="difSticker" data-i="${i}" title="${esc(t)}"><canvas data-stk="${i}" width="512" height="512" aria-label="${esc(t)}"></canvas></button>`).join("")}</div>`).join("")}`;
 }
 
+// --- GIF animados -------------------------------------------------------------
+let gifBg = "cream", gifRaf = 0;
+function gifsHTML() {
+  const items = E.STICKERS.map(([k, t], i) => ({ k, t, i, g: stkGroup(k) }));
+  return `<div class="card" style="margin-bottom:14px"><p class="small">Los stickers de Ágape, con movimiento. Toca uno para compartirlo o guardarlo como GIF. En WhatsApp, Instagram o el chat del grupo se mueve solo.</p>
+    <div class="field" style="margin-top:10px"><label>Fondo</label><div class="seg" role="radiogroup" aria-label="Fondo del GIF">${G.BGS.map(([k, l]) => `<label><input type="radio" name="difGifBg" value="${k}" ${gifBg === k ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
+      <span class="xs muted">«Transparente» queda bien en el chat del grupo; en WhatsApp conviene un fondo de color.</span></div>
+    <div class="row-wrap" style="gap:6px;margin-top:8px">${STK_GROUPS.map((g, n) => `<a class="chip" href="#" data-action="difStkGo" data-g="${n}">${g}</a>`).join("")}</div></div>
+    ${STK_GROUPS.map((g, n) => `<h3 class="dif-stk-h" id="stkg${n}">${g} <small class="muted">${items.filter((x) => x.g === n).length}</small></h3>
+    <div class="dif-stk dif-gif">${items.filter((x) => x.g === n).map(({ k, t, i }) => `<button type="button" data-action="difGif" data-i="${i}" title="${esc(t)}"><canvas data-gif="${i}" width="200" height="200" aria-label="${esc(t)} (animado)"></canvas><small>${G.MOTION_LABEL[G.motionOf(k, i)]}</small></button>`).join("")}</div>`).join("")}`;
+}
+const GIF_BG = () => (G.BGS.find((b) => b[0] === gifBg) || G.BGS[0])[2];
+async function animateGifs() {
+  cancelAnimationFrame(gifRaf);
+  await G.prepare();
+  const cvs = [...document.querySelectorAll("[data-gif]")];
+  // Primero se dibujan quietos (poco a poco), luego se animan solo los que están a la vista.
+  for (const [n, c] of cvs.entries()) { if (st.tab !== "gifs") return; G.base(+c.dataset.gif); G.frame(c.getContext("2d"), c.width, +c.dataset.gif, 0, GIF_BG()); if (n % 6 === 5) await new Promise((r) => setTimeout(r)); }
+  const seen = new Set();
+  const io = new IntersectionObserver((es) => es.forEach((e) => (e.isIntersecting ? seen.add(e.target) : seen.delete(e.target))));
+  cvs.forEach((c) => io.observe(c));
+  const reduce = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const t0 = performance.now();
+  const loop = (now) => {
+    if (st.tab !== "gifs" || !document.querySelector("[data-gif]")) { io.disconnect(); return; }
+    if (!reduce) { const p = ((now - t0) / 1440) % 1; for (const c of seen) G.frame(c.getContext("2d"), c.width, +c.dataset.gif, p, GIF_BG()); }
+    gifRaf = requestAnimationFrame(loop);
+  };
+  gifRaf = requestAnimationFrame(loop);
+}
+
 // --- Fondos de pantalla ------------------------------------------------------
 function fondosHTML() {
   const [tw, th] = st.fsize === "pc" ? [256, 144] : [135, 292];
@@ -164,6 +196,7 @@ function fondosHTML() {
 let painting = 0;
 async function paint() {
   const id = ++painting;
+  if (st.tab === "gifs") return animateGifs();
   if (st.tab === "stickers") {
     await E.preload(E.STICKERS.flatMap(([k, , c]) => E.stickerIlls(k, c)));
     for (const [i, [k, t, c]] of E.STICKERS.entries()) {
@@ -209,11 +242,11 @@ function save(blob, name) {
   document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000);
 }
 async function share(blob, name) {
-  const file = new File([blob], name, { type: "image/png" });
+  const file = new File([blob], name, { type: blob.type || "image/png" });
   if (navigator.canShare && navigator.canShare({ files: [file] })) {
     try { await navigator.share({ files: [file] }); return; } catch (e) { if (e && e.name === "AbortError") return; }
   }
-  save(blob, name); toast("Imagen descargada");
+  save(blob, name); toast(blob.type === "image/gif" ? "GIF descargado" : "Imagen descargada");
 }
 
 function registerActions() {
@@ -225,11 +258,18 @@ function registerActions() {
   A.difSave = async () => { const cv = $("#difCanvas"); if (cv) save(await toBlob(cv), fileName()); };
   A.difShare = async () => { const cv = $("#difCanvas"); if (cv) share(await toBlob(cv), fileName()); };
   A.difStkGo = (t, e) => { e && e.preventDefault && e.preventDefault(); document.getElementById("stkg" + t.dataset.g)?.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  A.difGif = async (t) => {
+    if (t.dataset.busy) return; t.dataset.busy = "1"; t.classList.add("is-busy");
+    try { share(await G.makeGif(+t.dataset.i, gifBg), `agape-gif-${+t.dataset.i + 1}.gif`); }
+    catch (e) { console.warn(e); toast("No se pudo crear el GIF", ""); }
+    finally { delete t.dataset.busy; t.classList.remove("is-busy"); }
+  };
   A.difSticker = async (t) => { const cv = t.querySelector("canvas"); share(await toBlob(cv), `agape-sticker-${+t.dataset.i + 1}.png`); };
   // Tabs: el radio necesita su cambio de estado, así que no basta con el clic delegado
   document.addEventListener("change", (e) => {
     const t = e.target;
     if (t.name === "difTab") return A.difTab(t);
+    if (t.name === "difGifBg") { gifBg = t.value; document.querySelectorAll("[data-gif]").forEach((c) => G.frame(c.getContext("2d"), c.width, +c.dataset.gif, 0, GIF_BG())); return; }
     if (t.name === "difFsize") { st.fsize = t.value; $("#difBody").innerHTML = body(); return paint(); }
     if (t.id === "difPhoto" && t.files[0]) return loadPhoto(t.files[0]);
     const k = t.dataset && t.dataset.dif; if (!k) return;
