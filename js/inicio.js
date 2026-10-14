@@ -143,16 +143,35 @@ export function blocksHTML() {
 // ---------------------------------------------------------------------------
 // Páginas de bloque
 // ---------------------------------------------------------------------------
+// El curso, en grande: como las diapositivas de Inicio (ilustración, título y el paso que sigue).
+function courseBanner(course, st) {
+  const pct = st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0;
+  const nx = st.next, ses = nx && nx.type === "session" ? nx.session : null;
+  const ph = nx ? (course.phases[nx.phase] || {}) : {};
+  const main = st.complete ? { href: "#/constancia", label: "Ver mi constancia" }
+    : ses ? { href: `#/vivir/${nx.phase}/${encodeURIComponent(ses.id)}`, label: st.readSessions ? "Seguir donde quedé" : "Comenzar el curso" }
+    : nx ? { href: "#/itinerario", label: `Rendir la evaluación del módulo ${ph.phaseNum || nx.phase + 1}` } : { href: "#/itinerario", label: "Ver el curso" };
+  const now = st.complete ? "¡Completaste el curso! Gracias por tu entrega." : ses ? `Ahora: ${ses.id ? esc(ses.id) + " · " : ""}${esc(ses.title)}` : nx ? `Te falta la evaluación de «${esc(ph.title || "este módulo")}»` : "";
+  return `<section class="hub-cbanner${st.complete ? " is-done" : ""}" aria-labelledby="hubCT">
+    <div class="hub-cb-txt">
+      <span class="eyebrow">Curso de formación de dirigentes</span>
+      <span class="hub-cb-hand">${st.complete ? "¡lo lograste!" : "tu camino de dirigente"}</span>
+      <h2 id="hubCT">${esc(course.title)}</h2>
+      <div class="hub-cb-prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Avance del curso"><i style="width:${pct}%"></i></div>
+      <p class="hub-cb-meta"><b>${st.readSessions} de ${st.totalSessions}</b> unidades · <b>${st.donePhases} de ${course.phases.length}</b> módulos</p>
+      ${now ? `<p class="hub-cb-now">${now}</p>` : ""}
+      <div class="hub-cb-btns"><a class="btn btn-gold" href="${main.href}">${esc(main.label)} ${icon("arrowR")}</a><a class="btn btn-ghost" href="#/itinerario">Ver el itinerario</a></div>
+    </div>
+    <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus(st.complete ? "envio" : "camino", "hub-cb-il")}</div>
+  </section>`;
+}
 export function viewFormacion() {
   const w = who(), course = S.activeCourse(), st = S.courseState(course);
   const b = BLOCKS.formacion;
   if (w.camino) ctx.onAfterRender(() => ctx.camJ.homeCard());
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 1 · ${esc(b.hand)}</span><h1>Formación</h1><p>${esc(descFor("formacion", w))}</p></header>
   ${w.camino ? `<div id="mcSlot"></div>` : ""}
-  ${w.curso ? `<a class="card link hub-course" href="#/itinerario">
-      <span class="eyebrow">Curso de formación de dirigentes</span><strong>${esc(course.title)}</strong>
-      <span class="hub-prog"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></span>
-      <span class="muted small"><b>${st.readSessions}/${st.totalSessions}</b> unidades · ${st.complete ? "¡Curso completado! 🎉" : "sigue donde quedaste"}</span></a>` : ""}
+  ${w.curso ? courseBanner(course, st) : ""}
   <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
   ${w.guest ? `<p class="muted small" style="margin-top:14px">Para ver el curso y los encuentros, <a href="#/perfil">ingresa con tu cuenta</a>.</p>` : ""}`;
 }

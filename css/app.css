@@ -3054,3 +3054,27 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .fi-grid > .fi-lib { margin-top: 16px; }
 .fi-grid > .fi-lib[open] { grid-column: 1 / -1; }
 @media (prefers-reduced-motion: reduce) { .fi-chev { transition: none; } .fichero:not([open]):hover { transform: none; } }
+
+/* Formación · el curso en grande, como las diapositivas de Inicio */
+.hub-cbanner { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 10px 24px; align-items: center; margin-top: 16px; padding: 24px 26px; border-radius: var(--r-xl); background: #fde0d2; color: #0b2566; border: 3px solid #0b2566; box-shadow: 5px 5px 0 #0b2566; }
+.hub-cbanner.is-done { background: #fff1c7; }
+.hub-cb-txt { display: grid; gap: 6px; justify-items: start; position: relative; z-index: 1; min-width: 0; }
+.hub-cb-txt .eyebrow { color: #0b2566; }
+.hub-cb-hand { font-family: var(--font-hand); font-weight: 700; font-size: 1.5rem; color: #c9460f; line-height: 1; }
+.hub-cbanner h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 82%; letter-spacing: -0.03em; font-size: clamp(2rem, 5.4vw, 3rem); line-height: .95; margin: 0 0 6px; }
+.hub-cb-prog { width: 100%; max-width: 520px; height: 16px; border-radius: 99px; border: 2.5px solid #0b2566; background: #fff; overflow: hidden; }
+.hub-cb-prog i { display: block; height: 100%; background: #ffba03; border-right: 2.5px solid #0b2566; }
+.hub-cb-prog i[style="width:100%"] { border-right: 0; }
+.hub-cb-meta { margin: 2px 0 0; font-size: .95rem; }
+.hub-cb-now { margin: 0; font-size: 1rem; font-weight: 700; color: #24406e; }
+.hub-cb-btns { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 8px; }
+.hub-cb-art { position: relative; align-self: stretch; display: grid; place-items: center; min-height: 170px; }
+.hub-cb-sun { position: absolute; width: 260px; height: 260px; right: -70px; bottom: -110px; border-radius: 50%; background: #8ad2fa; }
+.hub-cb-il { position: relative; width: 100%; max-width: 260px; height: auto; color: #0b2566; --il-bg: #fff6e5; }
+@media (max-width: 700px) {
+  .hub-cbanner { grid-template-columns: 1fr; padding: 20px 18px 0; }
+  .hub-cb-art { min-height: 140px; order: -1; margin: -6px 0 0; }
+  .hub-cb-il { max-width: 200px; }
+  .hub-cb-sun { width: 200px; height: 200px; right: -50px; bottom: -60px; }
+  .hub-cb-btns { width: 100%; margin-bottom: 20px; } .hub-cb-btns .btn { flex: 1 1 auto; justify-content: center; }
+}
