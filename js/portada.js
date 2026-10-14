@@ -115,8 +115,8 @@ const btn = (b, main) => {
   return `<a class="btn ${main ? "btn-gold" : "btn-glass"}" href="${esc(b.href)}"${ext ? ' target="_blank" rel="noopener"' : ""}>${esc(b.label)} ${main ? icon("arrowR") : ""}</a>`;
 };
 // Enlace con vista previa: un video de YouTube muestra su imagen; cualquier otra página, su ícono y nombre.
-const okUrl = (u) => /^https?:\/\/[^\s]+$/i.test(String(u || "").trim());
-function ytId(u) {
+export const okUrl = (u) => /^https?:\/\/[^\s]+$/i.test(String(u || "").trim());
+export function ytId(u) {
   try {
     const x = new URL(u), h = x.hostname.replace(/^www\.|^m\./, "");
     if (h === "youtu.be") return x.pathname.slice(1).split("/")[0];

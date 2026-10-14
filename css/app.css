@@ -3415,3 +3415,33 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .p-ph-frame { aspect-ratio: 2.5 / 1; border-radius: 12px; border: 2px solid #0b2566; background-size: cover; display: flex; align-items: center; padding: 10px; color: #fff; overflow: hidden; }
 .p-ph-mock.is-mob .p-ph-frame { aspect-ratio: 3 / 4; align-items: flex-end; }
 .p-ph-frame b { font-family: var(--font-display); font-size: .95rem; line-height: 1; text-shadow: 0 1px 6px rgba(0,0,0,.4); }
+
+/* ---------- Podcast Ágape ---------- */
+.hr-pod { display: inline-flex; align-items: center; gap: 6px; margin-left: auto; text-decoration: none; font-weight: 800; font-size: .85rem; color: #fff; background: #0b2566; border-radius: 999px; padding: 5px 12px; }
+.hr-pod small { background: #ffba03; color: #0b2566; border-radius: 999px; padding: 0 7px; font-size: .7rem; text-transform: uppercase; letter-spacing: .06em; }
+.hr-pod:hover { background: #ef591c; }
+@media (max-width: 560px) { .hr-pod { margin-left: 0; } }
+.pod-hero { display: grid; grid-template-columns: auto minmax(0, 1fr); gap: 18px; align-items: center; background: #0b2566; color: #fff; border: 3px solid #0b2566; border-radius: 24px; padding: clamp(18px, 4vw, 32px); box-shadow: 5px 5px 0 #ffba03; }
+.pod-mic { width: 84px; height: 84px; border-radius: 50%; background: #ffba03; color: #0b2566; display: grid; place-items: center; border: 3px solid #fff; }
+.pod-mic svg { width: 44px; height: 44px; }
+.pod-kicker { font-size: .74rem; font-weight: 800; letter-spacing: .14em; text-transform: uppercase; color: #8ad2fa; }
+.pod-hero h1 { font-family: var(--font-display); font-size: clamp(2rem, 6vw, 3rem); line-height: 1; margin: 4px 0 8px; }
+.pod-hero p { margin: 0 0 12px; opacity: .92; max-width: 56ch; }
+.pod-admin { margin: 14px 0 0; gap: 8px; }
+.pod-soon { margin-top: 18px; text-align: center; background: #fff; border: 2.5px dashed #1351a4; border-radius: 20px; padding: 24px 18px; color: #0b2566; }
+.pod-soon h2 { font-family: var(--font-display); font-size: 1.3rem; margin: 0 0 6px; }
+.pod-soon p { margin: 0 auto 14px; max-width: 46ch; }
+.pod-list { display: grid; gap: 14px; margin-top: 18px; }
+.pod-ep { display: grid; grid-template-columns: minmax(0, 300px) minmax(0, 1fr); gap: 16px; background: #fff; border: 2.5px solid #0b2566; border-radius: 20px; padding: 14px; box-shadow: 3px 3px 0 #0b2566; color: #0b2566; }
+.pod-ep.is-new { box-shadow: 4px 4px 0 #ef591c; }
+.pod-thumb { position: relative; display: grid; place-items: center; aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 2px solid #0b2566; background: #1351a4; padding: 0; cursor: pointer; color: #fff; text-decoration: none; }
+.pod-thumb img { width: 100%; height: 100%; object-fit: cover; display: block; }
+.pod-thumb.is-link { gap: 4px; align-content: center; }
+.pod-thumb.is-link svg { width: 40px; height: 40px; }
+.pod-frame { aspect-ratio: 16 / 9; border-radius: 14px; overflow: hidden; border: 2px solid #0b2566; background: #000; }
+.pod-frame iframe { width: 100%; height: 100%; border: 0; display: block; }
+.pod-txt { display: grid; gap: 4px; align-content: start; }
+.pod-txt h3 { font-family: var(--font-display); font-size: 1.25rem; margin: 0; line-height: 1.1; }
+.pod-txt p { margin: 4px 0 6px; line-height: 1.45; }
+.pod-badge { justify-self: start; background: #ef591c; color: #fff; border-radius: 999px; padding: 2px 10px; font-size: .72rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; }
+@media (max-width: 640px) { .pod-ep { grid-template-columns: 1fr; } .pod-hero { grid-template-columns: 1fr; text-align: left; } .pod-mic { width: 64px; height: 64px; } .pod-mic svg { width: 34px; height: 34px; } }

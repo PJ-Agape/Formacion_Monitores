@@ -52,6 +52,7 @@ const ITEMS = [
   { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta plaza", ok: () => true, hub: false }, // en La Plaza Ágape
+  { b: "red", e: "🎙️", t: "Podcast Ágape", d: "Episodios de nuestro podcast.", href: "#/podcast", kw: "podcast episodios youtube escuchar audio canal", ok: () => true, hub: false }, // franja de radios en Inicio
   { b: "red", e: "🎲", t: "Juegos", d: "El Impostor, ¡En la frente!, Trivia Ágape y más.", href: "#/juegos", kw: "juegos jugar trivia preguntas impostor mimica mimicas frente adivinar charadas dinamica plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true, hub: false }, // franja propia en Comunidad

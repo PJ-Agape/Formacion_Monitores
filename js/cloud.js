@@ -685,6 +685,20 @@ export async function savePortada(data) {
 }
 
 // ---------------------------------------------------------------------------
+// Podcast Ágape: datos del canal y episodios (content/podcast). Lo lee cualquiera; lo editan los administradores.
+// ---------------------------------------------------------------------------
+export async function getPodcast() {
+  if (!enabled || !db) return null;
+  try {
+    const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", "podcast")), 6000);
+    return snap.exists() ? safeJSON(snap.data().json, {}) : {};
+  } catch { return null; }
+}
+export async function savePodcast(data) {
+  await fb.setDoc(fb.doc(db, "content", "podcast"), { json: JSON.stringify(data), updatedAt: fb.serverTimestamp(), updatedBy: account.email });
+}
+
+// ---------------------------------------------------------------------------
 // Velas de la capilla: intenciones de la comunidad (solo las ven quienes tienen cuenta).
 // ---------------------------------------------------------------------------
 export function watchVelas(cb, onErr) {
