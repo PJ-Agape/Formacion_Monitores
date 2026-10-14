@@ -232,7 +232,7 @@ export function view(opt = {}) {
     <div class="cap-rosbanner-txt">
       <span class="cap-hand">con María, cuenta a cuenta</span>
       <h2 id="capRosT">Reza el <em>Rosario</em></h2>
-      <p>Hoy, ${esc(DAYNAME[now.getDay()])}, rezamos los <strong>${esc(my.name.toLowerCase())}</strong>. La app te acompaña paso a paso: tú solo rezas.</p>
+      <p>Hoy, ${esc(DAYNAME[now.getDay()])}, rezamos los <strong>${esc(my.name.toLowerCase())}</strong>. Oremos por nuestra Iglesia, por el Papa y sus intenciones, por nuestro párroco, nuestra comunidad y por todos los jóvenes.</p>
       <button class="btn cap-rosbanner-btn" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rezar el Rosario ahora</button>
     </div>
   </section>

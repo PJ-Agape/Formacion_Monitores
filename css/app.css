@@ -2924,7 +2924,7 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .cap-rosbanner .cap-hand { color: #ffba03; }
 .cap-rosbanner h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.03em; font-size: clamp(2rem, 6vw, 3rem); line-height: .95; margin: 0; color: #fff; }
 .cap-rosbanner h2 em { font-style: normal; font-family: var(--font-hand); color: #ffba03; font-size: 1.15em; letter-spacing: 0; }
-.cap-rosbanner p { margin: 0; font-size: 1.02rem; max-width: 46ch; color: #e8f2fb; }
+.cap-rosbanner p { margin: 0; font-size: 1.02rem; max-width: 52ch; color: #e8f2fb; }
 .cap-rosbanner p strong { color: #fff; }
 .cap-rosbanner-btn { margin-top: 6px; background: #ffba03; color: #0b2566; border: 2px solid #fff6e5; font-weight: 800; font-size: 1.1rem; padding: 14px 24px; border-radius: 999px; box-shadow: 3px 3px 0 #fff6e5; display: inline-flex; align-items: center; gap: 10px; }
 .cap-rosbanner-btn:hover { background: #ffd04d; transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #fff6e5; }
