@@ -134,10 +134,33 @@ export function linkPreviewHTML(l) {
       <span class="car-link-txt"><b>${esc(l.label || (yt ? "Ver el video" : host))}</b><small>${esc(host)} ↗</small></span>
     </a>`;
 }
+// Foto de fondo: se guarda comprimida dentro de la portada, con su punto de encuadre y cuánto se oscurece.
+const okPhoto = (p) => !!(p && typeof p.src === "string" && /^data:image\/(jpeg|webp|png);base64,[A-Za-z0-9+/=]+$/.test(p.src));
+const clampN = (v, d) => { const n = Number(v); return Number.isFinite(n) ? Math.min(100, Math.max(0, Math.round(n))) : d; };
+const PHOTO_MAX = 1600, PHOTO_BYTES = 150000, PORTADA_MAX = 900000;
+async function compressPhoto(file) {
+  const url = URL.createObjectURL(file);
+  try {
+    const img = await new Promise((ok, fail) => { const i = new Image(); i.onload = () => ok(i); i.onerror = fail; i.src = url; });
+    const k = Math.min(1, PHOTO_MAX / Math.max(img.width, img.height));
+    const cv = document.createElement("canvas"); cv.width = Math.round(img.width * k); cv.height = Math.round(img.height * k);
+    cv.getContext("2d").drawImage(img, 0, 0, cv.width, cv.height);
+    let q = 0.8, d = cv.toDataURL("image/jpeg", q);
+    while (d.length > PHOTO_BYTES && q > 0.35) { q -= 0.08; d = cv.toDataURL("image/jpeg", q); }
+    if (d.length > PHOTO_BYTES) { // todavía pesada: se achica
+      const c2 = document.createElement("canvas"); c2.width = Math.round(cv.width * 0.7); c2.height = Math.round(cv.height * 0.7);
+      c2.getContext("2d").drawImage(cv, 0, 0, c2.width, c2.height); d = c2.toDataURL("image/jpeg", 0.6);
+    }
+    return d;
+  } finally { URL.revokeObjectURL(url); }
+}
+
 export function slideHTML(x) {
   const chips = (x.chips || []).filter(Boolean);
-  return `<article class="car-slide" data-theme-c="${esc(THEMES[x.theme] ? x.theme : "sky")}" aria-roledescription="diapositiva">
-      <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
+  const ph = okPhoto(x.photo);
+  const phStyle = ph ? ` style="--car-photo:url('${x.photo.src}');--car-px:${clampN(x.photo.x, 50)}%;--car-py:${clampN(x.photo.y, 50)}%;--car-dim:${clampN(x.photo.dim, 55) / 100}"` : "";
+  return `<article class="car-slide${ph ? " has-photo" : ""}" data-theme-c="${esc(THEMES[x.theme] ? x.theme : "sky")}" aria-roledescription="diapositiva"${phStyle}>
+      ${ph ? "" : `<i class="hero-blob b1"></i><i class="hero-blob b3"></i>`}
       <div class="car-body">
         ${x.kicker ? `<span class="eyebrow">${esc(x.kicker)}</span>` : ""}
         ${x.hand ? `<span class="car-hand">${esc(x.hand)}</span>` : ""}
@@ -147,7 +170,7 @@ export function slideHTML(x) {
         <div class="actions">${btn(x.b1, true)}${btn(x.b2, false)}</div>
       </div>
       ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">` : ""}
-      ${x.link && okUrl(x.link.url) ? linkPreviewHTML(x.link) : x.illus && SCENE_KEYS.includes(x.illus) ? illus(x.illus, "car-illus") : ""}
+      ${x.link && okUrl(x.link.url) ? linkPreviewHTML(x.link) : !ph && x.illus && SCENE_KEYS.includes(x.illus) ? illus(x.illus, "car-illus") : ""}
     </article>`;
 }
 
@@ -200,7 +223,7 @@ export function adminView() {
 // Editor (diálogo con vista previa)
 let editing = null;
 function editor(x, isNew) {
-  editing = { key: x.key, isNew, course: !!x.course };
+  editing = { key: x.key, isNew, course: !!x.course, photo: okPhoto(x.photo) ? { ...x.photo } : null };
   let dlg = document.getElementById("pDialog");
   if (!dlg) { dlg = document.createElement("dialog"); dlg.id = "pDialog"; dlg.className = "sheet p-sheet"; document.body.appendChild(dlg); }
   const v = (k) => esc(x[k] || "");
@@ -238,6 +261,21 @@ function editor(x, isNew) {
         </div>
         <span class="xs muted">Se muestra en la diapositiva en lugar de la ilustración. Un video de YouTube aparece con su imagen; otras páginas, con su ícono y nombre.</span>
       </fieldset>
+      <fieldset class="p-dates p-photo"><legend>Foto de fondo (opcional)</legend>
+        <div class="row-wrap" style="gap:8px;align-items:center">
+          <label class="btn btn-soft btn-sm">${icon("ul")} <span id="pPhL">${okPhoto(x.photo) ? "Cambiar foto" : "Elegir foto"}</span><input type="file" accept="image/*" id="pPhFile" class="sr-only"></label>
+          <button type="button" class="btn btn-ghost btn-sm" data-action="pPhDel" id="pPhDel" ${okPhoto(x.photo) ? "" : "hidden"}>${icon("x")} Quitar foto</button>
+        </div>
+        <div id="pPhEd" class="p-ph-ed" ${okPhoto(x.photo) ? "" : "hidden"}>
+          <div class="p-ph-mocks" id="pPhMocks"></div>
+          <div class="fc-sl">
+            <label>Encuadre ↔ <input type="range" id="pPhX" min="0" max="100" step="1" value="${clampN(x.photo?.x, 50)}"></label>
+            <label>Encuadre ↕ <input type="range" id="pPhY" min="0" max="100" step="1" value="${clampN(x.photo?.y, 50)}"></label>
+            <label>Oscurecer <input type="range" id="pPhDim" min="20" max="85" step="1" value="${clampN(x.photo?.dim, 55)}"></label>
+          </div>
+          <span class="xs muted">Mueve el encuadre para que lo importante quede a la vista en computador y celular. «Oscurecer» ayuda a que el texto se lea bien. Con foto, la ilustración no se muestra.</span>
+        </div>
+      </fieldset>
       <div class="field"><label>Etiquetas (opcional, separadas por coma)</label><input class="input" name="chips" maxlength="120" value="${esc((x.chips || []).join(", "))}"></div>`}
       <fieldset class="p-dates"><legend>¿Cuándo se muestra?</legend>
         <div class="ag-form-row">
@@ -261,6 +299,7 @@ function readForm(form) {
     b1: { label: g("b1l"), href: g("b1h") }, b2: { label: g("b2l"), href: g("b2h") },
     chips: g("chips").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 5),
     link: okUrl(g("lku")) ? { url: g("lku"), label: g("lkl") } : null,
+    photo: editing.photo ? { src: editing.photo.src, x: clampN($("#pPhX")?.value, 50), y: clampN($("#pPhY")?.value, 50), dim: clampN($("#pPhDim")?.value, 55) } : null,
   };
   return { ...base, from: g("from"), to: g("to"), hidden: f.get("hidden") === "on" };
 }
@@ -269,6 +308,9 @@ function preview() {
   if (!box || !form) return;
   const x = readForm(form);
   box.innerHTML = `<div class="p-prev-in">${slideHTML({ ...x, title: x.title || "Título de la diapositiva", logo: editing.key === "agape" && (over.agape?.logo ?? true) })}</div>`;
+  const m = $("#pPhMocks");
+  if (m) m.innerHTML = x.photo ? ["Computador", "Celular"].map((l, i) => `<div class="p-ph-mock ${i ? "is-mob" : ""}"><small>${l}</small>
+    <div class="p-ph-frame" style="background-image:linear-gradient(rgba(11,37,102,${x.photo.dim / 100}),rgba(11,37,102,${x.photo.dim / 100})),url('${x.photo.src}');background-position:center,${x.photo.x}% ${x.photo.y}%"><b>${esc((x.title || "Título").replace(/\*/g, ""))}</b></div></div>`).join("") : "";
 }
 
 async function persist(next, msg) {
@@ -311,6 +353,23 @@ function registerActions() {
     }
     persist(n, "Orden actualizado");
   };
+  A.pPhDel = () => {
+    if (!editing) return; editing.photo = null;
+    const ed = $("#pPhEd"), d = $("#pPhDel"), l = $("#pPhL"), f = $("#pPhFile");
+    if (ed) ed.hidden = true; if (d) d.hidden = true; if (l) l.textContent = "Elegir foto"; if (f) f.value = "";
+    preview();
+  };
+  document.addEventListener("change", async (e) => {
+    if (e.target.id !== "pPhFile" || !e.target.files[0] || !editing) return;
+    const l = $("#pPhL"); if (l) l.textContent = "Preparando…";
+    try {
+      const src = await compressPhoto(e.target.files[0]);
+      editing.photo = { src, x: 50, y: 50, dim: 55 };
+      ["pPhX", "pPhY"].forEach((id) => { const r = $("#" + id); if (r) r.value = 50; }); const dm = $("#pPhDim"); if (dm) dm.value = 55;
+      $("#pPhEd").hidden = false; $("#pPhDel").hidden = false; if (l) l.textContent = "Cambiar foto";
+      preview();
+    } catch (err) { console.warn(err); if (l) l.textContent = "Elegir foto"; toast("No pude abrir esa imagen. Prueba con una foto JPG o PNG.", ""); }
+  });
   document.addEventListener("input", (e) => { if (e.target.closest && e.target.closest("#pForm")) preview(); });
   document.addEventListener("change", (e) => { if (e.target.closest && e.target.closest("#pForm")) preview(); });
   document.addEventListener("submit", (e) => {
@@ -323,7 +382,13 @@ function registerActions() {
     const prev = stored(key) || {};
     const order = editing.isNew ? 15 : prev.order;
     const label = editing.course ? prev.label : (x.title || "").replace(/\*/g, "");
+    const next = { ...over, [key]: { ...prev, ...x, label, order } };
+    if (!x.photo) delete next[key].photo;
+    if (JSON.stringify({ slides: next }).length > PORTADA_MAX) {
+      toast("La portada ya tiene muchas fotos. Quita la foto de alguna diapositiva que ya terminó y vuelve a intentar.", "");
+      return;
+    }
     document.getElementById("pDialog")?.close();
-    persist({ ...over, [key]: { ...prev, ...x, label, order } }, editing.isNew ? "Diapositiva creada" : "Cambios guardados");
+    persist(next, editing.isNew ? "Diapositiva creada" : "Cambios guardados");
   });
 }
