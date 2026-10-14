@@ -212,7 +212,6 @@ export function view(opt = {}) {
     ctx.onLeave(stop);
     paintVelas();
   });
-  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["siempre", "Oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]].filter(([k]) => k !== "palabra" || lectio);
   let num = 0; // los rincones se numeran solos, en orden
   return `
   <section class="cap-hero" style="--season:${s.hex}">
@@ -244,7 +243,6 @@ export function view(opt = {}) {
     </div>
   </section>
 
-  <nav class="cap-nav" aria-label="Rincones de la capilla"><a href="#" class="cap-nav-ros" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rosario</a>${rincones.map(([k, l]) => `<a href="#" data-action="capGo" data-k="${k}">${esc(l)}</a>`).join("")}</nav>
 
   <section class="cap-room" id="cap-silencio">
     <div class="cap-room-head"><span class="cap-num">01</span><h2>Un minuto con <em>Jesús</em></h2></div>
@@ -631,7 +629,6 @@ function registerActions() {
     else if (e.key === "ArrowLeft") { e.preventDefault(); rosMove(-1); }
   });
   A.velaMore = (el) => { const p = el.previousElementSibling; const open = p.classList.toggle("cap-clamp"); el.textContent = open ? "Leer todo" : "Mostrar menos"; };
-  A.capGo = (el) => { document.getElementById("cap-" + el.dataset.k)?.scrollIntoView({ behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth", block: "start" }); };
   A.capSilence = (el) => silence(+el.dataset.min || 1);
   A.capStop = () => stopSilence(false);
   A.capPray = (el) => {

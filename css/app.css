@@ -1557,7 +1557,7 @@ dialog.sheet { border: 3px solid var(--z-b); box-shadow: 8px 8px 0 var(--z-b); }
 .cap-nav a { flex: 0 0 auto; text-decoration: none; color: #0b2566; font-weight: 800; font-size: .88rem; background: #fff; border: 2px solid #0b2566; border-radius: 999px; padding: 6px 14px; box-shadow: 2px 2px 0 #0b2566; }
 .cap-nav a:hover { background: #ffba03; }
 
-.cap-room { scroll-margin-top: 130px; margin-top: 30px; }
+.cap-room { scroll-margin-top: 84px; margin-top: 30px; }
 .cap-room-head { display: flex; align-items: baseline; gap: 12px; margin-bottom: 12px; }
 .cap-room-head h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.03em; font-size: clamp(1.7rem, 4.4vw, 2.4rem); line-height: 1; }
 .cap-room-head h2 em { font-style: normal; font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.15em; letter-spacing: 0; }
@@ -1628,8 +1628,6 @@ body.cap-quiet { overflow: hidden; }
 .cap-vela-guest > div { min-width: 200px; }
 
 /* Rosario virtual */
-.cap-nav a.cap-nav-ros { background: #0b2566; color: #ffba03; display: inline-flex; align-items: center; gap: 6px; }
-.cap-nav a.cap-nav-ros:hover { background: #1351a4; }
 .ros-ov { position: fixed; inset: 0; z-index: 110; overflow-y: auto; overscroll-behavior: contain; color: #fff6e5;
   background: radial-gradient(80% 55% at 50% 38%, #1351a4 0%, #0b2566 65%, #061541 100%); animation: capIn .45s ease;
   padding: calc(env(safe-area-inset-top, 0px) + 10px) 12px calc(env(safe-area-inset-bottom, 0px) + 12px); }
