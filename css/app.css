@@ -3199,3 +3199,13 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .ag-strip-ico svg { width: 24px; height: 24px; }
 .ag-strip-btn { background: #8ad2fa !important; color: #0b2566 !important; border-color: #0b2566 !important; }
 .card.link.ag-strip { padding-top: 14px; padding-bottom: 14px; }
+
+/* Capilla · Nuestras intenciones colapsable (como la tarjeta del Rosario) */
+.cap-altar-top { cursor: pointer; display: grid; justify-items: start; border-radius: 18px; }
+.cap-altar-top:focus-visible { outline: 3px solid #ffba03; outline-offset: 6px; }
+.cap-altar-top .cap-altar-row, .cap-altar-top .cap-altar-sum { justify-self: stretch; }
+.cap-altar-btn { justify-self: center; margin-top: 14px; background: #ffba03; color: #0b2566; border: 2px solid #fff6e5; font-weight: 800; font-size: 1.08rem; padding: 13px 24px; border-radius: 999px; box-shadow: 3px 3px 0 #fff6e5; display: inline-flex; align-items: center; gap: 10px; }
+.cap-altar-top:hover .cap-altar-btn { background: #ffd04d; }
+.cap-altar.is-open .cap-altar-btn { background: transparent; color: #fff6e5; border-color: rgba(255,246,229,.6); box-shadow: none; font-size: .95rem; padding: 9px 18px; }
+@media (max-width: 560px) { .cap-altar-btn { justify-self: stretch; justify-content: center; } }
+.cap-altar .cap-altar-top > .cap-hand { color: #ffba03; display: block; }

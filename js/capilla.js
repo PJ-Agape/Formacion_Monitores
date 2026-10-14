@@ -258,8 +258,19 @@ const candleSVG = (lit = true, cls = "") => `<svg class="cap-candle ${lit ? "lit
 // Vista
 // ---------------------------------------------------------------------------
 let velas = null, focusVela = null, focusDone = false;
+let altarOpen = (() => { try { return sessionStorage.getItem("agape_altar") === "1"; } catch { return false; } })();
+function setAltar(open) {
+  altarOpen = open; try { sessionStorage.setItem("agape_altar", open ? "1" : "0"); } catch {}
+  const sec = document.getElementById("cap-velas"); if (!sec) return;
+  sec.classList.toggle("is-open", open);
+  sec.querySelector(".cap-altar-top")?.setAttribute("aria-expanded", String(open));
+  const body = document.getElementById("capAltarBody"); if (body) body.hidden = !open;
+  const t = sec.querySelector(".cap-altar-btn span"); if (t) t.textContent = open ? "Ocultar las intenciones" : "Deja aquí tus intenciones";
+  if (open) setTimeout(() => document.getElementById("velaText")?.focus({ preventScroll: true }), 50);
+}
 export function view(opt = {}) {
   focusVela = opt.vela || null; focusDone = false;
+  if (opt.focus === "velas" || opt.vela) altarOpen = true;
   const d = ctx.content().devotional || { title: "", desc: "", cards: [] };
   const s = season(), m = moment(), now = new Date();
   const mk = MYST_BY_DAY[now.getDay()], my = MYST[mk];
@@ -330,13 +341,17 @@ export function view(opt = {}) {
   </section>
 
 
-  <section class="cap-room cap-altar" id="cap-velas">
-    <span class="cap-hand">aquí nadie reza solo</span>
-    <div class="cap-room-head"><span class="cap-num">01</span><h2>Nuestras <em>intenciones</em></h2></div>
-    <p class="cap-lead">Enciende una vela por quien quieras y acompaña con tu oración las de los demás. Cada vela brilla una semana.</p>
-    ${member ? `<div class="cap-altar-row" id="velaAltar" aria-hidden="true"></div>
-      <p class="cap-altar-sum" id="velaSum"></p>
-      <form class="cap-light" id="velaForm">
+  <section class="cap-room cap-altar${altarOpen ? " is-open" : ""}" id="cap-velas">
+    <div class="cap-altar-top" data-action="capAltar" role="button" tabindex="0" aria-expanded="${altarOpen}" aria-controls="capAltarBody">
+      <span class="cap-hand">aquí nadie reza solo</span>
+      <div class="cap-room-head"><h2>Nuestras <em>intenciones</em></h2></div>
+      <p class="cap-lead">Enciende una vela por quien quieras y acompaña con tu oración las de los demás. Cada vela brilla una semana.</p>
+      ${member ? `<div class="cap-altar-row" id="velaAltar" aria-hidden="true"></div>
+      <p class="cap-altar-sum" id="velaSum"></p>` : ""}
+      <span class="btn cap-altar-btn">${icon("flame")} <span>${altarOpen ? "Ocultar las intenciones" : "Deja aquí tus intenciones"}</span></span>
+    </div>
+    <div class="cap-altar-body" id="capAltarBody" ${altarOpen ? "" : "hidden"}>
+    ${member ? `<form class="cap-light" id="velaForm">
         ${candleSVG(false, "cap-light-c")}
         <div class="cap-light-body">
           <label for="velaText"><strong>Enciende tu vela</strong><span>¿Por quién o por qué quieres rezar? Si prefieres, déjala en silencio.</span></label>
@@ -349,6 +364,7 @@ export function view(opt = {}) {
     : `<div class="cap-light cap-vela-guest">${candleSVG(true, "cap-light-c")}<div class="cap-light-body"><strong>Las intenciones son de la comunidad</strong>
         <span>Ingresa con la cuenta con que te invitaron para encender tu vela y rezar por las de los demás.</span>
         ${ctx.cloud.enabled ? `<button class="btn cap-light-btn" data-action="signIn">Ingresar</button>` : ""}</div></div>`}
+    </div>
   </section>
 
 
@@ -754,6 +770,8 @@ function registerActions() {
     else if (e.key === "ArrowRight" || (e.key === " " && e.target === document.body)) { e.preventDefault(); rosMove(1); }
     else if (e.key === "ArrowLeft") { e.preventDefault(); rosMove(-1); }
   });
+  A.capAltar = (el) => { if (el.closest && el.closest(".cap-altar-body")) return; setAltar(!altarOpen); };
+  document.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("cap-altar-top")) { e.preventDefault(); setAltar(!altarOpen); } });
   A.velaMore = (el) => { const p = el.previousElementSibling; const open = p.classList.toggle("cap-clamp"); el.textContent = open ? "Leer todo" : "Mostrar menos"; };
   A.capGuide = (el) => openGuide(el.dataset.k);
   A.capGdNext = () => guideMove(1);
