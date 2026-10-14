@@ -12,8 +12,8 @@ const C = E.C;
 
 // Tamaños (mm) y su equivalente a 300 ppp.
 export const SIZES = {
-  cr80: { l: "Tarjeta (5,4 × 8,6 cm)", d: "Como una credencial o carnet. Caben 9 por hoja.", w: 54, h: 85.6 },
-  grande: { l: "Portacredencial grande (9 × 13 cm)", d: "Para fundas grandes de lanyard. Caben 4 por hoja.", w: 90, h: 130 },
+  cr80: { l: "Tarjeta (5,4 × 8,6 cm)", d: "Como una credencial o carnet. Caben 9 por hoja.", w: 54, h: 85.6, cols: 3, rows: 3 },
+  grande: { l: "Portacredencial grande (9 × 13 cm)", d: "Para fundas grandes de lanyard. Caben 4 por hoja.", w: 90, h: 130, cols: 2, rows: 2 },
 };
 const PX = 300 / 25.4;
 const ROLES = {
@@ -31,7 +31,7 @@ const THEMES = { navy: ["Azul noche", C.navy], blue: ["Azul", C.blue], coral: ["
 const KEY = "agape_credenciales_v1";
 const load = () => { try { return JSON.parse(localStorage.getItem(KEY) || "null") || {}; } catch { return {}; } };
 const saved = load();
-const ev = { title: "Encuentro Ágape", sub: "", theme: "navy", size: "cr80", ...(saved.ev || {}) };
+const ev = { title: "Encuentro Ágape", sub: "", theme: "navy", size: "cr80", fill: false, ...(saved.ev || {}) };
 let list = Array.isArray(saved.list) ? saved.list : [];
 const blank = () => ({ id: "", name: "", parish: "", role: "participante", photo: "", zoom: 1, dx: 0, dy: 0 });
 let cur = blank();
@@ -98,7 +98,7 @@ export function draw(c, p, photo, e = ev) {
   tl.forEach((l, k) => c.fillText(l, tx, ty0 + k * ts * 1.02));
   if (e.sub) { c.font = `700 ${4.4 * u}px Jakarta`; c.fillStyle = theme === C.sun ? C.navy : C.sky; fitText(c, e.sub, tw, 4.4 * u, 3 * u, 700, "Jakarta"); c.fillText(e.sub, tx, ty0 + tl.length * ts * 1.02 + 0.6 * u); }
   // medidas: primero el texto de abajo, la foto ocupa lo que queda
-  const bandB = H * 0.11, by = H - bandB, name = (p.name || "Tu nombre").trim();
+  const bandB = H * 0.11, by = H - bandB, name = p.blank ? "" : (p.name || "Tu nombre").trim();
   const ns = fitText(c, name, W * 0.88, 13 * u, 6 * u);
   c.font = `700 ${4.8 * u}px Jakarta`;
   const pl = p.parish ? wrap2(c, p.parish, W * 0.86) : [];
@@ -124,7 +124,8 @@ export function draw(c, p, photo, e = ev) {
   // nombre o apodo y parroquia, centrados en el espacio que queda
   const free = by - (py + ps + 2.4 * u), y0 = py + ps + 2.4 * u + (free - textH) / 2;
   c.fillStyle = C.navy; c.textAlign = "center"; c.font = `800 ${ns}px Bricolage`;
-  c.fillText(name, W / 2, y0 + ns * 0.78);
+  if (p.blank) { c.fillRect(W * 0.14, y0 + ns * 0.85, W * 0.72, 0.5 * u); c.font = `700 ${3.4 * u}px Jakarta`; c.fillStyle = C.coral; c.fillText("ESCRIBE TU NOMBRE", W / 2, y0 + ns * 0.85 + 5 * u); }
+  else c.fillText(name, W / 2, y0 + ns * 0.78);
   if (pl.length) {
     c.font = `800 ${3.4 * u}px Jakarta`; c.fillStyle = C.coral;
     c.fillText("PARROQUIA".split("").join(String.fromCharCode(8202)), W / 2, y0 + ns * 0.95 + 4 * u);
@@ -181,6 +182,9 @@ export function view() {
         <section class="card stack" style="--gap:10px">
           <div class="row-wrap" style="gap:8px;align-items:center"><h2 class="cred-h" style="flex:1">Lista para imprimir <small class="muted" id="credCount"></small></h2>
             <button type="button" class="btn btn-gold btn-sm" data-action="credPrint">${icon("print")} Imprimir todas</button></div>
+          <div class="field"><label>En cada hoja carta</label><div class="seg" role="radiogroup" aria-label="Cuántas por hoja">${Object.entries(SIZES).map(([k, z]) => `<label><input type="radio" name="credPer" value="${k}" ${ev.size === k ? "checked" : ""}><span>${z.cols * z.rows} por hoja · ${z.l.match(/\(([^)]+)\)/)[1]}</span></label>`).join("")}</div></div>
+          <label class="row" style="gap:8px"><input type="checkbox" id="credFill" ${ev.fill ? "checked" : ""}> Completar la última hoja con credenciales en blanco (para quienes lleguen sin inscribirse)</label>
+          <p class="small cred-sum" id="credSum"></p>
           <div id="credList" class="cred-list"></div>
           <button type="button" class="btn btn-ghost btn-sm" data-action="credClear" style="justify-self:start">${icon("trash")} Borrar la lista</button>
         </section>
@@ -196,6 +200,9 @@ async function paint() {
 async function paintList() {
   const box = $("#credList"); if (!box) return;
   $("#credCount").textContent = list.length ? `· ${list.length}` : "";
+  const sum = $("#credSum");
+  if (sum) { const z = SIZES[ev.size], per = z.cols * z.rows, pages = Math.ceil(list.length / per), free = pages * per - list.length;
+    sum.textContent = list.length ? `${list.length} credencial${list.length > 1 ? "es" : ""} → ${pages} hoja${pages > 1 ? "s" : ""} carta${free ? (free > 1 ? ` · quedan ${free} espacios libres${ev.fill ? " (irán en blanco)" : ""}` : ` · queda 1 espacio libre${ev.fill ? " (irá en blanco)" : ""}`) : ""}.` : ""; }
   if (!list.length) { box.innerHTML = `<p class="muted small">Todavía no hay credenciales. Arma una y toca «Agregar a la lista».</p>`; return; }
   box.innerHTML = list.map((p) => `<div class="cred-item${p.id === cur.id ? " on" : ""}"><canvas data-cred="${esc(p.id)}" aria-hidden="true"></canvas>
     <div class="cred-item-t"><b>${esc(p.name || "Sin nombre")}</b><small>${esc(ROLES[p.role]?.l || "")}${p.parish ? " · " + esc(p.parish) : ""}</small></div>
@@ -219,21 +226,28 @@ const syncForm = () => {
 // Imprimir: hojas tamaño carta con las credenciales a su medida real
 // ---------------------------------------------------------------------------
 async function printAll(items) {
-  const S = SIZES[ev.size] || SIZES.cr80;
+  const S = SIZES[ev.size] || SIZES.cr80, per = S.cols * S.rows;
+  const all = [...items];
+  const free = (per - (all.length % per)) % per;
+  if (ev.fill) for (let k = 0; k < free; k++) all.push({ ...blank(), blank: true, role: "participante" });
   toast("Preparando las credenciales…");
   const imgs = [];
-  for (const p of items) { const cv = document.createElement("canvas"); draw(cv.getContext("2d"), p, await photoImg(p.photo)); imgs.push(cv.toDataURL("image/png")); await new Promise((r) => setTimeout(r)); }
+  for (const p of all) { const cv = document.createElement("canvas"); draw(cv.getContext("2d"), p, await photoImg(p.photo)); imgs.push(cv.toDataURL("image/png")); await new Promise((r) => setTimeout(r)); }
+  const pages = [];
+  for (let k = 0; k < imgs.length; k += per) pages.push(imgs.slice(k, k + per));
   const fr = document.createElement("iframe");
   fr.style.cssText = "position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden";
   document.body.appendChild(fr);
   const d = fr.contentDocument;
   d.open();
+  // Sin separación entre tarjetas: los cortes se comparten y basta una línea por fila y columna.
   d.write(`<!doctype html><html><head><meta charset="utf-8"><title>Credenciales · ${esc(ev.title)}</title><style>
     @page { size: letter; margin: 8mm; }
     html, body { margin: 0; padding: 0; }
-    .sheet { display: flex; flex-wrap: wrap; gap: 3mm; justify-content: center; align-content: flex-start; }
-    img { width: ${S.w}mm; height: ${S.h}mm; display: block; break-inside: avoid; outline: .2mm dashed #9aa6bf; outline-offset: 0; }
-  </style></head><body><div class="sheet">${imgs.map((s) => `<img src="${s}" alt="">`).join("")}</div></body></html>`);
+    .page { display: grid; grid-template-columns: repeat(${S.cols}, ${S.w}mm); grid-auto-rows: ${S.h}mm; justify-content: center; align-content: start; break-after: page; }
+    .page:last-child { break-after: auto; }
+    img { width: ${S.w}mm; height: ${S.h}mm; display: block; outline: .15mm dashed #9aa6bf; outline-offset: -.075mm; }
+  </style></head><body>${pages.map((pg) => `<div class="page">${pg.map((src) => `<img src="${src}" alt="">`).join("")}</div>`).join("")}</body></html>`);
   d.close();
   await Promise.all([...d.images].map((im) => (im.complete ? 0 : new Promise((ok) => { im.onload = im.onerror = ok; }))));
   fr.contentWindow.focus(); fr.contentWindow.print();
@@ -272,7 +286,9 @@ function registerActions() {
   });
   document.addEventListener("change", async (e) => {
     const t = e.target;
-    if (t.dataset && t.dataset.ev && t.tagName === "SELECT") { ev[t.dataset.ev] = t.value; persist(); const h = $("#credSizeHint"); if (h) h.textContent = SIZES[ev.size].d; paint(); paintList(); }
+    if (t.name === "credPer") { ev.size = t.value; persist(); const sel = $("[data-ev=size]"); if (sel) sel.value = ev.size; const h = $("#credSizeHint"); if (h) h.textContent = SIZES[ev.size].d; paint(); paintList(); return; }
+    if (t.id === "credFill") { ev.fill = t.checked; persist(); paintList(); return; }
+    if (t.dataset && t.dataset.ev && t.tagName === "SELECT") { ev[t.dataset.ev] = t.value; persist(); document.querySelectorAll("input[name=credPer]").forEach((r) => { r.checked = r.value === ev.size; }); const h = $("#credSizeHint"); if (h) h.textContent = SIZES[ev.size].d; paint(); paintList(); }
     if (t.dataset && t.dataset.cp === "role") { cur.role = t.value; paint(); }
     if (t.id === "credPhoto" && t.files[0]) {
       try { cur.photo = await readPhoto(t.files[0]); cur.zoom = 1; cur.dx = cur.dy = 0; syncForm(); paint(); }
