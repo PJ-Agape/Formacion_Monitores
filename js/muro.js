@@ -21,6 +21,7 @@ const isNews = (p) => p.type === "anuncio" || p.type === "logro";
 const FILTERS = [["todo", "Todo"], ["anuncio", "Anuncios"], ["encuesta", "Encuestas"], ["tema", "Temas"], ["pregunta", "Preguntas"]];
 let filter = "todo";
 let posts = null, loadError = false, flagged = null;
+let openId = null, openStop = null, composeOpen = false; // tema abierto en la lista y su suscripción a respuestas
 
 const st = () => ctx.cloud.state();
 const me = () => ctx.cloud.myUid();
@@ -113,16 +114,19 @@ export function viewWall() {
     const stop = ctx.cloud.watchWall((rows) => { posts = rows; loadError = false; paintList(); },
       () => { loadError = true; paintList(); });
     ctx.onLeave(stop);
+    ctx.onLeave(() => { if (openStop) openStop(); openStop = null; });
+    if (openId) watchOpen(openId);
     paintList();
   });
   const canTopic = s.ready && s.isStaff;
   return `
   <header class="page-head"><span class="eyebrow">Muro de la comunidad</span><h1>Anuncios y <em>conversación</em></h1>
-    <p>Avisos del equipo, temas para pensar juntos y preguntas de los dirigentes. Escribe con el mismo cariño con que hablarías en la reunión.</p></header>
+    <p>Toca un tema para leerlo y conversar. Escribe con el mismo cariño con que hablarías en la reunión.</p></header>
   ${chatTabs("muro")}
 
   ${s.ready ? `
-  <form class="card wall-compose" id="wallCompose" style="margin-top:16px">
+  <button class="btn ${composeOpen ? "btn-ghost" : "btn-primary"} wall-new" data-action="wallCompose" aria-expanded="${composeOpen}" style="margin-top:16px">${icon(composeOpen ? "x" : "plus")} ${composeOpen ? "Cancelar" : canTopic ? "Nueva publicación" : "Proponer una pregunta o un tema"}</button>
+  <form class="card wall-compose" id="wallCompose" style="margin-top:12px" ${composeOpen ? "" : "hidden"}>
     <div class="row-wrap" style="gap:8px">
       ${canTopic ? `<div class="seg" role="radiogroup" aria-label="Tipo de publicación">
         ${["anuncio", "tema", "pregunta", "encuesta"].map((t, i) => `<label><input type="radio" name="type" value="${t}" ${i === 1 ? "checked" : ""}><span>${TYPES[t].label}</span></label>`).join("")}
@@ -172,7 +176,32 @@ function paintList() {
     box.innerHTML = `<div class="card" style="text-align:center;padding:32px"><p class="muted">${filter === "reportes" ? "No hay publicaciones reportadas ni ocultas." : "Todavía no hay publicaciones aquí."}</p></div>`;
     return;
   }
-  box.innerHTML = list.map(postCard).join("");
+  // Conserva lo que se estaba escribiendo en la respuesta del tema abierto.
+  const draft = $("#wallReply textarea")?.value || "";
+  const focused = document.activeElement && document.activeElement.closest && document.activeElement.closest("#wallReply");
+  if (box.querySelector(".wall-edit")) return; // editando: no se redibuja hasta guardar o cancelar
+  if (openId && cur.id === openId) cur.post = (posts || []).find((x) => x.id === openId) || cur.post;
+  box.innerHTML = list.map(rowHTML).join("");
+  const ta = $("#wallReply textarea"); if (ta && draft) ta.value = draft;
+  if (focused && ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); }
+}
+// Cada publicación es una fila: tipo y título. Al tocarla se abre ahí mismo con su conversación.
+function rowHTML(p) {
+  const t = TYPES[p.type] || TYPES.tema, open = openId === p.id, n = p.replyCount || 0, lk = count(p.likes);
+  return `<article class="wall-row ${esc(p.type)}${p.pinned ? " pinned" : ""}${p.hidden ? " is-hidden" : ""}${open ? " open" : ""}" data-pid="${esc(p.id)}">
+    <button class="wall-row-head" data-action="wallOpen" data-pid="${esc(p.id)}" aria-expanded="${open}">
+      <span class="chip ${t.chip}">${icon(t.icon)} ${t.label}</span>
+      <span class="wall-row-t">${p.pinned ? `<span class="wall-pin" title="Fijado">${icon("up")}</span>` : ""}${esc(p.title)}</span>
+      <span class="wall-row-meta">${p.type !== "anuncio" ? `<span title="Respuestas">${icon("chat")} ${n}</span>` : ""}${lk ? `<span title="Me sirve">${heart()} ${lk}</span>` : ""}<span class="xs">${when(p.lastActivity || p.createdAt)}</span></span>
+      <span class="wall-row-chev" aria-hidden="true">${icon("down")}</span>
+    </button>
+    ${open ? `<div class="wall-row-body">${threadHTML(p, cur.id === p.id ? cur.replies : null, true)}</div>` : ""}
+  </article>`;
+}
+function watchOpen(id) {
+  if (openStop) openStop();
+  cur = { id, post: (posts || []).find((x) => x.id === id), replies: null };
+  openStop = ctx.cloud.watchReplies(id, (r) => { if (cur.id === id) { cur.replies = r; paintList(); } });
 }
 
 // ---------- Encuestas ----------
@@ -246,31 +275,24 @@ export function viewPost(id) {
   return `<a class="btn btn-sm btn-ghost" href="#/muro">${icon("arrowL")} Volver al muro</a>
     <div id="wallPost" style="margin-top:14px"><div class="card muted" style="text-align:center">Cargando…</div></div>`;
 }
-function paintPost() {
-  const box = $("#wallPost");
-  if (!box) return;
-  const p = cur.post;
-  if (p === undefined) return;
-  if (p === null) { box.innerHTML = `<div class="card" style="text-align:center;padding:32px"><h2 class="display">Esta publicación ya no está disponible</h2><a class="btn btn-primary" style="margin-top:14px" href="#/muro">Ir al muro</a></div>`; return; }
+function threadHTML(p, rs, inline) {
   const t = TYPES[p.type] || TYPES.tema;
-  const replies = (cur.replies || []).sort((a, b) => tsVal(a.createdAt) - tsVal(b.createdAt));
-  // Conserva lo que se estaba escribiendo si llega una respuesta nueva.
-  const draft = $("#wallReply textarea")?.value || "";
-  const focused = document.activeElement && document.activeElement.closest && document.activeElement.closest("#wallReply");
-  box.innerHTML = `
+  const replies = [...(rs || [])].sort((a, b) => tsVal(a.createdAt) - tsVal(b.createdAt));
+  const talk = p.type !== "anuncio";
+  return `
   <article class="card wall-post ${p.type} ${p.hidden ? "is-hidden" : ""}">
     <div class="wall-head">
-      <span class="chip ${t.chip}">${icon(t.icon)} ${t.label}</span>
+      ${inline ? "" : `<span class="chip ${t.chip}">${icon(t.icon)} ${t.label}</span>`}
       ${p.closed ? `<span class="chip">${icon("lock")} Conversación cerrada</span>` : ""}
       ${modBadges(p)}<span class="spacer"></span>${menu(p, "post", p.id)}
     </div>
-    <h1 class="wall-h1">${esc(p.title)}</h1>
+    ${inline ? "" : `<h1 class="wall-h1">${esc(p.title)}</h1>`}
     ${p.body ? `<div class="wall-body"><p>${text(p.body)}</p></div>` : ""}
     ${p.type === "encuesta" ? pollHTML(p) : ""}
     <div class="wall-foot">${byline(p)}<span class="spacer"></span>${st().ready ? likeBtn(p, `wall/${p.id}`) : ""}</div>
   </article>
 
-  <h2 class="wall-sub">${replies.length ? `${replies.length} respuesta${replies.length > 1 ? "s" : ""}` : "Aún no hay respuestas"}</h2>
+  ${!talk ? "" : `<h2 class="wall-sub">${rs === null ? "Cargando respuestas…" : replies.length ? `${replies.length} respuesta${replies.length > 1 ? "s" : ""}` : "Aún no hay respuestas"}</h2>
   <div class="stack" style="--gap:10px">
     ${replies.map((r) => `<div class="wall-reply ${r.hidden ? "is-hidden" : ""}" id="r-${esc(r.id)}">
       <div class="wall-head">${byline(r)}<span class="spacer"></span>${modBadges(r)}${menu(r, "reply", p.id)}</div>
@@ -282,12 +304,24 @@ function paintPost() {
   <div style="margin-top:16px">
   ${p.closed ? `<div class="note">El equipo cerró esta conversación. Puedes seguir leyéndola.</div>`
     : st().ready ? `<form class="card wall-compose" id="wallReply" data-pid="${esc(p.id)}">
-        <textarea class="textarea" name="body" maxlength="2000" required placeholder="Escribe tu respuesta…">${esc(draft)}</textarea>
+        <textarea class="textarea" name="body" maxlength="2000" required placeholder="Escribe tu respuesta…"></textarea>
         <div class="row-wrap"><span class="xs muted">Se mostrará como <b>${esc(ctx.cloud.shortName(st().account.name))}</b></span><span class="spacer"></span>
         <button class="btn btn-primary btn-sm" type="submit">${icon("send")} Responder</button></div>
       </form>`
     : joinBox("sumarte a la conversación")}
-  </div>`;
+  </div>`}`;
+}
+function paintPost() {
+  const box = $("#wallPost");
+  if (!box) return;
+  const p = cur.post;
+  if (p === undefined) return;
+  if (p === null) { box.innerHTML = `<div class="card" style="text-align:center;padding:32px"><h2 class="display">Esta publicación ya no está disponible</h2><a class="btn btn-primary" style="margin-top:14px" href="#/muro">Ir al muro</a></div>`; return; }
+  // Conserva lo que se estaba escribiendo si llega una respuesta nueva.
+  const draft = $("#wallReply textarea")?.value || "";
+  const focused = document.activeElement && document.activeElement.closest && document.activeElement.closest("#wallReply");
+  box.innerHTML = threadHTML(p, cur.replies, false);
+  const ta0 = $("#wallReply textarea"); if (ta0 && draft) ta0.value = draft;
   if (focused) { const ta = $("#wallReply textarea"); if (ta) { ta.focus(); ta.setSelectionRange(ta.value.length, ta.value.length); } }
 }
 
@@ -323,6 +357,15 @@ const closeMenu = (el) => { const d = el.closest("details"); if (d) d.open = fal
 
 function registerActions() {
   const A = ctx.actions;
+  // Abrir o cerrar un tema en la lista (uno a la vez)
+  A.wallOpen = (el) => {
+    const id = el.dataset.pid;
+    if (openId === id) { openId = null; if (openStop) openStop(); openStop = null; cur = { id: null, post: undefined, replies: null }; }
+    else { openId = id; watchOpen(id); }
+    paintList();
+    if (openId) requestAnimationFrame(() => document.querySelector(`.wall-row[data-pid="${CSS.escape(id)}"]`)?.scrollIntoView({ block: "nearest" }));
+  };
+  A.wallCompose = () => { composeOpen = !composeOpen; ctx.render(); if (composeOpen) requestAnimationFrame(() => $("#wallCompose [name=title]")?.focus()); };
   A.wallFilter = async (el) => {
     filter = el.dataset.f;
     if (filter === "reportes") flagged = await ctx.cloud.flaggedReplies();
@@ -413,6 +456,7 @@ function registerActions() {
         if (type === "encuesta" && options.length < 2) { toast("Una encuesta necesita al menos 2 opciones", ""); btn.disabled = false; return; }
         await ctx.cloud.createPost({ type, title, body: String(d.get("body") || "").trim(), pinned: !!d.get("pinned") && st().isStaff, options });
         f.reset(); const po = $("#pollOpts"); if (po) po.hidden = true; toast("Publicado en el muro");
+        composeOpen = false; ctx.render();
       } catch (err) { fail(err); }
       btn.disabled = false;
     }

@@ -3210,3 +3210,29 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 @media (max-width: 560px) { .cap-altar-btn { justify-self: stretch; justify-content: center; } }
 .cap-altar .cap-altar-top > .cap-hand { color: #ffba03; display: block; }
 .car-slide.car-go { cursor: pointer; }
+
+/* Muro · temas compactos que se abren en el mismo lugar */
+.wall-new { margin-top: 16px; }
+.wall-row { background: var(--surface, #fff); border: 2px solid #0b2566; border-radius: 16px; box-shadow: 3px 3px 0 #0b2566; overflow: hidden; }
+.wall-row.pinned { border-color: #c9460f; box-shadow: 3px 3px 0 #c9460f; }
+.wall-row.is-hidden { opacity: .6; }
+.wall-row-head { width: 100%; display: grid; grid-template-columns: auto minmax(0, 1fr) auto auto; align-items: center; gap: 6px 12px; padding: 12px 14px; background: none; border: 0; font: inherit; color: inherit; text-align: left; cursor: pointer; }
+.wall-row-head:hover { background: #f3f8fd; }
+.wall-row-head:focus-visible { outline: 3px solid #ef591c; outline-offset: -3px; }
+.wall-row-t { font-weight: 800; font-size: 1.02rem; line-height: 1.25; overflow-wrap: anywhere; color: #0b2566; }
+.wall-pin { display: inline-flex; vertical-align: -2px; margin-right: 4px; color: #c9460f; }
+.wall-pin svg { width: 15px; height: 15px; }
+.wall-row-meta { display: inline-flex; align-items: center; gap: 10px; color: #4a5d7a; font-size: .82rem; white-space: nowrap; }
+.wall-row-meta span { display: inline-flex; align-items: center; gap: 3px; }
+.wall-row-meta svg { width: 15px; height: 15px; }
+.wall-row-chev svg { width: 18px; height: 18px; transition: transform .2s; }
+.wall-row.open .wall-row-chev svg { transform: rotate(180deg); }
+.wall-row-body { border-top: 2px dashed rgba(11,37,102,.18); padding: 12px 14px 16px; background: #fbfdff; }
+.wall-row-body > .wall-post { box-shadow: none; border-width: 0; padding: 0; background: none; }
+@media (max-width: 640px) {
+  .wall-row-head { grid-template-columns: minmax(0, 1fr) auto; grid-template-areas: "chip chev" "t t" "meta meta"; }
+  .wall-row-head .chip { grid-area: chip; justify-self: start; }
+  .wall-row-t { grid-area: t; } .wall-row-meta { grid-area: meta; } .wall-row-chev { grid-area: chev; }
+}
+@media (prefers-reduced-motion: reduce) { .wall-row-chev svg { transition: none; } }
+.wall-row-body > .wall-post { border-left: 0 !important; }
