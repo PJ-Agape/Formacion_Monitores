@@ -165,7 +165,7 @@ function draftBar(dirty) {
     <span class="spacer"></span>
     ${undo ? `<button class="btn btn-sm btn-ghost" data-action="aUndo">${icon("undo")} Deshacer</button>` : ""}
     ${dirty ? `<button class="btn btn-sm btn-ghost" data-action="aPreview">${icon("eye")} Vista previa</button>
-    <a class="btn btn-sm btn-primary" href="#/admin/publicar">Publicar</a>` : ""}
+    ${cloudOn && !S.draftIsOutdated() ? `<button class="btn btn-sm btn-primary" data-action="aPublishCloud">${icon("send")} Publicar ahora</button>` : `<a class="btn btn-sm btn-primary" href="#/admin/publicar">Publicar</a>`}` : ""}
   </div>`;
 }
 
@@ -1253,7 +1253,7 @@ function bindActions() {
       onSave: (o) => commit((d) => {
         if (o.items) o.items = o.items.filter((x) => x.trim());
         if (isNew) d[k].cards.push(o); else d[k].cards[i] = o;
-      }, { msg: "Guardado" }),
+      }, { msg: "Guardado en el borrador. Para que todos lo vean, toca «Publicar ahora»." }),
       onDelete: !isNew && box.cards.length > 1 ? () => commit((d) => d[k].cards.splice(i, 1), { snapshot: true, msg: "Eliminado" }) : null,
     });
   };
