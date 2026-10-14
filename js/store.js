@@ -35,18 +35,27 @@ const del = (k) => { try { localStorage.removeItem(k); } catch {} };
 let published = null;
 
 export async function loadContent(fromCloud) {
-  // Hay dos fuentes: lo publicado desde Gestión (nube) y data/contenido.json (el sitio).
-  // Gana la más nueva, para que una copia antigua en la nube no tape el contenido actualizado.
+  // Hay tres fuentes: lo publicado desde Gestión (nube), data/contenido.json (el sitio) y la última copia
+  // que este dispositivo ya vio. Gana la más nueva: si la nube tarda o responde con una copia vieja,
+  // el teléfono no vuelve a una versión anterior (antes caía al archivo del sitio y «perdía» lo publicado).
   const [c, f] = await Promise.all([
     fromCloud ? fromCloud().catch(() => null) : null,
     fetch(CONFIG.contentUrl, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
   ]);
-  const ok = (x) => x && Array.isArray(x.courses);
-  const newer = (a, b) => String(a.updatedAt || "") > String(b.updatedAt || "") || (String(a.updatedAt || "") === String(b.updatedAt || "") && (Number(a.version) || 0) >= (Number(b.version) || 0));
-  published = ok(c) && ok(f) ? (newer(c, f) ? c : f) : ok(c) ? c : ok(f) ? f : read(K.cache);
+  published = newest([c, f, read(K.cache)]);
   if (!published) throw new Error("Sin contenido");
   write(K.cache, published);
   return published;
+}
+const okContent = (x) => !!(x && Array.isArray(x.courses));
+// Fecha completa (las publicaciones antiguas guardaban solo el día) y, si empatan, el número de versión.
+const stamp = (x) => [Date.parse(x.updatedAt || "") || 0, Number(x.version) || 0];
+const isNewer = (a, b) => { const [ta, va] = stamp(a), [tb, vb] = stamp(b); return ta > tb || (ta === tb && va > vb); };
+function newest(list) { return list.filter(okContent).reduce((best, x) => (!best || isNewer(x, best) ? x : best), null); }
+// Llega contenido de la nube después de abrir la app: se usa solo si es más nuevo que el que se está mostrando.
+export function adoptIfNewer(c) {
+  if (!okContent(c) || (published && !isNewer(c, published))) return false;
+  published = c; write(K.cache, c); return true;
 }
 
 export const isPreview = () => sessionStorage.getItem("agape_preview") === "1" && !!read(K.draft);

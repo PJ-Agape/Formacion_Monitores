@@ -307,10 +307,14 @@ function summarize(all) {
 // ---------------------------------------------------------------------------
 // Contenido publicado
 // ---------------------------------------------------------------------------
+let contentStale = false;
+export const contentWasStale = () => contentStale;
 export async function fetchContent() {
+  contentStale = false;
   if (!enabled || !db) return null;
   try {
-    const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", "published")), 6000);
+    const snap = await withTimeout(fb.getDoc(fb.doc(db, "content", "published")), 10000);
+    if (snap.metadata && snap.metadata.fromCache) contentStale = true; // copia guardada: se vuelve a pedir en unos segundos
     return snap.exists() ? safeJSON(snap.data().json, null) : null;
   } catch { return null; }
 }

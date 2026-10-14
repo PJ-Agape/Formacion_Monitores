@@ -1446,6 +1446,18 @@ async function boot() {
   try {
     if (cloud.enabled) await cloud.init();
     await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
+    // Si la nube no respondió a tiempo (o entregó la copia guardada), se vuelve a pedir el contenido
+    // publicado: al abrir, a los pocos segundos y cada vez que se vuelve a la app (como mucho cada 2 min).
+    if (cloud.enabled) {
+      let lastC = Date.now();
+      const recheck = async (force) => {
+        if (!force && Date.now() - lastC < 120000) return; lastC = Date.now();
+        const c = await cloud.fetchContent().catch(() => null);
+        if (S.adoptIfNewer(c) && !/^#\/admin/.test(location.hash)) render();
+      };
+      setTimeout(() => recheck(true), 8000);
+      document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") recheck(false); });
+    }
     if (cloud.enabled) cloud.onChange(render); // después de cargar el contenido, para no dibujar sin datos
     // Al volver a la app (celular en segundo plano, otra pestaña), se trae el avance hecho en otro dispositivo.
     // Solo se vuelve a dibujar si algo cambió y la persona no está escribiendo ni en medio de una unidad.

@@ -1035,7 +1035,7 @@ function bindActions() {
       const d = S.ensureDraft();
       const pub = S.publishedContent();
       d.version = (Number(pub.version) || 1) + 1;
-      d.updatedAt = new Date().toISOString().slice(0, 10);
+      d.updatedAt = new Date().toISOString(); // fecha y hora: así gana siempre a la copia del sitio
       await api.cloud.publishContent(d);
       S.setPublished(d); S.discardDraft(); undo = null;
       toast("Publicado. Los dirigentes ya ven los cambios.", "ok", 4000); api.render();
