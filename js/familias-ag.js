@@ -187,6 +187,7 @@ async function saveEditor(form) {
   const integrantes = derive(dirigentes.map((d) => d.uid), edJovenes, othersDir(id));
   const nombre = String(new FormData(form).get("nombre") || "").trim().slice(0, 40);
   const etapa = ETAPAS[form.elements.etapa?.value] ? form.elements.etapa.value : "";
+  const f = (rows || []).find((r) => r.id === id) || {}; // la familia tal como estaba antes de editarla
   try {
     // un dirigente está en una sola familia: si estaba en otra, sale de ella
     const mine = new Set(dirigentes.map((d) => d.uid));

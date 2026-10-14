@@ -127,7 +127,8 @@ async function handleUser(u) {
     account = { uid: u.uid, ...snap.data() };
     if (account.active === false) { status = "inactive"; return; }
     S.saveProfile({ name: account.name, parish: account.parish });
-    await pullAndMerge();
+    // Un error al traer el avance no debe dejar la cuenta sin su rol: la sesión queda lista igual.
+    try { await pullAndMerge(); } catch (e) { console.warn("Avance:", e); }
     status = "ready";
     fb.updateDoc(uref, { lastSeen: fb.serverTimestamp() }).catch(() => {});
   } catch (e) {
@@ -185,6 +186,17 @@ async function pullAndMerge() {
   if (JSON.stringify(mergedNotes) !== JSON.stringify(cloudNotes)) dirty.notes = true;
   if (dirty.progress || dirty.notes) queuePush();
   lastPull = Date.now();
+}
+// Al volver a la app (otra pestaña, el celular que estaba en segundo plano) se trae de nuevo el avance:
+// así lo hecho en el computador aparece en el celular sin cerrar sesión. Devuelve true si algo cambió.
+let lastPull = 0;
+export async function refreshProgress(force) {
+  if (!user || !account || account.active === false) return false;
+  if (!force && Date.now() - lastPull < 20000) return false;
+  const before = JSON.stringify([S.allProgressRaw(), S.allNotesRaw()]);
+  await flushPush();
+  try { await pullAndMerge(); } catch { return false; }
+  return JSON.stringify([S.allProgressRaw(), S.allNotesRaw()]) !== before;
 }
 const safeJSON = (s, d) => { try { return JSON.parse(s); } catch { return d; } };
 
