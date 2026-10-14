@@ -196,13 +196,12 @@ function plazaHTML() {
 }
 export function viewRed() {
   const w = who(), b = BLOCKS.red;
-  ctx.onAfterRender(() => { ctx.agenda.homeNext(); ctx.wall.homeHighlight(); });
+  ctx.onAfterRender(() => { ctx.wall.homeHighlight(); }); // la agenda ya está en Inicio
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   ${plazaHTML()}
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>
-  <div id="agendaSlot" style="margin-top:16px"></div>
   ${w.cuenta ? `<div id="wallSlot"></div>` : ""}`;
 }
 
