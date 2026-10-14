@@ -104,9 +104,13 @@ const DEV_GROUPS = [
   ["Por la Iglesia y los santos", ["Oración por el Papa", "Oración a San José", "Oración a la Sagrada Familia", "San Miguel Arcángel"]],
 ];
 const QUICK = ["Padre nuestro", "Ave María", "Gloria al Padre", "Credo", "Ángel de Dios"];
-const devFind = (t) => ORACIONES.find((o) => o.t === t);
+// Las oraciones propias de la comunidad (Gestión → Oración) van en el mismo selector, con su etiqueta.
+let OWN = [];
+const OWN_LABEL = "Nuestras oraciones";
+const devAll = () => [...OWN, ...ORACIONES];
+const devFind = (t) => devAll().find((o) => o.t === t);
 const devGroups = () => {
-  const used = new Set(), out = DEV_GROUPS.map(([g, ts]) => [g, ts.map(devFind).filter(Boolean)]);
+  const used = new Set(), out = [[OWN_LABEL, OWN], ...DEV_GROUPS.map(([g, ts]) => [g, ts.map((t) => ORACIONES.find((o) => o.t === t)).filter(Boolean)])];
   out.forEach(([, xs]) => xs.forEach((o) => used.add(o.t)));
   const rest = ORACIONES.filter((o) => !used.has(o.t)); // si se agrega una oración nueva, igual aparece
   if (rest.length) out.push(["Otras", rest]);
@@ -117,6 +121,12 @@ const devCurrent = () => { let t = ""; try { t = sessionStorage.getItem(DEV_KEY)
 function devCardHTML(o) {
   if (!o) return "";
   const grp = (devGroups().find(([, xs]) => xs.includes(o)) || [""])[0];
+  if (o.own) {
+    const c = o.own;
+    return `<span class="eyebrow">${esc(OWN_LABEL)}${c.tag ? ` · ${esc(c.tag)}` : ""}</span><h3>${esc(o.t)}</h3>
+      ${c.type === "list" ? `<ol class="cap-steps">${(c.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol>`
+        : `<p class="cap-prayer">${rich(String(c.text || "").replace(/^«|»$/g, "")).replace(/\n/g, "<br>")}</p>`}`;
+  }
   return `<span class="eyebrow">${esc(grp)}</span><h3>${esc(o.t)}</h3>
     ${o.note ? `<p class="cap-pr-note">${esc(o.note)}</p>` : ""}
     ${o.x ? `<p class="cap-prayer">${prayerHTML(o.x)}</p>` : ""}
@@ -128,13 +138,13 @@ function devCardHTML(o) {
 function devocionarioHTML() {
   const cur = devCurrent();
   return `<div class="cap-devpick">
-      <div class="cap-quick" role="group" aria-label="Las más rezadas">${QUICK.filter(devFind).map((t) => `<button type="button" class="chip-btn" data-action="capDev" data-t="${esc(t)}" aria-pressed="${t === cur}">${esc(t)}</button>`).join("")}</div>
+      <div class="cap-quick" role="group" aria-label="Las más rezadas">${[...OWN.slice(0, 1).map((o) => o.t), ...QUICK].filter(devFind).map((t) => `<button type="button" class="chip-btn" data-action="capDev" data-t="${esc(t)}" aria-pressed="${t === cur}">${esc(t)}</button>`).join("")}</div>
       <label class="cap-devsel"><span>Elige una oración</span>
         <select class="input" id="capDevSel">${devGroups().map(([g, xs]) => `<optgroup label="${esc(g)}">${xs.map((o) => `<option value="${esc(o.t)}" ${o.t === cur ? "selected" : ""}>${esc(o.t)}</option>`).join("")}</optgroup>`).join("")}</select>
       </label>
     </div>
     <article class="card cap-devcard" id="capDevCard" aria-live="polite">${devCardHTML(devFind(cur))}</article>
-    <p class="muted small" style="margin-top:12px">${ORACIONES.length} oraciones del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;
+    <p class="muted small" style="margin-top:12px">${OWN.length ? `${OWN.length} oraciones nuestras y ` : ""}${ORACIONES.length} del devocionario de <a href="https://www.vaticannews.va/es/oraciones.html" target="_blank" rel="noopener">Vatican News</a>.</p>`;
 }
 function devShow(t) {
   if (!devFind(t)) return;
@@ -188,7 +198,7 @@ export function view(opt = {}) {
   const mk = MYST_BY_DAY[now.getDay()], my = MYST[mk];
   const cards = d.cards || [];
   const lectio = cards.find((c) => c.type === "list" && /palabra|biblia/i.test((c.title || "") + (c.tag || "")));
-  const own = cards.filter((c) => c !== lectio);
+  OWN = cards.filter((c) => c !== lectio && c.title).map((c) => ({ t: c.title, own: c }));
   const member = st().ready;
   ctx.onAfterRender(() => {
     if (opt.focus === "rosario") setTimeout(() => openRosary(), 50);
@@ -205,7 +215,7 @@ export function view(opt = {}) {
     ctx.onLeave(stop);
     paintVelas();
   });
-  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]].filter(([k]) => k !== "palabra" || lectio);
+  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["siempre", "Oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]].filter(([k]) => k !== "palabra" || lectio);
   let num = 0; // los rincones se numeran solos, en orden
   return `
   <section class="cap-hero" style="--season:${s.hex}">
@@ -281,19 +291,9 @@ export function view(opt = {}) {
   </section>` : ""}
 
   <section class="cap-room" id="cap-siempre">
-    <div class="cap-room-head"><span class="cap-num">05</span><h2>Oraciones de <em>siempre</em></h2></div>
-    <p class="cap-lead">Las oraciones que rezamos en todo el mundo. Elige una y rézala con calma.</p>
+    <div class="cap-room-head"><span class="cap-num">05</span><h2>Nuestras oraciones y las de <em>siempre</em></h2></div>
+    <p class="cap-lead">Las nuestras, para antes y después de cada encuentro, y las que rezamos en todo el mundo. Elige una y rézala con calma.</p>
     ${devocionarioHTML()}
-  </section>
-
-  <section class="cap-room" id="cap-nuestras">
-    <div class="cap-room-head"><span class="cap-num">06</span><h2>Nuestras <em>oraciones</em></h2></div>
-    <p class="cap-lead">${esc(d.desc || "Oraciones de la comunidad para antes y después de cada encuentro.")}</p>
-    <div class="cap-own">${own.map((c) => `<article class="card cap-card ${c.type === "list" ? "is-list" : ""}">
-        <span class="eyebrow">${esc(c.tag || "")}</span><h3>${esc(c.title)}</h3>
-        ${c.type === "list" ? `<ol class="cap-steps">${(c.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol>`
-          : `<p class="cap-prayer">${rich(String(c.text || "").replace(/^«|»$/g, "")).replace(/\n/g, "<br>")}</p>`}
-      </article>`).join("")}</div>
   </section>
 
   <section class="cap-room" id="cap-cantar">
