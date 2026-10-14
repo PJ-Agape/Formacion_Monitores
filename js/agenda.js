@@ -45,7 +45,7 @@ const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Da
 const todayIso = () => iso(new Date());
 const longDate = (s) => parse(s).toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
 
-let events = null, camino = [], showCamino = true, month = null, selDay = null, openId = null, news = [];
+let events = null, camino = [], showCamino = true, month = null, selDay = null, openId = null;
 
 // Encuentros de Camino Ágape a partir del programa (se muestran el domingo de cada semana).
 async function loadCamino() {
@@ -107,10 +107,6 @@ export function viewAgenda(day) {
     await Promise.all([loadCamino(), loadCumples()]);
     const stop = ctx.cloud.watchAgenda((rows) => { events = rows; paint(); }, () => { events = events || []; paint(); });
     ctx.onLeave(stop);
-    ctx.cloud.latestWall && ctx.cloud.latestWall().then((rows) => {
-      news = rows.filter((p) => !p.hidden && (p.type === "anuncio" || p.type === "logro")).sort((a, b) => (b.pinned === true) - (a.pinned === true) || (b.createdAt?.toMillis?.() || 0) - (a.createdAt?.toMillis?.() || 0)).slice(0, 3);
-      paintNews();
-    });
     paint();
   });
   const admin = ctx.cloud.state().isStaff;
@@ -135,8 +131,6 @@ export function viewAgenda(day) {
     </section>
     <aside class="ag-side">
       <section class="card ag-list-card"><h3 id="agListTitle">Próximas fechas</h3><div id="agList" class="ag-list"><p class="muted small">Cargando…</p></div></section>
-      <section class="card ag-news"><h3>${icon("sparkle")} Noticias</h3><div id="agNews"><p class="muted small">Cargando…</p></div>
-        <a class="btn btn-sm btn-ghost" href="#/muro" style="margin-top:10px">Ver el muro</a></section>
     </aside>
   </div>`;
 }
@@ -195,11 +189,6 @@ function paintList() {
         </div></div>` : ""}
     </article>`;
   }).join("");
-}
-function paintNews() {
-  const box = $("#agNews"); if (!box) return;
-  box.innerHTML = news.length ? news.map((p) => `<a class="ag-news-item" href="#/muro"><strong>${esc(p.title)}</strong>${p.body ? `<span class="muted small">${esc(p.body.slice(0, 110))}${p.body.length > 110 ? "…" : ""}</span>` : ""}</a>`).join("")
-    : `<p class="muted small">Sin anuncios por ahora.</p>`;
 }
 
 // ---------------------------------------------------------------------------
