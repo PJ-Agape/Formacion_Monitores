@@ -1,7 +1,7 @@
 // Gestión → Inicio y enlaces: el saludo, La Plaza Ágape, Nuestras familias y las radios católicas.
 // Lo editan administradores y coordinadores; los cambios se ven al instante, sin «Publicar».
 import { esc, icon, toast } from "./util.js";
-import { DEFAULTS, DOOR_NAMES, cfg, savedRaw, adopt } from "./inicio-config.js";
+import { DEFAULTS, DOOR_NAMES, REDES, cfg, savedRaw, adopt } from "./inicio-config.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -39,6 +39,11 @@ export function adminView() {
     <section class="card ia-sec"><h2>La Plaza Ágape</h2>${head("plaza")}<div class="ia-doors">${doors("plaza")}</div></section>
 
     <section class="card ia-sec"><h2>Nuestras familias</h2><p class="muted small">Solo la ven quienes tienen cuenta. «Asistencia» aparece solo a los guías.</p>${head("familias")}<div class="ia-doors">${doors("familias")}</div></section>
+
+    <section class="card ia-sec"><h2>Música y redes sociales</h2>
+      <p class="muted small">La playlist aparece en Inicio, junto a las radios y el podcast. Las redes, como botones pequeños en el pie de página de toda la app.</p>
+      <div class="ag-form-row">${f("playlist.label", "Nombre de la playlist", c.playlist.label, DEFAULTS.playlist.label, 40)}${f("playlist.url", "Enlace de la playlist", c.playlist.url, DEFAULTS.playlist.url, 300)}</div>
+      <div class="ag-form-row">${Object.entries(REDES).map(([k, l]) => f(`redes.${k}`, l, c.redes[k], DEFAULTS.redes[k], 300)).join("")}</div></section>
 
     <section class="card ia-sec"><h2>Radios católicas</h2><p class="muted small">La franja de radios de Inicio. El nombre corto es el que se ve en el botón.</p>
       <div id="iaRadios" class="stack" style="--gap:10px">${radiosHTML()}</div>
@@ -102,6 +107,8 @@ function registerActions() {
       : typeof b === "string" ? val(`${path}${k}`) : read(b, `${path}${k}.`)]));
     const { radios: _r, ...textBase } = DEFAULTS;
     const v = read(textBase, "");
+    const badUrl = ["playlist.url", ...Object.keys(REDES).map((k) => `redes.${k}`)].find((k) => val(k) && !okUrl(val(k)));
+    if (badUrl) { toast("Revisa los enlaces de la playlist y las redes: deben empezar con https://", ""); return; }
     const bad = radios.find((r) => (r.name || r.url) && (!r.name || !okUrl(r.url)));
     if (bad) { toast("Cada radio necesita nombre y un enlace que empiece con https://", ""); return; }
     const rs = radios.filter((r) => r.name && okUrl(r.url)).map(({ name, short, url, where }) => ({ name, short: short || "", url, where: where || "" }));

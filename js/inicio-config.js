@@ -26,6 +26,20 @@ export const DEFAULTS = {
     },
   },
   radios: RADIOS_BASE.map((r) => ({ ...r })),
+  playlist: { label: "Playlist Ágape", url: "https://open.spotify.com/playlist/5oR6IXXnU6H9AdFJuwdiaB" },
+  redes: {
+    instagram: "https://www.instagram.com/pj_agape_joven/",
+    tiktok: "https://www.tiktok.com/@pj.agape",
+    facebook: "https://www.facebook.com/share/18FQ5BhWpd/",
+  },
+};
+export const REDES = { instagram: "Instagram", tiktok: "TikTok", facebook: "Facebook" };
+// Íconos simples (monocromos) para los enlaces.
+export const BRAND_ICO = {
+  spotify: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><circle cx="12" cy="12" r="10" fill="currentColor"/><path d="M7 9.6c3.4-1 7.2-.7 10.2 1M7.6 12.6c2.8-.8 5.8-.5 8.2.9M8.2 15.4c2.2-.6 4.4-.4 6.3.7" fill="none" stroke="var(--brand-bg, #fff)" stroke-width="1.7" stroke-linecap="round"/></svg>',
+  instagram: '<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><circle cx="17.3" cy="6.7" r="1.1" fill="currentColor" stroke="none"/></svg>',
+  tiktok: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M14.5 3h3c.2 1.9 1.5 3.4 3.5 3.6v3.1c-1.3 0-2.5-.4-3.5-1v6.4A5.9 5.9 0 1 1 11.6 9.2v3.2a2.8 2.8 0 1 0 2.9 2.8V3Z"/></svg>',
+  facebook: '<svg viewBox="0 0 24 24" width="18" height="18" aria-hidden="true"><path fill="currentColor" d="M13.6 21v-7.6h2.6l.4-3h-3V8.5c0-.9.3-1.5 1.5-1.5h1.6V4.3c-.3 0-1.2-.1-2.3-.1-2.3 0-3.9 1.4-3.9 4v2.2H7.9v3h2.6V21h3.1Z"/></svg>',
 };
 export const DOOR_NAMES = { momentos: "Momentos", muro: "Muro", chat: "Chat", juegos: "Juegos", familias: "Ver las familias", pasaporte: "Mi pasaporte", asistencia: "Asistencia" };
 

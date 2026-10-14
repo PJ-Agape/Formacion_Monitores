@@ -23,7 +23,7 @@ import * as juegos from "./juegos.js";
 import * as frente from "./frente.js";
 import * as trivia from "./trivia.js";
 import * as podcast from "./podcast.js";
-import { cfg as inicioCfg } from "./inicio-config.js";
+import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
@@ -243,8 +243,16 @@ actions.vaSet = (el) => {
   toast(el.dataset.r ? "Vista de prueba activada" : "Volviste a tu vista");
   location.hash = "#/";
 };
+// Redes sociales en el pie de página (se editan en Gestión → Inicio y enlaces).
+function paintFootSocial() {
+  const box = $("#footSocial"); if (!box) return;
+  const r = inicioCfg().redes || {};
+  box.innerHTML = Object.keys(REDES).filter((k) => /^https:\/\//.test(r[k] || "")).map((k) =>
+    `<a href="${esc(r[k])}" target="_blank" rel="noopener" aria-label="${REDES[k]} de Ágape" title="${REDES[k]}">${BRAND_ICO[k]}</a>`).join("");
+}
 function renderChrome(section) {
   viewAsBar();
+  paintFootSocial();
   const tab = TAB_OF[section] || section;
   const cur = (k) => (k === tab ? 'aria-current="page"' : "");
   const NAV = navFor();
@@ -377,13 +385,16 @@ function viewHome() {
 // Radios católicas: una franja liviana en Inicio (se abren en la página de cada radio).
 const RADIO_ICO = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2.5"/><path d="M7 8 17 3.5"/><circle cx="15.5" cy="14" r="2.6"/><path d="M6.5 12.5h4M6.5 15.5h4"/></svg>`;
 function radiosHTML() {
-  const rs = inicioCfg().radios;
+  const rs = inicioCfg().radios, pl = inicioCfg().playlist || {};
   onAfterRender(() => inicio.refreshInicioCfg(() => { if (location.hash === "" || location.hash === "#/" || location.hash === "#/red") render(); }));
   onAfterRender(() => podcast.refreshQuiet(() => { if (podcast.hasEpisodes()) document.querySelector(".hr-pod small")?.remove(); }));
   return `<nav class="home-radios" aria-label="Radios católicas en vivo">
     ${rs.length ? `<span class="hr-lbl">${RADIO_ICO} Radios católicas</span>` : ""}
     <div class="hr-list">${rs.map((r) => `<a href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc([r.name, r.where].filter(Boolean).join(" · "))}"><i class="hr-dot" aria-hidden="true"></i>${esc(r.short || r.name)}</a>`).join("")}</div>
-    <a class="hr-pod" href="#/podcast">${podcast.MIC} Podcast Ágape${podcast.hasEpisodes() ? "" : ` <small>pronto</small>`}</a>
+    <span class="hr-more">
+      <a class="hr-pod" href="#/podcast">${podcast.MIC} Podcast Ágape${podcast.hasEpisodes() ? "" : ` <small>pronto</small>`}</a>
+      ${/^https:\/\//.test(pl.url || "") ? `<a class="hr-pl" href="${esc(pl.url)}" target="_blank" rel="noopener">${BRAND_ICO.spotify} ${esc(pl.label || "Playlist Ágape")}</a>` : ""}
+    </span>
   </nav>`;
 }
 let carTimer = null, carI = 0;

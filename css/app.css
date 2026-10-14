@@ -3465,3 +3465,17 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .ia-radio { border: 2px dashed var(--line, #c9d3e6); border-radius: 14px; padding: 10px 12px; display: grid; gap: 6px; }
 .ia-foot { display: flex; flex-wrap: wrap; gap: 10px; align-items: center; position: sticky; bottom: 0; background: var(--bg, #fff6e5); padding: 10px 0; z-index: 2; }
 
+
+/* Playlist (franja de Inicio) y redes en el pie de página */
+.hr-more { display: inline-flex; gap: 8px; flex-wrap: wrap; margin-left: auto; }
+.hr-more .hr-pod { margin-left: 0; }
+.hr-pl { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 800; font-size: .85rem; color: #fff; background: #1db954; border-radius: 999px; padding: 5px 12px; --brand-bg: #1db954; }
+.hr-pl svg { width: 16px; height: 16px; }
+.hr-pl:hover { background: #0b2566; --brand-bg: #0b2566; }
+@media (max-width: 560px) { .hr-more { margin-left: 0; } }
+.foot-social { display: flex; justify-content: center; gap: 10px; margin-bottom: 12px; }
+.foot-social:empty { display: none; }
+.foot-social a { width: 38px; height: 38px; display: grid; place-items: center; border-radius: 50%; border: 2px solid #0b2566; color: #0b2566; background: #fff6e5; box-shadow: 2px 2px 0 #8ad2fa; transition: transform .15s, background .15s, color .15s; }
+.foot-social a:hover { background: #0b2566; color: #ffba03; transform: translateY(-2px); }
+.foot-social a:focus-visible { outline: 3px solid #ef591c; outline-offset: 3px; }
+@media (prefers-reduced-motion: reduce) { .foot-social a:hover { transform: none; } }
