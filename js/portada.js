@@ -114,6 +114,26 @@ const btn = (b, main) => {
   const ext = !String(b.href).startsWith("#");
   return `<a class="btn ${main ? "btn-gold" : "btn-glass"}" href="${esc(b.href)}"${ext ? ' target="_blank" rel="noopener"' : ""}>${esc(b.label)} ${main ? icon("arrowR") : ""}</a>`;
 };
+// Enlace con vista previa: un video de YouTube muestra su imagen; cualquier otra página, su ícono y nombre.
+const okUrl = (u) => /^https?:\/\/[^\s]+$/i.test(String(u || "").trim());
+function ytId(u) {
+  try {
+    const x = new URL(u), h = x.hostname.replace(/^www\.|^m\./, "");
+    if (h === "youtu.be") return x.pathname.slice(1).split("/")[0];
+    if (h.endsWith("youtube.com")) return x.searchParams.get("v") || (x.pathname.match(/^\/(?:shorts|live|embed)\/([\w-]{6,})/) || [])[1] || "";
+  } catch {}
+  return "";
+}
+export function linkPreviewHTML(l) {
+  if (!l || !okUrl(l.url)) return "";
+  let host = ""; try { host = new URL(l.url).hostname.replace(/^www\./, ""); } catch { return ""; }
+  const yt = ytId(l.url).replace(/[^\w-]/g, "");
+  return `<a class="car-link${yt ? " is-yt" : ""}" href="${esc(l.url)}" target="_blank" rel="noopener">
+      ${yt ? `<span class="car-link-img"><img src="https://i.ytimg.com/vi/${yt}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()"><i class="car-link-play" aria-hidden="true"></i></span>`
+        : `<span class="car-link-ico"><b aria-hidden="true">${esc(host.charAt(0).toUpperCase())}</b><img src="https://www.google.com/s2/favicons?domain=${encodeURIComponent(host)}&sz=64" alt="" loading="lazy" width="32" height="32" onerror="this.remove()"></span>`}
+      <span class="car-link-txt"><b>${esc(l.label || (yt ? "Ver el video" : host))}</b><small>${esc(host)} ↗</small></span>
+    </a>`;
+}
 export function slideHTML(x) {
   const chips = (x.chips || []).filter(Boolean);
   return `<article class="car-slide" data-theme-c="${esc(THEMES[x.theme] ? x.theme : "sky")}" aria-roledescription="diapositiva">
@@ -127,7 +147,7 @@ export function slideHTML(x) {
         <div class="actions">${btn(x.b1, true)}${btn(x.b2, false)}</div>
       </div>
       ${x.logo ? `<img class="car-logo" src="icons/logo-320.webp" width="150" height="150" alt="Logo Ágape Joven PJ, Parroquia San Miguel de Yungay">` : ""}
-      ${x.illus && SCENE_KEYS.includes(x.illus) ? illus(x.illus, "car-illus") : ""}
+      ${x.link && okUrl(x.link.url) ? linkPreviewHTML(x.link) : x.illus && SCENE_KEYS.includes(x.illus) ? illus(x.illus, "car-illus") : ""}
     </article>`;
 }
 
@@ -211,6 +231,13 @@ function editor(x, isNew) {
         <div class="field"><label>Segundo botón (opcional)</label><input class="input" name="b2l" maxlength="40" value="${esc(x.b2?.label || "")}"></div>
         <div class="field"><label>Enlace</label><input class="input" name="b2h" maxlength="400" value="${esc(x.b2?.href || "")}" placeholder="#/muro, #/oracion, https://…"></div>
       </div>
+      <fieldset class="p-dates"><legend>Enlace con vista previa (opcional)</legend>
+        <div class="ag-form-row">
+          <div class="field"><label>Enlace</label><input class="input" name="lku" type="url" maxlength="400" value="${esc(x.link?.url || "")}" placeholder="https://youtube.com/… o cualquier página"></div>
+          <div class="field"><label>Texto de la vista previa</label><input class="input" name="lkl" maxlength="60" value="${esc(x.link?.label || "")}" placeholder="Ej: Mira el tráiler"></div>
+        </div>
+        <span class="xs muted">Se muestra en la diapositiva en lugar de la ilustración. Un video de YouTube aparece con su imagen; otras páginas, con su ícono y nombre.</span>
+      </fieldset>
       <div class="field"><label>Etiquetas (opcional, separadas por coma)</label><input class="input" name="chips" maxlength="120" value="${esc((x.chips || []).join(", "))}"></div>`}
       <fieldset class="p-dates"><legend>¿Cuándo se muestra?</legend>
         <div class="ag-form-row">
@@ -233,6 +260,7 @@ function readForm(form) {
     title: g("title"), kicker: g("kicker"), hand: g("hand"), text: g("text"), theme: g("theme") || "sky", illus: g("illus"),
     b1: { label: g("b1l"), href: g("b1h") }, b2: { label: g("b2l"), href: g("b2h") },
     chips: g("chips").split(",").map((s) => s.trim()).filter(Boolean).slice(0, 5),
+    link: okUrl(g("lku")) ? { url: g("lku"), label: g("lkl") } : null,
   };
   return { ...base, from: g("from"), to: g("to"), hidden: f.get("hidden") === "on" };
 }
