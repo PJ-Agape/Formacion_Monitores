@@ -5,6 +5,7 @@
 import { esc, rich, icon, toast } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
 import * as papa from "./papa.js";
+import { illus } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -204,7 +205,8 @@ export function view(opt = {}) {
     ctx.onLeave(stop);
     paintVelas();
   });
-  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["maria", "María"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]].filter(([k]) => k !== "palabra" || lectio);
+  const rincones = [["silencio", "Silencio"], ["velas", "Intenciones"], ["palabra", "Palabra"], ["siempre", "Oraciones de siempre"], ["nuestras", "Nuestras oraciones"], ["cantar", "Cantar"], ["radio", "Radios"]].filter(([k]) => k !== "palabra" || lectio);
+  let num = 0; // los rincones se numeran solos, en orden
   return `
   <section class="cap-hero" style="--season:${s.hex}">
     <div class="cap-arch">
@@ -223,6 +225,16 @@ export function view(opt = {}) {
       <span class="cap-hand sm">${esc(m.hand)}</span>
       <p class="cap-prayer">${esc(m.text).replace(/\n/g, "<br>")}</p>
     </article>
+  </section>
+
+  <section class="cap-rosbanner" id="cap-maria" aria-labelledby="capRosT">
+    <div class="cap-rosbanner-art">${illus("virgen", "cap-rosbanner-il")}</div>
+    <div class="cap-rosbanner-txt">
+      <span class="cap-hand">con María, cuenta a cuenta</span>
+      <h2 id="capRosT">Reza el <em>Rosario</em></h2>
+      <p>Hoy, ${esc(DAYNAME[now.getDay()])}, rezamos los <strong>${esc(my.name.toLowerCase())}</strong>. La app te acompaña paso a paso: tú solo rezas.</p>
+      <button class="btn cap-rosbanner-btn" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rezar el Rosario ahora</button>
+    </div>
   </section>
 
   <nav class="cap-nav" aria-label="Rincones de la capilla"><a href="#" class="cap-nav-ros" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rosario</a>${rincones.map(([k, l]) => `<a href="#" data-action="capGo" data-k="${k}">${esc(l)}</a>`).join("")}</nav>
@@ -268,30 +280,6 @@ export function view(opt = {}) {
       <ol class="cap-steps">${(lectio.items || []).map((i) => `<li>${rich(String(i).replace(/<strong>\s*\d+\.\s*/i, "<strong>"))}</li>`).join("")}</ol></article>
   </section>` : ""}
 
-  <section class="cap-room" id="cap-maria">
-    <div class="cap-room-head"><span class="cap-num">04</span><h2>Con <em>María</em></h2></div>
-    <div class="grid grid-2">
-      <article class="card cap-myst">
-        <span class="eyebrow">Hoy, ${esc(DAYNAME[now.getDay()])}, rezamos los</span>
-        <strong class="cap-myst-name">${esc(my.name)}</strong>
-        <ol>${my.items.map((x) => `<li>${esc(x)}</li>`).join("")}</ol>
-        <button class="btn btn-primary cap-ros-btn" data-action="capRosario" data-set="${mk}">${rosaryIcon()} Rezar el Rosario</button>
-        <details class="cap-how"><summary>Cómo rezar el Rosario</summary>
-          <ol class="small"><li>Haz la señal de la cruz y reza el Credo o un Padre nuestro.</li>
-          <li>En cada misterio: anúncialo, reza un Padre nuestro, diez Ave María y un Gloria.</li>
-          <li>Al terminar los cinco misterios, reza la Salve.</li></ol>
-          <p class="xs muted">Si tienes poco tiempo, reza un solo misterio: también es Rosario hecho con amor.</p></details>
-      </article>
-      <div class="stack" style="--gap:12px">
-        <a class="card link camino-banner" href="presentaciones/mes-de-maria.html" target="_blank" rel="noopener">
-          <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
-          <span style="flex:1"><span class="eyebrow">8 de noviembre al 8 de diciembre</span><strong>Mes de María: Con María, puente hacia Jesús</strong>
-          <span class="muted small">31 días con oración, Rosario, motivación y un desafío diario. Adentro puedes imprimirlo.</span></span>${icon("right")}
-        </a>
-      </div>
-    </div>
-  </section>
-
   <section class="cap-room" id="cap-siempre">
     <div class="cap-room-head"><span class="cap-num">05</span><h2>Oraciones de <em>siempre</em></h2></div>
     <p class="cap-lead">Las oraciones que rezamos en todo el mundo. Elige una y rézala con calma.</p>
@@ -327,7 +315,7 @@ export function view(opt = {}) {
       </a>`).join("")}</div>
   </section>
 
-  <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`;
+  <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`.replace(/<span class="cap-num">\d+<\/span>/g, () => `<span class="cap-num">${String(++num).padStart(2, "0")}</span>`);
 }
 
 // ---------------------------------------------------------------------------

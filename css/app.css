@@ -1585,17 +1585,12 @@ dialog.sheet { border: 3px solid var(--z-b); box-shadow: 8px 8px 0 var(--z-b); }
 .cap-vela-body { flex: 1; min-width: 0; } .cap-vela-body p { line-height: 1.45; overflow-wrap: anywhere; }
 .cap-empty { grid-column: 1 / -1; text-align: center; padding: 18px; }
 
-.cap-lectio .eyebrow, .cap-myst .eyebrow, .cap-lectio strong, .cap-myst-name { display: block; }
-.cap-lectio strong, .cap-myst-name { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
+.cap-lectio .eyebrow, .cap-lectio strong { display: block; }
+.cap-lectio strong { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; line-height: 1.1; }
 .cap-steps { counter-reset: s; list-style: none; padding: 0; margin: 12px 0 0; display: grid; gap: 10px; }
 .cap-steps li { counter-increment: s; position: relative; padding-left: 44px; line-height: 1.45; }
 .cap-steps li::before { content: counter(s); position: absolute; left: 0; top: -2px; width: 30px; height: 30px; border-radius: 50%; display: grid; place-items: center;
   background: #ffba03; border: 2px solid #0b2566; font-weight: 800; font-size: .9rem; }
-.cap-myst { background: #fde0d2; }
-.cap-myst ol { margin: 12px 0 0 1.2em; display: grid; gap: 6px; }
-.cap-how { margin-top: 14px; border-top: 2px dashed rgba(11,37,102,.35); padding-top: 10px; }
-.cap-how summary { cursor: pointer; font-weight: 800; }
-.cap-how ol { margin: 8px 0 6px 1.2em; display: grid; gap: 4px; }
 
 .cap-classic { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 12px; align-items: start; }
 .cap-pr { padding: 0; }
@@ -1637,7 +1632,6 @@ body.cap-quiet { overflow: hidden; }
 .cap-vela-guest > div { min-width: 200px; }
 
 /* Rosario virtual */
-.cap-ros-btn { margin-top: 14px; }
 .cap-nav a.cap-nav-ros { background: #0b2566; color: #ffba03; display: inline-flex; align-items: center; gap: 6px; }
 .cap-nav a.cap-nav-ros:hover { background: #1351a4; }
 .ros-ov { position: fixed; inset: 0; z-index: 110; overflow-y: auto; overscroll-behavior: contain; color: #fff6e5;
@@ -2921,3 +2915,23 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .cap-devcard h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.45rem; line-height: 1.1; margin: 0; color: #0b2566; }
 .cap-devcard .cap-prayer { font-size: 1.1rem; margin: 0; }
 .cap-devcard .row-wrap { gap: 8px; }
+
+/* Capilla · el Rosario, en lugar de privilegio bajo la portada */
+.cap-rosbanner { position: relative; overflow: hidden; display: grid; grid-template-columns: minmax(0, 220px) 1fr; align-items: center; gap: 18px 26px; margin-top: 22px; padding: 22px 26px; border-radius: var(--r-xl); background: radial-gradient(circle at 12% 30%, #1f4fa3 0, transparent 55%), #0b2566; color: #fff6e5; border: 3px solid #0b2566; box-shadow: 5px 5px 0 #ffba03; }
+.cap-rosbanner-art { color: #ffba03; --il-bg: #fff6e5; }
+.cap-rosbanner-il { width: 100%; height: auto; display: block; }
+.cap-rosbanner-txt { display: grid; gap: 8px; justify-items: start; }
+.cap-rosbanner .cap-hand { color: #ffba03; }
+.cap-rosbanner h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.03em; font-size: clamp(2rem, 6vw, 3rem); line-height: .95; margin: 0; color: #fff; }
+.cap-rosbanner h2 em { font-style: normal; font-family: var(--font-hand); color: #ffba03; font-size: 1.15em; letter-spacing: 0; }
+.cap-rosbanner p { margin: 0; font-size: 1.02rem; max-width: 46ch; color: #e8f2fb; }
+.cap-rosbanner p strong { color: #fff; }
+.cap-rosbanner-btn { margin-top: 6px; background: #ffba03; color: #0b2566; border: 2px solid #fff6e5; font-weight: 800; font-size: 1.1rem; padding: 14px 24px; border-radius: 999px; box-shadow: 3px 3px 0 #fff6e5; display: inline-flex; align-items: center; gap: 10px; }
+.cap-rosbanner-btn:hover { background: #ffd04d; transform: translate(-1px, -1px); box-shadow: 4px 4px 0 #fff6e5; }
+.cap-rosbanner-btn:focus-visible { outline: 3px solid #fff; outline-offset: 3px; }
+@media (max-width: 640px) {
+  .cap-rosbanner { grid-template-columns: 1fr; padding: 20px 18px 22px; text-align: left; }
+  .cap-rosbanner-art { max-width: 170px; margin: -6px auto 0; }
+  .cap-rosbanner-btn { width: 100%; justify-content: center; }
+}
+@media (prefers-reduced-motion: reduce) { .cap-rosbanner-btn:hover { transform: none; } }

@@ -47,10 +47,10 @@ export const DEFAULTS = [
     text: "La santidad no es para unos pocos: es la vocación de todos. Celebramos a quienes ya viven junto a Dios, como san Alberto Hurtado y santa Teresa de los Andes, y el 2 de noviembre rezamos por nuestros difuntos.",
     b1: { label: "Horarios en la agenda", href: "#/agenda" }, b2: { label: "Rezar con el devocionario", href: "#/oracion" } },
   { key: "maria", label: "Mes de María", theme: "rose", order: 40, from: "2026-09-15", to: "2026-12-08", illus: "virgen",
-    kicker: "8 de noviembre al 8 de diciembre", hand: "con flores a María",
+    kicker: "8 de noviembre al 8 de diciembre · 31 días", hand: "con María, puente hacia Jesús",
     title: "Mes de *María*",
-    text: "Durante un mes nos reunimos a rezar, cantar y llevar flores a la Virgen, como es tradición en Chile. Invita a tu familia y a tus amigos: María nos enseña a decir «aquí estoy».",
-    b1: { label: "Rezar los 31 días", href: "presentaciones/mes-de-maria.html" }, b2: { label: "Ver días y horarios", href: "#/agenda" } },
+    text: "Un mes para rezar, cantar y llevar flores a la Virgen, como es tradición en Chile. ¡Invita a tu familia!",
+    b1: { label: "Rezar los 31 días", href: "presentaciones/mes-de-maria.html" }, b2: { label: "Rezar el Rosario", href: "#/oracion/rosario" } },
 ];
 const DEF = Object.fromEntries(DEFAULTS.map((d) => [d.key, d]));
 
