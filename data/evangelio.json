@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-12": {
-   "titulo": "Lunes de la 28.ª semana del Tiempo Ordinario",
-   "cita": "Lc 11,29-32",
-   "frase": "Pide un signo y no le será dado otro que el de Jonás."
-  },
   "2026-10-13": {
    "titulo": "Martes de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 11,37-41",
@@ -55,6 +50,11 @@
    "titulo": "Jueves de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,49-53",
    "frase": "Yo he venido a traer fuego sobre la tierra, ¡y cómo desearía que ya estuviera ardiendo!"
+  },
+  "2026-10-23": {
+   "titulo": "Viernes de la 29.ª semana del Tiempo Ordinario",
+   "cita": "Lc 12,54-59",
+   "frase": "Cuando ven que una nube se levanta en occidente, ustedes dicen en seguida que va a llover, y así sucede."
   }
  }
 }
