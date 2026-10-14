@@ -124,8 +124,12 @@ const devGroups = () => {
 };
 const DEV_KEY = "agape_cap_oracion";
 const devCurrent = () => { let t = ""; try { t = sessionStorage.getItem(DEV_KEY) || ""; } catch {} return devFind(t) ? t : "Padre nuestro"; };
+const projBtn = (o) => (devSlides(o).length > 1 ? `<button type="button" class="btn btn-sm btn-primary cap-dev-proj" data-action="capProject">${icon("eye")} Proyectar</button>` : "");
 function devCardHTML(o) {
   if (!o) return "";
+  return devCardInner(o) + projBtn(o);
+}
+function devCardInner(o) {
   const grp = (devGroups().find(([, xs]) => xs.includes(o)) || [""])[0];
   if (o.own) {
     const c = o.own;
@@ -161,6 +165,55 @@ export function oremusView(t) {
       <p>Nuestras oraciones, para antes y después de cada encuentro, y las que rezamos en toda la Iglesia. Elige una y rézala con calma.</p></header>
     ${devocionarioHTML()}
   </div>`;
+}
+// Proyectar una oración (como el cancionero): portada con el título y luego el texto en partes cortas.
+function devPlain(html) { const d = document.createElement("div"); d.innerHTML = String(html || ""); return d.textContent.trim(); }
+function devSlides(o) {
+  if (!o) return [];
+  let blocks = [];
+  if (o.own) {
+    const c = o.own;
+    blocks = c.type === "list" ? (c.items || []).map((i) => [devPlain(rich(String(i))).replace(/^\d+\.\s*/, "")])
+      : String(c.text || "").replace(/^«|»$/g, "").split(/\n\s*\n/).map((b) => b.split("\n"));
+  } else if (o.x) blocks = String(o.x).split(/\n\s*\n/).map((b) => b.split("\n"));
+  const slides = [];
+  for (const b of blocks) {
+    const lines = b.map((l) => l.trim()).filter(Boolean);
+    for (let i = 0; i < lines.length; i += 5) slides.push({ lines: lines.slice(i, i + 5) });
+  }
+  if (!slides.length) return [];
+  const grp = o.own ? OWN_LABEL : (devGroups().find(([, xs]) => xs.includes(o)) || [""])[0];
+  return [{ title: o.t, sub: grp }, ...slides];
+}
+let pj = null; // { slides, i }
+function devProject(t) {
+  const sl = devSlides(devFind(t)); if (sl.length < 2) return;
+  pj = { slides: sl, i: 0 };
+  let ov = document.getElementById("capProj");
+  if (!ov) { ov = document.createElement("div"); ov.id = "capProj"; document.body.appendChild(ov); }
+  ov.className = "can-proj"; ov.setAttribute("role", "dialog"); ov.setAttribute("aria-modal", "true"); ov.setAttribute("aria-label", "Proyección de la oración");
+  document.body.classList.add("cap-quiet");
+  try { ov.requestFullscreen && ov.requestFullscreen().catch(() => {}); } catch {}
+  devProjPaint();
+}
+function devProjPaint() {
+  const ov = document.getElementById("capProj"); if (!ov || !pj) return;
+  const s = pj.slides[pj.i] || {};
+  const line = (l) => (/^[VR]\. /.test(l) ? `<b>${l[0]}.</b> ${esc(l.slice(3))}` : esc(l));
+  ov.innerHTML = `<div class="can-proj-in">
+    ${s.title ? `<span class="can-proj-mom">${esc(s.sub || "Oremus")}</span><h2 class="can-proj-title">${esc(s.title)}</h2>`
+      : `<p class="can-proj-txt">${(s.lines || []).map(line).join("<br>")}</p>`}
+  </div>
+  <div class="can-proj-ctrl"><button class="icon-btn" data-action="capProjPrev" aria-label="Anterior">${icon("left")}</button>
+    <span>${pj.i + 1} / ${pj.slides.length}</span>
+    <button class="icon-btn" data-action="capProjNext" aria-label="Siguiente">${icon("right")}</button>
+    <button class="btn btn-sm btn-glass" data-action="capProjClose">Salir</button></div>`;
+}
+function devProjMove(d) { if (!pj) return; pj.i = Math.max(0, Math.min(pj.slides.length - 1, pj.i + d)); devProjPaint(); }
+function devProjClose() {
+  pj = null; document.getElementById("capProj")?.remove();
+  document.body.classList.remove("cap-quiet");
+  try { if (document.fullscreenElement) document.exitFullscreen(); } catch {}
 }
 function devShow(t) {
   if (!devFind(t)) return;
@@ -692,6 +745,19 @@ function registerActions() {
   const A = ctx.actions;
   // Devocionario: un selector y una sola tarjeta con la oración elegida
   document.addEventListener("change", (e) => { if (e.target.id === "capDevSel") devShow(e.target.value); });
+  A.capProject = () => devProject(document.getElementById("capDevSel")?.value || devCurrent());
+  A.capProjPrev = () => devProjMove(-1);
+  A.capProjNext = () => devProjMove(1);
+  A.capProjClose = () => devProjClose();
+  document.addEventListener("keydown", (e) => {
+    if (!document.getElementById("capProj")) return;
+    if (e.key === "Escape") { e.preventDefault(); devProjClose(); }
+    else if (["ArrowRight", "PageDown", " "].includes(e.key)) { e.preventDefault(); devProjMove(1); }
+    else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); devProjMove(-1); }
+  });
+  let psx = null;
+  document.addEventListener("touchstart", (e) => { if (document.getElementById("capProj")) psx = e.touches[0].clientX; }, { passive: true });
+  document.addEventListener("touchend", (e) => { if (psx == null || !document.getElementById("capProj")) return; const dx = e.changedTouches[0].clientX - psx; psx = null; if (Math.abs(dx) > 60) devProjMove(dx < 0 ? 1 : -1); }, { passive: true });
   A.capRosario = (el) => openRosary(el.dataset.set);
   A.rosClose = () => closeRosary();
   A.rosNext = () => rosMove(1);
