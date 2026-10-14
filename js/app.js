@@ -480,7 +480,7 @@ function viewItinerary() {
   </header>
 
   ${c.courses.length > 1 ? `<div class="course-switch" style="margin:14px 0 4px" aria-label="Elegir curso">
-    ${c.courses.map((x) => `<button aria-pressed="${x.id === course.id}" data-action="course" data-id="${esc(x.id)}">${esc(x.title)}</button>`).join("")}
+    ${c.courses.map((x) => `<button aria-pressed="${x.id === course.id}" data-action="course" data-id="${esc(x.id)}">${esc(x.title)}${x.hidden ? " · oculto" : ""}</button>`).join("")}
   </div>` : ""}
 
   <div class="card progress-card" style="margin-top:16px">
@@ -1466,6 +1466,7 @@ camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
+S.setHiddenCourseRule(() => (cloud.enabled ? !!cloud.state().isAdmin : S.isAdmin()));
 inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 credenciales.setup({ actions, onAfterRender });
 familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });

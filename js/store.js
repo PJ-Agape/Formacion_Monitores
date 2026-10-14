@@ -65,8 +65,18 @@ export function setPreview(on) {
 }
 
 // Contenido que ven los dirigentes (o el borrador, si el admin está en vista previa).
+// Cursos ocultos (Gestión → Cursos → «Oculto»): solo los ven los administradores.
+let seeHidden = () => true, filtered = null, filteredFrom = null;
+export const setHiddenCourseRule = (fn) => { seeHidden = fn; filtered = null; };
 export function content() {
-  return isPreview() ? read(K.draft) : published;
+  const c = isPreview() ? read(K.draft) : published;
+  if (!c || !Array.isArray(c.courses) || seeHidden() || !c.courses.some((x) => x.hidden)) return c;
+  if (filteredFrom !== c || !filtered) {
+    const vis = c.courses.filter((x) => !x.hidden);
+    filtered = { ...c, courses: vis.length ? vis : c.courses.slice(0, 1) };
+    filteredFrom = c;
+  }
+  return filtered;
 }
 export const publishedContent = () => published;
 export function setPublished(c) { published = c; write(K.cache, c); }

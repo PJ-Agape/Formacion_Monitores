@@ -256,7 +256,7 @@ function legacyDiff(d) {
 function coursesView(d) {
   return `
   <header class="page-head row-wrap" style="align-items:flex-end">
-    <div><span class="eyebrow">Gestión</span><h1>Cursos</h1><p>Cada curso tiene módulos, unidades de estudio y una evaluación por módulo.</p></div>
+    <div><span class="eyebrow">Gestión</span><h1>Cursos</h1><p>Cada curso tiene módulos, unidades de estudio y una evaluación por módulo. Los cursos <b>ocultos</b> solo los ven los administradores: puedes prepararlos con calma y publicarlos cuando se necesiten.</p></div>
     <span class="spacer"></span>
     <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button>
   </header>
@@ -266,11 +266,12 @@ function coursesView(d) {
       return `<div class="card row" style="padding:16px 18px">
         <span class="tile-ico" style="margin:0;background:var(--accent-soft);color:var(--accent-text)">${icon("route")}</span>
         <a href="#/admin/itinerarios/${i}" style="flex:1;min-width:0;text-decoration:none;color:inherit">
-          <strong style="display:block">${esc(c.title)}</strong>
+          <strong style="display:block">${esc(c.title)} ${c.hidden ? `<span class="chip warn" style="vertical-align:middle">Oculto</span>` : `<span class="chip ok" style="vertical-align:middle">Público</span>`}</strong>
           <span class="muted small">${c.phases.length} módulos · ${n} unidades · tema ${esc(c.theme)}</span></a>
         <div class="row" style="gap:4px">
           ${iconBtn("up", "aMoveCourse", `data-i="${i}" data-d="-1"`, "Subir", i === 0)}
           ${iconBtn("down", "aMoveCourse", `data-i="${i}" data-d="1"`, "Bajar", i === d.courses.length - 1)}
+          <button class="btn btn-sm ${c.hidden ? "btn-primary" : "btn-ghost"}" data-action="aHideCourse" data-i="${i}" title="${c.hidden ? "Hacerlo visible para todos" : "Ocultarlo (solo lo verán los administradores)"}">${icon(c.hidden ? "eye" : "lock")} ${c.hidden ? "Publicar curso" : "Ocultar"}</button>
           ${iconBtn("copy", "aDupCourse", `data-i="${i}"`, "Duplicar")}
           ${d.courses.length > 1 ? iconBtn("trash", "aDelCourse", `data-i="${i}"`, "Eliminar", false, "danger") : ""}
           <a class="btn btn-sm btn-soft" href="#/admin/itinerarios/${i}">Editar</a>
@@ -1173,6 +1174,11 @@ function bindActions() {
   A.aEditCourse = (el) => {
     const ci = +el.dataset.ci, c = S.ensureDraft().courses[ci];
     openEditor({ title: "Datos del curso", spec: "course", obj: c, onSave: (o) => commit((d) => Object.assign(d.courses[ci], { title: o.title, theme: o.theme, description: o.description })) });
+  };
+  A.aHideCourse = (el) => {
+    const d0 = S.getDraft() || S.publishedContent(), c = d0.courses[+el.dataset.i]; if (!c) return;
+    if (!c.hidden && d0.courses.filter((x) => !x.hidden).length <= 1) { toast("Tiene que quedar al menos un curso público", ""); return; }
+    commit((d) => { d.courses[+el.dataset.i].hidden = !c.hidden; }, { msg: c.hidden ? "Curso público: se verá al publicar los cambios" : "Curso oculto: se aplicará al publicar los cambios" });
   };
   A.aMoveCourse = (el) => commit((d) => move(d.courses, +el.dataset.i, +el.dataset.d));
   A.aDupCourse = (el) => commit((d) => {
