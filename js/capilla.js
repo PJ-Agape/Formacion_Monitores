@@ -89,11 +89,11 @@ const CLASSIC = [
 // Devocionario completo (js/devocionario.js), en el orden de Vatican News
 const prayerHTML = (x) => esc(x).split("\n").map((l) => l === "" ? "<span class=\"cap-gap\"></span>"
   : /^[VR]\. /.test(l) ? `<span class="cap-vr"><b>${l[0]}.</b> ${l.slice(3)}</span>` : /^Oremos: /.test(l) ? `<span class="cap-vr"><b>Oremos:</b> ${l.slice(8)}</span>` : `${l}<br>`).join("");
-// Radios católicas: siempre enlazamos a la página oficial de cada una (no a señales de terceros).
-const RADIOS = [
-  { name: "Radio María Chile", where: "89.3 FM Santiago · a todo Chile por internet", url: "https://radiomaria.cl/" },
-  { name: "Radio El Sembrador", where: "104.7 FM Chillán · Diócesis de Chillán · en su Facebook", url: "https://www.facebook.com/ElSembrador1047/" },
-  { name: "Radio Regina Coeli", where: "Los Ángeles · Diócesis Santa María de Los Ángeles", url: "https://reinadelcielo.cl/radio/" },
+// Radios católicas (se muestran en Inicio): siempre enlazamos a la página oficial de cada una (no a señales de terceros).
+export const RADIOS = [
+  { name: "Radio María Chile", short: "Radio María", where: "89.3 FM Santiago · a todo Chile por internet", url: "https://radiomaria.cl/" },
+  { name: "Radio El Sembrador", short: "El Sembrador", where: "104.7 FM Chillán · Diócesis de Chillán · en su Facebook", url: "https://www.facebook.com/ElSembrador1047/" },
+  { name: "Radio Regina Coeli", short: "Regina Coeli", where: "Los Ángeles · Diócesis Santa María de Los Ángeles", url: "https://reinadelcielo.cl/radio/" },
 ];
 
 // Las oraciones de siempre se agrupan por tema para elegirlas en una lista (una sola tarjeta abierta a la vez).
@@ -356,16 +356,6 @@ export function view(opt = {}) {
       <span style="flex:1"><strong>Cancionero Ágape</strong>
       <span class="muted small">Canciones con acordes para cada momento de la misa, en el tono que necesites, y los repertorios de cada celebración.</span></span>${icon("right")}
     </a>
-  </section>
-
-  <section class="cap-room" id="cap-radio">
-    <div class="cap-room-head"><span class="cap-num">08</span><h2>Radios <em>católicas</em></h2></div>
-    <p class="cap-lead">Para rezar, cantar y escuchar la Palabra durante el día. Se abren en la página de cada radio.</p>
-    <div class="cap-radios">${RADIOS.map((r) => `<a class="card link cap-radio" href="${r.url}" target="_blank" rel="noopener">
-        <span class="cap-radio-ico" aria-hidden="true">📻</span>
-        <span style="flex:1"><strong>${esc(r.name)}</strong><span class="muted small">${esc(r.where)}</span></span>
-        <span class="go">Escuchar en vivo ${icon("arrowR")}</span>
-      </a>`).join("")}</div>
   </section>
 
   <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`.replace(/<span class="cap-num">\d+<\/span>/g, () => `<span class="cap-num">${String(++num).padStart(2, "0")}</span>`);

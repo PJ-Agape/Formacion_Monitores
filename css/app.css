@@ -3027,3 +3027,13 @@ a.fp-ev { color: inherit; text-decoration: none; }
 .oremus .back-link { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; color: #1351a4; text-decoration: none; margin-bottom: 8px; }
 .oremus .back-link svg { width: 18px; height: 18px; }
 .cap-dev-proj { margin-top: 4px; }
+
+/* Inicio · franja de radios católicas */
+.home-radios { display: flex; align-items: center; gap: 10px 14px; flex-wrap: wrap; margin-top: 16px; padding: 10px 14px; background: var(--surface, #fff); border: 2px solid #0b2566; border-radius: 999px; box-shadow: 3px 3px 0 #8ad2fa; }
+.hr-lbl { display: inline-flex; align-items: center; gap: 6px; font-weight: 800; font-size: .85rem; color: #0b2566; white-space: nowrap; }
+.hr-list { display: flex; gap: 8px; flex-wrap: wrap; }
+.hr-list a { display: inline-flex; align-items: center; gap: 6px; text-decoration: none; font-weight: 700; font-size: .85rem; color: #0b2566; background: #e1edfb; border-radius: 999px; padding: 5px 12px; }
+.hr-list a:hover { background: #ffba03; }
+.hr-dot { width: 8px; height: 8px; border-radius: 50%; background: #ef591c; box-shadow: 0 0 0 3px rgba(239,89,28,.2); }
+@media (prefers-reduced-motion: no-preference) { .hr-dot { animation: hrLive 1.8s ease-in-out infinite; } @keyframes hrLive { 50% { opacity: .35; } } }
+@media (max-width: 560px) { .home-radios { border-radius: 20px; } .hr-list { gap: 6px; } .hr-list a { padding: 5px 10px; font-size: .82rem; } }

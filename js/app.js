@@ -338,12 +338,21 @@ function viewHome() {
   <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
+  ${radiosHTML()}
   ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">
     <span class="tile-ico tile-brand" style="margin:0">${icon("sparkle")}</span>
     <span style="flex:1"><span class="eyebrow">¿Quieres ser dirigente?</span><strong>Sé puente</strong>
     <span class="muted small">Una presentación corta sobre qué es ser dirigente en Ágape y cómo es el curso.</span></span>${icon("right")}</a>` : ""}
   <div id="installSlot"></div>
   `;
+}
+// Radios católicas: una franja liviana en Inicio (se abren en la página de cada radio).
+const RADIO_ICO = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="8" width="18" height="12" rx="2.5"/><path d="M7 8 17 3.5"/><circle cx="15.5" cy="14" r="2.6"/><path d="M6.5 12.5h4M6.5 15.5h4"/></svg>`;
+function radiosHTML() {
+  return `<nav class="home-radios" aria-label="Radios católicas en vivo">
+    <span class="hr-lbl">${RADIO_ICO} Radios católicas</span>
+    <div class="hr-list">${capilla.RADIOS.map((r) => `<a href="${r.url}" target="_blank" rel="noopener" title="${esc(r.name)} · ${esc(r.where)}"><i class="hr-dot" aria-hidden="true"></i>${esc(r.short || r.name)}</a>`).join("")}</div>
+  </nav>`;
 }
 let carTimer = null, carI = 0;
 function startCarousel() {
