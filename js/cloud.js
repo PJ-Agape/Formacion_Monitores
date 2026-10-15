@@ -710,6 +710,18 @@ export async function savePodcast(data) {
 }
 
 // ---------------------------------------------------------------------------
+// Partidas sincronizadas (Juegos → ¡Última!): un documento por sala, partidas/{CÓDIGO}.
+// ---------------------------------------------------------------------------
+export const partidaExists = async (code) => { const snap = await withTimeout(fb.getDoc(fb.doc(db, "partidas", code)), 8000); return snap.exists(); };
+export const partidaCreate = (code, data) => fb.setDoc(fb.doc(db, "partidas", code), { ...data, at: fb.serverTimestamp(), createdAt: fb.serverTimestamp() });
+export const partidaUpdate = (code, data) => fb.updateDoc(fb.doc(db, "partidas", code), { ...data, at: fb.serverTimestamp() });
+export const partidaDelete = (code) => fb.deleteDoc(fb.doc(db, "partidas", code));
+export const partidaDel = () => fb.deleteField();
+export function partidaWatch(code, cb, onErr) {
+  return fb.onSnapshot(fb.doc(db, "partidas", code), (snap) => cb(snap.exists() ? snap.data() : null), (e) => { console.warn("Partida:", e); onErr && onErr(e); });
+}
+
+// ---------------------------------------------------------------------------
 // Velas de la capilla: intenciones de la comunidad (solo las ven quienes tienen cuenta).
 // ---------------------------------------------------------------------------
 export function watchVelas(cb, onErr) {

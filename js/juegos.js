@@ -5,6 +5,7 @@
 import { esc, icon } from "./util.js";
 import { artSvg as frenteSvg } from "./frente.js";
 import { artSvg as triviaSvg } from "./trivia.js";
+import { artSvg as ultimaSvg } from "./ultima.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave }
 export function setup(c) { ctx = c; registerActions(); }
@@ -96,6 +97,10 @@ export function view() {
       <span class="jg-card-art" aria-hidden="true">${triviaSvg()}</span>
       <span class="jg-card-txt"><small>Para jugar solo o entre todos</small><b>Trivia Ágape</b>
         <span>¿Cuánto sabes de nuestra comunidad, el Camino, la app y la fe?</span></span>${icon("right")}</a>
+    <a class="jg-card is-ul" href="#/juegos/ultima">
+      <span class="jg-card-art" aria-hidden="true">${ultimaSvg()}</span>
+      <span class="jg-card-txt"><small>2 a 8 jugadores · cada uno con su celular</small><b>¡Última!</b>
+        <span>El juego de cartas de Ágape. Junta colores, lanza un Roba 2 y no olvides avisar tu última carta.</span></span>${icon("right")}</a>
     <p class="muted small jg-soon">Pronto vendrán más juegos.</p>`;
 }
 
