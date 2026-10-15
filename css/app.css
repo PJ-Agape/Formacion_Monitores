@@ -3491,3 +3491,37 @@ p.p-prev-in .car-link, .p-prev-in .car-link { pointer-events: none; }
 .cred-item-t b { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cred-item-t small { color: var(--ink-3, #5a6b88); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .cred-sum { margin: 0; font-weight: 700; color: var(--ink-2, #24406e); }
+
+/* Capilla: Liturgia de las Horas */
+.cap-lhbanner { background: linear-gradient(135deg, #0b2566 0%, #1351a4 60%, #ef591c 140%); }
+.cap-lh-btns { display: flex; flex-wrap: wrap; gap: 8px; }
+.cap-lh-btns .is-alt { background: transparent; color: #fff6e5; border-color: rgba(255,246,229,.6); box-shadow: none; }
+.lh-ov { background: linear-gradient(180deg, var(--lh-sky1) 0%, #0b2566 62%) !important; }
+.lh-stage { width: min(100%, 460px, calc((100dvh - 520px) * 2.2)); min-width: 240px; flex: none; }
+.lh-arc { display: block; width: 100%; height: auto; overflow: visible; }
+.lh-path { fill: none; stroke: rgba(255,246,229,.45); stroke-width: 1.6; stroke-dasharray: 3 6; }
+.lh-horizon { stroke: rgba(255,246,229,.35); stroke-width: 1.4; }
+.lh-pt { cursor: pointer; }
+.lh-pt .hit { fill: transparent; }
+.lh-pt .dot { fill: rgba(255,246,229,.25); stroke: #fff6e5; stroke-width: 1.6; transition: fill .25s, r .25s; }
+.lh-pt.done .dot { fill: #fff6e5; }
+.lh-pt.now .dot { fill: #ffba03; stroke: #fff6e5; r: 8; }
+.lh-body { transition: transform .6s cubic-bezier(.2,.8,.2,1); pointer-events: none; }
+.lh-rays line { stroke: #ffd23f; stroke-width: 3; stroke-linecap: round; }
+.lh-card { width: min(100%, 520px); flex: 1 1 auto; min-height: 200px; max-height: calc(100dvh - 330px); overflow-y: auto; background: rgba(255,246,229,.97); color: #0b2566; border-radius: 24px; border: 3px solid #fff6e5; box-shadow: 5px 5px 0 rgba(0,0,0,.25); padding: 18px 20px; }
+.lh-c-in { display: grid; gap: 8px; animation: rosFade .35s ease; }
+.lh-c-in .ros-eb { color: #ef591c; font-size: .72rem; }
+.lh-t { font-family: var(--font-display); font-weight: 800; font-size: 1.7rem; line-height: 1.05; }
+.lh-sub { font-family: var(--font-hand); font-weight: 700; font-size: 1.3rem; color: #1351a4; line-height: 1; }
+.lh-how { margin: 0; font-size: 1rem; line-height: 1.5; color: #24406e; }
+.lh-xt { font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #1351a4; margin-top: 4px; }
+.lh-txt { font-size: 1.06rem; line-height: 1.55; background: #fff; border-left: 5px solid #ffba03; border-radius: 12px; padding: 12px 14px; }
+.lh-vr { display: block; }
+.lh-vr b { color: #ef591c; }
+.lh-gap { display: block; height: .6em; }
+.lh-open { justify-self: start; display: inline-flex; align-items: center; gap: 8px; margin-top: 4px; text-decoration: none; font-weight: 800; color: #fff; background: #1351a4; border-radius: 999px; padding: 10px 16px; box-shadow: 3px 3px 0 #0b2566; }
+.lh-open:hover { background: #0b2566; }
+.lh-note { font-size: .82rem; color: #5a6b88; }
+.lh-c-in.is-fin .lh-t { color: #ef591c; }
+.lh-ctl { width: min(100%, 520px); }
+@media (prefers-reduced-motion: reduce) { .lh-body { transition: none; } }
