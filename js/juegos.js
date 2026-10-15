@@ -6,6 +6,10 @@ import { esc, icon } from "./util.js";
 import { artSvg as frenteSvg } from "./frente.js";
 import { artSvg as triviaSvg } from "./trivia.js";
 import { artSvg as ultimaSvg } from "./ultima.js";
+import { artSvg as memSvg } from "./memorice.js";
+import { artSvg as mjSvg } from "./mahjong.js";
+import { artSvg as spSvg } from "./sopa.js";
+import { artSvg as cwSvg } from "./crucigrama.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave }
 export function setup(c) { ctx = c; registerActions(); }
@@ -84,7 +88,8 @@ function stopTimer() { if (timer) clearInterval(timer); timer = null; }
 // ---------------------------------------------------------------------------
 export function view() {
   return `<header class="page-head"><span class="eyebrow">La Plaza Ágape</span><h1>Juegos <em>Ágape</em></h1>
-      <p>Para jugar en grupo, en el encuentro, en el bus o donde estemos juntos.</p></header>
+      <p>Para jugar en grupo, en el encuentro, en el bus o donde estemos juntos. Y otros para un rato a solas.</p></header>
+    <h2 class="jg-h">Para jugar en grupo</h2>
     <a class="jg-card" href="#/juegos/impostor">
       <span class="jg-card-art" aria-hidden="true">${maskSvg()}</span>
       <span class="jg-card-txt"><small>3 a 20 jugadores · un solo celular</small><b>El Impostor</b>
@@ -101,7 +106,25 @@ export function view() {
       <span class="jg-card-art" aria-hidden="true">${ultimaSvg()}</span>
       <span class="jg-card-txt"><small>2 a 8 jugadores · cada uno con su celular</small><b>¡Última!</b>
         <span>El juego de cartas de Ágape. Junta colores, lanza un Roba 2 y no olvides avisar tu última carta.</span></span>${icon("right")}</a>
-    <p class="muted small jg-soon">Pronto vendrán más juegos.</p>`;
+    <h2 class="jg-h">Para jugar solo</h2>
+    <div class="jg-solo">
+    <a class="jg-card jg-mini is-mem" href="#/juegos/memorice">
+      <span class="jg-card-art" aria-hidden="true">${memSvg()}</span>
+      <span class="jg-card-txt"><small>Con los stickers</small><b>Memorice</b>
+        <span>Da vuelta las cartas y encuentra las parejas.</span></span>${icon("right")}</a>
+    <a class="jg-card jg-mini is-mj" href="#/juegos/mahjong">
+      <span class="jg-card-art" aria-hidden="true">${mjSvg()}</span>
+      <span class="jg-card-txt"><small>Con los personajes</small><b>Mahjong</b>
+        <span>Libera el tablero juntando fichas iguales.</span></span>${icon("right")}</a>
+    <a class="jg-card jg-mini is-sp" href="#/juegos/sopa">
+      <span class="jg-card-art" aria-hidden="true">${spSvg()}</span>
+      <span class="jg-card-txt"><small>Santos, Biblia y más</small><b>Sopa de letras</b>
+        <span>Encuentra las palabras escondidas.</span></span>${icon("right")}</a>
+    <a class="jg-card jg-mini is-cw" href="#/juegos/crucigrama">
+      <span class="jg-card-art" aria-hidden="true">${cwSvg()}</span>
+      <span class="jg-card-txt"><small>Pon a prueba lo que sabes</small><b>Crucigrama</b>
+        <span>Un crucigrama nuevo en cada partida.</span></span>${icon("right")}</a>
+    </div>`;
 }
 
 export function impostor() {

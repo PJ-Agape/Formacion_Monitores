@@ -13,7 +13,7 @@ export const DEFAULTS = {
       momentos: { kicker: "Lo que vivimos", title: "Momentos", text: "Las fotos del grupo, para reaccionar y comentar.", on: true },
       muro: { kicker: "Lo que conversamos", title: "Muro", text: "Avisos, temas, preguntas y encuestas.", on: true },
       chat: { kicker: "Lo que nos decimos", title: "Chat", text: "Salas para conversar en grupo.", on: true },
-      juegos: { kicker: "Lo que jugamos", title: "Juegos", text: "El Impostor, mímicas, trivia y más.", on: true },
+      juegos: { kicker: "Lo que jugamos", title: "Juegos", text: "Cartas, trivia, sopas de letras y más.", on: true },
     },
   },
   familias: {

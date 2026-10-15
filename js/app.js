@@ -23,6 +23,10 @@ import * as juegos from "./juegos.js";
 import * as frente from "./frente.js";
 import * as trivia from "./trivia.js";
 import * as ultima from "./ultima.js";
+import * as memorice from "./memorice.js";
+import * as mahjong from "./mahjong.js";
+import * as sopa from "./sopa.js";
+import * as crucigrama from "./crucigrama.js";
 import * as podcast from "./podcast.js";
 import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
@@ -103,6 +107,10 @@ const routes = [
   [/^\/juegos\/frente$/, () => frente.view(), "red"],
   [/^\/juegos\/trivia$/, () => trivia.view(), "red"],
   [/^\/juegos\/ultima(?:\?(.*))?$/, (q) => ultima.view(q || ""), "red"],
+  [/^\/juegos\/memorice$/, () => memorice.view(), "red"],
+  [/^\/juegos\/mahjong$/, () => mahjong.view(), "red"],
+  [/^\/juegos\/sopa$/, () => sopa.view(), "red"],
+  [/^\/juegos\/crucigrama$/, () => crucigrama.view(), "red"],
   [/^\/podcast$/, () => podcast.view(), "red"],
   [/^\/credenciales$/, () => credenciales.view(), "formacion"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
@@ -1485,6 +1493,7 @@ juegos.setup({ actions, render: () => render(), onAfterRender, onLeave });
 frente.setup({ actions, onAfterRender, onLeave });
 trivia.setup({ actions, onAfterRender, onLeave });
 ultima.setup({ actions, onAfterRender, onLeave, cloud });
+for (const m of [memorice, mahjong, sopa, crucigrama]) m.setup({ actions, onAfterRender, onLeave });
 podcast.setup({ actions, render: () => render(), onAfterRender, cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);

@@ -3591,3 +3591,109 @@ button.ul-card { cursor: pointer; }
 .ul-rank li:first-child { background: #ffba03; font-weight: 800; }
 @media (max-width: 400px) { .ul-card { width: 54px; height: 80px; } .ul-card .ul-mid { width: 38px; height: 54px; font-size: 1.5rem; } .ul-code b { width: 46px; height: 56px; font-size: 2rem; } }
 @media (prefers-reduced-motion: reduce) { .ul-call { animation: none; } .ul-card, .ul-opp { transition: none; } }
+
+/* Juegos para jugar solo: Memorice, Mahjong, Sopa de letras, Crucigrama */
+.jg-h { font-family: var(--font-display); font-size: 1.3rem; color: #0b2566; margin: 22px 0 10px; }
+.jg-solo { display: grid; gap: 12px; }
+@media (min-width: 720px) { .jg-solo { grid-template-columns: 1fr 1fr; } }
+.jg-mini { grid-template-columns: 72px minmax(0, 1fr) auto; padding: 12px; gap: 12px; }
+.jg-mini .jg-card-art { width: 72px; height: 72px; padding: 8px; }
+.jg-mini .jg-card-txt b { font-size: 1.3rem; }
+.jg-card.is-mem .jg-card-art { background: #e1f3fd; }
+.jg-card.is-mj .jg-card-art { background: #fde0d2; }
+.jg-card.is-sp .jg-card-art { background: #fff1c7; }
+.jg-card.is-cw .jg-card-art { background: #8ad2fa; }
+.solo { --sn: #0b2566; color: var(--sn); }
+.solo-head { margin-bottom: 12px; }
+.solo-head h1 { font-family: var(--font-display); font-size: 2rem; line-height: 1; margin: 0 0 4px; }
+.solo-head p { margin: 0; color: #24406e; line-height: 1.35; }
+.solo-head.has-st { display: grid; grid-template-columns: 76px minmax(0, 1fr); gap: 12px; align-items: center; }
+.solo-st img { width: 76px; height: 57px; object-fit: contain; }
+.solo-opts { display: flex; flex-wrap: wrap; gap: 8px 12px; align-items: end; margin-bottom: 10px; }
+.solo-seg { display: inline-flex; flex-wrap: wrap; gap: 4px; background: #fff; border: 2px solid var(--sn); border-radius: 999px; padding: 3px; }
+.solo-seg button { border: 0; background: none; border-radius: 999px; padding: 6px 12px; font: inherit; font-weight: 700; font-size: .85rem; color: var(--sn); cursor: pointer; }
+.solo-seg button.on { background: var(--sn); color: #fff; }
+.solo-bar { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 14px; padding: 8px 12px; background: #fff; border: 2px solid var(--sn); border-radius: 14px; font-size: .85rem; }
+.solo-bar b { font-variant-numeric: tabular-nums; }
+.solo-bar .btn { margin-left: auto; }
+.solo-best, .solo-note { margin: 6px 2px 0; min-height: 1em; }
+.solo-tools { display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; margin: 10px 0; }
+/* celebración */
+.js-win { position: fixed; inset: 0; z-index: 90; background: rgba(11, 37, 102, .45); display: grid; place-items: center; padding: 16px; animation: jsFade .2s ease-out; }
+.js-win-card { background: #fff6e5; border: 2.5px solid #0b2566; border-radius: 24px; box-shadow: 5px 5px 0 #0b2566; padding: 20px; width: min(340px, 100%); text-align: center; display: grid; gap: 8px; justify-items: center; animation: jsPop .35s cubic-bezier(.2, 1.4, .4, 1); }
+.js-win-st img { width: 150px; height: 112px; object-fit: contain; }
+.js-win-card h2 { font-family: var(--font-display); font-size: 1.7rem; margin: 0; color: #ef591c; line-height: 1.05; }
+.js-win-card p { margin: 0; color: #0b2566; }
+.js-win-acts { display: grid; gap: 8px; width: 100%; margin-top: 6px; }
+.js-win-acts .btn { justify-content: center; }
+@keyframes jsFade { from { opacity: 0; } }
+@keyframes jsPop { from { transform: scale(.8); opacity: 0; } }
+/* Memorice */
+.mem-grid { display: grid; grid-template-columns: repeat(var(--cols), minmax(0, 1fr)); gap: 8px; margin-top: 12px; max-width: 520px; margin-inline: auto; }
+.mem-card { aspect-ratio: 4 / 5; border: 0; padding: 0; background: none; perspective: 700px; cursor: pointer; font: inherit; }
+.mem-in { position: relative; display: block; width: 100%; height: 100%; transition: transform .35s; transform-style: preserve-3d; }
+.mem-card.up .mem-in { transform: rotateY(180deg); }
+.mem-back, .mem-front { position: absolute; inset: 0; border-radius: 12px; border: 2.5px solid #0b2566; backface-visibility: hidden; -webkit-backface-visibility: hidden; box-shadow: 2px 2px 0 #0b2566; }
+.mem-back { background: #1351a4 radial-gradient(circle at 50% 50%, #ffba03 0 14%, transparent 15%), repeating-linear-gradient(45deg, #1351a4 0 7px, #0b2566 7px 14px); }
+.mem-front { background: #fff; transform: rotateY(180deg); display: grid; grid-template-rows: 1fr auto; place-items: center; padding: 6px 4px 4px; overflow: hidden; }
+.mem-front img { width: 100%; height: 100%; object-fit: contain; min-height: 0; }
+.mem-front small { font-size: .62rem; font-weight: 700; line-height: 1.1; text-align: center; color: #0b2566; max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.mem-card.done .mem-front { background: #fff1c7; border-color: #ef591c; }
+.mem-card.done { animation: memOk .4s; }
+@keyframes memOk { 50% { transform: scale(1.06); } }
+/* Mahjong */
+.mj-wrap { display: flex; justify-content: center; overflow-x: auto; padding: 4px 0 8px; }
+.mj-board { position: relative; flex: none; }
+.mj-tile { position: absolute; padding: 3px; border-radius: 8px; border: 1.8px solid #0b2566; background: #fff; cursor: pointer;
+  box-shadow: var(--d) var(--d) 0 #fde0d2, var(--d) var(--d) 0 1.8px #0b2566; display: grid; place-items: center; transition: transform .1s, background .1s; }
+.mj-tile img { width: 92%; height: 92%; object-fit: contain; pointer-events: none; }
+.mj-tile:not(.free) { background: #eee6d6; }
+.mj-tile:not(.free) img { opacity: .55; }
+.mj-tile.sel { background: #ffba03; transform: translate(-2px, -3px); }
+.mj-tile.hint { background: #8ad2fa; }
+.mj-tile.no { animation: mjNo .3s; }
+@keyframes mjNo { 25% { transform: translateX(-3px); } 75% { transform: translateX(3px); } }
+/* Sopa de letras */
+.sp-tema { display: grid; gap: 2px; }
+.sp-tema .select { padding: 6px 10px; }
+.sp-board { position: relative; width: min(100%, 520px); margin: 12px auto 0; aspect-ratio: 1; background: #fff; border: 2.5px solid #0b2566; border-radius: 16px; box-shadow: 3px 3px 0 #0b2566; padding: 6px; touch-action: none; user-select: none; -webkit-user-select: none; }
+.sp-marks { position: absolute; inset: 6px; width: calc(100% - 12px); height: calc(100% - 12px); pointer-events: none; }
+.sp-marks line.f { opacity: .55; }
+.sp-marks line.t { opacity: .25; }
+.sp-grid { position: relative; display: grid; grid-template-columns: repeat(var(--n), 1fr); grid-template-rows: repeat(var(--n), 1fr); width: 100%; height: 100%; }
+.sp-c { display: grid; place-items: center; font-weight: 800; font-size: clamp(.8rem, 4.2vw, 1.25rem); color: #0b2566; cursor: pointer; border-radius: 50%; }
+.sp-c.tap { background: rgba(255, 186, 3, .5); }
+.sp-board.no { animation: mjNo .3s; }
+.sp-words { list-style: none; padding: 0; margin: 12px 0 0; display: flex; flex-wrap: wrap; gap: 6px; justify-content: center; }
+.sp-words li { padding: 4px 10px; border-radius: 999px; border: 2px solid #0b2566; background: #fff; font-weight: 700; font-size: .85rem; }
+.sp-words li.ok { background: var(--hl); text-decoration: line-through; text-decoration-thickness: 2px; }
+/* Crucigrama */
+.cw-wrap { display: flex; justify-content: center; margin-top: 12px; overflow-x: auto; }
+.cw-grid { --cs: min(36px, calc((100vw - 40px) / var(--w))); display: grid; grid-template-columns: repeat(var(--w), var(--cs)); grid-auto-rows: var(--cs); gap: 0; }
+.cw-x { background: transparent; }
+.cw-c { position: relative; border: 1.5px solid #0b2566; margin: -0.75px; background: #fff; font: inherit; font-weight: 800; font-size: calc(var(--cs) * .5); color: #0b2566; padding: 0; cursor: pointer; display: grid; place-items: center; text-transform: uppercase; }
+.cw-c i { position: absolute; top: 1px; left: 2px; font-style: normal; font-size: calc(var(--cs) * .26); font-weight: 700; line-height: 1; color: #1351a4; }
+.cw-c.in { background: #e1f3fd; }
+.cw-c.at { background: #ffba03; z-index: 1; }
+.cw-c.bad { color: #ef591c; background: #fde0d2; }
+.cw-c.hint { color: #1351a4; }
+.cw-dock { position: sticky; bottom: var(--bottom-h); z-index: 5; background: var(--paper); padding: 8px 0 4px; margin-top: 10px; }
+.cw-clue { background: #0b2566; color: #fff; border-radius: 12px; padding: 8px 12px; font-size: .9rem; line-height: 1.3; min-height: 2.6em; }
+.cw-clue b { color: #ffba03; margin-right: 4px; }
+.cw-kb { display: grid; gap: 5px; margin-top: 8px; }
+.cw-kb > div { display: flex; gap: 4px; justify-content: center; }
+.cw-kb button { flex: 1 1 0; max-width: 40px; height: 40px; border: 2px solid #0b2566; border-radius: 8px; background: #fff; font: inherit; font-weight: 800; color: #0b2566; padding: 0; cursor: pointer; box-shadow: 0 2px 0 #0b2566; }
+.cw-kb button:active { transform: translateY(2px); box-shadow: none; }
+.cw-kb button.wide { max-width: 64px; flex-grow: 1.6; background: #fde0d2; }
+.cw-dock .solo-tools { margin: 8px 0 0; }
+.cw-clues { display: grid; gap: 12px; margin-top: 14px; }
+@media (min-width: 640px) { .cw-clues { grid-template-columns: 1fr 1fr; } }
+.cw-clues h2 { font-family: var(--font-display); font-size: 1.15rem; margin: 0 0 6px; }
+.cw-clues ol { list-style: none; margin: 0; padding: 0; display: grid; gap: 4px; }
+.cw-clues li { padding: 6px 10px; border-radius: 10px; background: #fff; border: 1.5px solid #d8e6f5; cursor: pointer; font-size: .9rem; line-height: 1.3; }
+.cw-clues li b { color: #ef591c; margin-right: 2px; }
+.cw-clues li small { color: #5a6f93; }
+.cw-clues li.on { border-color: #0b2566; background: #e1f3fd; }
+.cw-clues li.ok { opacity: .55; text-decoration: line-through; }
+@media (prefers-reduced-motion: reduce) { .mem-in, .mj-tile { transition: none; } .js-win, .js-win-card, .mem-card.done { animation: none; } }
+body.solo-on .help-fab { display: none; }
