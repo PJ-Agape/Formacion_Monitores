@@ -5,7 +5,9 @@
 import { esc } from "./util.js";
 
 const K = "agape_a11y_v1";
-const DEF = { size: 0, facil: false, calma: false, contraste: false, voz: false };
+const DEF = { size: 0, facil: false, calma: false, contraste: false, voz: false, color: "" };
+// Color de la app (cada persona elige el suyo). «Morado» es la única excepción a la paleta del logo.
+export const COLORES = [["", "Azul Ágape", "#1351a4"], ["celeste", "Celeste", "#0b6fb3"], ["naranja", "Naranja", "#c9460f"], ["morado", "Morado", "#6b3fa0"]];
 let P = { ...DEF };
 try { P = { ...DEF, ...JSON.parse(localStorage.getItem(K) || "{}") }; } catch {}
 const save = () => { try { localStorage.setItem(K, JSON.stringify(P)); } catch {} };
@@ -20,6 +22,7 @@ export function apply() {
   h.classList.toggle("a11y-calma", !!P.calma);
   h.classList.toggle("a11y-contraste", !!P.contraste);
   h.classList.toggle("a11y-voz", !!P.voz && hasVoice());
+  if (COLORES.some(([k]) => k && k === P.color)) h.dataset.color = P.color; else delete h.dataset.color;
 }
 apply();
 
@@ -38,6 +41,8 @@ export function panelHTML() {
     <p class="muted small">Ajusta la app a tu medida. Se guarda en este teléfono o computador.</p>
     <div class="a11y-row" role="group" aria-label="Tamaño de la letra"><span class="a11y-k">Tamaño de la letra</span>
       <div class="seg">${["Normal", "Grande", "Muy grande"].map((l, i) => `<label><input type="radio" name="a11ySize" value="${i}" ${P.size === i ? "checked" : ""} data-a11y="size"><span style="font-size:${[0.9, 1.05, 1.2][i]}rem">${l}</span></label>`).join("")}</div></div>
+    <div class="a11y-row" role="radiogroup" aria-label="Color de la app"><span class="a11y-k">Color de la app</span>
+      <div class="a11y-colors">${COLORES.map(([k, l, c]) => `<label class="a11y-color"><input type="radio" name="a11yColor" value="${k}" ${P.color === k ? "checked" : ""} data-a11y="color"><i style="--c:${c}"></i><span>${l}</span></label>`).join("")}</div></div>
     ${OPTS.map(([k, l, d]) => (k === "voz" && !hasVoice()) ? "" : `<label class="a11y-opt"><input type="checkbox" data-a11y="${k}" ${P[k] ? "checked" : ""}>
       <span><b>${l}</b><span class="small muted">${esc(d)}</span></span></label>`).join("")}
     ${hasVoice() ? `<button type="button" class="btn btn-ghost btn-sm" data-a11y-test>🔊 Probar la voz</button>` : ""}
@@ -126,6 +131,7 @@ export function afterRender() {
 document.addEventListener("change", (e) => {
   const k = e.target.dataset && e.target.dataset.a11y; if (!k) return;
   if (k === "size") P.size = +e.target.value;
+  else if (k === "color") { P.color = e.target.value; document.dispatchEvent(new Event("agape:color")); }
   else P[k] = !!e.target.checked;
   save(); afterRender();
 });

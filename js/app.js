@@ -202,10 +202,12 @@ const leaveHooks = [];
 const onLeave = (f) => leaveHooks.push(f);
 window.addEventListener("hashchange", render);
 
+document.addEventListener("agape:color", () => { a11y.apply(); applyTheme(); });
 function applyTheme() {
   const c = S.activeCourse();
   document.documentElement.dataset.theme = (c && c.theme) || "amanecer";
-  const color = { amanecer: "#1351a4", cenaculo: "#0a2a6e", esperanza: "#0a3a78" }[c?.theme] || "#1351a4";
+  const pick = a11y.COLORES.find(([k]) => k && k === a11y.prefs().color);
+  const color = pick ? pick[2] : { amanecer: "#1351a4", cenaculo: "#0a2a6e", esperanza: "#0a3a78" }[c?.theme] || "#1351a4";
   $('meta[name="theme-color"]')?.setAttribute("content", color);
 }
 
