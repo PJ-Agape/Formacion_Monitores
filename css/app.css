@@ -3724,6 +3724,8 @@ body.solo-on .help-fab { display: none; }
 .cp-toc h2 { font-size: 1.4rem; color: var(--cp-acc); margin: 0 0 10px; }
 .cp-toc-m { margin-bottom: 10px; }
 .cp-toc-m ol { list-style: none; margin: 4px 0 0; padding: 0 0 0 10px; display: grid; gap: 2px; font-size: .95rem; }
+.cp-legal { margin-top: 26px; padding: 12px 14px; border: 1px solid #c9d1e0; border-radius: 8px; font-size: .82rem; color: #3b4a68; line-height: 1.45; }
+.cp-legal p { margin: 0 0 6px; }
 .cp-toc-m li span { display: inline-block; min-width: 2.6em; color: #ef591c; font-weight: 700; }
 .cp-mhead { padding: 26px 0 10px; border-bottom: 3px solid var(--cp-acc); margin-bottom: 8px; }
 .cp-mhead span, .cp-uhead span { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: #ef591c; font-weight: 800; }
@@ -3747,7 +3749,7 @@ body.solo-on .help-fab { display: none; }
 .cp-opts { list-style: none; padding: 0 !important; display: grid; gap: 4px; }
 .cp-opts li { display: flex; gap: 8px; align-items: flex-start; }
 .cp-box-o { flex: none; width: 1.4em; height: 1.4em; border: 1.5px solid var(--cp-ink); border-radius: 4px; display: grid; place-items: center; font: 700 .75rem "Bricolage", sans-serif; }
-@page cuaderno { size: letter portrait; margin: 16mm 16mm 18mm; @bottom-center { content: counter(page); font: 600 9pt Arial, sans-serif; color: #666; } }
+@page cuaderno { size: letter portrait; margin: 16mm 16mm 18mm; @bottom-right { content: counter(page); font: 600 9pt Arial, sans-serif; color: #666; } @bottom-left { content: "Pastoral Juvenil Ágape · CC BY-NC-SA 4.0 · uso pastoral sin fines de lucro"; font: 400 7.5pt Arial, sans-serif; color: #888; } }
 @media print {
   body.cp-printing main#view > :not(.cp-doc) { display: none !important; }
   .cp-doc { page: cuaderno; border: 0; box-shadow: none; padding: 0; border-radius: 0; font-size: 11pt; }

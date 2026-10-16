@@ -81,7 +81,7 @@ export function view(ci = 0, pi = "") {
       <label><input type="checkbox" data-cp="key" ${opt.key ? "checked" : ""}> Pauta de respuestas al final (para el equipo formador)</label>
     </div>
     <button class="btn btn-primary" data-action="print">${icon("print")} Imprimir o guardar PDF</button>
-    <p class="xs muted">${phases.length} módulo${phases.length > 1 ? "s" : ""} · ${nUnits} unidades. En el diálogo de impresión elige «Guardar como PDF» si quieres el archivo.</p>
+    <p class="xs muted">Consejo: en el diálogo de impresión desactiva «Encabezados y pies de página» para que el navegador no agregue la dirección de la página. ${phases.length} módulo${phases.length > 1 ? "s" : ""} · ${nUnits} unidades. En el diálogo de impresión elige «Guardar como PDF» si quieres el archivo.</p>
   </div>`;
   return `${bar}
   <div class="cp-doc">
@@ -93,7 +93,11 @@ export function view(ci = 0, pi = "") {
       ${c.description ? `<p class="cp-desc">${esc(ctx.S.courseDesc(c))}</p>` : ""}
       <p class="cp-owner">Cuaderno de: <span>${esc(name)}</span></p>
     </section>
-    <section class="cp-toc"><h2>Contenido</h2>${phases.map((ph) => `<div class="cp-toc-m"><b>Módulo ${esc(ph.phaseNum)} · ${esc(ph.title)}</b><ol>${ph.sessions.map((se) => `<li><span>${esc(se.id)}</span> ${esc(se.title)}</li>`).join("")}${opt.quiz && ph.quiz?.questions?.length ? `<li class="cp-toc-q"><span>✓</span> Evaluación del módulo</li>` : ""}</ol></div>`).join("")}</section>
+    <section class="cp-toc"><h2>Contenido</h2>${phases.map((ph) => `<div class="cp-toc-m"><b>Módulo ${esc(ph.phaseNum)} · ${esc(ph.title)}</b><ol>${ph.sessions.map((se) => `<li><span>${esc(se.id)}</span> ${esc(se.title)}</li>`).join("")}${opt.quiz && ph.quiz?.questions?.length ? `<li class="cp-toc-q"><span>✓</span> Evaluación del módulo</li>` : ""}</ol></div>`).join("")}
+      <div class="cp-legal"><h4>Derechos y uso de este cuaderno</h4>
+        <p>© ${new Date().getFullYear()} Pastoral Juvenil Ágape, Parroquia San Miguel de Yungay (Diócesis San Bartolomé de Chillán). Este material se comparte con la licencia <b>Creative Commons Atribución-NoComercial-CompartirIgual 4.0 (CC BY-NC-SA 4.0)</b>.</p>
+        <p>Puedes fotocopiarlo, imprimirlo y adaptarlo para tu parroquia, grupo o colegio, siempre que <b>cites la fuente</b> («Pastoral Juvenil Ágape, Parroquia San Miguel de Yungay»), <b>no lo vendas ni cobres por él</b> y <b>compartas tus adaptaciones con esta misma licencia</b>. El nombre y el logo de Ágape no forman parte de la licencia.</p>
+        <p>Las citas de la Biblia y de los documentos de la Iglesia son breves, se indican con su referencia y pertenecen a sus titulares. Licencia: creativecommons.org/licenses/by-nc-sa/4.0/deed.es</p></div></section>
     ${phases.map((ph) => `<section class="cp-module"><header class="cp-mhead"><span>Módulo ${esc(ph.phaseNum)}</span><h2>${esc(ph.title)}</h2>${ph.intro ? `<p>${rich(ph.intro)}</p>` : ""}</header>
       ${ph.sessions.map((se) => unitHTML(se, ph)).join("")}${opt.quiz ? quizHTML(ph) : ""}</section>`).join("")}
     ${opt.quiz && opt.key ? keyHTML(phases) : ""}
