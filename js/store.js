@@ -65,16 +65,23 @@ export function setPreview(on) {
 }
 
 // Contenido que ven los dirigentes (o el borrador, si el admin está en vista previa).
-// Cursos ocultos (Gestión → Cursos → «Oculto»): solo los ven los administradores.
-let seeHidden = () => true, filtered = null, filteredFrom = null;
-export const setHiddenCourseRule = (fn) => { seeHidden = fn; filtered = null; };
+// Cada curso puede estar oculto (Gestión → Cursos → «Oculto») o dirigido a ciertos roles («Dirigido a»):
+// la regla la pone app.js según la cuenta. Los administradores ven todos.
+export const PARA = [["asesor", "Asesores"], ["coordinador", "Coordinadores"], ["dirigente", "Dirigentes (incluye animadores)"], ["aspirante", "Aspirantes"]];
+export const paraDe = (c) => (c && c.para ? PARA.map(([k]) => k).filter((k) => c.para[k]) : []);
+let courseRule = () => true, filtered = null, filteredFrom = null, filteredKey = "";
+export const setCourseRule = (fn) => { courseRule = fn; filtered = null; };
+export const setHiddenCourseRule = (fn) => setCourseRule((c) => fn() || !c.hidden); // compatibilidad
 export function content() {
   const c = isPreview() ? read(K.draft) : published;
-  if (!c || !Array.isArray(c.courses) || seeHidden() || !c.courses.some((x) => x.hidden)) return c;
-  if (filteredFrom !== c || !filtered) {
-    const vis = c.courses.filter((x) => !x.hidden);
-    filtered = { ...c, courses: vis.length ? vis : c.courses.slice(0, 1) };
-    filteredFrom = c;
+  if (!c || !Array.isArray(c.courses)) return c;
+  const vis = c.courses.filter((x) => courseRule(x));
+  if (vis.length === c.courses.length) return c;
+  const key = vis.map((x) => x.id).join("|");
+  if (filteredFrom !== c || !filtered || filteredKey !== key) {
+    filtered = { ...c, courses: vis.length ? vis : c.courses.filter((x) => !x.hidden).slice(0, 1) };
+    if (!filtered.courses.length) filtered.courses = c.courses.slice(0, 1);
+    filteredFrom = c; filteredKey = key;
   }
   return filtered;
 }

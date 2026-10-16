@@ -1491,7 +1491,14 @@ camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
-S.setHiddenCourseRule(() => (cloud.enabled ? !!cloud.state().isAdmin : S.isAdmin()));
+S.setCourseRule((c) => {
+  if (cloud.enabled ? !!cloud.state().isAdmin : S.isAdmin()) return true;
+  if (c.hidden) return false;
+  const para = S.paraDe(c);
+  if (!para.length || !cloud.enabled) return true;
+  const st = cloud.state();
+  return para.includes(st.role) || (para.includes("asesor") && !!(st.account && st.account.asesor === true));
+});
 inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 credenciales.setup({ actions, onAfterRender });
 familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
