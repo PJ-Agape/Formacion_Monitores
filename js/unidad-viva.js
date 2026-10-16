@@ -193,6 +193,13 @@ export async function view(phaseIdx, sid) {
     const pos = S.getPos(course.id, key);
     if (pos) {
       G.xp = +pos.xp || 0; G.done = new Set(pos.done || []); G.answers = pos.ans || {};
+      // Unidades empezadas antes de la lámina «Oración inicial» (2.ª lámina): se corren los avances una lámina.
+      if (+pos.n === slides.length - 1 && slides[1] && slides[1].type === "invoke") {
+        const sh = (id) => String(id).replace(/^([a-z]?)(\d+)/, (all, l, n) => (+n >= 1 ? l + (+n + 1) : all));
+        G.done = new Set([...G.done].map(sh));
+        G.answers = Object.fromEntries(Object.entries(G.answers).map(([k, v]) => [sh(k), v]));
+        if (pos.s >= 1) pos.s = +pos.s + 1;
+      }
       if (!m && pos.s > 0) { G.cur = Math.min(slides.length - 1, +pos.s); resumed = G.cur + 1; }
     }
   } else { G.slides = slides; G.max = maxXP(slides, se); }
