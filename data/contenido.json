@@ -2418,6 +2418,7 @@
     {
       "id": "formacion-coordinadores",
       "title": "Coordinar es servir",
+      "rev": 2,
       "theme": "cenaculo",
       "para": {
         "coordinador": true
@@ -3289,7 +3290,7 @@
                 },
                 {
                   "title": "Lo que la coordinación debe asegurar",
-                  "body": "Según las orientaciones de Integridad en el Servicio Eclesial (ISE) de la Conferencia Episcopal de Chile:\n\n- Que todos los dirigentes conozcan y acepten los criterios de conducta del grupo y hayan hecho la formación en prevención.\n- Que las actividades se hagan en espacios abiertos y visibles, nunca a solas con un menor.\n- Que para salidas, retiros y campamentos haya autorización escrita de los apoderados y adultos responsables suficientes.\n- Que las comunicaciones con menores sean por los canales del grupo y no en privado.\n- Que se sepa a quién avisar y qué hacer ante una sospecha o una revelación."
+                  "body": "En línea con las orientaciones de Integridad en el Servicio Eclesial (ISE) de la Conferencia Episcopal de Chile, la coordinación debe asegurar:\n\n- Que todos los dirigentes conozcan y acepten los criterios de conducta del grupo y hayan hecho la formación en prevención.\n- Que las actividades se hagan en espacios abiertos y visibles, nunca a solas con un menor.\n- Que para salidas, retiros y campamentos haya autorización escrita de los apoderados y adultos responsables suficientes.\n- Que las comunicaciones con menores sean por los canales del grupo y no en privado.\n- Que se sepa a quién avisar y qué hacer ante una sospecha o una revelación."
                 },
                 {
                   "title": "Salidas, retiros y campamentos",
@@ -3306,9 +3307,9 @@
               },
               "church": [
                 {
-                  "source": "Integridad en el Servicio Eclesial (CECh)",
+                  "source": "Integridad en el Servicio Eclesial (CECh, 2020)",
                   "text": "La Iglesia en Chile establece criterios de conducta y orientaciones para que los espacios pastorales sean sanos y seguros para niños, adolescentes y jóvenes.",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf"
                 }
               ],
               "questions": [
@@ -3320,9 +3321,9 @@
               "prayer": "Gracias, Señor Jesús, que pusiste a los pequeños en el centro y los abrazaste. Te ofrezco mi responsabilidad en el cuidado de cada niño, adolescente y joven de nuestro grupo. Que nuestras decisiones hagan de Ágape un lugar sano y seguro, y que en cada joven que cuidamos sepamos recibirte a Ti en tu Iglesia. Amén.",
               "resources": [
                 {
-                  "title": "Integridad en el Servicio Eclesial (CECh)",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
-                  "note": "Orientaciones de la Iglesia en Chile para el servicio pastoral. Consulta además la versión vigente con tu diócesis."
+                  "title": "Integridad en el Servicio Eclesial (CECh, 2020)",
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf",
+                  "note": "Orientaciones de la Iglesia en Chile para el servicio pastoral. Consulta con tu diócesis si hay una versión más reciente."
                 }
               ]
             },
@@ -3339,11 +3340,11 @@
                 },
                 {
                   "title": "Si un joven revela un abuso",
-                  "body": "- Escúchalo con calma y créele. No lo interrogues ni le pidas detalles.\n- No le prometas guardar el secreto: dile que vas a buscar ayuda para protegerlo.\n- No confrontes a la persona señalada ni investigues por tu cuenta.\n- Avisa el mismo día a los asesores y al párroco, que seguirán el protocolo de la diócesis.\n- Anota con fecha lo que el joven dijo, con sus palabras, y entrégalo a quien corresponde. Guarda absoluta reserva con el resto del equipo."
+                  "body": "- Escúchalo con calma y créele. No lo interrogues ni le pidas detalles.\n- No le prometas guardar el secreto: dile que vas a buscar ayuda para protegerlo.\n- No confrontes a la persona señalada ni investigues por tu cuenta.\n- Avisa el mismo día a los asesores y al párroco, que seguirán el protocolo de la diócesis.\n- Anota con fecha lo que el joven dijo, con sus palabras, y entrégalo a quien corresponde. Guarda absoluta reserva con el resto del equipo.\n\nSobre la justicia civil: la ley chilena obliga a denunciar dentro de 24 horas a ciertas personas por su oficio, como directores y profesores respecto de sus alumnos o profesionales de la salud (art. 175 y 176 del Código Procesal Penal). Si tu trabajo te pone en ese caso, la obligación también te alcanza. En cualquier caso, toda persona puede denunciar ante Carabineros, la PDI o la Fiscalía, y las orientaciones de la Iglesia en Chile piden cooperar con diligencia y rapidez con las autoridades civiles. Háganlo de la mano del párroco y del encargado diocesano, sin dilatarlo.\n\nEn la Diócesis de San Bartolomé de Chillán, las denuncias se reciben en la Oficina de Recepción de Denuncias (escucharchillan@gmail.com) o en el Obispado (Av. Libertad 640, Chillán). Confirma que estos datos sigan vigentes."
                 },
                 {
                   "title": "Una crisis de salud mental",
-                  "body": "Si un joven expresa ideas de hacerse daño o de no querer vivir, o hay señales graves:\n\n- No lo dejes solo y tómalo en serio, sin dramatizar.\n- Avisa de inmediato a su familia y a un asesor.\n- Si hay riesgo inmediato, llama a emergencias o a Salud Responde (600 360 7777).\n- Después, acompaña con cercanía, pero sin reemplazar a los profesionales.\n\nLa unidad 5.4 del curso de dirigentes tiene el «semáforo» para orientarse en estas situaciones."
+                  "body": "Si un joven expresa ideas de hacerse daño o de no querer vivir, o hay señales graves:\n\n- No lo dejes solo y tómalo en serio, sin dramatizar.\n- Avisa de inmediato a su familia y a un asesor.\n- Si hay riesgo inmediato, llama al 131 (SAMU) o al *4141, la línea de apoyo del Ministerio de Salud para crisis. Para orientar, Salud Responde: 600 360 7777.\n- Después, acompaña con cercanía, pero sin reemplazar a los profesionales.\n\nLa unidad 5.4 del curso de dirigentes tiene el «semáforo» para orientarse en estas situaciones."
                 },
                 {
                   "title": "Un accidente en una actividad",
@@ -3356,9 +3357,9 @@
               },
               "church": [
                 {
-                  "source": "Integridad en el Servicio Eclesial (CECh)",
-                  "text": "Ante una sospecha o revelación de abuso, las orientaciones de la Iglesia en Chile piden proteger a la víctima, no investigar por cuenta propia y comunicar a la autoridad correspondiente.",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                  "source": "Integridad en el Servicio Eclesial (CECh, 2020), n. 14",
+                  "text": "Quien recibe una denuncia la acoge con prontitud, seriedad y sensibilidad pastoral, informa a la autoridad eclesial pertinente y colabora con las autoridades civiles.",
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf"
                 }
               ],
               "questions": [
@@ -3370,9 +3371,14 @@
               "prayer": "Gracias, Señor, por cada joven que nos confías, también en sus momentos de mayor fragilidad. Te ofrezco mi serenidad, mi cercanía y mi disposición a pedir ayuda. Que, como el buen samaritano, sepa acercarme, proteger y confiar a otros lo que me supera, para que nadie quede solo en nuestra comunidad y en tu Iglesia. Amén.",
               "resources": [
                 {
-                  "title": "Integridad en el Servicio Eclesial (CECh)",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
-                  "note": "Consulta con tu diócesis el protocolo vigente y el contacto del encargado de prevención."
+                  "title": "Integridad en el Servicio Eclesial (CECh, 2020)",
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf",
+                  "note": "Documento oficial de la Conferencia Episcopal de Chile."
+                },
+                {
+                  "title": "Diócesis de Chillán: Recepción de Denuncias",
+                  "url": "https://diocesisdechillan.cl/recepcion-de-denuncias/",
+                  "note": "Contacto de la oficina diocesana."
                 }
               ]
             },
@@ -3484,6 +3490,7 @@
     {
       "id": "formacion-asesores",
       "title": "Asesorar es acompañar",
+      "rev": 2,
       "theme": "esperanza",
       "para": {
         "asesor": true
@@ -3525,6 +3532,11 @@
                 "comment": "Lee el texto despacio y subraya los verbos de Jesús: se acercó, caminó, preguntó, explicó, entró, partió el pan, desapareció. Pregúntate cuál de esos verbos te sale más natural y cuál te cuesta más en tu servicio como asesor."
               },
               "church": [
+                {
+                  "source": "Christus vivit 237",
+                  "text": "El papa Francisco propone el camino de Emaús como modelo de acompañamiento: Jesús camina con los discípulos, los escucha, ilumina lo vivido con las Escrituras y parte el pan.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
                 {
                   "source": "Christus vivit 246",
                   "text": "Los jóvenes piden acompañantes que sean cristianos fieles comprometidos con la Iglesia y con el mundo, que escuchen sin juzgar y que reconozcan sus límites.",
@@ -3856,7 +3868,7 @@
                 },
                 {
                   "title": "Hacerse a un lado a tiempo",
-                  "body": "En Emaús, cuando los discípulos reconocen a Jesús, él desaparece (Lc 24,31). Christus vivit recoge esa idea: el buen acompañante, en algún momento, se hace a un lado para que el joven siga su camino (Christus vivit 296). Un asesor que logra que el grupo funcione sin depender de él ha hecho bien su trabajo."
+                  "body": "En Emaús, cuando los discípulos reconocen a Jesús, él desaparece (Lc 24,31). Christus vivit lo dice así: quien acompaña, «en algún momento tiene que desaparecer para dejar que él siga ese camino que ha descubierto» (Christus vivit 296). Un asesor que logra que el grupo funcione sin depender de él ha hecho bien su trabajo."
                 }
               ],
               "bible": {
@@ -3871,7 +3883,7 @@
                 },
                 {
                   "source": "Christus vivit 296",
-                  "text": "El acompañante, en algún momento, debe hacerse a un lado, como lo hizo Cristo.",
+                  "text": "Quien acompaña, en algún momento, tiene que desaparecer para dejar que el otro siga el camino que ha descubierto, como el Resucitado en Emaús.",
                   "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
                 }
               ],
@@ -4030,7 +4042,7 @@
               "church": [
                 {
                   "source": "Christus vivit 243",
-                  "text": "La comunidad tiene un papel muy importante en el acompañamiento de los jóvenes.",
+                  "text": "Es la comunidad entera la que debe sentirse responsable de acoger, motivar, alentar y estimular a los jóvenes.",
                   "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
                 },
                 {
@@ -4071,7 +4083,7 @@
                 },
                 {
                   "title": "Discernir: reconocer, interpretar, elegir",
-                  "body": "El papa Francisco propone tres pasos para discernir: reconocer lo que pasa en el propio corazón, interpretarlo a la luz de la Palabra de Dios y elegir (Christus vivit 237, retomando el Sínodo). El asesor no elige por el joven: lo ayuda a hacer el camino.\n\nAyuda mucho que el joven tenga una vida sacramental viva, oración personal y, si lo desea, un acompañante espiritual o un sacerdote con quien conversar."
+                  "body": "Christus vivit lee el camino de Emaús con tres verbos: Jesús ayuda a los discípulos a reconocer lo que están viviendo, a interpretarlo a la luz de las Escrituras, y ellos eligen volver a la comunidad (Christus vivit 237). El asesor no elige por el joven: lo ayuda a hacer el camino.\n\nAyuda mucho que el joven tenga una vida sacramental viva, oración personal y, si lo desea, un acompañante espiritual o un sacerdote con quien conversar."
                 },
                 {
                   "title": "Abrir horizontes",
@@ -4085,12 +4097,12 @@
               "church": [
                 {
                   "source": "Christus vivit 237",
-                  "text": "El discernimiento implica reconocer, interpretar y elegir.",
+                  "text": "En Emaús, Jesús ayuda a los discípulos a reconocer lo vivido e interpretarlo a la luz de las Escrituras; ellos eligen volver a la comunidad.",
                   "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
                 },
                 {
                   "source": "Christus vivit 242",
-                  "text": "La familia es el primer espacio de acompañamiento de los jóvenes.",
+                  "text": "Los jóvenes necesitan ser respetados en su libertad, pero también necesitan ser acompañados; la familia es el primer espacio de ese acompañamiento.",
                   "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
                 }
               ],
@@ -4145,14 +4157,14 @@
                 "feedback": "El asesor acompaña el cierre de la formación y el envío."
               },
               {
-                "q": "4. ¿Cuáles son los tres pasos del discernimiento según Christus vivit?",
+                "q": "4. ¿Con qué tres verbos lee Christus vivit 237 el camino de Emaús?",
                 "options": [
                   "Pensar, decidir, actuar.",
                   "Reconocer, interpretar, elegir.",
                   "Ver, juzgar, actuar."
                 ],
                 "correct": 1,
-                "feedback": "Reconocer lo que pasa en el corazón, interpretarlo a la luz de la Palabra y elegir."
+                "feedback": "Reconocer lo vivido, interpretarlo a la luz de las Escrituras y elegir."
               }
             ]
           }
@@ -4176,7 +4188,7 @@
                 },
                 {
                   "title": "Lo que el asesor garantiza",
-                  "body": "Según las orientaciones de Integridad en el Servicio Eclesial (ISE) de la Conferencia Episcopal de Chile, el asesor vela porque:\n\n- Todo el equipo conozca y acepte los criterios de conducta, y haya hecho la formación en prevención.\n- Nadie esté a solas con un menor; los encuentros y conversaciones se hagan en espacios abiertos y visibles.\n- La comunicación con menores sea por los canales del grupo, nunca en privado.\n- Las salidas, retiros y campamentos tengan autorización escrita de los apoderados y adultos responsables suficientes.\n- En la app y en redes, los jóvenes aparezcan solo con su nombre y la inicial del apellido, sin teléfonos."
+                  "body": "En línea con las orientaciones de Integridad en el Servicio Eclesial (ISE) de la Conferencia Episcopal de Chile, el asesor vela porque:\n\n- Todo el equipo conozca y acepte los criterios de conducta, y haya hecho la formación en prevención.\n- Nadie esté a solas con un menor; los encuentros y conversaciones se hagan en espacios abiertos y visibles.\n- La comunicación con menores sea por los canales del grupo, nunca en privado.\n- Las salidas, retiros y campamentos tengan autorización escrita de los apoderados y adultos responsables suficientes.\n- En la app y en redes, los jóvenes aparezcan solo con su nombre y la inicial del apellido, sin teléfonos."
                 },
                 {
                   "title": "Presentes en las salidas",
@@ -4193,9 +4205,9 @@
               },
               "church": [
                 {
-                  "source": "Integridad en el Servicio Eclesial (CECh)",
+                  "source": "Integridad en el Servicio Eclesial (CECh, 2020)",
                   "text": "La Iglesia en Chile establece criterios de conducta y orientaciones para que los espacios pastorales sean sanos y seguros para niños, adolescentes y jóvenes.",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf"
                 }
               ],
               "questions": [
@@ -4207,9 +4219,9 @@
               "prayer": "Gracias, Señor Jesús, que abrazaste a los niños y te indignaste cuando los alejaban. Te ofrezco mi responsabilidad de adulto en nuestro grupo. Hazme vigilante sin desconfianza y firme sin dureza, para que Ágape sea siempre un lugar sano y seguro, donde cada niño y joven pueda encontrarte en tu Iglesia. Amén.",
               "resources": [
                 {
-                  "title": "Integridad en el Servicio Eclesial (CECh)",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
-                  "note": "Consulta además con tu diócesis la versión vigente y el contacto del encargado de prevención."
+                  "title": "Integridad en el Servicio Eclesial (CECh, 2020)",
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf",
+                  "note": "Consulta con tu diócesis si hay una versión más reciente."
                 }
               ]
             },
@@ -4226,11 +4238,11 @@
                 },
                 {
                   "title": "Si un joven revela un abuso",
-                  "body": "Cuando un dirigente o coordinador te avisa, o el joven te lo cuenta a ti:\n\n- Se escucha y se le cree. No se interroga ni se piden detalles.\n- No se promete secreto: se le dice que se buscará ayuda para protegerlo.\n- No se confronta a la persona señalada ni se investiga por cuenta propia.\n- Se avisa el mismo día al párroco y se sigue el protocolo de la diócesis.\n- Se registra por escrito, con fecha, lo que se dijo, con las palabras del joven.\n- Se guarda absoluta reserva con el resto del equipo.\n\nConsulta con el encargado diocesano de prevención las obligaciones de denuncia que establece la ley."
+                  "body": "Cuando un dirigente o coordinador te avisa, o el joven te lo cuenta a ti:\n\n- Se escucha y se le cree. No se interroga ni se piden detalles.\n- No se promete secreto: se le dice que se buscará ayuda para protegerlo.\n- No se confronta a la persona señalada ni se investiga por cuenta propia.\n- Se avisa el mismo día al párroco y se sigue el protocolo de la diócesis.\n- Se registra por escrito, con fecha, lo que se dijo, con las palabras del joven.\n- Se guarda absoluta reserva con el resto del equipo.\n\nSobre la justicia civil: la ley chilena obliga a denunciar dentro de 24 horas a ciertas personas por su oficio, como directores y profesores respecto de sus alumnos o profesionales de la salud (art. 175 y 176 del Código Procesal Penal). Si tu trabajo te pone en ese caso, la obligación también te alcanza. En cualquier caso, toda persona puede denunciar ante Carabineros, la PDI o la Fiscalía, y las orientaciones de la Iglesia en Chile piden cooperar con diligencia y rapidez con las autoridades civiles. Háganlo de la mano del párroco y del encargado diocesano, sin dilatarlo.\n\nEn la Diócesis de San Bartolomé de Chillán, las denuncias se reciben en la Oficina de Recepción de Denuncias (escucharchillan@gmail.com) o en el Obispado (Av. Libertad 640, Chillán). Confirma que estos datos sigan vigentes."
                 },
                 {
                   "title": "Si hay riesgo para la vida",
-                  "body": "Si un joven expresa ideas de hacerse daño o de no querer vivir, o hay señales graves:\n\n- No se le deja solo y se le toma en serio.\n- Se avisa de inmediato a su familia.\n- Si hay riesgo inmediato, se llama a emergencias o a Salud Responde (600 360 7777).\n- Después se acompaña con cercanía, sin reemplazar a los profesionales.\n\nEl asesor no es terapeuta: acompaña y deriva."
+                  "body": "Si un joven expresa ideas de hacerse daño o de no querer vivir, o hay señales graves:\n\n- No se le deja solo y se le toma en serio.\n- Se avisa de inmediato a su familia.\n- Si hay riesgo inmediato, se llama al 131 (SAMU) o al *4141, la línea de apoyo del Ministerio de Salud para crisis. Para orientar, Salud Responde: 600 360 7777.\n- Después se acompaña con cercanía, sin reemplazar a los profesionales.\n\nEl asesor no es terapeuta: acompaña y deriva."
                 },
                 {
                   "title": "Cuidar a quien acompaña",
@@ -4243,9 +4255,9 @@
               },
               "church": [
                 {
-                  "source": "Integridad en el Servicio Eclesial (CECh)",
-                  "text": "Ante una sospecha o revelación de abuso, las orientaciones de la Iglesia en Chile piden proteger a la víctima, no investigar por cuenta propia y comunicar a la autoridad correspondiente.",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                  "source": "Integridad en el Servicio Eclesial (CECh, 2020), n. 14",
+                  "text": "Quien recibe una denuncia la acoge con prontitud, seriedad y sensibilidad pastoral, informa a la autoridad eclesial pertinente y colabora con las autoridades civiles.",
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf"
                 }
               ],
               "questions": [
@@ -4257,9 +4269,14 @@
               "prayer": "Gracias, Señor, Buen Pastor, que buscas a la oveja perdida y vendas a la herida. Te ofrezco mi disposición a proteger a los jóvenes en sus momentos más frágiles. Dame serenidad, prudencia y valentía para actuar a tiempo, y que nadie que sufra en nuestro grupo quede solo, porque en tu Iglesia todos somos cuidados. Amén.",
               "resources": [
                 {
-                  "title": "Integridad en el Servicio Eclesial (CECh)",
-                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
-                  "note": "Consulta con tu diócesis el protocolo vigente."
+                  "title": "Integridad en el Servicio Eclesial (CECh, 2020)",
+                  "url": "https://www.iglesia.cl/prevenirabusos/documentos/ise.pdf",
+                  "note": "Documento oficial de la Conferencia Episcopal de Chile."
+                },
+                {
+                  "title": "Diócesis de Chillán: Recepción de Denuncias",
+                  "url": "https://diocesisdechillan.cl/recepcion-de-denuncias/",
+                  "note": "Contacto de la oficina diocesana."
                 },
                 {
                   "title": "Salud Responde (Minsal)",
@@ -4523,7 +4540,7 @@
                 },
                 {
                   "source": "Christus vivit 296",
-                  "text": "El acompañante, en algún momento, debe hacerse a un lado, como lo hizo Cristo.",
+                  "text": "Quien acompaña, en algún momento, tiene que desaparecer para dejar que el otro siga el camino que ha descubierto, como el Resucitado en Emaús.",
                   "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
                 }
               ],

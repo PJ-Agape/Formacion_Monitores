@@ -1181,6 +1181,13 @@ function bindActions() {
     for (const rc of repo.courses || []) {
       const c = d.courses.find((x) => x.id === rc.id);
       if (!c) { if (NEW_COURSES.includes(rc.id)) { d.courses.push(clone(rc)); n++; } continue; }
+      // Curso nuevo ya traído antes: si el sitio tiene una revisión más reciente, se reemplaza entero
+      // (conservando si está oculto y a quién va dirigido, que se eligen en Gestión).
+      if (NEW_COURSES.includes(rc.id) && (rc.rev || 1) > (c.rev || 1)) {
+        const keep = { hidden: c.hidden, para: c.para };
+        d.courses[d.courses.indexOf(c)] = Object.assign(clone(rc), keep.para ? { para: keep.para } : {}, keep.hidden ? { hidden: true } : {});
+        n++; continue;
+      }
       if (c.description && c.description.includes("5 módulos y 21 unidades") && rc.description !== c.description) { c.description = rc.description; n++; }
       rc.phases.forEach((rp) => {
         let ph = c.phases.find((x) => x.phaseNum === rp.phaseNum);
