@@ -259,6 +259,8 @@ function coursesView(d) {
     <span class="spacer"></span>
     <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button>
   </header>
+  <div class="note" style="margin-bottom:14px"><b>Oraciones finales de las unidades.</b> Hay versiones nuevas de las oraciones de acción de gracias. Tráelas a tu borrador (solo cambia las oraciones; lo demás queda igual) y luego publica.
+    <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncPrayers">${icon("ul")} Traer las oraciones nuevas</button></div></div>
   <div class="stack" style="--gap:12px">
     ${d.courses.map((c, i) => {
       const n = c.phases.reduce((a, p) => a + p.sessions.length, 0);
@@ -1151,6 +1153,22 @@ function bindActions() {
     const d0 = S.getDraft() || S.publishedContent(), c = d0.courses[+el.dataset.i]; if (!c) return;
     if (!c.hidden && d0.courses.filter((x) => !x.hidden).length <= 1) { toast("Tiene que quedar al menos un curso público", ""); return; }
     commit((d) => { d.courses[+el.dataset.i].hidden = !c.hidden; }, { msg: c.hidden ? "Curso público: se verá al publicar los cambios" : "Curso oculto: se aplicará al publicar los cambios" });
+  };
+  // Trae solo las oraciones finales («prayer») de data/contenido.json al borrador, por curso y unidad.
+  A.aSyncPrayers = async (el) => {
+    el.disabled = true;
+    try {
+      const repo = await (await fetch("data/contenido.json", { cache: "no-store" })).json();
+      const map = new Map();
+      for (const c of repo.courses || []) for (const ph of c.phases || []) for (const se of ph.sessions || []) if (se.prayer) map.set(c.id + "|" + se.id, se.prayer);
+      let n = 0;
+      const d0 = S.getDraft() || S.publishedContent();
+      for (const c of d0.courses) for (const ph of c.phases) for (const se of ph.sessions) { const p = map.get(c.id + "|" + se.id); if (p && p !== se.prayer) n++; }
+      if (!n) { toast("Las oraciones ya están al día"); el.disabled = false; return; }
+      commit((d) => {
+        for (const c of d.courses) for (const ph of c.phases) for (const se of ph.sessions) { const p = map.get(c.id + "|" + se.id); if (p) se.prayer = p; }
+      }, { snapshot: true, msg: `${n} oraciones actualizadas en el borrador. Revísalas y publica.` });
+    } catch (e) { console.warn(e); toast("No se pudieron traer las oraciones", ""); el.disabled = false; }
   };
   A.aMoveCourse = (el) => commit((d) => move(d.courses, +el.dataset.i, +el.dataset.d));
   A.aDupCourse = (el) => commit((d) => {

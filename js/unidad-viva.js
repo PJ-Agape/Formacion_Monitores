@@ -6,6 +6,8 @@
 
 import { esc, rich, plain, icon, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
+import { ORACIONES } from "./devocionario.js";
+const VEN = (ORACIONES.find((o) => o.t === "Ven Santo Espíritu") || {}).x || "";
 
 let ctx = null; // { actions, render, onLeave, S }
 export function setup(c) { ctx = c; registerActions(); }
@@ -81,6 +83,7 @@ function build(course, ph, pi, se, ex) {
   const acts = (ex && ex.actividades) || [];
   const at = (k) => acts.filter((a) => String(a.after) === String(k)).forEach((a) => add(a.type, { a }));
   add("cover");
+  if (VEN) add("invoke");
   add("goal");
   at("inicio");
   (se.sections || []).forEach((sec, n) => {
@@ -139,7 +142,7 @@ function maxXP(slides, se) {
     else if (s.type === "church") m += POINTS.church * s.church.length;
     else if (s.type === "notebook") m += POINTS.notebook * (se.questions || []).length;
     else if (s.type === "mission") m += POINTS.mission;
-    else if (s.type === "prayer") m += POINTS.prayer;
+    else if (s.type === "prayer" || s.type === "invoke") m += POINTS.prayer;
   }
   return m;
 }
@@ -265,7 +268,12 @@ function slideBody(s, i) {
         <div class="uv-mission"><p>${rich(se.activity)}</p></div>
         <button class="btn btn-gold" data-action="uvMission" data-id="${i}">${G.done.has("m" + i) ? "✓ ¡Desafío aceptado!" : "¡Acepto el desafío!"}</button></div>
         <div class="uv-ill">${illus("envio")}</div></div>`;
-    case "prayer": return `<div class="uv-pray"><span class="uv-label">Oración</span><h2 class="uv-mid">🙏 Terminemos rezando</h2>
+    case "invoke": return `<div class="uv-pray"><span class="uv-label">Oración inicial</span><h2 class="uv-mid">Ven, Espíritu Santo</h2>
+        <p class="uv-lead">Antes de empezar, pide luz al Espíritu Santo para que lo que vas a aprender se haga vida y servicio.</p>
+        <p class="uv-prayer">${esc(VEN).replace(/\n/g, "<br>")}</p>
+        <button class="btn btn-gold" data-action="uvAmen" data-id="${i}">${G.done.has("p" + i) ? "✓ Amén" : "Amén"}</button></div>`;
+    case "prayer": return `<div class="uv-pray"><span class="uv-label">Oración final · Acción de gracias</span><h2 class="uv-mid">Gracias, Señor</h2>
+        <p class="uv-lead">Da gracias por lo que aprendiste y ofrécelo a Dios, junto con tu servicio a la Iglesia.</p>
         <p class="uv-prayer">${rich(se.prayer)}</p>
         <button class="btn btn-gold" data-action="uvAmen" data-id="${i}">${G.done.has("p" + i) ? "✓ Amén" : "Amén"}</button></div>`;
     case "end": return `<div class="uv-end" id="uvEnd"></div>`;

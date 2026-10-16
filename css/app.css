@@ -3695,3 +3695,9 @@ body.solo-on .help-fab { display: none; }
 .a11y-color i { width: 24px; height: 24px; border-radius: 50%; background: var(--c); box-shadow: inset 0 0 0 2px rgba(255,255,255,.6); }
 .a11y-color:has(input:checked) { border-color: var(--z-b, var(--ink)); box-shadow: 2px 2px 0 var(--z-b, var(--ink)); }
 .a11y-color:has(input:focus-visible) { outline: 3px solid var(--accent); outline-offset: 2px; }
+
+/* Oración inicial y final de cada unidad */
+.unit-pray-lead { margin: 6px 0 10px; }
+.unit-open { margin-bottom: 18px; }
+.uv-pray .uv-lead { max-width: 46ch; margin: 4px auto 0; opacity: .85; line-height: 1.4; }
+.uv-pray .uv-prayer { white-space: normal; }

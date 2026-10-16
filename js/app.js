@@ -4,6 +4,7 @@ import { CONFIG } from "./config.js";
 import * as S from "./store.js";
 import * as cloud from "./cloud.js";
 import { esc, rich, plain, icon, toast, initials } from "./util.js";
+import { ORACIONES } from "./devocionario.js";
 import qrcode from "./qrcode.mjs";
 import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
@@ -210,6 +211,12 @@ function applyTheme() {
   const color = pick ? pick[2] : { amanecer: "#1351a4", cenaculo: "#0a2a6e", esperanza: "#0a3a78" }[c?.theme] || "#1351a4";
   $('meta[name="theme-color"]')?.setAttribute("content", color);
 }
+
+// Oración inicial de cada unidad: invocación al Espíritu Santo (la misma del devocionario).
+export const VEN_ESPIRITU = (ORACIONES.find((o) => o.t === "Ven Santo Espíritu") || {}).x || "";
+const openPrayerHTML = () => VEN_ESPIRITU ? `<section class="unit-sec unit-open" id="u-open"><span class="eyebrow">Oración inicial · Invocación al Espíritu Santo</span>
+  <p class="small muted unit-pray-lead">Antes de empezar, pide luz al Espíritu Santo para que lo que vas a aprender se haga vida y servicio.</p>
+  <div class="prayer">${esc(VEN_ESPIRITU).replace(/\n/g, "<br>")}</div></section>` : "";
 
 // ---------------------------------------------------------------------------
 // Cabecera, navegación inferior
@@ -637,12 +644,13 @@ function viewEncounter(phaseIdx, sid) {
 
   // Índice lateral
   const toc = [
+    ["u-open", "Oración inicial"],
     ...sections.map((s, n) => [`u-sec-${n}`, s.title]),
     bible.comment ? ["u-bible", "Palabra de Dios"] : null,
     se.church?.length ? ["u-church", "La Iglesia nos dice"] : null,
     se.questions?.length ? ["u-reflect", "Para tu reflexión"] : null,
     se.activity ? ["u-activity", "Llévalo a tu grupo"] : null,
-    se.prayer ? ["u-prayer", "Oración"] : null,
+    se.prayer ? ["u-prayer", "Oración final"] : null,
     se.resources?.length ? ["u-resources", "Para profundizar"] : null,
   ].filter(Boolean);
 
@@ -665,6 +673,7 @@ function viewEncounter(phaseIdx, sid) {
     <span><b>Vivir la unidad en modo interactivo</b><small>Láminas, tarjetas, desafíos y puntos. Este texto queda como complemento para leer con calma.</small></span>${icon("arrowR")}</a>
   <div class="enc-layout" style="margin-top:24px">
     <article class="unit">
+      ${openPrayerHTML()}
       <div class="note accent objective"><b>Objetivo de aprendizaje.</b> ${rich(se.objective)}</div>
       ${se.intro ? `<p class="lead-text">${rich(se.intro)}</p>` : ""}
 
@@ -688,7 +697,8 @@ function viewEncounter(phaseIdx, sid) {
 
       ${se.activity ? `<section class="unit-sec" id="u-activity"><div class="activity-card"><span class="eyebrow">Llévalo a tu grupo</span><p>${rich(se.activity)}</p></div></section>` : ""}
 
-      ${se.prayer ? `<section class="unit-sec" id="u-prayer"><span class="eyebrow">Oración</span><div class="prayer">${rich(se.prayer)}</div></section>` : ""}
+      ${se.prayer ? `<section class="unit-sec" id="u-prayer"><span class="eyebrow">Oración final · Acción de gracias</span>
+        <p class="small muted unit-pray-lead">Da gracias por lo que aprendiste y ofrécelo a Dios, junto con tu servicio a la Iglesia.</p><div class="prayer">${rich(se.prayer)}</div></section>` : ""}
 
       ${se.resources?.length ? `<section class="unit-sec" id="u-resources"><span class="eyebrow">Para profundizar</span>
         <ul class="res-list">${se.resources.map((r) => `<li><a href="${esc(r.url)}" target="_blank" rel="noopener">
