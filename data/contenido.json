@@ -155,8 +155,8 @@
         {
           "phaseNum": 1,
           "title": "Fundamentos: identidad del dirigente y mirada de fe",
-          "desc": "4 unidades · Quién es un dirigente, cómo mira, escucha y trabaja en equipo",
-          "intro": "Antes de preparar dinámicas o temas, conviene detenerse en la pregunta de fondo: ¿quién soy yo cuando sirvo a otros jóvenes? En este módulo descubrirás el sentido de tu servicio, la mirada que Jesús tiene sobre cada joven, el arte de escuchar y la riqueza de caminar en equipo.",
+          "desc": "6 unidades · Quién es un dirigente, cómo mira, escucha y trabaja en equipo, y la Eucaristía y la oración como fuente de su servicio",
+          "intro": "Antes de preparar dinámicas o temas, conviene detenerse en la pregunta de fondo: ¿quién soy yo cuando sirvo a otros jóvenes? En este módulo descubrirás el sentido de tu servicio, la mirada que Jesús tiene sobre cada joven, el arte de escuchar, la riqueza de caminar en equipo y la fuente de donde nace todo: la Eucaristía, la oración y la misericordia de Dios.",
           "sessions": [
             {
               "id": "1.1",
@@ -385,7 +385,7 @@
               "sections": [
                 {
                   "title": "La primera comunidad como modelo",
-                  "body": "Hechos 2,42-47 describe la vida de la primera comunidad cristiana: perseveraban en la enseñanza de los apóstoles, en la comunión fraterna, en la fracción del pan y en la oración. Compartían lo que tenían y vivían con alegría y sencillez de corazón. Y el texto termina diciendo que el Señor agregaba cada día a los que se iban salvando.\n\nFíjate en el orden: primero la vida de comunidad, después el crecimiento. La gente se acercaba porque veía algo atractivo en cómo se trataban. Con un equipo de dirigentes pasa lo mismo: los jóvenes perciben enseguida si entre nosotros hay cariño o hay rivalidad, si hay alegría o solo cansancio."
+                  "body": "Hechos 2,42-47 describe la vida de la primera comunidad cristiana: perseveraban en la enseñanza de los apóstoles, en la comunión fraterna, en la fracción del pan y en la oración. Compartían lo que tenían y vivían con alegría y sencillez de corazón. Y el texto termina diciendo que el Señor agregaba cada día a los que se iban salvando.\n\nFíjate en el orden: primero la vida de comunidad, después el crecimiento. La gente se acercaba porque veía algo atractivo en cómo se trataban. Con un equipo de dirigentes pasa lo mismo: los jóvenes perciben enseguida si entre nosotros hay cariño o hay rivalidad, si hay alegría o solo cansancio.\n\n«La fracción del pan» es el nombre más antiguo de la Eucaristía. La primera comunidad no solo se reunía para conversar y organizarse: se reunía alrededor de la mesa del Señor. De ahí sacaba la fuerza para compartir y la alegría que atraía a otros. Un equipo de dirigentes que reza junto y que celebra junto la misa está construyendo sobre la misma roca."
                 },
                 {
                   "title": "¿Qué significa una pastoral sinodal?",
@@ -444,6 +444,138 @@
                   "title": "Comisión Nacional de Pastoral Juvenil de Chile",
                   "url": "https://pastoraljuvenil.cl/",
                   "note": "Noticias, documentos y subsidios de la Pastoral Juvenil chilena."
+                }
+              ]
+            },
+            {
+              "id": "1.5",
+              "title": "Permanecer en Él: la Eucaristía en el centro",
+              "time": "45 min",
+              "objective": "Descubrir la Eucaristía como fuente y centro de la vida del dirigente, y la misa dominical como el encuentro que sostiene y da sentido a todo su servicio.",
+              "intro": "Puedes preparar las mejores dinámicas y conocer todas las técnicas de acompañamiento, pero si no estás unido a Jesús, tu servicio se seca. Él mismo lo dijo: «Sin mí no pueden hacer nada». En esta unidad vas a mirar el lugar que ocupa la Eucaristía en tu vida, no como una obligación más, sino como el encuentro donde Jesús te alimenta, te une a su Iglesia y te envía.",
+              "sections": [
+                {
+                  "title": "«Sin mí no pueden hacer nada»",
+                  "body": "Jesús usa una imagen muy sencilla: la vid y los sarmientos. Un sarmiento no da uva porque se esfuerza mucho, sino porque está unido a la planta y la savia le llega.\n\nTu servicio en Ágape funciona igual. La cercanía, la paciencia, la alegría y la capacidad de escuchar no salen solo de tu buena voluntad: son fruto de estar unido a Jesús. Por eso la pregunta más importante para un dirigente no es «¿qué voy a hacer?», sino «¿estoy unido a Él?». Y el lugar privilegiado de esa unión es la Eucaristía."
+                },
+                {
+                  "title": "La misa del domingo, el corazón de la semana",
+                  "body": "Desde el principio, los cristianos se reunieron el domingo, el día de la Resurrección, para escuchar la Palabra y partir el pan. San Juan Pablo II lo llamó «el centro mismo de la vida cristiana» (Dies Domini 7).\n\nLa misa dominical no es un trámite ni un premio para los que ya son buenos. Es el momento en que Jesús te habla, se entrega por ti y te une a tus hermanos. Si alguna vez se te hace pesada, no la abandones: pregúntale al Señor qué quiere decirte, llega unos minutos antes, escucha las lecturas como una carta dirigida a ti. Y recuerda que los jóvenes de tu grupo te miran: un dirigente que vive la misa con alegría invita más que mil sermones."
+                },
+                {
+                  "title": "Comulgar: dejar que Él viva en ti",
+                  "body": "El Catecismo enseña que el fruto principal de la comunión es la unión íntima con Cristo (CEC 1391). Cuando comulgas, no recibes una cosa: recibes a Alguien. Jesús se hace alimento para que su amor pase a tu vida.\n\nPor eso conviene prepararse: llegar con el corazón dispuesto, acercarse al sacramento de la reconciliación cuando hay pecado grave, y después de comulgar quedarse unos momentos en silencio, agradeciendo. La Eucaristía también nos une entre nosotros: al recibir el mismo Cuerpo de Cristo nos hacemos un solo cuerpo, la Iglesia (CEC 1396). No se puede comulgar con Jesús y ignorar al hermano."
+                },
+                {
+                  "title": "Un servicio que nace del altar",
+                  "body": "Todo lo que haces como dirigente tiene un origen y una meta. El Concilio Vaticano II dice que la Eucaristía es «fuente y culmen de toda la vida cristiana» (CEC 1324): de ella brota la fuerza para servir, y hacia ella conducimos a los jóvenes.\n\nEn la práctica, esto significa algunas cosas concretas:\n\n- Poner la misa dominical en tu agenda antes que cualquier otra actividad.\n- Ofrecer en cada misa a los jóvenes de tu grupo, por su nombre.\n- Buscar, de vez en cuando, un rato de adoración ante el Santísimo.\n- Preparar los encuentros sabiendo que el objetivo final no es que lo pasen bien contigo, sino que se encuentren con Jesús."
+                }
+              ],
+              "bible": {
+                "ref": "Juan 15,1-11 · La vid y los sarmientos",
+                "comment": "En la Última Cena, después de lavar los pies a sus amigos y de entregarles su Cuerpo y su Sangre, Jesús les habla de permanecer en Él. Lee el texto despacio y fíjate cuántas veces aparece la palabra «permanecer». Él no te pide que produzcas frutos a fuerza de voluntad: te pide que te quedes unido a Él. El fruto viene después."
+              },
+              "church": [
+                {
+                  "source": "Catecismo 1324",
+                  "text": "La Eucaristía es «fuente y culmen de toda la vida cristiana»: los demás sacramentos y todas las obras de apostolado están unidos a ella y a ella se ordenan.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                },
+                {
+                  "source": "Ecclesia de Eucharistia 1",
+                  "text": "San Juan Pablo II abre su encíclica con una frase que lo resume todo: «La Iglesia vive de la Eucaristía».",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html"
+                },
+                {
+                  "source": "Dies Domini 7",
+                  "text": "El domingo, día del Señor resucitado, «constituye el centro mismo de la vida cristiana».",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/apost_letters/1998/documents/hf_jp-ii_apl_05071998_dies-domini.html"
+                }
+              ],
+              "questions": [
+                "¿Qué lugar ocupa hoy la misa dominical en tu semana? Sé sincero: ¿es encuentro, costumbre u obligación?",
+                "¿En qué momentos has sentido que tu servicio «se secaba»? ¿Tenía que ver con estar lejos de Jesús?",
+                "¿Qué podrías hacer este mes para vivir la misa con más atención (llegar antes, leer las lecturas, quedarte en silencio después de comulgar)?",
+                "¿Por qué jóvenes de tu grupo te gustaría rezar en la próxima misa? Escribe sus nombres."
+              ],
+              "activity": "Este domingo, en la misa, ofrece la Eucaristía por los jóvenes de tu grupo, uno por uno, por su nombre. Si puedes, invita a alguno de ellos a ir contigo o a sentarse juntos. Después anota en tu cuaderno qué te dijo el Señor en esa misa.",
+              "prayer": "Gracias, Jesús, porque te quedaste con nosotros en la Eucaristía y me invitas a permanecer en Ti como el sarmiento en la vid. Te ofrezco mis domingos, mis comuniones y todo mi servicio, para que nazcan del altar y vuelvan a él. Que mi vida entera sea eucarística: alimentada por Ti y entregada a los jóvenes en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: el sacramento de la Eucaristía",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html",
+                  "note": "Números 1322-1419. Lee especialmente 1324, 1391 y 1396."
+                },
+                {
+                  "title": "Dies Domini (Juan Pablo II, 1998)",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/apost_letters/1998/documents/hf_jp-ii_apl_05071998_dies-domini.html",
+                  "note": "Carta sobre el domingo, día del Señor. Lee los números 1-7."
+                }
+              ]
+            },
+            {
+              "id": "1.6",
+              "title": "Orar y dejarse perdonar",
+              "time": "45 min",
+              "objective": "Valorar la oración personal diaria y el sacramento de la reconciliación como fuentes de la vida del dirigente, y reconocer la importancia de dejarse acompañar espiritualmente.",
+              "intro": "Nadie puede dar lo que no ha recibido. Un dirigente que habla de la misericordia de Dios tiene que haberla experimentado; uno que invita a orar tiene que orar. En esta unidad vas a mirar tu propia vida de oración y tu relación con el sacramento del perdón, con sinceridad y sin miedo: Dios no te pide perfección, te pide que vuelvas a Él.",
+              "sections": [
+                {
+                  "title": "Orar es tratar de amistad",
+                  "body": "Santa Teresa de Jesús, doctora de la Iglesia, definió la oración de una manera que el Catecismo recoge: es «tratar de amistad, estando muchas veces tratando a solas con quien sabemos nos ama» (CEC 2709).\n\nOrar no es repetir fórmulas sin pensar ni hacer ejercicios para sentirse bien. Es estar con Jesús, como se está con un amigo: contarle lo que vives, escuchar su Palabra, quedarte en silencio a su lado. Jesús llamó a los Doce «para que estuvieran con Él y para enviarlos» (Mc 3,14). Fíjate en el orden: primero estar con Él, después ser enviados."
+                },
+                {
+                  "title": "Un rato con Él cada día",
+                  "body": "La oración se cuida como cualquier amistad: con tiempo. No hace falta mucho para empezar, pero sí constancia. Algunas formas sencillas:\n\n- <strong>Diez minutos con el Evangelio del día</strong>: léelo despacio, pregúntate qué te dice Jesús y respóndele.\n- <strong>El examen de la noche</strong>: dar gracias por el día, reconocer dónde estuvo Dios y pedir perdón por lo que faltó.\n- <strong>El Rosario o una decena</strong>: contemplar la vida de Jesús de la mano de María.\n- <strong>La guía «Un rato con Jesús»</strong> de la Capilla de la app, en casa o ante el Santísimo.\n\nHabrá días de sequedad en que no sientas nada. No importa: la oración no se mide por lo que sientes, sino por la fidelidad de seguir buscándolo."
+                },
+                {
+                  "title": "La alegría de ser perdonado",
+                  "body": "En el sacramento de la reconciliación, quien se acerca con el corazón arrepentido recibe de la misericordia de Dios el perdón de sus pecados y se reconcilia con la Iglesia (CEC 1422). Su efecto principal es devolvernos la amistad con Dios (CEC 1468).\n\nEl papa Francisco lo dice a los jóvenes: cuando te acerques a confesar tus pecados, cree firmemente en su misericordia, que te libera de la culpa (Christus vivit 123). Muchos jóvenes tienen miedo o vergüenza de confesarse, o hace años que no lo hacen. Si es tu caso, no estás solo: conversa con un sacerdote de confianza, prepárate con calma y date la oportunidad. Un dirigente que se confiesa con frecuencia aprende a mirar a los demás con la misma misericordia con que fue mirado."
+                },
+                {
+                  "title": "Dejarse acompañar",
+                  "body": "Así como tú acompañas a los jóvenes, tú también necesitas a alguien que te acompañe en tu camino de fe: un sacerdote, una religiosa o un asesor de la pastoral con experiencia. El acompañamiento espiritual no es una sesión de consejos, sino un espacio para discernir, con otro, lo que Dios va haciendo en tu vida.\n\nUn cuidado importante: tú no eres confesor de los jóvenes ni tienes que «revisar» su vida espiritual. Tu tarea es dar testimonio, invitar con libertad y respeto, y ayudarles a encontrar a quienes sí pueden acompañarlos en esos ámbitos."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 15,11-24 · El padre misericordioso",
+                "comment": "El hijo menor vuelve a casa con un discurso preparado y mucha vergüenza. Pero el padre lo ve de lejos, corre, lo abraza y no lo deja terminar: lo viste de fiesta. Así es Dios con nosotros en cada confesión. Lee el texto despacio y fíjate en los gestos del padre: ¿cuál te toca más el corazón?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 2709",
+                  "text": "Recoge la definición de Santa Teresa de Jesús: la oración mental es «tratar de amistad» con quien sabemos que nos ama.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p4s1c3a1_sp.html"
+                },
+                {
+                  "source": "Catecismo 1422 y 1468",
+                  "text": "En la reconciliación recibimos de la misericordia de Dios el perdón de los pecados y recuperamos su amistad.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c2a4_sp.html"
+                },
+                {
+                  "source": "Christus vivit 123",
+                  "text": "Cuando te acerques a confesar tus pecados, cree firmemente en su misericordia que te libera de la culpa.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo está hoy tu oración personal? ¿Qué momento del día podrías regalarle a Jesús de forma estable?",
+                "¿Qué te ayuda y qué te cuesta para acercarte al sacramento de la reconciliación?",
+                "¿Has experimentado alguna vez el abrazo del padre misericordioso? ¿Cómo cambió tu forma de mirar a otros?",
+                "¿Quién podría acompañarte espiritualmente? Escribe un nombre y un primer paso para conversar con esa persona."
+              ],
+              "activity": "Elige un momento fijo del día para orar diez minutos durante esta semana y anótalo en tu agenda. Además, averigua los horarios de confesión de tu parroquia y compártelos con tu grupo, sin presionar a nadie: solo como una invitación abierta.",
+              "prayer": "Gracias, Padre misericordioso, porque siempre me esperas, corres a mi encuentro y me abrazas cuando vuelvo. Te ofrezco mi oración de cada día, mis caídas y mis comienzos de nuevo. Que, perdonado y amado por Ti, sepa mirar a los jóvenes con tu misma misericordia y servir en tu Iglesia como testigo de tu amistad. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: la vida de oración",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p4s1c3a1_sp.html",
+                  "note": "Números 2700-2724: expresiones de la oración. Lee especialmente 2709."
+                },
+                {
+                  "title": "Catecismo: el sacramento de la reconciliación",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c2a4_sp.html",
+                  "note": "Números 1422-1498. Lee especialmente 1422, 1458 y 1468."
                 }
               ]
             }
@@ -1466,7 +1598,7 @@
                 },
                 {
                   "title": "Tu vida de oración",
-                  "body": "El Catecismo recuerda que la oración es la elevación del alma a Dios (CEC 2559) y que es, ante todo, una relación viva con Él. Sin ella, el servicio se reduce a activismo.\n\nNo necesitas grandes métodos. Algunas prácticas sencillas: diez minutos diarios con el Evangelio del día, el examen de la noche, la misa dominical vivida con atención, un rato de adoración de vez en cuando, y el sacramento de la reconciliación. Busca también a alguien que te acompañe espiritualmente: un sacerdote, una religiosa o un asesor de confianza."
+                  "body": "Jesús llamó a los Doce «para que estuvieran con Él y para enviarlos» (Mc 3,14). Primero estar con Él; después, ser enviados. La oración no es una técnica para descansar ni un deber más en la lista: es la amistad con Jesús que sostiene todo tu servicio. Sin ella, el servicio se reduce a activismo y tarde o temprano se agota.\n\nEl centro de esa amistad es la Eucaristía: la misa del domingo vivida con atención y, cuando puedas, un rato de adoración ante el Santísimo. A partir de ahí, algunas prácticas sencillas: diez minutos diarios con el Evangelio del día, el examen de la noche y el sacramento de la reconciliación con frecuencia. Busca también a alguien que te acompañe espiritualmente: un sacerdote, una religiosa o un asesor de confianza. (Lo profundizaste en las unidades 1.5 y 1.6.)"
                 }
               ],
               "bible": {
@@ -1725,7 +1857,7 @@
                 },
                 {
                   "title": "Tu compromiso",
-                  "body": "Un compromiso de servicio no es una promesa heroica, sino un paso concreto y libre. Puedes escribirlo en tres partes:\n\n- <strong>Con Dios</strong>: cómo cuidarás tu relación con Él (oración, sacramentos, acompañamiento).\n- <strong>Con los jóvenes</strong>: qué actitud o práctica concreta vivirás con tu grupo.\n- <strong>Con el equipo</strong>: cómo contribuirás al cuidado mutuo y a la comunión.\n\nTe proponemos compartir tu compromiso con tu equipo y con tus asesores, y renovarlo juntos en una celebración o en una misa de envío de la comunidad. Tu constancia de formación te espera al aprobar la evaluación final."
+                  "body": "Un compromiso de servicio no es una promesa heroica, sino un paso concreto y libre. Puedes escribirlo en tres partes:\n\n- <strong>Con Dios</strong>: cómo cuidarás tu relación con Él: la misa dominical, la oración diaria, la confesión frecuente y el acompañamiento espiritual.\n- <strong>Con los jóvenes</strong>: qué actitud o práctica concreta vivirás con tu grupo.\n- <strong>Con el equipo</strong>: cómo contribuirás al cuidado mutuo y a la comunión.\n\nTe proponemos compartir tu compromiso con tu equipo y con tus asesores, y renovarlo juntos en una celebración o en una misa de envío de la comunidad. Después de este envío te espera un último módulo, dedicado a la Eucaristía: el lugar donde cada domingo el Señor renueva tu envío."
                 }
               ],
               "bible": {
@@ -1834,6 +1966,376 @@
                 ],
                 "correct": 2,
                 "feedback": "Felicitaciones: has recorrido el curso completo. El liderazgo cristiano es servicio humilde que hace crecer a otros."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 6,
+          "title": "La Eucaristía, corazón de nuestra Pastoral Juvenil",
+          "desc": "5 unidades · Los jóvenes y la misa, la celebración paso a paso, animar la liturgia, la adoración y el envío",
+          "intro": "Todo lo que vivimos en Ágape nace de la Eucaristía y conduce a ella. En este módulo vas a mirar cómo acompañar a los jóvenes hacia la misa sin juzgarlos, a entender cada parte de la celebración para vivirla y explicarla, a animar la liturgia con alegría y respeto, a proponer la adoración y a llevar a la vida lo que celebramos. Porque en esta materia nunca será suficiente.",
+          "sessions": [
+            {
+              "id": "6.1",
+              "title": "«¿A quién iremos?»: los jóvenes y la Eucaristía hoy",
+              "time": "45 min",
+              "objective": "Comprender por qué a muchos jóvenes les cuesta la misa y aprender a acompañarlos hacia la Eucaristía con paciencia, testimonio e invitación, sin juzgarlos.",
+              "intro": "Muchos jóvenes de tu grupo no van a misa, o van solo cuando los llevan. No es un problema nuevo: también a Jesús algunos le dieron la espalda cuando habló del Pan de Vida. En esta unidad vas a mirar con realismo y con esperanza la relación de los jóvenes con la Eucaristía, y a pensar cómo acompañarlos para que descubran que ahí los espera Alguien.",
+              "sections": [
+                {
+                  "title": "También a Jesús lo dejaron",
+                  "body": "En el capítulo 6 de san Juan, Jesús se presenta como el Pan de Vida. Muchos de sus discípulos dicen «es duro este lenguaje» y se van. Jesús no corre detrás para convencerlos con trucos ni cambia su mensaje: mira a los Doce y les pregunta con libertad «¿También ustedes quieren irse?». Pedro responde por todos: «Señor, ¿a quién iremos? Tú tienes palabras de vida eterna».\n\nEsta escena nos enseña dos cosas: que la Eucaristía siempre ha sido un misterio que pide fe, y que Jesús respeta la libertad. Nuestra tarea no es obligar, sino ayudar a que cada joven pueda dar su propia respuesta, como Pedro."
+                },
+                {
+                  "title": "¿Por qué les cuesta?",
+                  "body": "Si conversas con los jóvenes, aparecen razones parecidas:\n\n- <strong>«Es aburrida»</strong>: no entienden lo que pasa ni el sentido de los gestos.\n- <strong>«No me siento parte»</strong>: nadie los saluda, no conocen a nadie, todo parece pensado para adultos.\n- <strong>«No tengo con quién ir»</strong>: su familia no va o el horario choca con otras cosas.\n- <strong>«No me siento digno»</strong>: cargan culpas o heridas y creen que la misa no es para ellos.\n\nDetrás de cada «no voy» hay una historia. Recuerda lo que viste en la unidad 1.2: no se trata de etiquetar («a ese no le interesa Dios»), sino de buscar la llama que sigue ardiendo."
+                },
+                {
+                  "title": "Acompañar, no sermonear",
+                  "body": "Algunas actitudes que ayudan:\n\n- <strong>El testimonio</strong>: que te vean vivir la misa con alegría, sin hacerlo pesar.\n- <strong>La invitación personal</strong>: «¿Vamos juntos el domingo?» vale más que un aviso general.\n- <strong>Ir en grupo</strong>: sentarse juntos, saludarse, salir a tomar algo después.\n- <strong>Explicar</strong>: ayudar a entender lo que se celebra (lo verás en la unidad 6.2).\n- <strong>Paciencia</strong>: cada uno tiene sus tiempos. La gracia de Dios trabaja aunque no lo veamos.\n\nLo que no ayuda: retar, comparar, contar quién fue y quién no, o hacer sentir culpable a alguien delante del grupo."
+                },
+                {
+                  "title": "Él es el que más desea encontrarse",
+                  "body": "En la Última Cena, Jesús dijo: «He deseado ardientemente comer esta Pascua con ustedes» (Lc 22,15). El papa Francisco tituló con esas palabras su carta sobre la liturgia, Desiderio desideravi: antes de que nosotros deseemos a Jesús, Él nos desea a nosotros.\n\nEste es el anuncio que queremos que los jóvenes descubran: la misa no es algo que hacemos para cumplir con Dios, sino el lugar donde Dios cumple su deseo de estar con nosotros. Un dirigente que cree esto de verdad lo transmite sin necesidad de muchas palabras."
+                }
+              ],
+              "bible": {
+                "ref": "Juan 6,35.60-69 · «Señor, ¿a quién iremos?»",
+                "comment": "Jesús se presenta como el Pan de Vida y muchos se van. Él no cambia su palabra para retenerlos, pero tampoco los desprecia: pregunta con libertad a los que quedan. Lee el texto y pregúntate qué responderías tú hoy, y qué responderían los jóvenes de tu grupo."
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 35",
+                  "text": "La Iglesia se renueva cuando recibe la fuerza siempre nueva de la Palabra de Dios, de la Eucaristía y de la presencia de Cristo.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Desiderio desideravi (Francisco, 2022)",
+                  "text": "El papa recuerda que en la Última Cena Jesús «deseó ardientemente» esa Pascua con los suyos: en la liturgia, Él es el primero que desea el encuentro.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_letters/documents/20220629-lettera-ap-desiderio-desideravi.html"
+                }
+              ],
+              "questions": [
+                "¿Por qué crees que a los jóvenes de tu grupo les cuesta ir a misa? Piensa en casos concretos, sin nombres.",
+                "¿Hubo un tiempo en que a ti también te costó? ¿Qué o quién te ayudó a volver?",
+                "¿Qué actitudes tuyas podrían estar alejando, sin querer, a algún joven de la misa?"
+              ],
+              "activity": "Organiza con tu grupo una «misa juntos»: elijan un domingo, quédense de acuerdo para llegar a la misma hora, siéntense juntos y compartan algo después. Invita personalmente a quienes hace tiempo que no van, sin presionar.",
+              "prayer": "Gracias, Jesús, Pan de Vida, porque deseas encontrarte con cada joven más de lo que nosotros te deseamos a Ti. Te ofrezco mi paciencia y mis invitaciones, también las que no tienen respuesta. Que mi testimonio en tu Iglesia ayude a muchos jóvenes a decir, como Pedro: «Señor, ¿a quién iremos?». Amén.",
+              "resources": [
+                {
+                  "title": "Desiderio desideravi (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_letters/documents/20220629-lettera-ap-desiderio-desideravi.html",
+                  "note": "Carta del papa Francisco sobre la formación litúrgica. Lee los primeros números."
+                },
+                {
+                  "title": "Biblia en línea: Evangelio según san Juan",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 6, el discurso del Pan de Vida."
+                }
+              ]
+            },
+            {
+              "id": "6.2",
+              "title": "La misa, paso a paso",
+              "time": "45 min",
+              "objective": "Comprender el sentido de cada parte de la misa para vivirla con más fe y poder explicarla de forma sencilla a los jóvenes.",
+              "intro": "No se puede amar lo que no se conoce. Muchos jóvenes —y también dirigentes— participan en la misa sin saber qué significan sus gestos y momentos. En esta unidad vas a recorrer la celebración de principio a fin, para que la vivas con más profundidad y puedas ayudar a otros a descubrir su belleza.",
+              "sections": [
+                {
+                  "title": "Nos reúne el Señor: los ritos iniciales",
+                  "body": "La misa empieza antes de la primera canción: empieza cuando la comunidad se reúne. No vamos cada uno por nuestro lado, sino como pueblo convocado por Dios.\n\nEn los ritos iniciales hacemos la señal de la cruz, el sacerdote nos saluda en nombre del Señor, reconocemos humildemente que somos pecadores (el acto penitencial), alabamos a Dios con el Gloria (fuera de Adviento y Cuaresma) y el sacerdote recoge las intenciones de todos en la oración colecta. Es como entrar a la casa de alguien que nos quiere: saludamos, pedimos perdón por lo que hayamos fallado y nos alegramos de estar ahí."
+                },
+                {
+                  "title": "Dios nos habla: la liturgia de la Palabra",
+                  "body": "En las lecturas, el salmo y el Evangelio, Dios mismo habla a su pueblo. No es una clase ni un trámite antes de la consagración: es Palabra viva. Por eso nos ponemos de pie para el Evangelio, que proclama las palabras y gestos de Jesús.\n\nEn la homilía, el sacerdote ayuda a aplicar la Palabra a la vida. Luego respondemos con el Credo, que resume nuestra fe, y con la oración de los fieles, donde presentamos a Dios las necesidades de la Iglesia y del mundo. Un buen consejo para los jóvenes: leer el Evangelio del domingo antes de ir. Así la misa deja de sentirse «ajena»."
+                },
+                {
+                  "title": "Jesús se entrega: la liturgia eucarística",
+                  "body": "Presentamos el pan y el vino, fruto de la tierra y del trabajo, y con ellos nuestra vida. En la plegaria eucarística, el sacerdote, actuando en la persona de Cristo, repite las palabras de la Última Cena: «Esto es mi Cuerpo… esta es mi Sangre». Por la acción del Espíritu Santo, el pan y el vino se convierten en el Cuerpo y la Sangre de Jesús, que se hace presente con su entrega en la cruz.\n\nDespués rezamos el Padre nuestro, nos damos la paz y nos acercamos a comulgar. Es el corazón de la misa: Jesús se da por entero para que vivamos de Él."
+                },
+                {
+                  "title": "Nos envía: la despedida",
+                  "body": "La misa termina con la bendición y el envío: «Pueden ir en paz». La palabra «misa» viene del latín missa, relacionada con el envío. No salimos simplemente porque se acabó, salimos enviados a llevar lo que recibimos.\n\nEl papa Francisco pide una formación litúrgica «seria y vital» (Desiderio desideravi 31) que nos permita seguir asombrándonos de lo que ocurre en cada celebración. El Concilio Vaticano II quería que los fieles no asistieran a la misa como espectadores mudos, sino que, comprendiendo bien los ritos y oraciones, participaran consciente y activamente (Sacrosanctum Concilium 48)."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 22,14-20 · La Última Cena",
+                "comment": "Jesús celebra la Pascua con sus amigos, toma el pan y el cáliz, da gracias y se entrega: «Hagan esto en memoria mía». Cada misa nos hace presentes en esa mesa. Lee el texto despacio e identifica los gestos que se repiten en la liturgia eucarística: tomar, dar gracias, partir, dar."
+              },
+              "church": [
+                {
+                  "source": "Sacrosanctum Concilium 48",
+                  "text": "La Iglesia procura que los cristianos no asistan al misterio eucarístico como extraños y mudos espectadores, sino que, comprendiendo bien los ritos y oraciones, participen en la acción sagrada.",
+                  "url": "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_sp.html"
+                },
+                {
+                  "source": "Desiderio desideravi 31",
+                  "text": "Se necesita una formación litúrgica «seria y vital», que nos ayude a no perder el asombro por lo que ocurre en la celebración.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_letters/documents/20220629-lettera-ap-desiderio-desideravi.html"
+                }
+              ],
+              "questions": [
+                "¿Qué parte de la misa entiendes y vives mejor? ¿Cuál te cuesta más o te parece más lejana?",
+                "¿Cómo le explicarías en dos frases a un joven de tu grupo qué pasa en la consagración?",
+                "¿Qué cambiaría en tu forma de vivir la misa si te tomaras en serio que al final eres enviado?"
+              ],
+              "activity": "Prepara para tu grupo una «misa explicada» de 15 minutos: muestren con imágenes o tarjetas las cuatro partes de la misa (nos reúne, nos habla, se entrega, nos envía) y conversen qué significa cada una. Si es posible, invita al párroco o a un seminarista a responder preguntas.",
+              "prayer": "Gracias, Señor, porque en cada misa nos reúnes, nos hablas, te entregas por nosotros y nos envías. Te ofrezco mi deseo de conocer mejor este misterio para amarlo más. Que, asombrado por tu entrega, sepa ayudar a los jóvenes de tu Iglesia a vivir la misa como un encuentro contigo y no como una costumbre. Amén.",
+              "resources": [
+                {
+                  "title": "Sacrosanctum Concilium (Concilio Vaticano II)",
+                  "url": "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_sp.html",
+                  "note": "Constitución sobre la sagrada liturgia. Lee los números 47-58, sobre el misterio eucarístico."
+                },
+                {
+                  "title": "Catecismo: la celebración litúrgica de la Eucaristía",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html",
+                  "note": "Números 1345-1355: el desarrollo de la celebración."
+                }
+              ]
+            },
+            {
+              "id": "6.3",
+              "title": "Jóvenes que celebran: animar la liturgia",
+              "time": "45 min",
+              "objective": "Aprender a promover la participación activa de los jóvenes en la misa, a través de los distintos servicios litúrgicos, respetando la naturaleza y las normas de la celebración.",
+              "intro": "Los jóvenes no quieren ser público: quieren ser parte. La liturgia ofrece muchos espacios para que participen de verdad: leer, cantar, servir al altar, acoger. En esta unidad vas a descubrir cómo ayudar a tu grupo a animar una misa con alegría, belleza y respeto, entendiendo que la liturgia no nos pertenece: es de la Iglesia y de Cristo.",
+              "sections": [
+                {
+                  "title": "Una participación plena, consciente y activa",
+                  "body": "El Concilio Vaticano II desea que todos los fieles participen en la liturgia de manera «plena, consciente y activa», un derecho y un deber que nace del bautismo (Sacrosanctum Concilium 14).\n\nParticipar activamente no significa que todos tengan que hacer algo visible. La primera participación es interior: escuchar, responder, cantar, rezar, ofrecer la propia vida. Pero también hay servicios concretos que los jóvenes pueden asumir, y que les ayudan a sentir que la misa también es suya."
+                },
+                {
+                  "title": "Los servicios que los jóvenes pueden asumir",
+                  "body": "- <strong>Acogida</strong>: saludar en la puerta, ayudar a encontrar un lugar, entregar hojas de cantos.\n- <strong>Lectores</strong>: proclamar la primera o segunda lectura y las intenciones, preparándose antes.\n- <strong>Salmista y coro</strong>: cantar el salmo y animar el canto de la asamblea.\n- <strong>Monaguillos o acólitos</strong>: servir al altar, según lo que indique la parroquia.\n- <strong>Ofrendas</strong>: llevar el pan y el vino al altar.\n- <strong>Ambientación</strong>: cuidar el orden y la belleza del templo, en coordinación con los responsables.\n\nCada servicio se prepara: una lectura mal leída o un canto improvisado distrae. Prepararse bien también es una forma de amar al Señor y a la comunidad."
+                },
+                {
+                  "title": "Creatividad con respeto",
+                  "body": "Una misa juvenil puede tener cantos alegres, moniciones cercanas y una acogida especial. Pero la liturgia tiene su propia forma, que la Iglesia cuida y que no podemos cambiar a nuestro gusto: los textos de la misa, las lecturas del día, las oraciones del sacerdote y los ritos no se reemplazan ni se inventan.\n\nAlgunos criterios prácticos:\n\n- Todo se coordina con el párroco o el equipo de liturgia de la parroquia.\n- Los cantos deben corresponder al momento de la misa y tener un contenido cristiano claro; no cualquier canción bonita sirve.\n- Las moniciones son breves y ayudan a entrar en el misterio, no son discursos.\n- La creatividad se pone en la preparación, la acogida, el canto y la oración, no en cambiar los ritos."
+                },
+                {
+                  "title": "Prepararse juntos para celebrar",
+                  "body": "Una buena práctica es reunirse con los jóvenes antes de animar una misa: leer juntos las lecturas del domingo, conversar qué les dicen, elegir los cantos de acuerdo con ellas y repartir los servicios. Ese encuentro previo ya es formación y oración.\n\nAsí los jóvenes descubren que la misa no es un espectáculo que se organiza, sino una celebración del amor de Dios en la que ellos ponen sus dones al servicio de todos."
+                }
+              ],
+              "bible": {
+                "ref": "1 Corintios 11,23-26 · «Hagan esto en memoria mía»",
+                "comment": "San Pablo transmite a la comunidad de Corinto lo que él mismo recibió: el relato de la Última Cena. Es uno de los textos más antiguos sobre la Eucaristía. Fíjate que no dice «inventé», sino «recibí» y «les transmití»: la liturgia es un tesoro que recibimos de la Iglesia y que cuidamos para entregarlo a otros."
+              },
+              "church": [
+                {
+                  "source": "Sacrosanctum Concilium 14",
+                  "text": "La Iglesia desea que todos los fieles sean llevados a la participación «plena, consciente y activa» en las celebraciones litúrgicas, a la que tienen derecho y deber en virtud del bautismo.",
+                  "url": "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_sp.html"
+                },
+                {
+                  "source": "Sacrosanctum Concilium 10",
+                  "text": "La liturgia es la cumbre a la cual tiende la actividad de la Iglesia y, al mismo tiempo, la fuente de donde mana toda su fuerza.",
+                  "url": "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Qué servicio litúrgico podrían asumir los jóvenes de tu grupo? ¿Quién tiene qué don?",
+                "¿Por qué crees que es importante respetar la forma de la liturgia y no cambiarla a nuestro gusto?",
+                "¿Cómo podrías ayudar a que la preparación de una misa sea también un momento de oración para tu grupo?"
+              ],
+              "activity": "Coordina con el párroco o el equipo de liturgia una misa animada por tu grupo. Reúnanse antes a leer las lecturas, elijan los cantos según el momento litúrgico y repartan los servicios: acogida, lectores, intenciones, coro y ofrendas.",
+              "prayer": "Gracias, Señor, porque nos llamas no a mirar desde lejos, sino a celebrar contigo como tu pueblo. Te ofrezco los dones de los jóvenes de nuestro grupo: sus voces, su alegría y sus manos dispuestas. Que, al servir en la liturgia de tu Iglesia, descubran su lugar en ella y aprendan a vivir toda su vida como una ofrenda. Amén.",
+              "resources": [
+                {
+                  "title": "Sacrosanctum Concilium (texto completo)",
+                  "url": "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_sp.html",
+                  "note": "Lee los números 10, 14 y 47-58."
+                },
+                {
+                  "title": "Catecismo: la Eucaristía en la vida de la Iglesia",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html",
+                  "note": "Números 1322-1344: fuente y culmen, nombres y origen de la Eucaristía."
+                }
+              ]
+            },
+            {
+              "id": "6.4",
+              "title": "Adorar: quedarse con Él",
+              "time": "45 min",
+              "objective": "Descubrir el valor de la adoración eucarística en la vida de fe y aprender a proponer momentos de adoración sencillos y bien preparados para los jóvenes.",
+              "intro": "Jesús no solo se hace presente en la misa: permanece en el sagrario, esperándonos. Adorarlo es quedarse con Él, sin prisa, reconociendo que es nuestro Dios y nuestro amigo. Muchos jóvenes que nunca imaginaron disfrutar del silencio descubren en la adoración un encuentro que les cambia la vida. En esta unidad vas a aprender a vivirla y a proponerla.",
+              "sections": [
+                {
+                  "title": "¿Qué es la adoración eucarística?",
+                  "body": "Como Cristo está realmente presente en el sacramento, la Iglesia lo honra con un culto de adoración (CEC 1418). Por eso, en cada templo hay un sagrario con una lámpara encendida, y por eso hacemos una genuflexión al pasar frente a él.\n\nLa adoración puede ser una visita breve al Santísimo o un tiempo más largo ante la custodia, en la exposición del Santísimo Sacramento. San Juan Pablo II la recomendaba especialmente: la exposición del Santísimo y la adoración de Cristo presente bajo las especies eucarísticas (Ecclesia de Eucharistia 25). No es un rito aparte de la misa: prolonga el encuentro de la comunión."
+                },
+                {
+                  "title": "«Venimos a adorarlo»",
+                  "body": "Los Magos recorrieron un largo camino siguiendo una estrella y, al encontrar al Niño, «postrándose, lo adoraron» (Mt 2,11). Su frase «venimos a adorarlo» (Mt 2,2) fue el lema de la Jornada Mundial de la Juventud de Colonia en 2005, que San Juan Pablo II preparó pidiendo a los jóvenes que llevaran al encuentro con Jesús eucarístico su entusiasmo, su esperanza y su capacidad de amar (Mane nobiscum Domine 30).\n\nLos santos jóvenes lo entendieron bien. San Carlo Acutis, el adolescente que evangelizó por internet, decía que la Eucaristía era su «autopista al cielo»."
+                },
+                {
+                  "title": "Cómo proponer la adoración a los jóvenes",
+                  "body": "Para quienes nunca la han vivido, conviene que la adoración sea breve, guiada y bien preparada:\n\n- <strong>Explica antes</strong> qué van a vivir: Jesús está realmente presente, vamos a estar con Él.\n- <strong>Cuida el ambiente</strong>: orden, luz cálida, un canto suave para empezar.\n- <strong>Guía con pocas palabras</strong>: una frase del Evangelio, una pregunta para el corazón, y luego silencio.\n- <strong>Alterna</strong> momentos de silencio con cantos de adoración y oraciones breves.\n- <strong>Respeta</strong> el ritmo de cada uno: nadie está obligado a «sentir» algo.\n- <strong>Coordina</strong> siempre con el párroco la exposición del Santísimo.\n\nLa Capilla de la app tiene una guía «Ante el Santísimo» que puede servir para una primera visita personal."
+                },
+                {
+                  "title": "Mirar y dejarse mirar",
+                  "body": "El Catecismo recuerda la respuesta de un campesino al santo cura de Ars, que le preguntó qué hacía tanto tiempo ante el sagrario: «Yo lo miro y Él me mira» (CEC 2715). Esa es la esencia de la adoración: no hace falta hablar mucho, basta estar.\n\nUn dirigente que adora aprende a mirar como Jesús mira, y ese aprendizaje se nota después en su manera de acompañar a los jóvenes."
+                }
+              ],
+              "bible": {
+                "ref": "Mateo 2,1-11 · Los Magos adoran al Niño",
+                "comment": "Los Magos buscan, preguntan, se ponen en camino y, cuando encuentran a Jesús, se arrodillan y le ofrecen lo mejor que tienen. Lee el relato y piensa: ¿qué estrella te ha guiado hasta Jesús? ¿Qué regalo podrías ofrecerle tú hoy?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 1418",
+                  "text": "Como Cristo está presente en el sacramento del altar, es preciso honrarlo con culto de adoración. La visita al Santísimo es una prueba de gratitud y de amor.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                },
+                {
+                  "source": "Ecclesia de Eucharistia 25",
+                  "text": "El culto a la Eucaristía fuera de la misa, particularmente la exposición del Santísimo y la adoración de Cristo presente en las especies eucarísticas, tiene un valor inestimable en la vida de la Iglesia.",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html"
+                },
+                {
+                  "source": "Mane nobiscum Domine 30",
+                  "text": "San Juan Pablo II invita a los jóvenes a llevar al encuentro con Jesús eucarístico su entusiasmo, su esperanza y su capacidad de amar.",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/apost_letters/2004/documents/hf_jp-ii_apl_20041008_mane-nobiscum-domine.html"
+                }
+              ],
+              "questions": [
+                "¿Has vivido alguna vez un momento de adoración? ¿Qué recuerdas de él?",
+                "¿Qué te ayuda a estar en silencio ante Jesús? ¿Qué te distrae?",
+                "¿Cómo podrías preparar una primera experiencia de adoración para tu grupo que sea sencilla y acogedora?"
+              ],
+              "activity": "Esta semana haz una visita personal al Santísimo, aunque sea de diez minutos. Luego, coordina con el párroco una adoración breve y guiada para tu grupo (20 a 30 minutos), con un canto, una frase del Evangelio, silencio y una oración final.",
+              "prayer": "Gracias, Jesús, porque te quedas en el sagrario esperándonos, como un amigo que no se cansa. Te ofrezco mi tiempo ante Ti, mis silencios y también mis distracciones. Que, mirándote y dejándome mirar, aprenda a llevar a los jóvenes de tu Iglesia a adorarte, como los Magos que vinieron de lejos para encontrarte. Amén.",
+              "resources": [
+                {
+                  "title": "Ecclesia de Eucharistia (Juan Pablo II, 2003)",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html",
+                  "note": "Encíclica sobre la Eucaristía en su relación con la Iglesia. Lee los números 1 y 25."
+                },
+                {
+                  "title": "Mane nobiscum Domine (Juan Pablo II, 2004)",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/apost_letters/2004/documents/hf_jp-ii_apl_20041008_mane-nobiscum-domine.html",
+                  "note": "Carta para el Año de la Eucaristía. Lee el número 30, dirigido a los jóvenes."
+                }
+              ]
+            },
+            {
+              "id": "6.5",
+              "title": "Del altar a la vida: la misa nos envía",
+              "time": "45 min",
+              "objective": "Comprender la relación entre la Eucaristía, la caridad y la misión, y aprender a ayudar a los jóvenes a llevar a la vida diaria lo que celebran en la misa.",
+              "intro": "La misa no termina cuando salimos del templo: continúa en la vida. Quien comulga con Jesús comulga también con sus hermanos, especialmente con los más pobres. En esta última unidad vas a descubrir cómo la Eucaristía impulsa el servicio, la caridad y la misión, y cómo cada misa renueva el envío que recibiste al terminar este curso.",
+              "sections": [
+                {
+                  "title": "Una Eucaristía que compromete",
+                  "body": "El Catecismo es muy claro: la Eucaristía entraña un compromiso en favor de los pobres. Para recibir en verdad el Cuerpo y la Sangre de Cristo entregados por nosotros, debemos reconocer a Cristo en los más pobres, sus hermanos (CEC 1397).\n\nNo se trata de dos cosas distintas, la misa por un lado y la solidaridad por otro. Es el mismo Jesús el que se entrega en el altar y el que nos sale al encuentro en el que tiene hambre, está solo o sufre. Quien de verdad se encuentra con Él en la Eucaristía no puede quedar indiferente ante el dolor de los demás."
+                },
+                {
+                  "title": "El Jueves Santo: pan partido y pies lavados",
+                  "body": "En la misma noche en que instituyó la Eucaristía, Jesús lavó los pies de sus discípulos y les dijo: «Les he dado ejemplo, para que también ustedes hagan lo mismo» (Jn 13,15). Ya lo viste en la unidad 2.3: el servicio es el estilo de Jesús. Ahora descubres de dónde nace: del mismo amor que se hace pan.\n\nPor eso, cada servicio que haces como dirigente —acoger, escuchar, incluir, acompañar— es una prolongación de la misa. Y por eso también, cuando el servicio cansa, la Eucaristía es el lugar donde se recarga."
+                },
+                {
+                  "title": "«Pueden ir en paz»: de la misa a la misión",
+                  "body": "La despedida de la misa es un envío. Así como Jesús envió a sus discípulos, cada domingo nos envía a llevar a la familia, al colegio, al trabajo y al barrio lo que hemos recibido.\n\nCon los jóvenes, esto puede vivirse de forma muy concreta: conversar después de la misa qué frase del Evangelio se llevan para la semana, elegir un gesto de servicio que nazca de lo celebrado, o unir una misa con una acción solidaria (una visita, una colecta, una olla común)."
+                },
+                {
+                  "title": "Un camino que vuelve a empezar",
+                  "body": "Terminaste el curso con un envío (unidad 5.5). Este módulo te recuerda que ese envío se renueva cada domingo. No eres dirigente por haber aprobado unas evaluaciones, sino porque el Señor te llama, te alimenta y te envía una y otra vez.\n\nQue la Eucaristía sea siempre el centro de tu vida y de tu servicio: el lugar de donde sales hacia los jóvenes y al que vuelves con ellos, para dar gracias."
+                }
+              ],
+              "bible": {
+                "ref": "Juan 13,1-15 · Jesús lava los pies a sus discípulos",
+                "comment": "Juan no relata las palabras de la consagración, pero en su lugar narra el lavatorio de los pies: así nos muestra qué significa la Eucaristía en la vida. Lee el texto y pregúntate: ¿a quién me está pidiendo Jesús que «lave los pies» esta semana?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 1397",
+                  "text": "La Eucaristía entraña un compromiso en favor de los pobres: para recibir en verdad el Cuerpo y la Sangre de Cristo debemos reconocer a Cristo en los más pobres, sus hermanos.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                },
+                {
+                  "source": "Catecismo 1396",
+                  "text": "La Eucaristía hace la Iglesia: quienes reciben a Cristo quedan unidos entre sí en un solo cuerpo.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Qué relación ves entre la misa del domingo y lo que haces durante la semana?",
+                "¿En quiénes de tu entorno te está esperando Jesús para ser servido?",
+                "¿Qué acción solidaria podría nacer de una misa celebrada con tu grupo?",
+                "Al terminar este módulo, ¿qué lugar quieres que tenga la Eucaristía en tu vida y en tu servicio?"
+              ],
+              "activity": "Propón a tu grupo unir una misa con una acción de servicio: por ejemplo, participar juntos en la misa del domingo y luego visitar un hogar de ancianos, preparar una once solidaria o apoyar una colecta parroquial. Al final, conversen qué relación descubrieron entre lo que celebraron y lo que hicieron.",
+              "prayer": "Gracias, Señor, porque en la misma noche te hiciste pan y lavaste los pies de tus amigos. Te ofrezco todo lo que aprendí en este camino: que mi servicio sea prolongación de tu Eucaristía y mi vida, pan partido para los demás. Cada domingo vuelve a enviarme, Señor: aquí estoy, para servir a los jóvenes y a los más pobres en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: frutos de la comunión",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html",
+                  "note": "Números 1391-1401. Lee especialmente 1396 y 1397."
+                },
+                {
+                  "title": "Biblia en línea: Evangelio según san Juan",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 13, el lavatorio de los pies."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 6 · La Eucaristía",
+            "title": "La Eucaristía, corazón de nuestra pastoral",
+            "questions": [
+              {
+                "q": "1. Un joven de tu grupo te dice: «La misa es aburrida, no voy a ir más». ¿Qué respuesta refleja mejor lo aprendido?",
+                "options": [
+                  "Decirle que si no va a misa no puede seguir en el grupo.",
+                  "Escucharlo, preguntarle qué le cuesta, invitarlo personalmente a ir juntos y ayudarlo a entender lo que se celebra.",
+                  "No decir nada: es su decisión y no es tema del dirigente."
+                ],
+                "correct": 1,
+                "feedback": "Como Jesús en Juan 6, respetamos la libertad, pero no somos indiferentes: escuchamos, invitamos y acompañamos para que cada joven pueda descubrir el sentido de la Eucaristía."
+              },
+              {
+                "q": "2. ¿Qué significa que la Eucaristía sea «fuente y culmen» de la vida cristiana?",
+                "options": [
+                  "Que es la actividad más importante del calendario parroquial.",
+                  "Que de ella brota la fuerza de toda la vida cristiana y hacia ella se orienta todo, también nuestro servicio.",
+                  "Que basta con ir a misa para ser un buen cristiano, aunque no se viva el Evangelio."
+                ],
+                "correct": 1,
+                "feedback": "El Catecismo (1324) enseña que los sacramentos y todas las obras de apostolado están unidos a la Eucaristía y se ordenan a ella."
+              },
+              {
+                "q": "3. Tu grupo va a animar la misa del domingo y alguien propone cambiar el Evangelio del día por un texto más «juvenil». ¿Qué corresponde hacer?",
+                "options": [
+                  "Aceptarlo, porque lo importante es que los jóvenes se motiven.",
+                  "Explicar que las lecturas y los ritos no se cambian, y poner la creatividad en la acogida, los cantos, las moniciones y la preparación, coordinando con el párroco.",
+                  "Dejar que cada uno haga lo que quiera durante la misa."
+                ],
+                "correct": 1,
+                "feedback": "La liturgia es un tesoro que recibimos de la Iglesia. La participación activa se vive dentro de su forma, con creatividad en lo que sí corresponde."
+              },
+              {
+                "q": "4. Quieres proponer una primera experiencia de adoración a jóvenes que nunca la han vivido. ¿Qué es lo más adecuado?",
+                "options": [
+                  "Una hora completa en silencio, sin ninguna explicación.",
+                  "Un momento breve y guiado: explicar antes qué se vive, un canto, una frase del Evangelio, silencio y una oración final, coordinado con el párroco.",
+                  "Pedirles que cierren los ojos y dejen la mente en blanco."
+                ],
+                "correct": 1,
+                "feedback": "La adoración es estar con Jesús presente en la Eucaristía. Para quienes empiezan, conviene que sea breve, acompañada y bien preparada."
+              },
+              {
+                "q": "5. ¿Por qué el Catecismo dice que la Eucaristía «entraña un compromiso en favor de los pobres»?",
+                "options": [
+                  "Porque en la misa se hace una colecta.",
+                  "Porque quien recibe a Cristo en la comunión está llamado a reconocerlo y servirlo en los más pobres, sus hermanos.",
+                  "Porque la caridad reemplaza a la misa: si ayudo a otros, no necesito ir."
+                ],
+                "correct": 1,
+                "feedback": "Es el mismo Jesús el que se entrega en el altar y el que nos sale al encuentro en el que sufre (CEC 1397). La misa nos envía a servir."
               }
             ]
           }

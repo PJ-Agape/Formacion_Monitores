@@ -259,8 +259,8 @@ function coursesView(d) {
     <span class="spacer"></span>
     <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button>
   </header>
-  <div class="note" style="margin-bottom:14px"><b>Oraciones finales de las unidades.</b> Hay versiones nuevas de las oraciones de acción de gracias. Tráelas a tu borrador (solo cambia las oraciones; lo demás queda igual) y luego publica.
-    <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncPrayers">${icon("ul")} Traer las oraciones nuevas</button></div></div>
+  <div class="note" style="margin-bottom:14px"><b>Novedades del curso de dirigentes.</b> Hay contenido nuevo en el sitio: las oraciones finales de acción de gracias, las unidades 1.5 y 1.6 (Eucaristía, oración y reconciliación), el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
+    <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncCourse">${icon("ul")} Traer las novedades</button></div></div>
   <div class="stack" style="--gap:12px">
     ${d.courses.map((c, i) => {
       const n = c.phases.reduce((a, p) => a + p.sessions.length, 0);
@@ -1154,21 +1154,40 @@ function bindActions() {
     if (!c.hidden && d0.courses.filter((x) => !x.hidden).length <= 1) { toast("Tiene que quedar al menos un curso público", ""); return; }
     commit((d) => { d.courses[+el.dataset.i].hidden = !c.hidden; }, { msg: c.hidden ? "Curso público: se verá al publicar los cambios" : "Curso oculto: se aplicará al publicar los cambios" });
   };
-  // Trae solo las oraciones finales («prayer») de data/contenido.json al borrador, por curso y unidad.
-  A.aSyncPrayers = async (el) => {
+  // Trae al borrador las novedades del sitio (data/contenido.json) sin pisar lo editado en Gestión:
+  // unidades y módulos que falten, oraciones finales, y solo las secciones que se corrigieron en el sitio.
+  const SECTION_UPDATES = { "curso-dirigentes-agape": [["1.4", "La primera comunidad como modelo"], ["5.1", "Tu vida de oración"], ["5.5", "Tu compromiso"]] };
+  const PHASE_TEXT_UPDATES = { "curso-dirigentes-agape": [1] }; // phaseNum con descripción e introducción nuevas
+  function mergeCourseNews(d, repo) {
+    let n = 0;
+    for (const rc of repo.courses || []) {
+      const c = d.courses.find((x) => x.id === rc.id); if (!c) continue;
+      rc.phases.forEach((rp) => {
+        let ph = c.phases.find((x) => x.phaseNum === rp.phaseNum);
+        if (!ph) { c.phases.push(clone(rp)); n += 1 + rp.sessions.length; return; }
+        if ((PHASE_TEXT_UPDATES[rc.id] || []).includes(rp.phaseNum)) for (const k of ["desc", "intro"]) if (rp[k] && ph[k] !== rp[k]) { ph[k] = rp[k]; n++; }
+        rp.sessions.forEach((rs, k) => {
+          const se = ph.sessions.find((x) => x.id === rs.id);
+          if (!se) { ph.sessions.splice(Math.min(k, ph.sessions.length), 0, clone(rs)); n++; return; }
+          if (rs.prayer && se.prayer !== rs.prayer) { se.prayer = rs.prayer; n++; }
+          for (const [sid, title] of SECTION_UPDATES[rc.id] || []) {
+            if (sid !== rs.id) continue;
+            const rsec = rs.sections.find((x) => x.title === title), sec = (se.sections || []).find((x) => x.title === title);
+            if (rsec && sec && sec.body !== rsec.body) { sec.body = rsec.body; n++; }
+          }
+        });
+      });
+    }
+    return n;
+  }
+  A.aSyncCourse = async (el) => {
     el.disabled = true;
     try {
       const repo = await (await fetch("data/contenido.json", { cache: "no-store" })).json();
-      const map = new Map();
-      for (const c of repo.courses || []) for (const ph of c.phases || []) for (const se of ph.sessions || []) if (se.prayer) map.set(c.id + "|" + se.id, se.prayer);
-      let n = 0;
-      const d0 = S.getDraft() || S.publishedContent();
-      for (const c of d0.courses) for (const ph of c.phases) for (const se of ph.sessions) { const p = map.get(c.id + "|" + se.id); if (p && p !== se.prayer) n++; }
-      if (!n) { toast("Las oraciones ya están al día"); el.disabled = false; return; }
-      commit((d) => {
-        for (const c of d.courses) for (const ph of c.phases) for (const se of ph.sessions) { const p = map.get(c.id + "|" + se.id); if (p) se.prayer = p; }
-      }, { snapshot: true, msg: `${n} oraciones actualizadas en el borrador. Revísalas y publica.` });
-    } catch (e) { console.warn(e); toast("No se pudieron traer las oraciones", ""); el.disabled = false; }
+      const n = mergeCourseNews(clone(S.getDraft() || S.publishedContent()), repo);
+      if (!n) { toast("El curso ya está al día"); el.disabled = false; return; }
+      commit((d) => { mergeCourseNews(d, repo); }, { snapshot: true, msg: `${n} cambios traídos al borrador. Revísalos y publica.` });
+    } catch (e) { console.warn(e); toast("No se pudieron traer las novedades", ""); el.disabled = false; }
   };
   A.aMoveCourse = (el) => commit((d) => move(d.courses, +el.dataset.i, +el.dataset.d));
   A.aDupCourse = (el) => commit((d) => {
