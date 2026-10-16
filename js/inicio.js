@@ -49,8 +49,7 @@ const ITEMS = [
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
   { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo, hub: false }, // vive en Materiales → Revistas
   { b: "formacion", e: "🪪", t: "Credenciales", d: "Tarjetas de solapa con foto, nombre y parroquia para los encuentros.", href: "#/credenciales", kw: "credenciales credencial tarjeta solapa lanyard portacredencial gafete nombre encuentro retiro", ok: () => true },
-  { b: "formacion", e: "🧰", t: "Materiales y dinámicas", d: "Recursos para preparar y juegos, rompehielos y dinámicas de oración.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links", ok: (w) => w.equipo,
-    links: [["🧰 Materiales", "#/materiales"], ["🎲 Dinámicas", "#/dinamicas"]] },
+  { b: "formacion", e: "🧰", t: "Materiales", d: "Revistas, presentaciones, guías, banco de dinámicas y todo lo que se imprime.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links imprimir presentaciones guias dinamicas", ok: (w) => w.equipo },
   { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta plaza", ok: () => true, hub: false }, // en La Plaza Ágape
