@@ -312,3 +312,11 @@ export function setAdmin(on) {
 // ---------------- Preferencias ----------------
 export const getMode = () => localStorage.getItem(K.mode) || "auto";
 export const setMode = (m) => localStorage.setItem(K.mode, m);
+
+// Descripción del curso con los números siempre al día («6 módulos y 28 unidades»),
+// aunque el texto guardado tenga cifras antiguas.
+export function courseDesc(c) {
+  if (!c || !c.description) return "";
+  const m = (c.phases || []).length, u = (c.phases || []).reduce((a, p) => a + (p.sessions || []).length, 0);
+  return c.description.replace(/\b\d+\s+m[oó]dulos?\s+y\s+\d+\s+unidades?\b/i, `${m} módulo${m === 1 ? "" : "s"} y ${u} unidad${u === 1 ? "" : "es"}`);
+}

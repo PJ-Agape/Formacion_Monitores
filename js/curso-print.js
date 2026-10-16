@@ -90,7 +90,7 @@ export function view(ci = 0, pi = "") {
       <span class="cp-kicker">Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay</span>
       <h1>${esc(c.title)}</h1>
       ${one !== null ? `<p class="cp-sub">Módulo ${esc(phases[0].phaseNum)} · ${esc(phases[0].title)}</p>` : `<p class="cp-sub">Cuaderno de formación de dirigentes</p>`}
-      ${c.description ? `<p class="cp-desc">${esc(c.description)}</p>` : ""}
+      ${c.description ? `<p class="cp-desc">${esc(ctx.S.courseDesc(c))}</p>` : ""}
       <p class="cp-owner">Cuaderno de: <span>${esc(name)}</span></p>
     </section>
     <section class="cp-toc"><h2>Contenido</h2>${phases.map((ph) => `<div class="cp-toc-m"><b>Módulo ${esc(ph.phaseNum)} · ${esc(ph.title)}</b><ol>${ph.sessions.map((se) => `<li><span>${esc(se.id)}</span> ${esc(se.title)}</li>`).join("")}${opt.quiz && ph.quiz?.questions?.length ? `<li class="cp-toc-q"><span>✓</span> Evaluación del módulo</li>` : ""}</ol></div>`).join("")}</section>

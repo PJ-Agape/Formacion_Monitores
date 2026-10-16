@@ -294,7 +294,7 @@ function courseView(d, ci) {
       <div style="flex:1;min-width:220px">
         <span class="chip accent">Tema ${esc(c.theme)}</span>
         <h1 class="display" style="font-size:1.9rem;margin-top:8px">${esc(c.title)}</h1>
-        <p class="muted small" style="margin-top:6px">${esc(c.description)}</p>
+        <p class="muted small" style="margin-top:6px">${esc(S.courseDesc(c))}</p>
       </div>
       <button class="btn btn-sm btn-soft" data-action="aEditCourse" data-ci="${ci}">${icon("edit")} Editar datos</button>
     </div>

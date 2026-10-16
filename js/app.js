@@ -349,7 +349,7 @@ function viewHome() {
       <div class="car-body">
         <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Curso de formación de dirigentes</span>
         <h2 class="car-title">${heroTitle(course.title)}</h2>
-        <p class="lead">${esc(course.description)}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
+        <p class="lead">${esc(S.courseDesc(course))}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
         <div class="actions">
           <a class="btn btn-gold" href="${resumeLink(course, st)}">Ir a la formación ${icon("arrowR")}</a>
         </div>
@@ -497,7 +497,7 @@ function viewItinerary() {
   <header class="page-head">
     <span class="eyebrow">Curso de formación</span>
     <h1>${esc(course.title)}</h1>
-    <p>${esc(course.description)}</p>
+    <p>${esc(S.courseDesc(course))}</p>
   </header>
 
   ${c.courses.length > 1 ? `<div class="course-switch" style="margin:14px 0 4px" aria-label="Elegir curso">
