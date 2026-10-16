@@ -48,6 +48,20 @@ function phrase(text) {
   return best ? best.f : "";
 }
 
+// Una sola frase para toda la app: si el saludo de buenos días (saludos/saludos.json) ya tiene una frase
+// elegida para ese día y la misma cita, se usa esa. Así coinciden el saludo, Inicio, la Capilla y la campanita.
+const SALUDOS = "saludos/saludos.json";
+const curada = {};
+if (existsSync(SALUDOS)) {
+  try {
+    for (const x of JSON.parse(readFileSync(SALUDOS, "utf8")).dias || []) {
+      const m = /📖[^\n]*\n_«(.+?)»_/.exec(x.dia || "");
+      if (m && x.cita) curada[x.iso] = { cita: x.cita.replace(/\s+/g, ""), frase: m[1].trim() };
+    }
+  } catch (e) { console.warn("saludos.json:", e.message); }
+}
+const elegir = (iso, cita, auto) => (curada[iso] && curada[iso].cita === cita.replace(/\s+/g, "") ? curada[iso].frase : auto);
+
 const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : { days: {} };
 const days = {};
 const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Santiago" }));
@@ -59,7 +73,8 @@ for (let i = -1; i < DAYS; i++) {
     const [titulo, cita, texto] = await Promise.all([
       get({ date, type: "liturgic_t" }), get({ date, type: "reading_st", content: "GSP" }), get({ date, type: "reading", content: "GSP" }),
     ]);
-    const frase = phrase(clean(texto));
+    const citaL = clean(cita).replace(/[.\s]+$/, "");
+    const frase = elegir(iso, citaL, phrase(clean(texto)));
     if (cita) days[iso] = { titulo: clean(titulo).replace(/(\d+)a (semana)/g, "$1.ª $2").replace(/(\d+)o (domingo)/gi, "$1.º $2"), cita: clean(cita).replace(/[.\s]+$/, ""), frase, ...(WITH_TEXT ? { texto: clean(texto).replace(/Copyright.*$/i, "").slice(0, 1800) } : {}) };
   } catch (e) {
     console.warn(iso, e.message);

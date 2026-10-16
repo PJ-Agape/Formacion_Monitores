@@ -11,7 +11,7 @@ on:
         default: ""
   push:
     branches: [main]
-    paths: ["scripts/evangelio.mjs"]
+    paths: ["scripts/evangelio.mjs", "saludos/saludos.json"]
 permissions:
   contents: write
 concurrency: { group: evangelio, cancel-in-progress: false }
