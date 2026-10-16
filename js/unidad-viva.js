@@ -299,6 +299,7 @@ function endHTML() {
     <h2 class="uv-mega">${s === 3 ? "¡Excelente!" : s === 2 ? "¡Muy bien!" : "¡Bien hecho!"}</h2>
     <div class="uv-stars">${[1, 2, 3].map((k) => `<span class="${k <= s ? "on" : ""}" style="--d:${k}">★</span>`).join("")}</div>
     <p class="uv-score"><b>${G.xp}</b> de ${G.max} puntos</p>
+    ${missingHTML()}
     <div class="uv-end-btns">
       ${read ? `<span class="chip ok">${icon("check")} Unidad completada</span>` : `<button class="btn btn-primary" data-action="uvComplete">${icon("check")} Marcar unidad como completada</button>`}
       ${last && G.ph.quiz && G.ph.quiz.questions && G.ph.quiz.questions.length ? `<a class="btn btn-gold" href="#/itinerario">Ir a la evaluación del módulo</a>` : next ? `<a class="btn btn-gold" href="#/vivir/${next[0]}/${encodeURIComponent(next[1].id)}">Siguiente: ${esc(next[1].title)} ${icon("arrowR")}</a>` : ""}
@@ -376,6 +377,31 @@ document.addEventListener("touchend", (e) => {
   if (Math.abs(dx) > 70 && Math.abs(dx) > Math.abs(dy) * 1.5) go(dx < 0 ? 1 : -1);
   sx = sy = null;
 }, { passive: true });
+
+// Qué puntos faltaron y dónde recuperarlos (se muestra al final de la unidad)
+function missing() {
+  const d = G.done, out = [];
+  const add = (key, label, pts, i) => { if (pts <= 0) return; let o = out.find((x) => x.key === key); if (!o) out.push(o = { key, label, pts: 0, n: 0, s: i }); o.pts += pts; o.n++; };
+  G.slides.forEach((s, i) => {
+    if (s.type === "notebook") (G.se.questions || []).forEach((_, k) => { if (!d.has(`q${i}-${k}`)) add("q", ["reflexión sin escribir", "reflexiones sin escribir"], POINTS.notebook, i); });
+    else if (s.type === "quiz") { if (!d.has("z" + i)) add("z", ["pregunta sin responder", "preguntas sin responder"], POINTS.quiz, i); else if (G.answers[i]) add("z2", ["pregunta acertada al segundo intento", "preguntas acertadas al segundo intento"], POINTS.quiz - Math.round(POINTS.quiz / 2), i); }
+    else if (s.type === "order") { if (!d.has("o" + i)) add("o", ["actividad de ordenar sin resolver", "actividades de ordenar sin resolver"], POINTS.order, i); else if (G.answers["o" + i]) add("z2", ["pregunta acertada al segundo intento", "preguntas acertadas al segundo intento"], POINTS.order - Math.round(POINTS.order / 2), i); }
+    else if (s.type === "vf") s.a.items.forEach((_, k) => { if (!d.has(`v${i}-${k}`)) add("v", ["verdadero o falso sin acertar", "verdaderos o falsos sin acertar"], POINTS.vf, i); });
+    else if (s.type === "pairs") { if (!d.has("p" + i)) add("pa", ["juego de parejas sin terminar", "juegos de parejas sin terminar"], POINTS.pairs, i); }
+    else if (s.type === "cards" || s.type === "flip" || s.type === "church") (s.type === "church" ? s.church : s.type === "cards" ? s.a.cards : s.cards).forEach((_, k) => { if (!d.has(`f${i}-${k}`)) add("f", ["tarjeta sin abrir", "tarjetas sin abrir"], s.type === "church" ? POINTS.church : s.type === "cards" ? POINTS.cards : POINTS.flip, i); });
+    else if (s.type === "mission") { if (!d.has("m" + i)) add("m", ["desafío sin aceptar", "desafíos sin aceptar"], POINTS.mission, i); }
+    else if (s.type === "prayer" || s.type === "invoke") { if (!d.has("p" + i)) add("a", ["oración sin su «Amén»", "oraciones sin su «Amén»"], POINTS.prayer, i); }
+  });
+  const known = out.reduce((a, o) => a + o.pts, 0), rest = G.max - G.xp - known;
+  if (rest > 0) out.push({ key: "e", label: ["punto descontado por errores en los juegos", "puntos descontados por errores en los juegos"], pts: rest, n: rest, s: null, plain: true });
+  return out;
+}
+function missingHTML() {
+  if (G.xp >= G.max) return `<p class="uv-miss-ok">¡Conseguiste todos los puntos de esta unidad!</p>`;
+  const list = missing(); if (!list.length) return "";
+  return `<div class="uv-miss"><b>Te faltaron ${G.max - G.xp} puntos:</b><ul>${list.map((o) => `<li><span>${o.plain ? `${o.pts} ${o.label[o.pts === 1 ? 0 : 1]}` : `${o.n} ${o.label[o.n === 1 ? 0 : 1]} <small>(${o.pts} pts)</small>`}</span>${o.s != null ? `<button class="btn btn-sm btn-soft" data-action="uvJump" data-s="${o.s}">Ir</button>` : ""}</li>`).join("")}</ul>
+    <small>Lo que quedó sin hacer lo completas con «Ir». Para mejorar respuestas equivocadas, usa «Jugar de nuevo».</small></div>`;
+}
 
 function finish() {
   const box = document.getElementById("uvEnd"); if (!box) return;
@@ -484,6 +510,7 @@ function registerActions() {
     }
   };
   A.uvMission = (el) => { gain("m" + el.dataset.id, POINTS.mission, el); el.textContent = "✓ ¡Desafío aceptado!"; };
+  A.uvJump = (el) => enter(+el.dataset.s);
   A.uvAmen = (el) => { gain("p" + el.dataset.id, POINTS.prayer, el); el.textContent = "✓ Amén"; };
   A.uvComplete = (el) => {
     ctx.S.markRead(G.course.id, G.key);

@@ -3763,3 +3763,11 @@ body.solo-on .help-fab { display: none; }
   .cp-doc h3, .cp-doc h4 { break-after: avoid; }
   .cp-key { break-before: page; }
 }
+
+/* Modo interactivo: detalle de puntos que faltaron */
+.uv-miss { text-align: left; max-width: 420px; margin: 0 auto 18px; background: rgba(255,255,255,.75); border: 2px solid var(--z-b, #0b2566); border-radius: 16px; padding: 12px 14px; color: #0b2566; }
+.uv-miss ul { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 6px; }
+.uv-miss li { display: flex; align-items: center; justify-content: space-between; gap: 10px; font-size: .95rem; }
+.uv-miss li small { color: #5a6f93; }
+.uv-miss > small { color: #5a6f93; }
+.uv-miss-ok { font-weight: 700; margin: -6px 0 16px; }
