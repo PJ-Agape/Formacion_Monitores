@@ -3701,3 +3701,63 @@ body.solo-on .help-fab { display: none; }
 .unit-open { margin-bottom: 18px; }
 .uv-pray .uv-lead { max-width: 46ch; margin: 4px auto 0; opacity: .85; line-height: 1.4; }
 .uv-pray .uv-prayer { white-space: normal; }
+
+/* ---------- Cuaderno de formación para imprimir (Recursos → Para imprimir) ---------- */
+.cp-bar { display: grid; gap: 10px; margin-bottom: 18px; }
+.cp-bar h1 { font-family: var(--font-display); margin: 0; }
+.cp-opts-row { display: grid; gap: 10px; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); }
+.cp-checks { display: grid; gap: 6px; font-size: .92rem; }
+.cp-checks label { display: flex; gap: 8px; align-items: center; }
+.cp-bar .btn-primary { justify-self: start; }
+.cp-doc { --cp-ink: #14213d; --cp-acc: #0b2566; background: #fff; color: var(--cp-ink); font-family: Georgia, "Times New Roman", serif; font-size: 11.5pt; line-height: 1.5;
+  border: 1px solid #d9dee8; border-radius: 10px; padding: 28px clamp(16px, 5vw, 48px); box-shadow: 0 6px 24px rgba(11, 37, 102, .08); }
+.cp-doc h1, .cp-doc h2, .cp-doc h3, .cp-doc h4, .cp-uhead span, .cp-mhead span, .cp-kicker, .cp-owner, .cp-toc { font-family: "Bricolage", system-ui, sans-serif; }
+.cp-cover { text-align: center; padding: 30px 0 40px; display: grid; justify-items: center; gap: 10px; border-bottom: 1px solid #d9dee8; }
+.cp-logo { width: 120px; height: 120px; object-fit: contain; }
+.cp-kicker { font-size: .78rem; letter-spacing: .14em; text-transform: uppercase; color: #ef591c; font-weight: 800; }
+.cp-cover h1 { font-size: 2.4rem; line-height: 1.05; color: var(--cp-acc); margin: 0; }
+.cp-sub { font-size: 1.1rem; margin: 0; }
+.cp-desc { max-width: 52ch; margin: 6px auto 0; color: #3b4a68; }
+.cp-owner { margin-top: 30px; font-weight: 700; }
+.cp-owner span { display: inline-block; min-width: 240px; border-bottom: 1px solid #14213d; padding: 0 6px 2px; font-weight: 600; }
+.cp-toc { padding: 24px 0; border-bottom: 1px solid #d9dee8; }
+.cp-toc h2 { font-size: 1.4rem; color: var(--cp-acc); margin: 0 0 10px; }
+.cp-toc-m { margin-bottom: 10px; }
+.cp-toc-m ol { list-style: none; margin: 4px 0 0; padding: 0 0 0 10px; display: grid; gap: 2px; font-size: .95rem; }
+.cp-toc-m li span { display: inline-block; min-width: 2.6em; color: #ef591c; font-weight: 700; }
+.cp-mhead { padding: 26px 0 10px; border-bottom: 3px solid var(--cp-acc); margin-bottom: 8px; }
+.cp-mhead span, .cp-uhead span { font-size: .75rem; letter-spacing: .12em; text-transform: uppercase; color: #ef591c; font-weight: 800; }
+.cp-mhead h2 { font-size: 1.8rem; color: var(--cp-acc); margin: 2px 0 6px; line-height: 1.1; }
+.cp-unit { padding: 22px 0 10px; border-bottom: 1px dashed #c9d1e0; }
+.cp-uhead h2 { font-size: 1.5rem; color: var(--cp-acc); margin: 2px 0 10px; line-height: 1.15; }
+.cp-doc h3 { font-size: 1.08rem; color: var(--cp-acc); margin: 14px 0 4px; }
+.cp-doc h4 { font-size: .8rem; letter-spacing: .08em; text-transform: uppercase; color: var(--cp-acc); margin: 0 0 4px; }
+.cp-doc p { margin: 0 0 8px; }
+.cp-doc ul, .cp-doc ol { margin: 0 0 8px; padding-left: 22px; }
+.cp-obj { background: #f2f5fa; border-left: 4px solid var(--cp-acc); padding: 8px 12px; border-radius: 4px; }
+.cp-lead { font-style: italic; }
+.cp-box { border: 1px solid #c9d1e0; border-radius: 8px; padding: 10px 14px; margin: 12px 0; }
+.cp-pray { border: 1.5px solid #e8b400; background: #fffaeb; border-radius: 8px; padding: 10px 14px; margin: 12px 0; font-style: italic; }
+.cp-pray h4 { font-style: normal; color: #9a6b00; }
+.cp-q { margin-bottom: 10px; }
+.cp-lines { display: grid; gap: 0; margin: 2px 0 6px; }
+.cp-lines i { display: block; height: 8.5mm; border-bottom: 1px solid #b7c0d1; }
+.cp-res { font-size: .9rem; color: #3b4a68; }
+.cp-qq { margin-bottom: 12px; break-inside: avoid; }
+.cp-opts { list-style: none; padding: 0 !important; display: grid; gap: 4px; }
+.cp-opts li { display: flex; gap: 8px; align-items: flex-start; }
+.cp-box-o { flex: none; width: 1.4em; height: 1.4em; border: 1.5px solid var(--cp-ink); border-radius: 4px; display: grid; place-items: center; font: 700 .75rem "Bricolage", sans-serif; }
+@page cuaderno { size: letter portrait; margin: 16mm 16mm 18mm; @bottom-center { content: counter(page); font: 600 9pt Arial, sans-serif; color: #666; } }
+@media print {
+  body.cp-printing main#view > :not(.cp-doc) { display: none !important; }
+  .cp-doc { page: cuaderno; border: 0; box-shadow: none; padding: 0; border-radius: 0; font-size: 11pt; }
+  .cp-cover { min-height: 230mm; align-content: center; border: 0; break-after: page; }
+  .cp-toc { border: 0; break-after: page; }
+  .cp-module { break-before: page; }
+  .cp-mhead { break-after: avoid; }
+  .cp-unit { break-before: page; border: 0; }
+  .cp-module > .cp-unit:first-of-type { break-before: avoid; }
+  .cp-box, .cp-pray, .cp-q, .cp-obj { break-inside: avoid; }
+  .cp-doc h3, .cp-doc h4 { break-after: avoid; }
+  .cp-key { break-before: page; }
+}

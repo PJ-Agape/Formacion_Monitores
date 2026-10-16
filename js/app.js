@@ -23,6 +23,7 @@ import * as momentos from "./momentos.js";
 import * as juegos from "./juegos.js";
 import * as frente from "./frente.js";
 import * as trivia from "./trivia.js";
+import * as cursoPrint from "./curso-print.js";
 import * as ultima from "./ultima.js";
 import * as memorice from "./memorice.js";
 import * as mahjong from "./mahjong.js";
@@ -90,6 +91,7 @@ const routes = [
   [/^\/vivir\/(\d+)\/([^/?]+)(?:\?s=\d+)?$/, async (p, id) => (await viva.view(p, id)) ?? null, "itinerario"],
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
+  [/^\/imprimir\/curso(?:\/(\d+))?(?:\/(\d+))?$/, (ci, pi) => cursoPrint.view(ci || 0, pi ?? ""), "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
@@ -1026,6 +1028,7 @@ function viewMaterials() {
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
+      row("#/imprimir/curso", "print", "La formación de dirigentes", "El curso completo o un módulo, como cuaderno de trabajo"),
       row("#/encuentros", "print", "Nuestra Revista", "Se imprimen completas o solo el encuentro de la semana"),
       row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
       ...prints.map(guide),
@@ -1504,6 +1507,7 @@ momentos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud 
 juegos.setup({ actions, render: () => render(), onAfterRender, onLeave });
 frente.setup({ actions, onAfterRender, onLeave });
 trivia.setup({ actions, onAfterRender, onLeave });
+cursoPrint.setup({ actions, onAfterRender, onLeave, S, render: () => render() });
 ultima.setup({ actions, onAfterRender, onLeave, cloud });
 for (const m of [memorice, mahjong, sopa, crucigrama]) m.setup({ actions, onAfterRender, onLeave });
 podcast.setup({ actions, render: () => render(), onAfterRender, cloud });

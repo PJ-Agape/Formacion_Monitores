@@ -1162,6 +1162,7 @@ function bindActions() {
     let n = 0;
     for (const rc of repo.courses || []) {
       const c = d.courses.find((x) => x.id === rc.id); if (!c) continue;
+      if (c.description && c.description.includes("5 módulos y 21 unidades") && rc.description !== c.description) { c.description = rc.description; n++; }
       rc.phases.forEach((rp) => {
         let ph = c.phases.find((x) => x.phaseNum === rp.phaseNum);
         if (!ph) { c.phases.push(clone(rp)); n += 1 + rp.sessions.length; return; }
