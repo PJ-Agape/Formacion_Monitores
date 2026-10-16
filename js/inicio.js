@@ -67,7 +67,6 @@ const ITEMS = [
   { b: "red", e: "📣", t: "Estudio de difusión", d: "Marco de foto, historias, fondos y stickers.", href: "#/difusion", kw: "difusion stickers fondos de pantalla marco foto historias invitacion afiche", ok: (w) => w.cuenta, hub: (w) => !w.equipo },
   { b: "red", e: "🏛️", t: "Guía de servicio", d: "Presentación: identidad, roles, cargos y reuniones.", href: "presentaciones/guia-de-servicio.html", ext: true, kw: "guia servicio pastoral identidad roles cargos reuniones comunidad presentacion", ok: (w) => w.equipo, hub: false },
   { b: "espiritu", e: "⛪", t: "Nuestra Capilla", d: "Silencio, intenciones, la Palabra y María: un lugar para estar con Jesús.", href: "#/oracion", kw: "capilla oracion rezar velas intenciones espiritualidad", ok: () => true },
-  { b: "espiritu", e: "🕰️", t: "Liturgia de las Horas", d: "Laudes, Vísperas y Completas, paso a paso.", href: "#/oracion/horas", kw: "liturgia de las horas laudes visperas completas breviario oficio oracion de la iglesia salmos", ok: () => true, hub: false },
   { b: "espiritu", e: "📖", t: "Evangelio del día", d: "La Palabra de hoy.", href: "#/evangelio", kw: "evangelio palabra lectura hoy biblia", ok: () => true },
   { b: "espiritu", e: "🙏", t: "Oremus", d: "Nuestras oraciones y las de siempre: Padre nuestro, Ave María, Credo y más.", href: "#/oremus", kw: "oraciones devocionario rezar oremus", ok: () => true },
   { b: "espiritu", e: "🌹", t: "Rezar el Rosario", d: "Paso a paso, cuenta a cuenta, con María.", href: "#/oracion/rosario", kw: "maria virgen rosario misterios", ok: () => true },

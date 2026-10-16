@@ -7,7 +7,6 @@ import { ORACIONES } from "./devocionario.js";
 import * as papa from "./papa.js";
 import { illus } from "./ilustraciones.js";
 import { avatar } from "./avatares.js";
-import * as horas from "./horas.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -280,10 +279,9 @@ export function view(opt = {}) {
   const member = st().ready;
   ctx.onAfterRender(() => {
     if (opt.focus === "rosario") setTimeout(() => openRosary(), 50);
-    if (opt.focus === "horas") setTimeout(() => horas.open(horas.hourNow(), season().key), 50);
     Promise.all([loadGospel(), loadPropio()]).then(() => {
       paintGospel();
-      if (!opt.focus || opt.vela || opt.focus === "rosario" || opt.focus === "horas") return;
+      if (!opt.focus || opt.vela || opt.focus === "rosario") return;
       const box = document.getElementById(opt.focus === "gospel" ? "capGospel" : "cap-" + opt.focus); if (!box) return;
       if (opt.focus !== "gospel") { box.scrollIntoView({ behavior: "auto", block: "start" }); return; }
       box.scrollIntoView({ behavior: "auto", block: "center" });
@@ -342,16 +340,6 @@ export function view(opt = {}) {
     </div>
   </section>
 
-
-  <section class="cap-rosbanner cap-lhbanner" id="cap-horas" aria-labelledby="capLhT">
-    <div class="cap-rosbanner-art">${illus("biblia", "cap-rosbanner-il")}</div>
-    <div class="cap-rosbanner-txt">
-      <span class="cap-hand">con toda la Iglesia</span>
-      <h2 id="capLhT">Liturgia de las <em>Horas</em></h2>
-      <p>La oración que la Iglesia reza cada día en todo el mundo. Te acompañamos paso a paso: <strong>Laudes</strong> en la mañana, <strong>Vísperas</strong> en la tarde y <strong>Completas</strong> antes de dormir.</p>
-      <div class="cap-lh-btns">${Object.entries(horas.HOURS).map(([k, h]) => `<button class="btn cap-rosbanner-btn ${k === horas.hourNow() ? "" : "is-alt"}" data-action="capHoras" data-k="${k}">${esc(h.name)}${k === horas.hourNow() ? " · ahora" : ""}</button>`).join("")}</div>
-    </div>
-  </section>
 
   <section class="cap-room cap-altar${altarOpen ? " is-open" : ""}" id="cap-velas">
     <div class="cap-altar-top" data-action="capAltar" role="button" tabindex="0" aria-expanded="${altarOpen}" aria-controls="capAltarBody">
@@ -775,8 +763,6 @@ function registerActions() {
   document.addEventListener("touchstart", (e) => { if (document.getElementById("capProj")) psx = e.touches[0].clientX; }, { passive: true });
   document.addEventListener("touchend", (e) => { if (psx == null || !document.getElementById("capProj")) return; const dx = e.changedTouches[0].clientX - psx; psx = null; if (Math.abs(dx) > 60) devProjMove(dx < 0 ? 1 : -1); }, { passive: true });
   A.capRosario = (el) => openRosary(el.dataset.set);
-  A.capHoras = (el) => horas.open(el.dataset.k, season().key);
-  horas.register(A);
   A.rosClose = () => closeRosary();
   A.rosNext = () => rosMove(1);
   A.rosPrev = () => rosMove(-1);
