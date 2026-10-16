@@ -3480,6 +3480,1117 @@
           }
         }
       ]
+    },
+    {
+      "id": "formacion-asesores",
+      "title": "Asesorar es acompañar",
+      "theme": "esperanza",
+      "para": {
+        "asesor": true
+      },
+      "description": "Formación para asesores de la Pastoral Juvenil Ágape: 5 módulos y 15 unidades para acompañar a los jóvenes al estilo de Jesús en Emaús, custodiar el sentido del grupo en comunión con la parroquia, cuidar a todos como adultos responsables y preparar el relevo.",
+      "phases": [
+        {
+          "phaseNum": 1,
+          "title": "Fundamentos: asesorar es acompañar",
+          "desc": "3 unidades · Emaús, custodios del sentido y la Eucaristía",
+          "intro": "Antes que tareas, una identidad: el asesor es un adulto en la fe que camina al lado de los jóvenes, como Jesús en Emaús. En este módulo descubrirás qué es y qué no es asesorar, cómo cuidar el sentido del grupo y por qué tu servicio nace de la Eucaristía.",
+          "sessions": [
+            {
+              "id": "1.1",
+              "title": "Asesorar es acompañar",
+              "time": "40 min",
+              "objective": "Comprender el servicio del asesor como acompañamiento al estilo de Jesús en el camino de Emaús: caminar al lado, escuchar, iluminar con la Palabra y partir el pan.",
+              "intro": "El asesor no es el jefe del grupo ni un organizador más. Es un adulto en la fe que la Iglesia pone al lado de los jóvenes para acompañarlos. En esta unidad vas a mirar cómo acompaña Jesús y qué significa eso para tu servicio en Ágape.",
+              "sections": [
+                {
+                  "title": "Jesús se acercó y caminó con ellos",
+                  "body": "Dos discípulos vuelven a Emaús tristes y desanimados. Jesús no los espera en el pueblo: se acerca y camina con ellos (Lc 24,15). Primero pregunta y escucha. Después les explica las Escrituras. Al final se queda con ellos y parte el pan. Y cuando lo reconocen, desaparece: ellos vuelven corriendo a la comunidad.\n\nEn ese camino están todos los pasos del acompañamiento: acercarse, escuchar, iluminar, celebrar y dejar que el otro siga su propio camino."
+                },
+                {
+                  "title": "Lo que el asesor es",
+                  "body": "En Ágape, los asesores son <strong>los custodios del sentido y la identidad del grupo</strong> y su puente con la parroquia. Su servicio esencial es:\n\n- Acompañar a la dupla de coordinadores.\n- Participar en la reunión mensual.\n- Mantener viva la unión con el párroco.\n- Acompañar la formación de los dirigentes.\n- Cuidar a los jóvenes como adultos responsables.\n\nSon unas tres horas al mes, durante un período de hasta cuatro años."
+                },
+                {
+                  "title": "Lo que el asesor no es",
+                  "body": "El asesor no prepara los encuentros semanales, no maneja la tecnología de la app ni tiene que estar en todas las reuniones. Tampoco reemplaza a la coordinación: la acompaña.\n\nEsto no es desinterés. Es confianza en los jóvenes. Si el asesor lo hace todo, los jóvenes no crecen; si se desentiende, quedan solos. El equilibrio está en estar cerca sin ocupar su lugar."
+                },
+                {
+                  "title": "Las cualidades de un buen acompañante",
+                  "body": "El papa Francisco recoge lo que los propios jóvenes pidieron en el Sínodo: acompañantes que sean cristianos fieles, comprometidos con la Iglesia y con el mundo, que busquen la santidad, que no juzguen, que escuchen activamente, que reconozcan sus propios límites y que sepan alegrarse con los avances de los jóvenes (Christus vivit 246). Es un buen espejo para mirarse con humildad."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 24,13-35 · Los discípulos de Emaús",
+                "comment": "Lee el texto despacio y subraya los verbos de Jesús: se acercó, caminó, preguntó, explicó, entró, partió el pan, desapareció. Pregúntate cuál de esos verbos te sale más natural y cuál te cuesta más en tu servicio como asesor."
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 246",
+                  "text": "Los jóvenes piden acompañantes que sean cristianos fieles comprometidos con la Iglesia y con el mundo, que escuchen sin juzgar y que reconozcan sus límites.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Evangelii gaudium 169",
+                  "text": "La Iglesia tendrá que iniciar a todos en el «arte del acompañamiento», para que aprendan a quitarse las sandalias ante la tierra sagrada del otro.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                }
+              ],
+              "questions": [
+                "¿Qué te movió a aceptar el servicio de asesor?",
+                "¿Cuál de los verbos de Jesús en Emaús te cuesta más?",
+                "¿Tiendes más a hacerlo todo o a desentenderte? ¿Cómo encontrar el equilibrio?"
+              ],
+              "activity": "Esta semana, conversa con cada uno de los coordinadores por separado. Pregúntales cómo están ellos, no solo cómo va el grupo. Escucha más de lo que hablas.",
+              "prayer": "Gracias, Señor Jesús, porque te acercaste a los discípulos desanimados y caminaste con ellos. Te ofrezco mi servicio de asesor: que sepa acercarme, escuchar e iluminar con tu Palabra, y luego hacerme a un lado para que los jóvenes vuelvan a la comunidad con el corazón ardiendo. Que mi vida adulta, entregada en tu Iglesia, sea para ellos un signo de tu fidelidad. Amén.",
+              "resources": [
+                {
+                  "title": "Christus vivit (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html",
+                  "note": "Capítulo 9, sobre el discernimiento y el acompañamiento."
+                },
+                {
+                  "title": "Biblia en línea: Evangelio según san Lucas",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 24."
+                }
+              ]
+            },
+            {
+              "id": "1.2",
+              "title": "Custodios del sentido",
+              "time": "40 min",
+              "objective": "Asumir la tarea del asesor como custodio de la identidad del grupo: que Ágape siga siendo una comunidad que lleva a Cristo, en comunión con la parroquia y el párroco.",
+              "intro": "Un grupo juvenil puede ir perdiendo poco a poco su centro sin que nadie lo note: más actividades, menos oración; más entretención, menos Evangelio. El asesor tiene una mirada de largo plazo que ayuda a no perder el rumbo. En esta unidad vas a revisar qué significa cuidar el sentido del grupo.",
+              "sections": [
+                {
+                  "title": "Yo planté, Apolo regó",
+                  "body": "San Pablo recuerda a los corintios que ni el que planta ni el que riega son lo importante, sino Dios, que hace crecer (1 Co 3,6-7). El asesor no es dueño del grupo ni de sus frutos. Cuida el terreno, riega con paciencia y confía en que el crecimiento es obra de Dios."
+                },
+                {
+                  "title": "Qué es el sentido de Ágape",
+                  "body": "Ágape existe para que los jóvenes se encuentren con Jesús y vivan el Evangelio en comunidad. No busca números, sino una vivencia profunda de la fe y el servicio. Eso se traduce en señales concretas que el asesor puede observar:\n\n- ¿Hay oración real en los encuentros y en las reuniones del equipo?\n- ¿Los jóvenes van a misa y conocen la Eucaristía?\n- ¿Cada joven es conocido por su nombre en su familia?\n- ¿Hay servicio a otros, especialmente a los más pobres?\n\nCuando alguna de estas señales se debilita, el asesor lo plantea en la reunión mensual."
+                },
+                {
+                  "title": "El puente con el párroco",
+                  "body": "El asesor mantiene viva la comunión del grupo con la parroquia. En concreto:\n\n- Envía al párroco un resumen mensual de una página.\n- Le avisa el mismo día cualquier situación urgente.\n- Le presenta en marzo el plan del año y en noviembre el borrador de la revista.\n- Coordina con él las misas, las confesiones de Cuaresma y Adviento y la misa de envío de los dirigentes.\n\nEl párroco no necesita estar en todas las reuniones; necesita estar bien informado."
+                },
+                {
+                  "title": "Novedad y fidelidad",
+                  "body": "Custodiar el sentido no es oponerse a todo lo nuevo. El papa Francisco invita a abandonar el «siempre se ha hecho así» y a ser creativos (Evangelii gaudium 33). El asesor ayuda a distinguir: lo que cambia es la forma; lo que no cambia es Cristo en el centro."
+                }
+              ],
+              "bible": {
+                "ref": "1 Corintios 3,5-11 · Dios es quien hace crecer",
+                "comment": "Pablo corrige a una comunidad dividida por sus líderes: unos decían «yo soy de Pablo», otros «yo de Apolo». Lee el texto y piensa: ¿el grupo está centrado en Cristo o en algunas personas, incluido tú?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 33",
+                  "text": "La pastoral en clave de misión pide abandonar el cómodo criterio pastoral del «siempre se ha hecho así» y ser audaces y creativos.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Christus vivit 206",
+                  "text": "La pastoral juvenil está llamada a ser sinodal: una Iglesia participativa y corresponsable, que camina junta.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cuál de las señales del sentido de Ágape está hoy más fuerte y cuál más débil?",
+                "¿Cómo está hoy la comunicación con el párroco?",
+                "¿Qué novedad del grupo te ha costado aceptar? ¿Toca la forma o el fondo?"
+              ],
+              "activity": "Redacta el primer resumen mensual para el párroco: una página con lo vivido en el mes, los próximos pasos y lo que necesitan de él. Acuerden en la reunión mensual quién lo enviará cada mes.",
+              "prayer": "Gracias, Señor, porque eres Tú quien hace crecer lo que sembramos. Te ofrezco mi servicio de cuidar el sentido de nuestro grupo: que sepa regar con paciencia, distinguir lo esencial de lo pasajero y mantener a Ágape unido a su parroquia. Que todo lo que hagamos lleve a los jóvenes a Ti, en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Número 33: la pastoral en clave de misión."
+                }
+              ]
+            },
+            {
+              "id": "1.3",
+              "title": "El asesor vive de la Eucaristía",
+              "time": "40 min",
+              "objective": "Reconocer que el servicio del asesor nace de su propia vida de fe, alimentada por la Eucaristía, la oración y la reconciliación, y que su testimonio adulto es parte del acompañamiento.",
+              "intro": "Los jóvenes aprenden más de lo que ven que de lo que escuchan. Un asesor que vive de la Eucaristía enseña, sin decirlo, dónde está la fuente. En esta unidad vas a mirar tu propia vida de fe como la base de tu servicio.",
+              "sections": [
+                {
+                  "title": "Lo reconocieron al partir el pan",
+                  "body": "En Emaús, los discípulos escucharon a Jesús durante todo el camino, pero lo reconocieron al partir el pan (Lc 24,30-31.35). La Palabra prepara el corazón y la Eucaristía abre los ojos. Para el asesor, eso es también una regla de vida: no se puede llevar a otros a donde uno no va."
+                },
+                {
+                  "title": "La fuente de tu servicio",
+                  "body": "La Eucaristía es «fuente y culmen de toda la vida cristiana» (CEC 1324). Todo apostolado nace de ella y conduce a ella. San Juan Pablo II lo dijo en una frase: «La Iglesia vive de la Eucaristía» (Ecclesia de Eucharistia 1).\n\nTu servicio de asesor no se sostiene con buena voluntad. Se sostiene con la misa dominical, con un rato de oración personal y con la confesión frecuente."
+                },
+                {
+                  "title": "Un testimonio adulto",
+                  "body": "Los jóvenes necesitan ver adultos que creen de verdad: que rezan, que se equivocan y piden perdón, que son fieles en su familia y en su trabajo. Tu manera de vivir la misa con el grupo, de rezar en las reuniones, de hablar de la Iglesia con cariño, también es formación."
+                },
+                {
+                  "title": "Cuidar el centro del equipo",
+                  "body": "Desde la reunión mensual, el asesor puede velar porque el calendario del año gire en torno al año litúrgico y a la misa dominical, que el equipo celebre junto la Eucaristía de vez en cuando, que haya tiempos de confesión en Cuaresma y Adviento y un retiro al año. No lo organiza: lo propone y lo cuida."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 24,28-35 · Lo reconocieron al partir el pan",
+                "comment": "Lee el final del relato. Los discípulos invitan a Jesús a quedarse, lo reconocen al partir el pan y vuelven de noche a Jerusalén. Pregúntate: ¿qué lugar tiene hoy la Eucaristía en tu propia semana?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 1324",
+                  "text": "La Eucaristía es fuente y culmen de toda la vida cristiana; los ministerios eclesiales y las obras de apostolado están unidos a ella y a ella se ordenan.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                },
+                {
+                  "source": "Ecclesia de Eucharistia 1",
+                  "text": "«La Iglesia vive de la Eucaristía».",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html"
+                }
+              ],
+              "questions": [
+                "¿Qué lugar tienen la misa, la oración y la confesión en tu vida hoy?",
+                "¿Qué ven los jóvenes en tu manera de vivir la fe?",
+                "¿Qué podrías proponer en la reunión mensual para cuidar el centro del equipo?"
+              ],
+              "activity": "Propón en la próxima reunión mensual una misa con el equipo y un rato de adoración en el mes. Y fija para ti un momento semanal de oración por cada uno de los coordinadores y dirigentes, por su nombre.",
+              "prayer": "Gracias, Señor, porque te dejas reconocer al partir el pan y nos haces arder el corazón. Te ofrezco mi propia vida de fe, con sus luces y sus cansancios. Aliméntame con tu Cuerpo, para que mi servicio nazca de tu altar y para que los jóvenes vean en mí a un adulto que vive de Ti en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: el sacramento de la Eucaristía",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html",
+                  "note": "Números 1322-1419."
+                },
+                {
+                  "title": "Ecclesia de Eucharistia",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html",
+                  "note": "Encíclica de san Juan Pablo II sobre la Eucaristía."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 1 · Fundamentos",
+            "title": "Asesorar es acompañar",
+            "questions": [
+              {
+                "q": "1. ¿Cuál de estas tareas corresponde al asesor?",
+                "options": [
+                  "Preparar los encuentros semanales.",
+                  "Acompañar a la dupla de coordinadores y participar en la reunión mensual.",
+                  "Manejar la app del grupo."
+                ],
+                "correct": 1,
+                "feedback": "El asesor acompaña a quienes organizan; no prepara los encuentros ni maneja la tecnología."
+              },
+              {
+                "q": "2. En el relato de Emaús, ¿qué hace Jesús primero?",
+                "options": [
+                  "Les explica las Escrituras.",
+                  "Se acerca, camina con ellos y les pregunta.",
+                  "Parte el pan."
+                ],
+                "correct": 1,
+                "feedback": "El acompañamiento empieza acercándose y escuchando."
+              },
+              {
+                "q": "3. El grupo cambia la forma de un encuentro tradicional. ¿Cómo discierne el asesor?",
+                "options": [
+                  "Se opone: siempre se ha hecho así.",
+                  "Distingue si cambia la forma o el fondo: lo que no cambia es Cristo en el centro.",
+                  "Acepta todo sin preguntar."
+                ],
+                "correct": 1,
+                "feedback": "Custodiar el sentido no es oponerse a lo nuevo, sino cuidar lo esencial."
+              },
+              {
+                "q": "4. ¿Qué necesita el párroco de los asesores?",
+                "options": [
+                  "Que asista a todas las reuniones.",
+                  "Un resumen mensual de una página y un aviso el mismo día ante lo urgente.",
+                  "Nada: el grupo es independiente."
+                ],
+                "correct": 1,
+                "feedback": "El párroco necesita estar bien informado y en comunión con el grupo."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 2,
+          "title": "Acompañar a los jóvenes que sirven",
+          "desc": "3 unidades · La dupla, la escucha y el protagonismo juvenil",
+          "intro": "Los coordinadores y dirigentes necesitan un adulto que los escuche y los ayude a discernir, sin ocupar su lugar. En este módulo aprenderás a acompañar a la dupla, a escuchar y aconsejar, y a dejar que los jóvenes sean protagonistas.",
+          "sessions": [
+            {
+              "id": "2.1",
+              "title": "Acompañar a la dupla de coordinadores",
+              "time": "40 min",
+              "objective": "Aprender a acompañar a la dupla de coordinadores: escucharlos, aconsejarlos, ayudarlos a discernir y cuidar que no se agoten.",
+              "intro": "La dupla de coordinadores carga con mucho: el calendario, las reuniones, los dirigentes, las dificultades. El asesor es su primer apoyo. En esta unidad vas a aprender a acompañarlos sin reemplazarlos.",
+              "sections": [
+                {
+                  "title": "El consejo de Jetró",
+                  "body": "Moisés atendía él solo al pueblo desde la mañana hasta la tarde. Su suegro Jetró lo vio y le dijo: «No está bien lo que haces. Te agotarás tú y el pueblo» (Éx 18,17-18). Y le aconsejó repartir la carga entre personas de confianza.\n\nEl asesor es muchas veces ese Jetró: alguien que mira desde un poco más afuera, ve lo que el coordinador no alcanza a ver y lo aconseja con cariño."
+                },
+                {
+                  "title": "Un encuentro mensual con la dupla",
+                  "body": "Además de la reunión mensual del equipo, conviene un rato breve a solas con la dupla, o con cada coordinador, cada mes o cada dos meses. Tres preguntas bastan:\n\n- ¿Cómo están ustedes, como personas y como dupla?\n- ¿Qué los tiene contentos y qué los preocupa del grupo?\n- ¿En qué decisión necesitan ayuda para discernir?\n\nSe hace en un lugar abierto o en la parroquia, y si alguno es menor de edad, con las mismas precauciones que en cualquier conversación con menores."
+                },
+                {
+                  "title": "Aconsejar sin decidir por ellos",
+                  "body": "Cuando la dupla consulta, la tentación es dar la respuesta. Muchas veces ayuda más preguntar: «¿Qué opciones ven? ¿Qué pasaría con cada una? ¿Qué creen que quiere Dios?». Así aprenden a discernir.\n\nHay decisiones en las que el asesor sí debe intervenir con claridad: todo lo que toca la seguridad de los jóvenes, la comunión con la parroquia o la fe de la Iglesia."
+                },
+                {
+                  "title": "Cuidar que no se agoten",
+                  "body": "Los coordinadores suelen ser jóvenes con estudios, trabajo y familia. Ayúdalos a repartir tareas, a decir que no a algunas cosas y a descansar. Si ves señales de agotamiento o desánimo, conversa con ellos, y si es necesario ayúdalos a pedir apoyo."
+                }
+              ],
+              "bible": {
+                "ref": "Éxodo 18,13-24 · El consejo de Jetró",
+                "comment": "Jetró no reta a Moisés: observa, le dice con franqueza lo que ve y le propone una solución concreta. Moisés escucha y la pone en práctica. Lee el texto y piensa qué consejo de Jetró necesita hoy tu dupla de coordinadores."
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 246",
+                  "text": "Los acompañantes no deben conducir a los jóvenes como seguidores pasivos, sino caminar a su lado, dejándolos ser protagonistas de su propio camino.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Christus vivit 292",
+                  "text": "El acompañamiento requiere una sensibilidad hacia cada persona, que es única.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cuándo fue la última vez que conversaste a solas con la dupla de coordinadores?",
+                "¿Tiendes a dar respuestas o a ayudar a discernir?",
+                "¿Ves señales de cansancio en alguno de los coordinadores?"
+              ],
+              "activity": "Agenda este mes un rato con la dupla de coordinadores usando las tres preguntas. Anota, sin datos privados, lo que te pidieron y lo que te comprometiste a hacer.",
+              "prayer": "Gracias, Señor, por los coordinadores que guían nuestro grupo. Te ofrezco mi servicio de acompañarlos: dame la sabiduría de Jetró para ver lo que ellos no ven y la humildad para no decidir por ellos. Que, acompañados, crezcan como servidores de tu Iglesia y descubran tu llamado en su vida. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Éxodo",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 18."
+                }
+              ]
+            },
+            {
+              "id": "2.2",
+              "title": "Escuchar y aconsejar",
+              "time": "40 min",
+              "objective": "Desarrollar la escucha profunda y el consejo prudente como herramientas centrales del acompañamiento, respetando la libertad y la intimidad de cada joven.",
+              "intro": "Escuchar parece fácil, pero es un arte que se aprende. Muchos jóvenes no necesitan que les resuelvan la vida, sino alguien que los escuche de verdad. En esta unidad vas a revisar cómo escuchar y cómo aconsejar.",
+              "sections": [
+                {
+                  "title": "Habla, Señor, que tu siervo escucha",
+                  "body": "El niño Samuel oye que lo llaman de noche y corre donde el sacerdote Elí. Tres veces. Elí no tiene la respuesta, pero entiende que es Dios quien llama y le enseña a responder: «Habla, Señor, que tu siervo escucha» (1 Sam 3,9).\n\nEso es el acompañamiento: no ocupar el lugar de Dios, sino ayudar al joven a reconocer su voz."
+                },
+                {
+                  "title": "Escuchar de verdad",
+                  "body": "Algunas actitudes concretas:\n\n- Dar tiempo, sin mirar el reloj ni el teléfono.\n- No interrumpir ni completar las frases del otro.\n- Preguntar antes de suponer: «¿Qué quieres decir con eso?».\n- No apresurarse a dar consejos ni a contar la propia experiencia.\n- Devolver lo escuchado: «Lo que entiendo es que…».\n\nEl papa Francisco habla de «quitarse las sandalias ante la tierra sagrada del otro» (Evangelii gaudium 169)."
+                },
+                {
+                  "title": "Aconsejar con prudencia",
+                  "body": "Cuando llega el momento de aconsejar, ayuda:\n\n- Iluminar con el Evangelio, sin sermones.\n- Proponer, no imponer.\n- Reconocer los propios límites: el asesor no es psicólogo, ni confesor, ni director espiritual. Si el tema lo supera, ayuda al joven a buscar a quien corresponde: un sacerdote, un profesional, su familia."
+                },
+                {
+                  "title": "Discreción y transparencia",
+                  "body": "Lo que un joven comparte se guarda con discreción y no se comenta con otros (CEC 2489). Pero hay un límite claro: si lo que cuenta pone en riesgo su vida o la de otros, o revela un abuso, no se puede prometer secreto. Se le dice con cariño que vas a buscar ayuda para protegerlo, y se sigue el protocolo (lo verás en el Módulo 4)."
+                }
+              ],
+              "bible": {
+                "ref": "1 Samuel 3,1-10 · Habla, Señor, que tu siervo escucha",
+                "comment": "Elí ya es mayor y tiene sus propios errores, pero sabe reconocer cuándo Dios está llamando a un joven. Lee el texto y piensa: ¿qué joven del grupo podría estar escuchando una llamada de Dios y necesita a alguien que lo ayude a responder?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 169",
+                  "text": "Hace falta una mirada respetuosa y llena de compasión, que sane, libere y aliente a madurar en la vida cristiana.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Catecismo 2489",
+                  "text": "El bien y la seguridad del prójimo y el respeto de la vida privada son razones suficientes para callar lo que no debe ser conocido.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Qué te cuesta más al escuchar a un joven?",
+                "¿Cuándo has dado un consejo demasiado rápido?",
+                "¿Tienes claro a quién derivar cuando un tema te supera?"
+              ],
+              "activity": "En tu próxima conversación con un coordinador o dirigente, practica escuchar sin aconsejar durante los primeros diez minutos, y devuelve lo escuchado antes de dar tu opinión.",
+              "prayer": "Gracias, Señor, porque nos hablas y nos llamas por nuestro nombre. Te ofrezco mis oídos y mi corazón: enséñame a escuchar como Elí escuchó a Samuel, a quitarme las sandalias ante la historia de cada joven y a ayudarlo a reconocer tu voz. Que mi consejo sea siempre un servicio a tu llamada en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Números 169-173: el acompañamiento personal."
+                }
+              ]
+            },
+            {
+              "id": "2.3",
+              "title": "Que ellos crezcan",
+              "time": "40 min",
+              "objective": "Promover el protagonismo de los jóvenes en la pastoral juvenil, aprendiendo a confiar responsabilidades y a hacerse a un lado a tiempo.",
+              "intro": "La pastoral juvenil la hacen los jóvenes. El asesor no está para ser el protagonista, sino para que ellos lo sean. En esta unidad vas a revisar cómo confiar en los jóvenes y cuándo dar un paso atrás.",
+              "sections": [
+                {
+                  "title": "Que él crezca y yo disminuya",
+                  "body": "Juan el Bautista ve que sus discípulos se van con Jesús y, en lugar de molestarse, se alegra: «Es necesario que él crezca y que yo disminuya» (Jn 3,30). Es la alegría del amigo del novio. El asesor vive algo parecido: su alegría es ver crecer a los jóvenes y a Cristo en ellos."
+                },
+                {
+                  "title": "Los jóvenes, protagonistas",
+                  "body": "El papa Francisco pide que la pastoral juvenil sea hecha por los mismos jóvenes, acompañados por adultos (Christus vivit 203). No es una concesión: es confianza en lo que el Espíritu hace en ellos.\n\nEn la práctica, significa dejar que decidan, que se equivoquen dentro de márgenes seguros, que aprendan de sus errores y que reciban el reconocimiento por lo que hacen."
+                },
+                {
+                  "title": "Señales de que el asesor ocupa demasiado espacio",
+                  "body": "- Las decisiones se toman cuando el asesor está presente.\n- Los coordinadores consultan todo antes de actuar.\n- El asesor habla más que los jóvenes en la reunión mensual.\n- Las actividades reflejan los gustos del asesor más que los de los jóvenes.\n\nSi te reconoces en alguna, prueba a preguntar más y a opinar al final."
+                },
+                {
+                  "title": "Hacerse a un lado a tiempo",
+                  "body": "En Emaús, cuando los discípulos reconocen a Jesús, él desaparece (Lc 24,31). Christus vivit recoge esa idea: el buen acompañante, en algún momento, se hace a un lado para que el joven siga su camino (Christus vivit 296). Un asesor que logra que el grupo funcione sin depender de él ha hecho bien su trabajo."
+                }
+              ],
+              "bible": {
+                "ref": "Juan 3,22-30 · Que él crezca y yo disminuya",
+                "comment": "Los discípulos de Juan se preocupan porque todos se van con Jesús. Juan les responde con alegría. Lee el texto y pregúntate: ¿qué espacio tuyo en el grupo podrías dejar para que un joven crezca?"
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 203",
+                  "text": "Los mismos jóvenes son agentes de la pastoral juvenil, acompañados y guiados, pero libres para encontrar caminos siempre nuevos.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Christus vivit 296",
+                  "text": "El acompañante, en algún momento, debe hacerse a un lado, como lo hizo Cristo.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Te reconoces en alguna de las señales de ocupar demasiado espacio?",
+                "¿Qué decisión podrías dejar en manos de los coordinadores este mes?",
+                "¿Cómo reaccionas cuando los jóvenes se equivocan?"
+              ],
+              "activity": "En la próxima reunión mensual, intenta hablar solo después de que todos los coordinadores hayan opinado. Al terminar, pregúntate cómo cambió la reunión.",
+              "prayer": "Gracias, Señor, por los jóvenes que haces crecer en nuestro grupo. Te ofrezco mi deseo de controlar y de ser necesario. Dame la alegría de Juan el Bautista, que se alegró de disminuir para que Tú crecieras, y la libertad de hacerme a un lado a tiempo, para que ellos sean protagonistas en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Christus vivit (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html",
+                  "note": "Capítulo 7: la pastoral de los jóvenes."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 2 · Acompañar",
+            "title": "Acompañar a los jóvenes que sirven",
+            "questions": [
+              {
+                "q": "1. La dupla te consulta qué hacer ante una decisión. ¿Qué ayuda más, en general?",
+                "options": [
+                  "Darles la respuesta.",
+                  "Preguntarles qué opciones ven y qué creen que quiere Dios, y ayudarlos a discernir.",
+                  "Decirles que no es tu tema."
+                ],
+                "correct": 1,
+                "feedback": "Ayudar a discernir forma a los coordinadores; en temas de seguridad o de fe, el asesor sí interviene con claridad."
+              },
+              {
+                "q": "2. Un joven te cuenta algo y te pide que no se lo digas a nadie, pero revela un riesgo para su vida. ¿Qué haces?",
+                "options": [
+                  "Prometes guardar el secreto.",
+                  "Le dices con cariño que vas a buscar ayuda para protegerlo y sigues el protocolo.",
+                  "Lo comentas con el equipo."
+                ],
+                "correct": 1,
+                "feedback": "La discreción tiene un límite: cuando hay riesgo o abuso, no se promete secreto."
+              },
+              {
+                "q": "3. ¿Qué es una señal de que el asesor ocupa demasiado espacio?",
+                "options": [
+                  "Los coordinadores toman decisiones solos.",
+                  "Las decisiones se toman solo cuando el asesor está presente.",
+                  "Los jóvenes proponen actividades."
+                ],
+                "correct": 1,
+                "feedback": "El asesor busca que el grupo funcione sin depender de él."
+              },
+              {
+                "q": "4. ¿Qué consejo de Jetró a Moisés aplica a la coordinación?",
+                "options": [
+                  "Hacerlo todo uno mismo.",
+                  "Repartir la carga para no agotarse.",
+                  "Dejar de atender al pueblo."
+                ],
+                "correct": 1,
+                "feedback": "El asesor ayuda a la dupla a repartir tareas y a cuidar su descanso."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 3,
+          "title": "Acompañar la vida del grupo",
+          "desc": "3 unidades · Reunión mensual, formación y vocación",
+          "intro": "El asesor tiene un lugar propio en la vida del grupo: la reunión mensual, la formación de los dirigentes y el acompañamiento vocacional. En este módulo verás cómo aportar en cada uno.",
+          "sessions": [
+            {
+              "id": "3.1",
+              "title": "La reunión mensual",
+              "time": "40 min",
+              "objective": "Aprender a participar en la reunión mensual con los coordinadores como espacio de discernimiento del rumbo del grupo, y a traducirla en el resumen al párroco.",
+              "intro": "La reunión mensual es el lugar propio del asesor en la vida del grupo. Allí se mira el rumbo, el calendario y los objetivos. En esta unidad vas a revisar cómo aprovecharla bien.",
+              "sections": [
+                {
+                  "title": "Bernabé en Antioquía",
+                  "body": "Cuando la Iglesia de Jerusalén supo que en Antioquía muchos se convertían, envió a Bernabé. Al llegar, «vio la gracia de Dios, se alegró y exhortó a todos a permanecer fieles al Señor» (Hch 11,23). Después fue a buscar a Saulo para que lo ayudara.\n\nEs un buen modelo para el asesor en la reunión mensual: mirar primero lo que Dios está haciendo, alegrarse, animar y sumar a otros."
+                },
+                {
+                  "title": "De qué se habla",
+                  "body": "Una reunión mensual de una hora puede tener esta forma:\n\n1. Oración con el Evangelio del domingo (10 min).\n2. Cómo estamos: los coordinadores cuentan el mes (15 min).\n3. Mirada al calendario litúrgico y a los objetivos del mes siguiente (15 min).\n4. Situaciones delicadas, con reserva (10 min).\n5. Acuerdos y lo que se informará al párroco (10 min)."
+                },
+                {
+                  "title": "El aporte propio del asesor",
+                  "body": "En la reunión mensual, el asesor:\n\n- Hace preguntas que ayudan a mirar el sentido: «¿Para qué hacemos esto? ¿Cómo ayuda a que los jóvenes se encuentren con Jesús?».\n- Recuerda los tiempos litúrgicos y las fechas de la parroquia.\n- Ayuda a discernir las situaciones delicadas.\n- Anima y reconoce lo que funciona.\n\nNo dirige la reunión: la conduce la coordinación."
+                },
+                {
+                  "title": "El resumen al párroco",
+                  "body": "De cada reunión mensual sale el resumen de una página para el párroco: lo vivido, los próximos pasos y lo que se necesita de él. Se escribe con datos generales, sin nombres de jóvenes en situaciones delicadas; esas se conversan con él en persona."
+                }
+              ],
+              "bible": {
+                "ref": "Hechos 11,19-26 · Bernabé en Antioquía",
+                "comment": "Bernabé es enviado a una comunidad nueva y no llega a controlar, sino a reconocer la gracia de Dios. Lee el texto y fíjate en los cuatro verbos: vio, se alegró, exhortó y fue a buscar. ¿Cuál necesita hoy tu grupo?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 24",
+                  "text": "La comunidad evangelizadora sabe primerear, involucrarse, acompañar, fructificar y festejar.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Christus vivit 206",
+                  "text": "La pastoral juvenil sinodal es participativa y corresponsable: todos aportan desde su lugar.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo son hoy las reuniones mensuales? ¿Qué funciona y qué no?",
+                "¿Haces preguntas de sentido o tiendes a opinar sobre detalles?",
+                "¿Quién escribe hoy el resumen al párroco?"
+              ],
+              "activity": "Propón a los coordinadores la estructura de una hora para la próxima reunión mensual y, al terminar, redacten juntos el resumen para el párroco.",
+              "prayer": "Gracias, Señor, por la gracia que derramas en nuestro grupo, mucho más de lo que vemos. Te ofrezco nuestras reuniones mensuales: que, como Bernabé, sepa ver tu obra, alegrarme, animar a los jóvenes a permanecer fieles a Ti y sumar a otros a tu servicio en la Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Hechos de los Apóstoles",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 11."
+                }
+              ]
+            },
+            {
+              "id": "3.2",
+              "title": "Acompañar la formación de los dirigentes",
+              "time": "40 min",
+              "objective": "Asumir el acompañamiento de los dirigentes durante su formación: conversar sus reflexiones, recibir su compromiso y preparar su envío.",
+              "intro": "Los dirigentes hacen el curso «El Arte de Encontrarnos» en la app. Pero la formación no es solo leer unidades: necesita alguien que converse con ellos lo que van descubriendo. En esta unidad vas a revisar el papel del asesor en ese camino.",
+              "sections": [
+                {
+                  "title": "Reaviva el don de Dios",
+                  "body": "San Pablo le escribe a Timoteo: «te recomiendo que reavives el don de Dios que recibiste por la imposición de mis manos» (2 Tm 1,6). El don ya está, pero hay que avivarlo. El asesor acompaña a los dirigentes para que su servicio no sea solo una tarea, sino la respuesta a un llamado."
+                },
+                {
+                  "title": "Conversar lo aprendido",
+                  "body": "Al terminar cada módulo del curso, el dirigente puede conversar con un asesor:\n\n- ¿Qué descubriste en este módulo?\n- ¿Qué te desafía?\n- ¿Qué pusiste en práctica con tu familia?\n\nLas reflexiones del cuaderno son del dirigente: se comparten solo si él quiere. En Gestión, con cuenta de equipo, el asesor puede ver el avance de cada uno en el curso para saber cuándo invitarlo a conversar."
+                },
+                {
+                  "title": "El compromiso y la constancia",
+                  "body": "Al terminar el curso, el dirigente escribe su compromiso. El asesor lo recibe en una conversación personal, lo ayuda a que sea concreto y realista, y firma su constancia junto a la coordinación."
+                },
+                {
+                  "title": "La misa de envío",
+                  "body": "Los dirigentes que terminan son bendecidos y enviados por el párroco en una misa dominical, hacia el cierre del año. El asesor coordina con el párroco la fecha y ayuda a que sea un momento de fiesta para toda la comunidad. El envío recuerda que el servicio no es iniciativa propia: es la Iglesia quien envía."
+                }
+              ],
+              "bible": {
+                "ref": "2 Timoteo 1,3-14 · Reaviva el don de Dios",
+                "comment": "Pablo recuerda la fe de la abuela y la madre de Timoteo y le pide que no se avergüence del Evangelio. Lee el texto y piensa en un dirigente concreto: ¿qué don de Dios ves en él que necesita ser avivado?"
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 243",
+                  "text": "La comunidad tiene un papel muy importante en el acompañamiento de los jóvenes.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Christus vivit 246",
+                  "text": "Los jóvenes piden acompañantes que sepan alegrarse con sus avances y reconocer sus propios límites.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cuántos dirigentes están hoy haciendo el curso? ¿Has conversado con alguno?",
+                "¿Cómo podrías ayudar a que el compromiso final sea concreto?",
+                "¿Qué falta coordinar para la misa de envío de este año?"
+              ],
+              "activity": "Revisa en Gestión el avance de los dirigentes en el curso e invita a conversar a quien haya terminado un módulo. Coordina con el párroco una fecha tentativa para la misa de envío.",
+              "prayer": "Gracias, Señor, por los dones que pones en cada dirigente. Te ofrezco mi servicio de acompañar su formación: que sepa ayudarlos a reavivar tu don, a responder con generosidad a tu llamado y a sentirse enviados por tu Iglesia para servir a los más jóvenes. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Segunda carta a Timoteo",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 1."
+                }
+              ]
+            },
+            {
+              "id": "3.3",
+              "title": "Acompañar la vocación",
+              "time": "40 min",
+              "objective": "Comprender que todo acompañamiento en la pastoral juvenil es vocacional y aprender a ayudar a los jóvenes a discernir el llamado de Dios en su vida.",
+              "intro": "Cada joven del grupo tiene una vocación: el matrimonio, el sacerdocio, la vida consagrada, y también una manera única de servir en el mundo. El asesor, como adulto en la fe, puede ayudar a que esa pregunta no se apague. En esta unidad vas a mirar el acompañamiento en clave vocacional.",
+              "sections": [
+                {
+                  "title": "Vengan y lo verán",
+                  "body": "Dos discípulos de Juan siguen a Jesús. Él se da vuelta y les pregunta: «¿Qué buscan?». Ellos responden: «Maestro, ¿dónde vives?». Y Jesús les dice: «Vengan y lo verán» (Jn 1,38-39). La vocación no empieza con una respuesta, sino con un encuentro y con tiempo compartido."
+                },
+                {
+                  "title": "Todo es vocacional",
+                  "body": "La pregunta vocacional no es solo «¿seré sacerdote o religiosa?». Es «¿para quién soy?». Servir como dirigente o coordinador ya es una experiencia vocacional: descubrir la alegría de darse. El asesor puede ayudar a que los jóvenes lean esa experiencia como un llamado."
+                },
+                {
+                  "title": "Discernir: reconocer, interpretar, elegir",
+                  "body": "El papa Francisco propone tres pasos para discernir: reconocer lo que pasa en el propio corazón, interpretarlo a la luz de la Palabra de Dios y elegir (Christus vivit 237, retomando el Sínodo). El asesor no elige por el joven: lo ayuda a hacer el camino.\n\nAyuda mucho que el joven tenga una vida sacramental viva, oración personal y, si lo desea, un acompañante espiritual o un sacerdote con quien conversar."
+                },
+                {
+                  "title": "Abrir horizontes",
+                  "body": "Algunos gestos sencillos: hablar con naturalidad del matrimonio, del sacerdocio y de la vida consagrada; invitar a sacerdotes, religiosas o matrimonios a compartir su historia; rezar en el grupo por las vocaciones; y, si un joven manifiesta inquietud, ponerlo en contacto con el párroco o la pastoral vocacional de la diócesis."
+                }
+              ],
+              "bible": {
+                "ref": "Juan 1,35-42 · Vengan y lo verán",
+                "comment": "Los discípulos pasan una tarde con Jesús y uno de ellos corre a buscar a su hermano. Lee el texto y piensa: ¿quién te ayudó a ti a descubrir tu vocación? ¿A qué joven podrías ayudar tú?"
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 237",
+                  "text": "El discernimiento implica reconocer, interpretar y elegir.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Christus vivit 242",
+                  "text": "La familia es el primer espacio de acompañamiento de los jóvenes.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo descubriste tu propia vocación? ¿Quién te acompañó?",
+                "¿Se habla en el grupo de las distintas vocaciones?",
+                "¿Qué joven del grupo tiene hoy una inquietud que podrías acompañar?"
+              ],
+              "activity": "Propón a la coordinación un encuentro en el que un matrimonio, un sacerdote o una religiosa comparta su historia vocacional con los jóvenes. Reza esta semana por la vocación de cada coordinador y dirigente, por su nombre.",
+              "prayer": "Gracias, Señor, porque llamas a cada joven por su nombre y le dices: «Vengan y lo verán». Te ofrezco mi propia vocación y mi servicio de acompañar la de otros. Que sepa ayudar a los jóvenes a reconocer tu voz, a interpretarla a la luz de tu Palabra y a elegir con libertad el camino en que Tú los llamas a servir en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Christus vivit (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html",
+                  "note": "Capítulos 8 y 9: la vocación y el discernimiento."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 3 · La vida del grupo",
+            "title": "Acompañar la vida del grupo",
+            "questions": [
+              {
+                "q": "1. En la reunión mensual, ¿cuál es el aporte propio del asesor?",
+                "options": [
+                  "Dirigir la reunión.",
+                  "Hacer preguntas de sentido, recordar el año litúrgico y ayudar a discernir.",
+                  "Decidir el calendario."
+                ],
+                "correct": 1,
+                "feedback": "La reunión la conduce la coordinación; el asesor ayuda a mirar el sentido."
+              },
+              {
+                "q": "2. ¿Qué incluye el resumen mensual al párroco?",
+                "options": [
+                  "Los nombres de los jóvenes en situaciones delicadas.",
+                  "Lo vivido, los próximos pasos y lo que se necesita de él; lo delicado se conversa en persona.",
+                  "Solo las actividades."
+                ],
+                "correct": 1,
+                "feedback": "El resumen es general; las situaciones delicadas se tratan en persona y con reserva."
+              },
+              {
+                "q": "3. Un dirigente termina el curso. ¿Qué hace el asesor?",
+                "options": [
+                  "Nada, la app lo registra.",
+                  "Recibe su compromiso en una conversación personal y firma su constancia con la coordinación.",
+                  "Le pide que haga el curso de nuevo."
+                ],
+                "correct": 1,
+                "feedback": "El asesor acompaña el cierre de la formación y el envío."
+              },
+              {
+                "q": "4. ¿Cuáles son los tres pasos del discernimiento según Christus vivit?",
+                "options": [
+                  "Pensar, decidir, actuar.",
+                  "Reconocer, interpretar, elegir.",
+                  "Ver, juzgar, actuar."
+                ],
+                "correct": 1,
+                "feedback": "Reconocer lo que pasa en el corazón, interpretarlo a la luz de la Palabra y elegir."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 4,
+          "title": "Garantes del cuidado",
+          "desc": "3 unidades · Prevención, situaciones graves y conflictos",
+          "intro": "En un grupo de jóvenes, los asesores son los adultos responsables. En este módulo revisarás cómo garantizar ambientes sanos y seguros, cómo actuar ante una situación grave y cómo ayudar a resolver los conflictos con verdad y caridad.",
+          "sessions": [
+            {
+              "id": "4.1",
+              "title": "Adultos responsables",
+              "time": "40 min",
+              "objective": "Asumir la responsabilidad del asesor como adulto garante del cuidado de niños, adolescentes y jóvenes, conociendo y haciendo cumplir las orientaciones de la Iglesia en Chile.",
+              "intro": "En un grupo donde casi todos son jóvenes, los asesores son los adultos responsables. Esa responsabilidad no se delega. En esta unidad vas a revisar qué significa ser garante del cuidado en Ágape.",
+              "sections": [
+                {
+                  "title": "Dejen que los niños vengan a mí",
+                  "body": "Los discípulos querían alejar a los niños, y Jesús se indignó: «Dejen que los niños vengan a mí; no se lo impidan» (Mc 10,14). Después los abrazó y los bendijo. Jesús no solo acoge a los pequeños: se enoja cuando se les trata mal. Cuidarlos es parte del Evangelio."
+                },
+                {
+                  "title": "Lo que el asesor garantiza",
+                  "body": "Según las orientaciones de Integridad en el Servicio Eclesial (ISE) de la Conferencia Episcopal de Chile, el asesor vela porque:\n\n- Todo el equipo conozca y acepte los criterios de conducta, y haya hecho la formación en prevención.\n- Nadie esté a solas con un menor; los encuentros y conversaciones se hagan en espacios abiertos y visibles.\n- La comunicación con menores sea por los canales del grupo, nunca en privado.\n- Las salidas, retiros y campamentos tengan autorización escrita de los apoderados y adultos responsables suficientes.\n- En la app y en redes, los jóvenes aparezcan solo con su nombre y la inicial del apellido, sin teléfonos."
+                },
+                {
+                  "title": "Presentes en las salidas",
+                  "body": "En retiros, campamentos y salidas con menores, los asesores están presentes como adultos responsables. Revisan antes la lista de verificación con la coordinación: autorizaciones, fichas de emergencia guardadas con reserva, dormitorios separados, transporte seguro y programa informado al párroco y a los apoderados."
+                },
+                {
+                  "title": "Elegir y acompañar al equipo",
+                  "body": "El asesor participa en el discernimiento de quiénes asumen servicios con menores: personas conocidas, formadas y acompañadas. Si alguna conducta de un miembro del equipo preocupa, no se ignora ni se espera: se conversa de inmediato con el otro asesor y, si corresponde, con el párroco."
+                }
+              ],
+              "bible": {
+                "ref": "Marcos 10,13-16 · Dejen que los niños vengan a mí",
+                "comment": "Jesús se indigna con sus propios discípulos cuando impiden que los niños se acerquen. Lee el texto y piensa: ¿qué te pide Jesús hoy para que nuestro grupo sea un lugar donde cada niño y joven pueda acercarse a Él con seguridad?"
+              },
+              "church": [
+                {
+                  "source": "Integridad en el Servicio Eclesial (CECh)",
+                  "text": "La Iglesia en Chile establece criterios de conducta y orientaciones para que los espacios pastorales sean sanos y seguros para niños, adolescentes y jóvenes.",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                }
+              ],
+              "questions": [
+                "¿Conoces bien las orientaciones de Integridad en el Servicio Eclesial?",
+                "¿Todo el equipo ha hecho la formación en prevención?",
+                "¿Qué punto de lo que el asesor garantiza no se está cumpliendo hoy?"
+              ],
+              "activity": "Revisen entre los asesores la lista de lo que el asesor garantiza y marquen lo que falta. Fijen con la coordinación una fecha para que todo el equipo haga o renueve la formación en prevención.",
+              "prayer": "Gracias, Señor Jesús, que abrazaste a los niños y te indignaste cuando los alejaban. Te ofrezco mi responsabilidad de adulto en nuestro grupo. Hazme vigilante sin desconfianza y firme sin dureza, para que Ágape sea siempre un lugar sano y seguro, donde cada niño y joven pueda encontrarte en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Integridad en el Servicio Eclesial (CECh)",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
+                  "note": "Consulta además con tu diócesis la versión vigente y el contacto del encargado de prevención."
+                }
+              ]
+            },
+            {
+              "id": "4.2",
+              "title": "Ante una situación grave",
+              "time": "40 min",
+              "objective": "Saber cómo actuar como asesor ante una revelación de abuso, una situación de riesgo para la vida o una crisis grave: proteger, avisar y seguir el protocolo diocesano.",
+              "intro": "Ante una situación grave, la coordinación y los dirigentes acuden a los asesores. Es el momento en que tu presencia adulta más importa. En esta unidad vas a revisar los pasos para actuar con serenidad y responsabilidad.",
+              "sections": [
+                {
+                  "title": "El pastor que busca a la oveja herida",
+                  "body": "Dios dice por el profeta Ezequiel: «Buscaré a la oveja perdida, haré volver a la descarriada, vendaré a la herida y sanaré a la enferma» (Ez 34,16). En el mismo capítulo, reprocha duramente a los pastores que se aprovecharon del rebaño y no cuidaron a las ovejas débiles. Proteger al que sufre es tarea de todo pastor."
+                },
+                {
+                  "title": "Si un joven revela un abuso",
+                  "body": "Cuando un dirigente o coordinador te avisa, o el joven te lo cuenta a ti:\n\n- Se escucha y se le cree. No se interroga ni se piden detalles.\n- No se promete secreto: se le dice que se buscará ayuda para protegerlo.\n- No se confronta a la persona señalada ni se investiga por cuenta propia.\n- Se avisa el mismo día al párroco y se sigue el protocolo de la diócesis.\n- Se registra por escrito, con fecha, lo que se dijo, con las palabras del joven.\n- Se guarda absoluta reserva con el resto del equipo.\n\nConsulta con el encargado diocesano de prevención las obligaciones de denuncia que establece la ley."
+                },
+                {
+                  "title": "Si hay riesgo para la vida",
+                  "body": "Si un joven expresa ideas de hacerse daño o de no querer vivir, o hay señales graves:\n\n- No se le deja solo y se le toma en serio.\n- Se avisa de inmediato a su familia.\n- Si hay riesgo inmediato, se llama a emergencias o a Salud Responde (600 360 7777).\n- Después se acompaña con cercanía, sin reemplazar a los profesionales.\n\nEl asesor no es terapeuta: acompaña y deriva."
+                },
+                {
+                  "title": "Cuidar a quien acompaña",
+                  "body": "Cuando un dirigente o coordinador recibe una revelación difícil, también queda afectado. El asesor lo escucha, le agradece que haya avisado, lo libera de la responsabilidad de resolverlo y le recuerda la reserva. Nadie del equipo debe cargar solo con una situación así."
+                }
+              ],
+              "bible": {
+                "ref": "Ezequiel 34,11-16 · Yo mismo buscaré a mis ovejas",
+                "comment": "Dios se presenta como el pastor que busca, venda y sana. Lee el texto y pídele que te dé su corazón de pastor para cuidar a los jóvenes más frágiles del grupo."
+              },
+              "church": [
+                {
+                  "source": "Integridad en el Servicio Eclesial (CECh)",
+                  "text": "Ante una sospecha o revelación de abuso, las orientaciones de la Iglesia en Chile piden proteger a la víctima, no investigar por cuenta propia y comunicar a la autoridad correspondiente.",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                }
+              ],
+              "questions": [
+                "¿Sabrías qué hacer hoy si un dirigente te avisa de una revelación de abuso?",
+                "¿Tienes el contacto del encargado diocesano de prevención?",
+                "¿Cómo cuidarías al dirigente que recibió la revelación?"
+              ],
+              "activity": "Completa entre los asesores una hoja de contactos de emergencia: párroco, encargado diocesano de prevención y su canal de denuncias, Salud Responde y emergencias. Compártela con la coordinación y revisen juntos los pasos de esta unidad.",
+              "prayer": "Gracias, Señor, Buen Pastor, que buscas a la oveja perdida y vendas a la herida. Te ofrezco mi disposición a proteger a los jóvenes en sus momentos más frágiles. Dame serenidad, prudencia y valentía para actuar a tiempo, y que nadie que sufra en nuestro grupo quede solo, porque en tu Iglesia todos somos cuidados. Amén.",
+              "resources": [
+                {
+                  "title": "Integridad en el Servicio Eclesial (CECh)",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
+                  "note": "Consulta con tu diócesis el protocolo vigente."
+                },
+                {
+                  "title": "Salud Responde (Minsal)",
+                  "url": "https://saludresponde.minsal.cl/",
+                  "note": "Orientación en salud las 24 horas: 600 360 7777."
+                }
+              ]
+            },
+            {
+              "id": "4.3",
+              "title": "Verdad y caridad en los conflictos",
+              "time": "40 min",
+              "objective": "Aprender a ayudar al equipo a resolver conflictos con verdad y caridad, y a corregir con mansedumbre cuando es necesario.",
+              "intro": "Los conflictos del equipo suelen llegar a los asesores cuando la coordinación no logra resolverlos o cuando la coordinación es parte del conflicto. En esta unidad vas a revisar cómo ayudar sin tomar partido y cómo corregir con mansedumbre.",
+              "sections": [
+                {
+                  "title": "Corregir con mansedumbre",
+                  "body": "San Pablo escribe: «Si alguno es sorprendido en alguna falta, ustedes, los espirituales, corríjanlo con espíritu de mansedumbre, y cuídate tú mismo, no sea que también seas tentado. Lleven los unos las cargas de los otros» (Gál 6,1-2). Corregir es un acto de amor, pero exige humildad."
+                },
+                {
+                  "title": "Mediar sin tomar partido",
+                  "body": "Cuando el conflicto llega a los asesores:\n\n- Escucha a cada parte por separado, sin adelantar juicios.\n- Interpreta en sentido favorable lo que dice cada uno, en cuanto sea posible (CEC 2478).\n- Reúnelos y ayúdalos a decir lo que les pasó sin acusar.\n- Busquen un acuerdo concreto y fijen una fecha para revisarlo.\n\nSi el conflicto es con la dupla de coordinadores, los asesores lo tratan juntos, con mayor razón en privado."
+                },
+                {
+                  "title": "Cuándo corregir con firmeza",
+                  "body": "Hay situaciones en las que el asesor debe corregir con claridad, aunque incomode: una falta a los criterios de cuidado de los jóvenes, un trato humillante, un mal manejo del dinero o una actitud que daña la comunión con la parroquia. Se hace en privado, con caridad, y se informa al párroco cuando corresponde."
+                },
+                {
+                  "title": "El conflicto como oportunidad",
+                  "body": "El papa Francisco enseña que la unidad prevalece sobre el conflicto: no se trata de ignorarlo ni de quedar atrapado en él, sino de asumirlo y transformarlo en el eslabón de un nuevo proceso (Evangelii gaudium 226-230). Un equipo que resuelve bien un conflicto sale más unido."
+                }
+              ],
+              "bible": {
+                "ref": "Gálatas 6,1-5 · Corríjanlo con mansedumbre",
+                "comment": "Pablo une la corrección con la humildad y con llevar las cargas de los otros. Lee el texto y piensa en una corrección que te tocó dar o recibir: ¿cómo se vivió la mansedumbre?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 226-230",
+                  "text": "La unidad prevalece sobre el conflicto: aceptarlo, resolverlo y transformarlo en el eslabón de un nuevo proceso.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Catecismo 2478",
+                  "text": "Cada uno debe interpretar, en cuanto sea posible, en un sentido favorable los pensamientos, palabras y acciones de su prójimo.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Hay hoy algún conflicto en el equipo que haya llegado a los asesores?",
+                "¿Te cuesta más corregir o mediar?",
+                "¿Qué situación del grupo requeriría hoy una corrección firme?"
+              ],
+              "activity": "Si hay un conflicto abierto, conversa con el otro asesor sobre cómo mediar siguiendo los pasos de esta unidad. Si no lo hay, pregunten a la dupla de coordinadores qué tensiones ven en el equipo.",
+              "prayer": "Gracias, Señor, porque nos corriges con paciencia y nos reconcilias contigo. Te ofrezco los conflictos de nuestro equipo y mi propia fragilidad. Dame un espíritu de mansedumbre para corregir, humildad para no juzgar y paciencia para llevar las cargas de los otros, para que nuestro grupo sea signo de comunión en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Números 226-230."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 4 · Cuidado",
+            "title": "Garantes del cuidado",
+            "questions": [
+              {
+                "q": "1. ¿Cuál de estas situaciones debe corregir el asesor?",
+                "options": [
+                  "Un dirigente conversa en privado por redes con un menor.",
+                  "Un dirigente propone una dinámica nueva.",
+                  "La dupla cambia el horario de la reunión quincenal."
+                ],
+                "correct": 0,
+                "feedback": "La comunicación con menores es por los canales del grupo, nunca en privado."
+              },
+              {
+                "q": "2. Un dirigente te avisa que un joven reveló un abuso. ¿Qué haces?",
+                "options": [
+                  "Investigas por tu cuenta antes de avisar.",
+                  "Avisas el mismo día al párroco, sigues el protocolo diocesano y guardas reserva con el equipo.",
+                  "Esperas a la reunión mensual."
+                ],
+                "correct": 1,
+                "feedback": "Se protege a la víctima, no se investiga y se avisa de inmediato."
+              },
+              {
+                "q": "3. ¿Cómo cuidas al dirigente que recibió esa revelación?",
+                "options": [
+                  "Le pides que siga acompañando el caso.",
+                  "Lo escuchas, le agradeces, lo liberas de resolverlo y le recuerdas la reserva.",
+                  "No le dices nada."
+                ],
+                "correct": 1,
+                "feedback": "Nadie del equipo debe cargar solo con una situación así."
+              },
+              {
+                "q": "4. Al mediar un conflicto, ¿qué recomienda el Catecismo?",
+                "options": [
+                  "Buscar al culpable.",
+                  "Interpretar en sentido favorable, en cuanto sea posible, lo que dice cada uno.",
+                  "Dar la razón a quien lleva más tiempo."
+                ],
+                "correct": 1,
+                "feedback": "Evitar el juicio temerario es parte de la caridad (CEC 2478)."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 5,
+          "title": "La vida del asesor",
+          "desc": "3 unidades · Límites, comunión eclesial y relevo",
+          "intro": "Quien acompaña también necesita ser cuidado. En este módulo mirarás tus propios límites, el papel de puente con la parroquia y la diócesis, y cómo preparar el relevo y entregar el grupo con gratitud.",
+          "sessions": [
+            {
+              "id": "5.1",
+              "title": "Cuidar al que cuida",
+              "time": "40 min",
+              "objective": "Reconocer los límites del propio servicio y cuidar la vida personal, familiar y espiritual del asesor, para servir con alegría y sin agotarse.",
+              "intro": "El asesor también necesita ser cuidado. Tiene familia, trabajo y su propia vida. En esta unidad vas a revisar cómo vivir tu servicio con límites sanos y con un corazón descansado en Dios.",
+              "sections": [
+                {
+                  "title": "Vengan a un lugar apartado",
+                  "body": "Cuando los apóstoles volvieron de la misión, había tanta gente que ni tenían tiempo para comer. Jesús les dijo: «Vengan ustedes solos a un lugar apartado y descansen un poco» (Mc 6,31). Jesús cuida a quienes envía. El descanso también es parte de la misión."
+                },
+                {
+                  "title": "Tu servicio tiene un tamaño",
+                  "body": "El servicio esencial del asesor son unas tres horas al mes. No se trata de hacer menos por desinterés, sino de cuidar lo esencial y no ocupar espacios que corresponden a los jóvenes. Un asesor agotado no acompaña bien.\n\nPregúntate: ¿tu servicio en Ágape está en armonía con tu familia, tu trabajo y tu vida de oración? Si no, conversa con el otro asesor y repartan mejor las tareas."
+                },
+                {
+                  "title": "Límites sanos",
+                  "body": "- Hay horarios: no todo mensaje requiere respuesta inmediata, salvo una emergencia.\n- Hay roles: el asesor no es amigo íntimo, ni terapeuta, ni padre de los jóvenes. Es un adulto en la fe que los acompaña.\n- Hay distancia física y emocional adecuada con los menores, según los criterios de cuidado.\n- Hay humildad: lo que te supera se deriva."
+                },
+                {
+                  "title": "Descansar en el Señor",
+                  "body": "El mejor descanso del asesor es estar con el Señor: la misa dominical vivida sin prisa, un rato ante el Santísimo, la confesión, un retiro al año. No para recargar energía y seguir produciendo, sino para recordar que el grupo es de Dios y que Él lo cuida mejor que nadie."
+                }
+              ],
+              "bible": {
+                "ref": "Marcos 6,30-34 · Vengan a descansar un poco",
+                "comment": "Jesús invita a descansar, pero al bajar de la barca ve a la multitud y se compadece. El descanso y la compasión van juntos. Lee el texto y pregúntate: ¿cuándo fue la última vez que descansaste en el Señor?"
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 246",
+                  "text": "Los jóvenes piden acompañantes que reconozcan sus propios límites.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Catecismo 1324",
+                  "text": "La Eucaristía es fuente y culmen de toda la vida cristiana.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Tu servicio en Ágape está en armonía con tu familia y tu trabajo?",
+                "¿Qué límite te cuesta más cuidar?",
+                "¿Cuándo descansas en el Señor?"
+              ],
+              "activity": "Conversa con el otro asesor sobre cómo se están repartiendo el servicio y qué límites quieren cuidar. Agenda para ti un rato de adoración o un retiro en los próximos meses.",
+              "prayer": "Gracias, Señor, porque cuidas a quienes envías y nos invitas a descansar en Ti. Te ofrezco mi cansancio, mis límites y mi familia. Que sepa servir con alegría, sin querer hacerlo todo, y recordar siempre que nuestro grupo es tuyo. Renueva en mí la gracia de mi vocación en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Evangelio según san Marcos",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 6."
+                }
+              ]
+            },
+            {
+              "id": "5.2",
+              "title": "En comunión con la Iglesia",
+              "time": "40 min",
+              "objective": "Fortalecer la comunión del grupo con la parroquia, la Pastoral Juvenil diocesana y la Iglesia universal, entendiendo que el asesor es un puente entre ellas.",
+              "intro": "Ágape no es un grupo aislado: es parte de una parroquia, de una diócesis y de la Iglesia. Esa comunión protege al grupo, lo enriquece y le recuerda su misión. En esta unidad vas a revisar el papel del asesor como puente.",
+              "sections": [
+                {
+                  "title": "Un solo cuerpo",
+                  "body": "San Pablo compara a la Iglesia con un cuerpo: muchos miembros, cada uno con su función, y ninguno puede decirle al otro «no te necesito» (1 Co 12,21). Un grupo juvenil que se cierra en sí mismo se empobrece; uno que se sabe parte del cuerpo crece."
+                },
+                {
+                  "title": "Con la parroquia",
+                  "body": "El asesor ayuda a que el grupo:\n\n- Participe en la misa dominical de la comunidad y en las grandes fiestas parroquiales.\n- Colabore con otros grupos y pastorales, por ejemplo en el Mes de María o en la acción solidaria.\n- Esté representado, si se invita, en el consejo pastoral.\n- Cuide los espacios parroquiales y respete sus horarios."
+                },
+                {
+                  "title": "Con la diócesis",
+                  "body": "La Diócesis de San Bartolomé de Chillán tiene su Pastoral Juvenil, con encuentros, formación y orientaciones. El asesor puede mantener el contacto, informar al grupo de las actividades diocesanas y animar a los jóvenes a participar. Encontrarse con jóvenes de otras parroquias amplía el horizonte."
+                },
+                {
+                  "title": "Con la Iglesia universal",
+                  "body": "Los jóvenes de Ágape son parte de la Iglesia en todo el mundo. Christus vivit, las Jornadas Mundiales de la Juventud y la vida del Papa son ocasiones para que lo descubran. El asesor puede acercar al grupo algún mensaje del Papa a los jóvenes, rezar por la Iglesia y mostrar que la fe que viven es la de millones."
+                }
+              ],
+              "bible": {
+                "ref": "1 Corintios 12,12-27 · Un solo cuerpo",
+                "comment": "Pablo insiste en que todos los miembros se necesitan y que los más débiles son los más necesarios. Lee el texto y pregúntate: ¿qué aporta Ágape al cuerpo de la parroquia, y qué necesita de él?"
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 206",
+                  "text": "La pastoral juvenil sinodal es participativa y corresponsable, y camina junto con toda la comunidad.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Ecclesia de Eucharistia 1",
+                  "text": "La Iglesia vive de la Eucaristía: allí se expresa y se alimenta la comunión de todo el cuerpo.",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo es hoy la relación del grupo con los demás grupos de la parroquia?",
+                "¿Conoce el grupo las actividades de la Pastoral Juvenil diocesana?",
+                "¿Qué podría aportar Ágape a la parroquia este año?"
+              ],
+              "activity": "Averigua las próximas actividades de la Pastoral Juvenil diocesana y compártelas con la coordinación. Propón una acción de servicio conjunta con otro grupo de la parroquia.",
+              "prayer": "Gracias, Señor, porque nos haces miembros de un solo cuerpo, tu Iglesia. Te ofrezco mi servicio de puente entre nuestro grupo, la parroquia y la diócesis. Que Ágape nunca se cierre en sí mismo, sino que se sepa parte de tu pueblo y ofrezca con alegría los dones que pones en sus jóvenes. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Primera carta a los Corintios",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 12."
+                }
+              ]
+            },
+            {
+              "id": "5.3",
+              "title": "Encomendar y entregar",
+              "time": "40 min",
+              "objective": "Preparar el relevo de los asesores y de la coordinación, y cerrar el propio período de servicio con gratitud, encomendando el grupo a Dios.",
+              "intro": "Los asesores sirven por un período de hasta cuatro años. Un buen asesor piensa en quién vendrá después y entrega el grupo con gratitud. En esta unidad vas a mirar el relevo como un acto de confianza en Dios.",
+              "sections": [
+                {
+                  "title": "Los encomiendo a Dios",
+                  "body": "Al despedirse de los presbíteros de Éfeso, San Pablo les recuerda cómo sirvió entre ellos, les pide que cuiden del rebaño y termina: «Ahora los encomiendo a Dios y a la palabra de su gracia» (Hch 20,32). Después rezan juntos de rodillas. Pablo no se siente imprescindible: entrega la comunidad a Dios y a quienes la cuidarán."
+                },
+                {
+                  "title": "Preparar el relevo de la coordinación",
+                  "body": "Los coordinadores sirven por hasta dos años, renovables por otros dos. El asesor ayuda a que el relevo se prepare con tiempo: a reconocer a los dirigentes con dones de servicio, a que asuman responsabilidades crecientes y a que hagan la formación para coordinadores. El discernimiento se hace con la coordinación y se presenta al párroco."
+                },
+                {
+                  "title": "Preparar el propio relevo",
+                  "body": "También el asesor prepara su relevo: identifica adultos de la parroquia que podrían asumir, los invita a conocer el grupo, les propone hacer esta formación y los presenta al párroco, que es quien nombra o confirma a los asesores. Un período de acompañamiento compartido facilita la transición."
+                },
+                {
+                  "title": "Entregar con gratitud",
+                  "body": "Al terminar, una buena entrega incluye conversar con los nuevos asesores sobre la historia del grupo, sus procesos y sus desafíos, compartir los contactos de la parroquia y la diócesis, y despedirse del grupo con una acción de gracias. Terminar un servicio no es perder algo: es confiar en que Dios sigue cuidando lo que sembramos."
+                }
+              ],
+              "bible": {
+                "ref": "Hechos 20,17-38 · La despedida de Mileto",
+                "comment": "Pablo hace memoria, aconseja, encomienda y reza. Lee el texto e imagina tu propia despedida del grupo: ¿qué te gustaría poder decir de tu servicio? ¿A quién encomendarías el grupo?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 222-225",
+                  "text": "El tiempo es superior al espacio: lo que importa es iniciar procesos que otros puedan continuar.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Christus vivit 296",
+                  "text": "El acompañante, en algún momento, debe hacerse a un lado, como lo hizo Cristo.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Cuánto tiempo te queda como asesor? ¿Has pensado en tu relevo?",
+                "¿Qué adultos de la parroquia podrían acompañar al grupo en el futuro?",
+                "¿Qué dirigentes ves con dones para coordinar?"
+              ],
+              "activity": "Haz una lista breve de adultos que podrían ser futuros asesores y de dirigentes con dones para coordinar. Conversa con el otro asesor y con el párroco sobre cómo invitarlos.",
+              "prayer": "Gracias, Señor, por cada año de servicio en Ágape, por los jóvenes que he acompañado y por lo que ellos me han enseñado de Ti. Como Pablo, te encomiendo este grupo a Ti y a la palabra de tu gracia. Que sepa preparar a quienes vendrán, entregar con generosidad y seguir respondiendo a tu llamado allí donde me envíes en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Hechos de los Apóstoles",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 20."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 5 · La vida del asesor",
+            "title": "Servir en comunión y entregar",
+            "questions": [
+              {
+                "q": "1. ¿Qué es un límite sano del asesor?",
+                "options": [
+                  "Responder siempre al instante cualquier mensaje.",
+                  "Saber que no es terapeuta ni amigo íntimo de los jóvenes, y derivar lo que lo supera.",
+                  "Hacerse cargo de todo para que el grupo funcione."
+                ],
+                "correct": 1,
+                "feedback": "El asesor es un adulto en la fe que acompaña, con límites claros."
+              },
+              {
+                "q": "2. ¿Cómo se vive la comunión con la diócesis?",
+                "options": [
+                  "El grupo es independiente y no necesita a la diócesis.",
+                  "Manteniendo contacto con la Pastoral Juvenil diocesana y animando a los jóvenes a participar.",
+                  "Solo a través del párroco."
+                ],
+                "correct": 1,
+                "feedback": "Encontrarse con jóvenes de otras parroquias amplía el horizonte del grupo."
+              },
+              {
+                "q": "3. ¿Quién nombra o confirma a los asesores?",
+                "options": [
+                  "La coordinación.",
+                  "El párroco.",
+                  "Los propios asesores."
+                ],
+                "correct": 1,
+                "feedback": "El párroco nombra o confirma a los asesores, por un período de hasta cuatro años."
+              },
+              {
+                "q": "4. ¿Cuándo empieza a prepararse el relevo?",
+                "options": [
+                  "Cuando el asesor ya se fue.",
+                  "Con tiempo, invitando y acompañando a quienes podrían asumir.",
+                  "No se prepara: llega solo."
+                ],
+                "correct": 1,
+                "feedback": "Un buen relevo se prepara con tiempo y con un período compartido."
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "about": {
