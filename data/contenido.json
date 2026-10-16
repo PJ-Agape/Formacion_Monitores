@@ -2414,6 +2414,1072 @@
           }
         }
       ]
+    },
+    {
+      "id": "formacion-coordinadores",
+      "title": "Coordinar es servir",
+      "theme": "cenaculo",
+      "para": {
+        "coordinador": true
+      },
+      "description": "Formación para coordinadores de la Pastoral Juvenil Ágape: 5 módulos y 15 unidades para coordinar desde Cristo, con herramientas de planificación, reuniones, seguimiento de compromisos, administración, comunicación asertiva, conflictos y prevención.",
+      "phases": [
+        {
+          "phaseNum": 1,
+          "title": "Fundamentos: coordinar desde Cristo",
+          "desc": "3 unidades · Servicio, dupla y la Eucaristía en el centro",
+          "intro": "Antes de cualquier herramienta, la pregunta de fondo: ¿desde dónde coordino? En este módulo descubrirás la coordinación como servicio al estilo de Jesús, el sentido de la dupla y la Eucaristía como centro de la vida del equipo.",
+          "sessions": [
+            {
+              "id": "1.1",
+              "title": "Coordinar es servir",
+              "time": "40 min",
+              "objective": "Comprender la coordinación como un servicio que nace de Cristo, que vino a servir y no a ser servido, y no como un puesto de poder.",
+              "intro": "Ser coordinador no es estar arriba de los demás, sino al servicio de todos. En esta unidad vas a mirar el liderazgo de Jesús y a preguntarte desde dónde quieres coordinar: desde el control o desde el servicio.",
+              "sections": [
+                {
+                  "title": "El que quiera ser el primero",
+                  "body": "Cuando Santiago y Juan piden los primeros puestos, Jesús reúne a los Doce y les dice que entre ellos no puede ser como entre los poderosos del mundo: «el que quiera ser grande, que se haga servidor de ustedes» (Mc 10,43). Y se pone a sí mismo como ejemplo: «el Hijo del hombre no vino para ser servido, sino para servir».\n\nEsta es la regla de oro de la coordinación en Ágape. Tu autoridad no viene del cargo, sino de la manera en que sirves. Los demás te seguirán porque confían en ti, no porque tengas el título."
+                },
+                {
+                  "title": "Coordinar no es hacerlo todo",
+                  "body": "Un error frecuente del coordinador que recién parte es querer hacerlo todo él mismo, porque «así sale mejor». Eso agota al coordinador y deja sin espacio a los demás.\n\nCoordinar es lograr que cada uno pueda dar lo mejor de sí: repartir tareas, acompañar, preguntar cómo va, reconocer lo que otros hacen. Un buen coordinador se nota cuando el equipo funciona bien incluso si él falta un día."
+                },
+                {
+                  "title": "Las tentaciones del cargo",
+                  "body": "Todo servicio con algo de responsabilidad tiene sus tentaciones:\n\n- <strong>El protagonismo</strong>: buscar que se note lo que yo hago.\n- <strong>El control</strong>: decidir solo, sin escuchar.\n- <strong>El activismo</strong>: llenarse de actividades y descuidar la oración.\n- <strong>El desánimo</strong>: pensar que todo depende de mí y frustrarse cuando algo falla.\n\nReconocerlas a tiempo es parte del camino. La respuesta a todas es la misma: volver a Jesús, que lava los pies."
+                },
+                {
+                  "title": "Tu servicio en la Iglesia",
+                  "body": "Tu servicio como coordinador no es un trabajo aislado: es parte de la misión de la parroquia y de la Iglesia. Coordinas en comunión con tus asesores, tu párroco y la diócesis. Esa comunión no te quita libertad: te sostiene y te protege de equivocarte solo."
+                }
+              ],
+              "bible": {
+                "ref": "Marcos 10,35-45 · El que quiera ser grande, que se haga servidor",
+                "comment": "Dos discípulos piden poder y los demás se molestan. Jesús no los reta: les enseña un modo nuevo de ser grande. Lee el texto y fíjate en cómo termina: Jesús da su vida. Esa es la medida del liderazgo cristiano."
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 24",
+                  "text": "El papa Francisco pide una Iglesia que sabe «primerear»: tomar la iniciativa, salir al encuentro y acompañar con paciencia.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Christus vivit 35",
+                  "text": "La Iglesia se renueva con la fuerza de la Palabra de Dios, de la Eucaristía y de la presencia de Cristo.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Por qué aceptaste ser coordinador? Escribe tus motivaciones con sinceridad.",
+                "¿Cuál de las tentaciones del cargo te parece más cercana a ti?",
+                "¿Qué gesto concreto de servicio podrías tener esta semana con tu equipo?"
+              ],
+              "activity": "En la próxima reunión quincenal, antes de revisar las tareas, pregunta a cada dirigente cómo está y qué necesita. Escucha sin apurarte. Anota en tu cuaderno qué descubriste.",
+              "prayer": "Gracias, Señor Jesús, porque no viniste a ser servido, sino a servir y a dar tu vida. Te ofrezco este cargo que me confían y te pido un corazón libre de protagonismo. Que mi coordinación sea servicio humilde en tu Iglesia y que, a través de ella, otros puedan dar lo mejor de sí. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Lee el número 24 sobre la Iglesia en salida."
+                },
+                {
+                  "title": "Biblia en línea: Evangelio según san Marcos",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 10."
+                }
+              ]
+            },
+            {
+              "id": "1.2",
+              "title": "Una dupla que camina junta",
+              "time": "40 min",
+              "objective": "Valorar la coordinación en dupla como un estilo de corresponsabilidad y discernimiento compartido, y aprender acuerdos básicos para trabajar bien de a dos.",
+              "intro": "En Ágape la coordinación es una dupla. No es casualidad: Jesús envió a sus discípulos de dos en dos. En esta unidad vas a descubrir el sentido de trabajar de a dos y a construir acuerdos con tu compañero o compañera de coordinación.",
+              "sections": [
+                {
+                  "title": "De dos en dos",
+                  "body": "Jesús envió a los setenta y dos «de dos en dos» delante de él (Lc 10,1). De a dos se sostienen, se corrigen, se animan cuando uno se cansa y dan un testimonio más creíble.\n\nLa dupla de coordinadores no son dos jefes que se reparten el poder, sino dos servidores que se complementan. Uno puede ser más ordenado y el otro más cercano; uno ve los detalles y el otro el horizonte. La riqueza está en sumar los dones."
+                },
+                {
+                  "title": "Acuerdos de la dupla",
+                  "body": "Al empezar, conviene conversar y dejar por escrito algunos acuerdos:\n\n- <strong>Cómo nos comunicamos</strong>: por qué medio, cada cuánto, qué es urgente.\n- <strong>Cómo nos repartimos</strong>: quién lleva el calendario, quién el seguimiento de dirigentes, quién la relación con los apoderados.\n- <strong>Cómo decidimos</strong>: qué decidimos juntos siempre y qué puede decidir uno.\n- <strong>Cómo resolvemos los desacuerdos</strong>: conversar en privado, nunca delante del equipo, y si no hay acuerdo, consultar a los asesores."
+                },
+                {
+                  "title": "Discernir juntos",
+                  "body": "Discernir es buscar juntos lo que Dios quiere, no imponer la propia idea. Para las decisiones importantes, un camino sencillo:\n\n1. Rezar antes de decidir.\n2. Escuchar las opiniones del equipo y de los asesores.\n3. Mirar los pros y contras a la luz del Evangelio y del bien de los jóvenes.\n4. Decidir, comunicar con claridad y evaluar después."
+                },
+                {
+                  "title": "Cuando la dupla se tensiona",
+                  "body": "Es normal tener diferencias. Lo que daña es callarlas o hablarlas con otros en vez de con la otra persona. Una regla de oro: lo que me molesta de mi compañero de dupla, se lo digo primero a él, con cariño y en privado. Si se repite, buscamos juntos a un asesor."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 10,1-9 · Los envió de dos en dos",
+                "comment": "Jesús no envía a sus discípulos solos, sino de a dos, con pocas cosas y con un mensaje de paz. Lee el texto y piensa: ¿qué le aporta tu compañero de dupla a tu servicio? ¿Qué le aportas tú?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 226-230",
+                  "text": "La unidad prevalece sobre el conflicto: los conflictos no se ignoran ni se disimulan, se asumen y se transforman en un eslabón de un nuevo proceso.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Evangelii gaudium 33",
+                  "text": "El papa invita a abandonar el criterio del «siempre se ha hecho así» y a repensar con audacia y creatividad los objetivos y métodos.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                }
+              ],
+              "questions": [
+                "¿Qué dones aportas tú a la dupla y cuáles tu compañero o compañera?",
+                "¿Qué acuerdo de la dupla les falta conversar?",
+                "¿Cómo reaccionas cuando no estás de acuerdo con tu compañero de coordinación?"
+              ],
+              "activity": "Junto a tu compañero de dupla, escriban en una hoja los cuatro acuerdos de esta unidad: cómo se comunican, cómo se reparten, cómo deciden y cómo resuelven los desacuerdos. Compártanla con los asesores en la próxima reunión mensual.",
+              "prayer": "Gracias, Señor, por mi compañero de camino en este servicio, como enviaste a tus discípulos de dos en dos. Te ofrezco nuestras diferencias y nuestros dones, para que se complementen. Que nuestra dupla sea signo de comunión en tu Iglesia y que, discerniendo juntos, busquemos siempre lo que Tú quieres. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Lee los números 226-230: la unidad prevalece sobre el conflicto."
+                }
+              ]
+            },
+            {
+              "id": "1.3",
+              "title": "La Eucaristía, centro del equipo",
+              "time": "40 min",
+              "objective": "Reconocer la Eucaristía y la oración compartida como el centro de la vida del equipo de servicio, y aprender a cuidar ese centro desde la coordinación.",
+              "intro": "Un equipo pastoral puede funcionar muy bien en lo práctico y, sin embargo, perder el sentido. La coordinación tiene una tarea que nadie más puede hacer por ella: cuidar que el equipo no se olvide de quién lo reúne. En esta unidad vas a mirar cómo poner a Cristo, y especialmente la Eucaristía, en el centro de la vida del equipo.",
+              "sections": [
+                {
+                  "title": "Perseveraban en la fracción del pan",
+                  "body": "La primera comunidad cristiana perseveraba en la enseñanza de los apóstoles, en la comunión fraterna, en la fracción del pan y en la oración (Hch 2,42). La «fracción del pan» es el nombre más antiguo de la Eucaristía.\n\nUn equipo de servicio que solo se reúne para organizar se convierte, poco a poco, en una comisión. Un equipo que también celebra junto la misa y reza unido sigue siendo comunidad."
+                },
+                {
+                  "title": "La fuente de todo el servicio",
+                  "body": "El Catecismo enseña que la Eucaristía es «fuente y culmen de toda la vida cristiana» (CEC 1324). De ella brota la fuerza para servir y hacia ella conducimos a los jóvenes.\n\nPara la coordinación, esto se traduce en decisiones concretas: que el calendario del año se arme a partir del año litúrgico y no al revés; que no se programen actividades del grupo a la hora de la misa dominical; que el equipo participe junto, de vez en cuando, en una misa y en un rato de adoración."
+                },
+                {
+                  "title": "La oración en las reuniones",
+                  "body": "Toda reunión del equipo empieza y termina con oración. No como un trámite apurado, sino como un momento real:\n\n- Una invocación al Espíritu Santo al comenzar.\n- Una frase del Evangelio del domingo y un minuto de silencio.\n- Al terminar, una acción de gracias y las intenciones del grupo.\n\nLa coordinación puede repartir este servicio: que cada vez lo prepare un dirigente distinto."
+                },
+                {
+                  "title": "Cuidar la vida espiritual del equipo",
+                  "body": "La coordinación no reemplaza al acompañante espiritual de cada dirigente, pero sí puede cuidar que el equipo tenga ocasiones de crecer en la fe: un retiro al año, tiempos de confesión en Cuaresma y Adviento, la invitación a hacer el curso de formación. Pregunta también, con delicadeza, cómo está cada uno en su vida de fe."
+                }
+              ],
+              "bible": {
+                "ref": "Hechos 2,42-47 · La primera comunidad",
+                "comment": "La comunidad de Jerusalén tenía cuatro pilares: la enseñanza, la comunión fraterna, la fracción del pan y la oración. Lee el texto y evalúa con honestidad cuál de los cuatro está más fuerte y cuál más débil en tu equipo."
+              },
+              "church": [
+                {
+                  "source": "Catecismo 1324",
+                  "text": "La Eucaristía es «fuente y culmen de toda la vida cristiana»: los demás sacramentos y todas las obras de apostolado están unidos a ella y a ella se ordenan.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                },
+                {
+                  "source": "Ecclesia de Eucharistia 1",
+                  "text": "San Juan Pablo II lo resume en una frase: «La Iglesia vive de la Eucaristía».",
+                  "url": "https://www.vatican.va/content/john-paul-ii/es/encyclicals/documents/hf_jp-ii_enc_20030417_eccl-de-euch.html"
+                }
+              ],
+              "questions": [
+                "¿Cuál de los cuatro pilares de Hechos 2,42 está más débil en tu equipo?",
+                "¿Cómo están empezando y terminando hoy las reuniones del equipo?",
+                "¿Qué podrías proponer para que el equipo celebre junto la Eucaristía?"
+              ],
+              "activity": "Coordina con tu equipo una misa dominical a la que vayan juntos este mes, y propongan después un rato breve de adoración o de oración. Incluye en la agenda de la reunión quincenal quién prepara la oración inicial de cada reunión del semestre.",
+              "prayer": "Gracias, Señor, porque te quedaste con nosotros en la Eucaristía y eres el centro que nos reúne. Te ofrezco nuestro equipo, nuestras reuniones y nuestro calendario, para que todo nazca de tu altar. Que como coordinador sepa cuidar ese centro, para que nuestro servicio en tu Iglesia sea siempre fruto de tu amor. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: el sacramento de la Eucaristía",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html",
+                  "note": "Números 1322-1419."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 1 · Fundamentos",
+            "title": "Coordinar desde Cristo",
+            "questions": [
+              {
+                "q": "1. Un dirigente nuevo prepara una dinámica que no te convence del todo. ¿Qué hace un coordinador que sirve?",
+                "options": [
+                  "La rehace él mismo para que salga perfecta.",
+                  "Le pregunta qué quiere lograr, le sugiere mejoras y lo deja hacerla, acompañándolo.",
+                  "Le dice que mejor no la haga."
+                ],
+                "correct": 1,
+                "feedback": "Coordinar es ayudar a que cada uno dé lo mejor de sí, no hacerlo todo uno mismo."
+              },
+              {
+                "q": "2. Tú y tu compañero de dupla no están de acuerdo en una decisión importante. ¿Qué corresponde?",
+                "options": [
+                  "Que cada uno lo plantee al equipo para ver quién gana.",
+                  "Conversarlo en privado, rezar, escuchar al equipo y, si no hay acuerdo, consultar a los asesores.",
+                  "Decide el que lleva más tiempo en Ágape."
+                ],
+                "correct": 1,
+                "feedback": "Los desacuerdos de la dupla se conversan en privado y se disciernen, con ayuda de los asesores si es necesario."
+              },
+              {
+                "q": "3. Al armar el calendario del año, ¿qué va primero?",
+                "options": [
+                  "Las actividades más entretenidas.",
+                  "El año litúrgico y la misa dominical, y a partir de ahí las actividades.",
+                  "Las fechas libres de los dirigentes."
+                ],
+                "correct": 1,
+                "feedback": "La Eucaristía es fuente y culmen de la vida cristiana: el calendario se arma a partir del año litúrgico."
+              },
+              {
+                "q": "4. ¿Cuál es una buena señal de que la coordinación funciona?",
+                "options": [
+                  "Que todo depende del coordinador.",
+                  "Que el equipo funciona bien incluso cuando el coordinador falta un día.",
+                  "Que el coordinador hace la mayor parte del trabajo."
+                ],
+                "correct": 1,
+                "feedback": "Un buen coordinador forma un equipo que funciona sin depender solo de él."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 2,
+          "title": "Planificar con sentido",
+          "desc": "3 unidades · Año pastoral, plan de acción y reuniones",
+          "intro": "Planificar es una forma de amar. En este módulo aprenderás a armar el año pastoral desde el año litúrgico, a convertir ideas en acciones con responsables y plazos, y a conducir reuniones que terminan en acuerdos.",
+          "sessions": [
+            {
+              "id": "2.1",
+              "title": "El año pastoral",
+              "time": "40 min",
+              "objective": "Aprender a planificar el año pastoral de Ágape a partir del año litúrgico, del lema y de los objetivos del grupo, en comunión con la parroquia y la diócesis.",
+              "intro": "Planificar es una forma de amar: es pensar con anticipación en lo que los jóvenes necesitan. En esta unidad vas a ver cómo se arma el año de Ágape y qué papel tiene la coordinación en ese proceso.",
+              "sections": [
+                {
+                  "title": "Todo tiene su momento",
+                  "body": "«Hay un tiempo para todo y un momento para cada cosa bajo el cielo» (Ecl 3,1). El año de Ágape va de marzo a la solemnidad de Cristo Rey, con unos 34 encuentros que siguen el año litúrgico: Cuaresma, Pascua, Pentecostés, el Tiempo Ordinario, el Mes de María.\n\nLa coordinación no inventa el año desde cero: lo recibe de la Iglesia y lo concreta para el grupo."
+                },
+                {
+                  "title": "Lema, foco y objetivos",
+                  "body": "Cada año el equipo, con los asesores, define un lema y un foco (por ejemplo, «año de la misión» o «año vocacional») y dos o tres objetivos concretos. Un buen objetivo dice qué queremos lograr y cómo nos daremos cuenta de que lo logramos.\n\n- Débil: «Que los jóvenes recen más».\n- Mejor: «Que cada familia del grupo tenga un momento de oración en todos sus encuentros, preparado por los propios jóvenes»."
+                },
+                {
+                  "title": "El calendario en una sola mirada",
+                  "body": "El calendario anual reúne en un solo lugar:\n\n- Los encuentros semanales y las semanas sin encuentro (vacaciones, Fiestas Patrias, actividades parroquiales).\n- Los tiempos fuertes: Cuaresma, Semana Santa, Pentecostés, Mes de María, Adviento.\n- Las actividades especiales: retiros, misiones, campamentos, misas del grupo, la misa de envío de dirigentes.\n- Las reuniones del equipo: la mensual con asesores y la quincenal.\n\nEn la app, ese calendario vive en la Agenda: la coordinación lo carga y todos lo ven."
+                },
+                {
+                  "title": "El tiempo es superior al espacio",
+                  "body": "El papa Francisco enseña que «el tiempo es superior al espacio»: es mejor iniciar procesos que ocupar espacios (Evangelii gaudium 222-225). Para la coordinación significa no medir el año solo por la cantidad de actividades, sino por los procesos que se abren en los jóvenes: más amistad con Jesús, más vida de comunidad, más servicio."
+                }
+              ],
+              "bible": {
+                "ref": "Eclesiastés 3,1-8 · Hay un tiempo para todo",
+                "comment": "El sabio descubre que la vida tiene ritmos: tiempo de sembrar y de cosechar, de llorar y de reír. Lee el texto y piensa: ¿cuáles son los ritmos del año de tu grupo? ¿Dónde hace falta un tiempo de descanso o de celebración?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 222-225",
+                  "text": "El tiempo es superior al espacio: se trata de privilegiar las acciones que generan procesos más que ocupar espacios.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Sacrosanctum Concilium 10",
+                  "text": "La liturgia es la cumbre a la cual tiende la actividad de la Iglesia y la fuente de donde mana toda su fuerza.",
+                  "url": "https://www.vatican.va/archive/hist_councils/ii_vatican_council/documents/vat-ii_const_19631204_sacrosanctum-concilium_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Cuál fue el lema del año pasado y qué quedó de él en los jóvenes?",
+                "Escribe un objetivo para el próximo año que diga qué queremos lograr y cómo nos daremos cuenta.",
+                "¿Qué proceso te gustaría abrir en los jóvenes el próximo año?"
+              ],
+              "activity": "Con tu dupla, revisen la Agenda de la app y comprueben que estén cargados los tiempos fuertes, las semanas sin encuentro y las reuniones del equipo de los próximos tres meses. Completen lo que falte.",
+              "prayer": "Gracias, Señor, porque nos das el tiempo como un regalo y nos guías a través del año de la Iglesia. Te ofrezco la planificación de este año, nuestros objetivos y nuestras fechas. Que sepamos abrir procesos más que llenar espacios, y que todo nuestro calendario sirva para que los jóvenes te encuentren en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Números 222-225: el tiempo es superior al espacio."
+                }
+              ]
+            },
+            {
+              "id": "2.2",
+              "title": "De la idea a la acción",
+              "time": "40 min",
+              "objective": "Aprender una herramienta sencilla de planificación para transformar una idea en acciones concretas, con responsables, plazos y recursos.",
+              "intro": "Muchas buenas ideas se quedan en el camino porque nadie definió quién hace qué y para cuándo. En esta unidad vas a aprender a convertir una idea en un plan que se pueda cumplir.",
+              "sections": [
+                {
+                  "title": "Calcular antes de construir",
+                  "body": "Jesús habla de quien quiere construir una torre y primero se sienta a calcular los gastos, para ver si tiene con qué terminarla (Lc 14,28). Planificar no es falta de fe: es responsabilidad con lo que se nos confía."
+                },
+                {
+                  "title": "Cinco preguntas para planificar",
+                  "body": "Para cualquier actividad (un retiro, una misión, una colecta), respondan juntos:\n\n1. <strong>¿Para qué?</strong> El objetivo, en una frase.\n2. <strong>¿Qué?</strong> Las acciones necesarias.\n3. <strong>¿Quién?</strong> Un responsable por acción, con nombre y apellido.\n4. <strong>¿Cuándo?</strong> Una fecha para cada acción.\n5. <strong>¿Con qué?</strong> Los recursos: dinero, materiales, permisos, lugar.\n\nLas respuestas se anotan en una tabla sencilla que todo el equipo puede ver."
+                },
+                {
+                  "title": "Responsables, no voluntarios anónimos",
+                  "body": "Una tarea que es «de todos» suele terminar siendo de nadie. Cada acción tiene un responsable, aunque trabaje con otros. El responsable no tiene que hacerlo todo: tiene que preocuparse de que se haga y avisar a tiempo si algo se complica."
+                },
+                {
+                  "title": "Prever los riesgos",
+                  "body": "Antes de cerrar el plan, pregunten: ¿qué podría salir mal? Lluvia, poca asistencia, un permiso que no llega, un traslado sin adultos suficientes. Para cada riesgo importante, piensen un plan B. Y recuerden que toda actividad con menores necesita autorización de los apoderados y adultos responsables (lo verás en el Módulo 5)."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 14,28-30 · Calcular antes de construir",
+                "comment": "Jesús usa un ejemplo práctico: nadie empieza una torre sin calcular si podrá terminarla. Lee el texto y piensa en una actividad del grupo que quedó a medio camino. ¿Qué faltó calcular?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 231-233",
+                  "text": "La realidad es más importante que la idea: las ideas deben estar al servicio de la realidad concreta, para no quedarse en propuestas que no se encarnan.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                }
+              ],
+              "questions": [
+                "Piensa en una actividad que salió bien. ¿Qué la hizo funcionar?",
+                "Piensa en una que no resultó. ¿Cuál de las cinco preguntas faltó responder?",
+                "¿Qué tareas de tu equipo hoy «son de todos» y necesitan un responsable?"
+              ],
+              "activity": "Elijan la próxima actividad especial del grupo y respondan juntos las cinco preguntas en una tabla: acción, responsable, fecha y recursos. Agreguen una columna de riesgos con su plan B y compártanla con todo el equipo.",
+              "prayer": "Gracias, Señor, por las ideas y los sueños que pones en nuestro equipo. Te ofrezco nuestros planes, nuestras tablas y nuestros plazos, para que no se queden en palabras. Que sepamos calcular con responsabilidad y confiar en tu providencia, y que cada actividad sea un servicio bien hecho para los jóvenes de tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Números 231-233: la realidad es más importante que la idea."
+                }
+              ]
+            },
+            {
+              "id": "2.3",
+              "title": "Reuniones que sirven",
+              "time": "40 min",
+              "objective": "Aprender a preparar, conducir y cerrar las reuniones del equipo (mensual y quincenal) para que sean breves, orantes y terminen en acuerdos claros.",
+              "intro": "Nadie quiere reuniones largas que no llegan a nada. La coordinación es responsable de que las reuniones del equipo sean un espacio de comunión y de trabajo bien hecho. En esta unidad vas a aprender a prepararlas y conducirlas.",
+              "sections": [
+                {
+                  "title": "Escuchar, discernir, decidir",
+                  "body": "Cuando la primera comunidad enfrentó un conflicto serio, los apóstoles y los presbíteros se reunieron en Jerusalén: escucharon a todos, discernieron a la luz del Espíritu y comunicaron su decisión por escrito: «el Espíritu Santo y nosotros hemos decidido…» (Hch 15,28). Es un buen modelo para nuestras reuniones."
+                },
+                {
+                  "title": "Las dos reuniones del equipo",
+                  "body": "- <strong>Reunión mensual</strong> (asesores y coordinadores): revisar el rumbo, el calendario litúrgico, los objetivos del mes y las situaciones delicadas.\n- <strong>Reunión quincenal</strong> (coordinadores, animadores y dirigentes): programar en detalle los próximos encuentros y evaluar los anteriores.\n\nCada una tiene su propósito. No conviene mezclarlas ni tratar en la quincenal temas que corresponden a la mensual, como situaciones personales delicadas."
+                },
+                {
+                  "title": "Antes, durante y después",
+                  "body": "<strong>Antes</strong>: envía la tabla de temas con un día de anticipación, con el tiempo de cada punto.\n\n<strong>Durante</strong>: empieza a la hora, con oración. Cuida que todos hablen, que nadie acapare y que cada punto termine en un acuerdo.\n\n<strong>Después</strong>: envía el mismo día un acta breve con los acuerdos: qué se decidió, quién lo hace y para cuándo. Sin acta, los acuerdos se olvidan."
+                },
+                {
+                  "title": "Una reunión de una hora",
+                  "body": "Una estructura que funciona para la quincenal:\n\n1. Oración (5 min).\n2. Revisión de los acuerdos de la reunión anterior (10 min).\n3. Evaluación de los encuentros pasados (10 min).\n4. Programación de los próximos encuentros (25 min).\n5. Varios y avisos (5 min).\n6. Acuerdos y oración final (5 min)."
+                }
+              ],
+              "bible": {
+                "ref": "Hechos 15,6-29 · La asamblea de Jerusalén",
+                "comment": "La comunidad enfrenta una pregunta difícil. Fíjate en los pasos: se reúnen, discuten, escuchan testimonios, Santiago propone, todos deciden y lo comunican por escrito. Lee el texto y compáralo con la forma en que decide tu equipo."
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 234-237",
+                  "text": "El todo es superior a la parte: hay que ampliar la mirada para reconocer un bien mayor que nos beneficia a todos.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo son hoy las reuniones de tu equipo? ¿Qué funciona y qué no?",
+                "¿Quién suele hablar más y quién casi nunca en las reuniones? ¿Cómo podrías equilibrarlo?",
+                "¿Se envía un acta con los acuerdos después de cada reunión?"
+              ],
+              "activity": "Prepara la próxima reunión quincenal con la estructura de una hora: envía la tabla de temas un día antes, cuida los tiempos y envía el acta con los acuerdos el mismo día. Pide al equipo que evalúe la reunión en una palabra al final.",
+              "prayer": "Gracias, Espíritu Santo, porque nos reúnes y nos ayudas a discernir. Te ofrezco cada reunión de nuestro equipo, con sus palabras, sus silencios y sus acuerdos. Que nuestras reuniones sean comunión y servicio, y que podamos decir, como la primera comunidad: «el Espíritu Santo y nosotros hemos decidido». Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Hechos de los Apóstoles",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 15."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 2 · Planificar",
+            "title": "Planificar con sentido",
+            "questions": [
+              {
+                "q": "1. ¿Cuál es el mejor objetivo para el año?",
+                "options": [
+                  "Que los jóvenes sean más buenos.",
+                  "Que cada familia del grupo tenga un momento de oración en todos sus encuentros, preparado por los propios jóvenes.",
+                  "Hacer muchas actividades."
+                ],
+                "correct": 1,
+                "feedback": "Un buen objetivo dice qué queremos lograr y cómo nos daremos cuenta de que lo logramos."
+              },
+              {
+                "q": "2. Para organizar un retiro, el equipo dice «todos ayudamos con todo». ¿Qué falta?",
+                "options": [
+                  "Más entusiasmo.",
+                  "Un responsable con nombre para cada acción, con fecha y recursos.",
+                  "Hacer el retiro más corto."
+                ],
+                "correct": 1,
+                "feedback": "Una tarea que es de todos suele terminar siendo de nadie: cada acción necesita un responsable y una fecha."
+              },
+              {
+                "q": "3. ¿Qué se hace después de cada reunión del equipo?",
+                "options": [
+                  "Nada: todos recuerdan lo conversado.",
+                  "Se envía el mismo día un acta breve con los acuerdos, responsables y plazos.",
+                  "Se espera a la próxima reunión para recordar."
+                ],
+                "correct": 1,
+                "feedback": "Sin acta, los acuerdos se olvidan."
+              },
+              {
+                "q": "4. Una situación personal delicada de un joven, ¿en qué reunión se trata?",
+                "options": [
+                  "En la quincenal, con todo el equipo.",
+                  "En la mensual, con los asesores, cuidando la confidencialidad.",
+                  "En el chat del equipo."
+                ],
+                "correct": 1,
+                "feedback": "Las situaciones delicadas se tratan con los asesores, con discreción, no frente a todo el equipo."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 3,
+          "title": "Seguimiento y administración",
+          "desc": "3 unidades · Compromisos, recursos y evaluación",
+          "intro": "Un acuerdo sin seguimiento es una buena intención. En este módulo aprenderás a acompañar los compromisos del equipo, a administrar con transparencia y a evaluar para crecer.",
+          "sessions": [
+            {
+              "id": "3.1",
+              "title": "Compromisos y seguimiento",
+              "time": "40 min",
+              "objective": "Aprender a hacer seguimiento de los compromisos y acciones del equipo con herramientas sencillas, sin perder el trato cercano.",
+              "intro": "Un acuerdo sin seguimiento es una buena intención. Pero un seguimiento sin cariño se convierte en control. En esta unidad vas a aprender a acompañar el cumplimiento de los compromisos con orden y con caridad.",
+              "sections": [
+                {
+                  "title": "Fiel en lo poco",
+                  "body": "Jesús dice que «el que es fiel en lo poco también es fiel en lo mucho» (Lc 16,10). Los pequeños compromisos cumplidos (llegar a la hora, traer el material, avisar cuando no se puede) construyen la confianza del equipo y son también una forma de vivir el Evangelio."
+                },
+                {
+                  "title": "Un tablero de compromisos",
+                  "body": "Una herramienta sencilla basta: una tabla compartida con cinco columnas.\n\n- <strong>Compromiso</strong>: qué se acordó.\n- <strong>Responsable</strong>: quién.\n- <strong>Fecha</strong>: para cuándo.\n- <strong>Estado</strong>: pendiente, en curso, listo.\n- <strong>Nota</strong>: lo que haga falta saber.\n\nSe revisa al comienzo de cada reunión quincenal (punto 2 de la estructura de una hora). Así nadie se entera tarde de que algo no se hizo."
+                },
+                {
+                  "title": "Preguntar a tiempo",
+                  "body": "Un buen seguimiento se adelanta: unos días antes de la fecha, el coordinador pregunta «¿cómo vas con…? ¿necesitas ayuda?». Esa pregunta, hecha con cariño, evita la mayoría de los problemas. Si alguien no puede cumplir, lo importante es que avise a tiempo para buscar otra solución."
+                },
+                {
+                  "title": "Cuando alguien no cumple",
+                  "body": "Puede pasar. Antes de reclamar, pregunta qué pasó: a veces hay una dificultad personal detrás. Conversa en privado, busquen juntos una solución y, si se repite, conversen sobre si ese servicio es el adecuado para esa persona en este momento. Nunca se expone a alguien delante del grupo."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 16,10-12 · Fiel en lo poco",
+                "comment": "Jesús une la fidelidad en lo pequeño con la confianza en lo grande. Lee el texto y piensa en los pequeños compromisos de tu servicio: ¿cuáles cumples con fidelidad y cuáles se te escapan?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 2478",
+                  "text": "Para evitar el juicio temerario, cada uno debe interpretar, en cuanto sea posible, en un sentido favorable los pensamientos, palabras y acciones de su prójimo.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Qué compromisos del equipo se suelen olvidar?",
+                "¿Cómo reaccionas cuando alguien no cumple lo acordado?",
+                "¿Quién en tu equipo podría ayudarte a llevar el tablero de compromisos?"
+              ],
+              "activity": "Arma el tablero de compromisos del equipo con los acuerdos de la última reunión (puede ser una tabla en papel, en el teléfono o en una planilla compartida) y revísenlo al comienzo de la próxima reunión quincenal.",
+              "prayer": "Gracias, Señor, porque eres fiel a tus promesas aun cuando nosotros fallamos. Te ofrezco los compromisos de nuestro equipo, los cumplidos y los pendientes. Que sepa acompañar a cada uno con orden y con cariño, y que nuestra fidelidad en lo pequeño sea un servicio humilde en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: el octavo mandamiento",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html",
+                  "note": "Números 2475-2487: el respeto de la reputación y el juicio temerario."
+                }
+              ]
+            },
+            {
+              "id": "3.2",
+              "title": "Administrar con transparencia",
+              "time": "40 min",
+              "objective": "Conocer criterios básicos para administrar con transparencia los recursos del grupo: dinero, materiales, inventario y espacios de la parroquia.",
+              "intro": "Los recursos del grupo no son de la coordinación: son de la comunidad y, en el fondo, de Dios. En esta unidad vas a aprender a administrarlos con orden, transparencia y espíritu de servicio.",
+              "sections": [
+                {
+                  "title": "Honradez ante Dios y ante los demás",
+                  "body": "San Pablo organizó una colecta para la comunidad de Jerusalén y cuidó que todo fuera transparente: «procuramos hacer el bien no solo delante del Señor, sino también delante de los hombres» (2 Co 8,21). La transparencia protege a la comunidad y protege también a quien administra."
+                },
+                {
+                  "title": "El dinero del grupo",
+                  "body": "Algunos criterios sencillos:\n\n- El dinero lo maneja un tesorero designado, no la coordinación sola, y nunca en una cuenta personal sin registro.\n- Todo ingreso y todo gasto se anota con fecha, monto, motivo y comprobante (boleta o foto).\n- Dos personas cuentan el dinero de una colecta o una actividad.\n- Una vez al semestre se rinde cuenta al equipo y a los asesores.\n- Las actividades para reunir fondos se coordinan con la parroquia."
+                },
+                {
+                  "title": "Materiales e inventario",
+                  "body": "Los materiales del grupo (guitarras, parlantes, carpas, material de dinámicas) se registran en una lista con su estado y quién los tiene. Al terminar una actividad se revisa que todo vuelva a su lugar. Un inventario simple evita pérdidas y discusiones."
+                },
+                {
+                  "title": "Los espacios de la parroquia",
+                  "body": "Las salas y el templo son de la comunidad parroquial. Se piden con anticipación a quien corresponda, se dejan limpios y ordenados, y se respeta el horario. Cuidar los espacios es una forma concreta de comunión con la parroquia."
+                }
+              ],
+              "bible": {
+                "ref": "2 Corintios 8,16-24 · Transparencia en la colecta",
+                "comment": "Pablo envía a Tito y a otro hermano para encargarse de la colecta, de modo que nadie pueda criticar el manejo del dinero. Lee el texto y fíjate en cuántas precauciones toma. ¿Cuáles podría tomar tu equipo?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 1397",
+                  "text": "La Eucaristía entraña un compromiso en favor de los pobres: los bienes de la comunidad también están al servicio de los hermanos más necesitados.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p2s2c1a3_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo se maneja hoy el dinero de tu grupo? ¿Hay registro y rendición de cuentas?",
+                "¿Existe un inventario de los materiales del grupo?",
+                "¿Qué precaución de esta unidad deberían adoptar primero?"
+              ],
+              "activity": "Con el tesorero, revisen el registro de ingresos y gastos del último semestre y preparen una rendición de cuentas breve para la próxima reunión mensual. Si no existe un inventario de materiales, armen la primera lista.",
+              "prayer": "Gracias, Señor, por todo lo que nos confías: el dinero, los materiales, los espacios y, sobre todo, las personas. Te ofrezco mi administración, para que sea honrada y transparente ante Ti y ante los demás. Que los bienes de nuestro grupo estén siempre al servicio de los jóvenes y de los más pobres en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Segunda carta a los Corintios",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulos 8 y 9: la colecta para Jerusalén."
+                }
+              ]
+            },
+            {
+              "id": "3.3",
+              "title": "Evaluar para crecer",
+              "time": "40 min",
+              "objective": "Aprender a evaluar los encuentros, las actividades y el año pastoral de forma sencilla, para mejorar y reconocer lo que Dios ha hecho.",
+              "intro": "Evaluar no es buscar culpables, sino aprender. Un equipo que evalúa con frecuencia mejora rápido y celebra lo que funciona. En esta unidad vas a aprender herramientas sencillas para evaluar con sentido.",
+              "sections": [
+                {
+                  "title": "Contaron todo lo que habían hecho",
+                  "body": "Cuando los apóstoles volvieron de la misión, le contaron a Jesús todo lo que habían hecho, y él los llevó aparte a descansar (Lc 9,10). Evaluar es también eso: volver con Jesús, contarle lo vivido, agradecer y descansar en Él."
+                },
+                {
+                  "title": "Tres preguntas que bastan",
+                  "body": "Para evaluar un encuentro o una actividad:\n\n1. <strong>¿Qué funcionó?</strong> Para repetirlo.\n2. <strong>¿Qué no funcionó?</strong> Para cambiarlo.\n3. <strong>¿Qué aprendimos?</strong> Para la próxima vez.\n\nSe anotan las respuestas y se guardan junto a la planificación. Así el próximo año no se parte de cero."
+                },
+                {
+                  "title": "Evaluar el año",
+                  "body": "Al final del año (después de Cristo Rey), el equipo dedica una reunión completa a evaluar:\n\n- ¿Cumplimos los objetivos que nos propusimos?\n- ¿Qué procesos se abrieron en los jóvenes?\n- ¿Cómo estuvo el equipo: la comunión, el cansancio, la formación?\n- ¿Qué cambiaríamos para el próximo año?\n\nEsa evaluación se comparte con los asesores y el párroco, y sirve para planificar el año siguiente."
+                },
+                {
+                  "title": "Evaluar con caridad",
+                  "body": "Se evalúan las acciones, no a las personas. Se dice lo que no funcionó sin humillar a nadie y se reconoce públicamente lo que salió bien. Y siempre se termina dando gracias: lo que pasó en el corazón de los jóvenes es, ante todo, obra de Dios."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 9,10-11 · Volvieron y le contaron todo",
+                "comment": "Los apóstoles vuelven contentos y cansados de la misión, y Jesús los escucha y los lleva aparte. Lee el texto y piensa: ¿cuándo fue la última vez que tu equipo se detuvo a contarle a Jesús lo vivido y a dar gracias?"
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 231-233",
+                  "text": "La realidad es más importante que la idea: evaluar es mirar la realidad tal como es, para que nuestras propuestas respondan a ella.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                }
+              ],
+              "questions": [
+                "¿Tu equipo evalúa los encuentros? ¿Cómo lo hace?",
+                "¿Qué aprendizaje del año pasado no debería olvidarse?",
+                "¿Cómo podrías asegurar que la evaluación termine en acción de gracias?"
+              ],
+              "activity": "Después del próximo encuentro, dediquen diez minutos a las tres preguntas de evaluación y anoten las respuestas. Propongan además la fecha de la evaluación del año en la Agenda.",
+              "prayer": "Gracias, Señor, por todo lo que haces en los jóvenes y en nuestro equipo, mucho más de lo que vemos. Te ofrezco lo que funcionó y lo que no, nuestros aciertos y nuestros errores. Que sepamos evaluar con humildad y caridad, aprender de lo vivido y seguir sirviendo en tu Iglesia con un corazón agradecido. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Números 231-233."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 3 · Seguimiento y administración",
+            "title": "Seguir, administrar y evaluar",
+            "questions": [
+              {
+                "q": "1. ¿Cuándo conviene revisar el tablero de compromisos?",
+                "options": [
+                  "Solo al final del año.",
+                  "Al comienzo de cada reunión quincenal, y preguntando antes de cada fecha.",
+                  "Cuando algo sale mal."
+                ],
+                "correct": 1,
+                "feedback": "El seguimiento se adelanta: se revisa en cada reunión y se pregunta antes de la fecha."
+              },
+              {
+                "q": "2. Un dirigente no trajo el material que le tocaba por segunda vez. ¿Qué haces?",
+                "options": [
+                  "Se lo reclamas delante del grupo.",
+                  "Le preguntas en privado qué pasó y buscan juntos una solución.",
+                  "Lo sacas del equipo."
+                ],
+                "correct": 1,
+                "feedback": "Antes de reclamar, se pregunta; nunca se expone a alguien delante del grupo."
+              },
+              {
+                "q": "3. ¿Cuál es una buena práctica con el dinero del grupo?",
+                "options": [
+                  "Que lo guarde el coordinador en su cuenta personal.",
+                  "Registrar cada ingreso y gasto con comprobante, contarlo entre dos y rendir cuenta cada semestre.",
+                  "No anotar nada para no complicarse."
+                ],
+                "correct": 1,
+                "feedback": "La transparencia protege a la comunidad y a quien administra."
+              },
+              {
+                "q": "4. Al evaluar una actividad que salió mal, ¿qué corresponde?",
+                "options": [
+                  "Buscar al culpable.",
+                  "Preguntar qué funcionó, qué no y qué aprendimos, evaluando acciones y no personas.",
+                  "No hablar más del tema."
+                ],
+                "correct": 1,
+                "feedback": "Evaluar es aprender, con caridad, y terminar dando gracias."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 4,
+          "title": "Comunicar y cuidar al equipo",
+          "desc": "3 unidades · Comunicación asertiva, conflictos y comunicación hacia afuera",
+          "intro": "Coordinar es, en gran parte, comunicar. En este módulo aprenderás a decir la verdad con amor, a enfrentar los conflictos al estilo de Jesús y a comunicar con cuidado hacia los apoderados, la parroquia y las redes.",
+          "sessions": [
+            {
+              "id": "4.1",
+              "title": "Comunicación asertiva",
+              "time": "40 min",
+              "objective": "Aprender a comunicarse de forma asertiva: decir la verdad con claridad y con amor, escuchar y pedir lo que se necesita sin agredir ni callar.",
+              "intro": "Coordinar es, en gran parte, comunicar: pedir, avisar, agradecer, corregir. En esta unidad vas a aprender a comunicarte de un modo que respeta a los demás y a ti mismo.",
+              "sections": [
+                {
+                  "title": "La verdad con amor",
+                  "body": "San Pablo resume el estilo cristiano de comunicarse: «viviendo en la verdad y en el amor» (Ef 4,15). No basta con decir la verdad si se dice con dureza, ni basta con ser amable si se calla lo que hay que decir. La asertividad cristiana une las dos cosas."
+                },
+                {
+                  "title": "Tres estilos de comunicación",
+                  "body": "- <strong>Pasivo</strong>: callo lo que pienso para evitar problemas, y después me molesto.\n- <strong>Agresivo</strong>: digo lo que pienso sin cuidar al otro, con gritos, ironía o descalificaciones.\n- <strong>Asertivo</strong>: digo lo que pienso y necesito con claridad, respetando al otro.\n\nTodos usamos los tres según el momento. El desafío es elegir conscientemente el estilo asertivo."
+                },
+                {
+                  "title": "Una frase que ayuda",
+                  "body": "Una forma sencilla de hablar asertivamente tiene cuatro partes:\n\n1. Lo que pasó, sin juzgar: «En las últimas dos reuniones llegaste media hora tarde».\n2. Cómo me afecta: «Me preocupa porque tuvimos que empezar sin tu parte».\n3. Lo que necesito: «Necesito que me avises si no vas a llegar a la hora».\n4. Una pregunta abierta: «¿Qué te está pasando? ¿Cómo te puedo ayudar?»."
+                },
+                {
+                  "title": "Escuchar también es comunicar",
+                  "body": "La comunicación asertiva incluye escuchar de verdad: no interrumpir, preguntar antes de suponer y repetir con tus palabras lo que entendiste. En los grupos de WhatsApp del equipo, cuida además el tono: lo que por escrito parece neutro puede leerse como un reto. Las conversaciones difíciles se tienen en persona, no por chat."
+                }
+              ],
+              "bible": {
+                "ref": "Efesios 4,15.25-32 · La verdad con amor",
+                "comment": "Pablo da consejos muy concretos para hablar en comunidad: decir la verdad, no dejar que el enojo dure hasta la noche, que de la boca salgan palabras que edifiquen. Lee el texto y elige un consejo para practicar esta semana."
+              },
+              "church": [
+                {
+                  "source": "Catecismo 2477",
+                  "text": "El respeto de la reputación de las personas prohíbe toda actitud y toda palabra que pueda causarles un daño injusto.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Qué estilo de comunicación usas más cuando estás bajo presión?",
+                "Piensa en una conversación pendiente con alguien de tu equipo. Escríbela usando la frase de cuatro partes.",
+                "¿Cómo está el tono de los mensajes en el grupo de WhatsApp del equipo?"
+              ],
+              "activity": "Ten esta semana la conversación pendiente que escribiste, en persona, usando la frase de cuatro partes. Después anota en tu cuaderno cómo te fue y qué aprendiste.",
+              "prayer": "Gracias, Señor, porque eres la Palabra que se hizo cercana y nos habló con verdad y con amor. Te ofrezco mi manera de hablar: mis silencios cobardes y mis palabras duras. Que aprenda a decir la verdad con amor y a escuchar de verdad, para que mi servicio en tu Iglesia edifique y nunca hiera. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: el octavo mandamiento",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html",
+                  "note": "Números 2464-2513: la verdad y el respeto en la comunicación."
+                }
+              ]
+            },
+            {
+              "id": "4.2",
+              "title": "Conflictos y corrección fraterna",
+              "time": "40 min",
+              "objective": "Aprender a enfrentar los conflictos del equipo de forma evangélica, siguiendo los pasos de la corrección fraterna y buscando la reconciliación.",
+              "intro": "Donde hay personas hay conflictos. Lo que distingue a una comunidad cristiana no es que no tenga conflictos, sino la manera en que los enfrenta. En esta unidad vas a aprender el camino que propone Jesús.",
+              "sections": [
+                {
+                  "title": "Los pasos de Jesús",
+                  "body": "Jesús propone un camino muy concreto (Mt 18,15-17):\n\n1. <strong>A solas</strong>: «ve y corrígelo en privado». Primero se habla con la persona, no de la persona.\n2. <strong>Con uno o dos más</strong>: si no escucha, se busca la ayuda de alguien de confianza (en Ágape, normalmente un asesor).\n3. <strong>Con la comunidad</strong>: solo si lo anterior no basta, y con mucho cuidado.\n\nLa mayoría de los conflictos se resuelven en el primer paso, si se da a tiempo y con cariño."
+                },
+                {
+                  "title": "Lo que empeora un conflicto",
+                  "body": "- Hablar a espaldas de la persona o comentar el problema en el grupo de WhatsApp.\n- Dejar pasar el tiempo hasta que la molestia crece.\n- Generalizar: «tú siempre…», «tú nunca…».\n- Buscar tener la razón más que buscar una solución.\n- Mezclar el conflicto del equipo con los jóvenes."
+                },
+                {
+                  "title": "Mediar como coordinador",
+                  "body": "Cuando el conflicto es entre dos dirigentes, la coordinación puede mediar: escucha a cada uno por separado, luego reúnelos, pide que cada uno diga lo que le pasó sin acusar y busquen juntos un acuerdo concreto. Si el conflicto es contigo, pide ayuda a un asesor para que medie."
+                },
+                {
+                  "title": "Perdonar y empezar de nuevo",
+                  "body": "Pedro le pregunta a Jesús cuántas veces hay que perdonar, y Jesús responde: «setenta veces siete» (Mt 18,22). Un equipo que sabe pedir perdón y perdonar es un testimonio para los jóvenes. Y recuerda que el sacramento de la reconciliación también sana las heridas que dejan los conflictos."
+                }
+              ],
+              "bible": {
+                "ref": "Mateo 18,15-22 · Si tu hermano peca",
+                "comment": "Jesús da un procedimiento claro para corregir y, a continuación, habla del perdón sin límite. Lee el texto y fíjate en que ambas cosas van juntas: corregir y perdonar."
+              },
+              "church": [
+                {
+                  "source": "Evangelii gaudium 226-230",
+                  "text": "La unidad prevalece sobre el conflicto: se trata de aceptar el conflicto, resolverlo y transformarlo en el eslabón de un nuevo proceso.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                },
+                {
+                  "source": "Christus vivit 123",
+                  "text": "Cuando te acerques a confesar tus pecados, cree firmemente en su misericordia que te libera de la culpa.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                }
+              ],
+              "questions": [
+                "¿Hay algún conflicto abierto hoy en tu equipo? ¿En qué paso está?",
+                "¿Cuál de las cosas que empeoran un conflicto sueles hacer tú?",
+                "¿A quién necesitas pedir perdón o perdonar?"
+              ],
+              "activity": "Si hay un conflicto abierto en tu equipo, da el primer paso de Jesús: conversa en privado con la persona esta semana. Si el conflicto es entre otros dos, ofrece mediar. Comparte con tu asesor cómo resultó.",
+              "prayer": "Gracias, Señor, porque nos corriges con paciencia y nos perdonas setenta veces siete. Te ofrezco los conflictos de nuestro equipo y mis propias heridas. Que tenga la valentía de corregir en privado y la humildad de pedir perdón, para que nuestra comunidad sea signo de tu reconciliación en la Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Evangelii gaudium (texto completo)",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html",
+                  "note": "Números 226-230."
+                }
+              ]
+            },
+            {
+              "id": "4.3",
+              "title": "Comunicar hacia afuera",
+              "time": "40 min",
+              "objective": "Aprender a comunicar las actividades del grupo a los apoderados, la parroquia y las redes sociales con claridad y con criterios de cuidado de los jóvenes.",
+              "intro": "La coordinación es también la voz del grupo hacia afuera: los apoderados, la parroquia y las redes. En esta unidad vas a aprender a comunicar bien y con cuidado.",
+              "sections": [
+                {
+                  "title": "Lo que hemos visto y oído",
+                  "body": "«Lo que hemos visto y oído, se lo anunciamos» (1 Jn 1,3). Comunicar lo que vive el grupo es una forma de evangelizar: muestra que en la parroquia hay jóvenes que se encuentran con Jesús. Pero esa comunicación tiene que cuidar a las personas."
+                },
+                {
+                  "title": "Con los apoderados",
+                  "body": "Los papás y apoderados confían a sus hijos al grupo. Necesitan saber con anticipación:\n\n- Fechas, horarios y lugares de los encuentros y actividades.\n- Para las salidas: el programa, los adultos responsables, el transporte, el costo y la autorización que deben firmar.\n- A quién contactar ante cualquier duda.\n\nEn la app, la Agenda reúne las fechas: compártela con ellos. Responde siempre las consultas de los apoderados con amabilidad y rapidez."
+                },
+                {
+                  "title": "Con la parroquia",
+                  "body": "Informa a la parroquia (secretaría, párroco, consejo pastoral) de las actividades que usan espacios o que involucran a toda la comunidad. Participa en las instancias parroquiales cuando se invite al grupo. Ágape es parte de la parroquia, no un grupo aparte."
+                },
+                {
+                  "title": "En redes sociales",
+                  "body": "Criterios básicos, en línea con el cuidado de los jóvenes:\n\n- Solo se publican fotos de jóvenes con autorización de sus apoderados, y nunca en situaciones que puedan avergonzarlos.\n- Se identifica a los jóvenes solo con el nombre y la inicial del apellido; nunca teléfonos, direcciones ni colegios.\n- No se publica en vivo la ubicación de una actividad con menores.\n- El tono es siempre respetuoso: lo que se publica habla de toda la Iglesia."
+                }
+              ],
+              "bible": {
+                "ref": "1 Juan 1,1-4 · Lo que hemos visto y oído",
+                "comment": "Juan comunica una experiencia: lo que vio, oyó y tocó. Lee el texto y piensa: ¿qué experiencia de fe vive tu grupo que vale la pena comunicar, y cómo hacerlo cuidando a cada joven?"
+              },
+              "church": [
+                {
+                  "source": "Catecismo 2489",
+                  "text": "Al comunicar información, el bien y la seguridad del prójimo y el respeto de la vida privada son razones suficientes para callar lo que no debe ser conocido.",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html"
+                }
+              ],
+              "questions": [
+                "¿Cómo se enteran hoy los apoderados de las actividades del grupo?",
+                "¿Qué criterio de redes sociales no se está cumpliendo en tu grupo?",
+                "¿Qué podrías mejorar en la relación con la parroquia?"
+              ],
+              "activity": "Revisen la Agenda de la app y comprueben que estén las próximas actividades con la información que necesitan los apoderados. Revisen también las últimas publicaciones del grupo en redes con los criterios de esta unidad.",
+              "prayer": "Gracias, Señor, por todo lo que vemos y oímos de Ti en los jóvenes de nuestro grupo. Te ofrezco nuestra comunicación con los apoderados, con la parroquia y en las redes. Que sepamos anunciar lo que vivimos con alegría y cuidar a cada joven, para que nuestra voz sea siempre servicio en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Catecismo: el octavo mandamiento",
+                  "url": "https://www.vatican.va/archive/catechism_sp/p3s2c2a8_sp.html",
+                  "note": "Número 2489: la discreción al comunicar."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 4 · Comunicar",
+            "title": "Comunicar y cuidar al equipo",
+            "questions": [
+              {
+                "q": "1. ¿Cuál es una frase asertiva?",
+                "options": [
+                  "«Tú nunca cumples nada».",
+                  "«En las últimas dos reuniones llegaste tarde; me preocupa. Necesito que me avises. ¿Qué te está pasando?».",
+                  "No decir nada para evitar problemas."
+                ],
+                "correct": 1,
+                "feedback": "La frase asertiva describe sin juzgar, dice cómo me afecta, pide lo que necesito y pregunta."
+              },
+              {
+                "q": "2. Dos dirigentes están peleados. ¿Cuál es el primer paso?",
+                "options": [
+                  "Comentarlo en el grupo de WhatsApp del equipo.",
+                  "Escuchar a cada uno por separado y luego reunirlos para buscar un acuerdo.",
+                  "Esperar a que se les pase."
+                ],
+                "correct": 1,
+                "feedback": "Jesús propone empezar en privado; la coordinación puede mediar escuchando a cada uno."
+              },
+              {
+                "q": "3. ¿Qué datos de un joven se pueden publicar en redes del grupo?",
+                "options": [
+                  "Nombre completo y colegio.",
+                  "Solo el nombre y la inicial del apellido, y fotos con autorización de sus apoderados.",
+                  "Cualquier dato si el joven está de acuerdo."
+                ],
+                "correct": 1,
+                "feedback": "Se cuida la privacidad: nombre e inicial, y fotos solo con autorización."
+              },
+              {
+                "q": "4. ¿Dónde se tiene una conversación difícil con alguien del equipo?",
+                "options": [
+                  "Por chat, para que quede por escrito.",
+                  "En persona y en privado.",
+                  "Delante del equipo, para que todos aprendan."
+                ],
+                "correct": 1,
+                "feedback": "Las conversaciones difíciles se tienen en persona: por escrito el tono se malinterpreta."
+              }
+            ]
+          }
+        },
+        {
+          "phaseNum": 5,
+          "title": "Prevención, cuidado y relevo",
+          "desc": "3 unidades · Ambientes seguros, situaciones críticas y relevo",
+          "intro": "La coordinación tiene una responsabilidad especial en el cuidado de todos. En este módulo revisarás cómo hacer de Ágape un lugar seguro, cómo actuar ante una situación crítica y cómo preparar a quienes vendrán después.",
+          "sessions": [
+            {
+              "id": "5.1",
+              "title": "Ambientes sanos y seguros",
+              "time": "40 min",
+              "objective": "Conocer las responsabilidades de la coordinación en la prevención de abusos y en el cuidado de niños, adolescentes y jóvenes, según las orientaciones de la Iglesia en Chile.",
+              "intro": "La coordinación tiene una responsabilidad especial en la prevención: organiza las actividades, define los espacios y elige a quienes acompañan. En esta unidad vas a revisar cómo hacer de Ágape un lugar seguro para todos.",
+              "sections": [
+                {
+                  "title": "Jesús pone a los pequeños en el centro",
+                  "body": "Jesús toma a un niño, lo pone en medio de sus discípulos, lo abraza y dice: «el que recibe a uno de estos pequeños en mi nombre, me recibe a mí» (Mc 9,37). Cuidar a los más pequeños y vulnerables no es un trámite: es recibir a Cristo."
+                },
+                {
+                  "title": "Lo que la coordinación debe asegurar",
+                  "body": "Según las orientaciones de Integridad en el Servicio Eclesial (ISE) de la Conferencia Episcopal de Chile:\n\n- Que todos los dirigentes conozcan y acepten los criterios de conducta del grupo y hayan hecho la formación en prevención.\n- Que las actividades se hagan en espacios abiertos y visibles, nunca a solas con un menor.\n- Que para salidas, retiros y campamentos haya autorización escrita de los apoderados y adultos responsables suficientes.\n- Que las comunicaciones con menores sean por los canales del grupo y no en privado.\n- Que se sepa a quién avisar y qué hacer ante una sospecha o una revelación."
+                },
+                {
+                  "title": "Salidas, retiros y campamentos",
+                  "body": "Antes de cualquier salida con menores, una lista de revisión:\n\n- Autorizaciones firmadas por los apoderados de todos los menores.\n- Adultos responsables suficientes y conocidos por la parroquia.\n- Fichas con contactos de emergencia, alergias y medicamentos (guardadas con reserva y destruidas después).\n- Dormitorios separados por sexo y sin adultos durmiendo con menores.\n- Transporte autorizado y seguro.\n- El programa informado al párroco y a los apoderados."
+                },
+                {
+                  "title": "Elegir y acompañar a los dirigentes",
+                  "body": "La coordinación, con los asesores, cuida quién asume servicios con menores: que sea una persona conocida, formada y acompañada. Si algo en la conducta de un dirigente preocupa, no se ignora: se conversa con los asesores de inmediato."
+                }
+              ],
+              "bible": {
+                "ref": "Marcos 9,33-37 · El que recibe a uno de estos pequeños",
+                "comment": "Mientras los discípulos discuten quién es el más importante, Jesús pone a un niño en el centro. Lee el texto y piensa: ¿qué significa, en las decisiones concretas de la coordinación, poner a los más pequeños en el centro?"
+              },
+              "church": [
+                {
+                  "source": "Integridad en el Servicio Eclesial (CECh)",
+                  "text": "La Iglesia en Chile establece criterios de conducta y orientaciones para que los espacios pastorales sean sanos y seguros para niños, adolescentes y jóvenes.",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                }
+              ],
+              "questions": [
+                "¿Todos los dirigentes de tu equipo han hecho la formación en prevención?",
+                "¿Qué punto de la lista de revisión de salidas no se está cumpliendo hoy?",
+                "¿Sabe todo el equipo a quién avisar ante una sospecha?"
+              ],
+              "activity": "Con tu dupla y los asesores, revisen la lista de revisión de salidas y armen una ficha de autorización y una lista de verificación para la próxima actividad fuera de la parroquia.",
+              "prayer": "Gracias, Señor Jesús, que pusiste a los pequeños en el centro y los abrazaste. Te ofrezco mi responsabilidad en el cuidado de cada niño, adolescente y joven de nuestro grupo. Que nuestras decisiones hagan de Ágape un lugar sano y seguro, y que en cada joven que cuidamos sepamos recibirte a Ti en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Integridad en el Servicio Eclesial (CECh)",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
+                  "note": "Orientaciones de la Iglesia en Chile para el servicio pastoral. Consulta además la versión vigente con tu diócesis."
+                }
+              ]
+            },
+            {
+              "id": "5.2",
+              "title": "Ante una situación crítica",
+              "time": "40 min",
+              "objective": "Saber cómo actuar como coordinación ante una situación crítica (una revelación de abuso, una crisis de salud mental, un accidente), a quién avisar y qué no hacer.",
+              "intro": "Ojalá nunca ocurra, pero la coordinación tiene que estar preparada. En esta unidad vas a aprender los pasos básicos para actuar con serenidad, proteger a quien sufre y no actuar solo.",
+              "sections": [
+                {
+                  "title": "El buen samaritano no lo hace todo solo",
+                  "body": "El samaritano se acerca al herido, lo cura, lo lleva a la posada y se lo confía al posadero: «cuídalo» (Lc 10,35). Hace lo que le corresponde y confía al herido a quien puede seguir cuidándolo. Es una buena imagen de lo que se espera de la coordinación en una crisis: acercarse, proteger y derivar."
+                },
+                {
+                  "title": "Si un joven revela un abuso",
+                  "body": "- Escúchalo con calma y créele. No lo interrogues ni le pidas detalles.\n- No le prometas guardar el secreto: dile que vas a buscar ayuda para protegerlo.\n- No confrontes a la persona señalada ni investigues por tu cuenta.\n- Avisa el mismo día a los asesores y al párroco, que seguirán el protocolo de la diócesis.\n- Anota con fecha lo que el joven dijo, con sus palabras, y entrégalo a quien corresponde. Guarda absoluta reserva con el resto del equipo."
+                },
+                {
+                  "title": "Una crisis de salud mental",
+                  "body": "Si un joven expresa ideas de hacerse daño o de no querer vivir, o hay señales graves:\n\n- No lo dejes solo y tómalo en serio, sin dramatizar.\n- Avisa de inmediato a su familia y a un asesor.\n- Si hay riesgo inmediato, llama a emergencias o a Salud Responde (600 360 7777).\n- Después, acompaña con cercanía, pero sin reemplazar a los profesionales.\n\nLa unidad 5.4 del curso de dirigentes tiene el «semáforo» para orientarse en estas situaciones."
+                },
+                {
+                  "title": "Un accidente en una actividad",
+                  "body": "Prioriza la atención de la persona y llama a emergencias si es necesario. Avisa a la familia y a los asesores lo antes posible. Después, registra lo ocurrido y revisen juntos qué medidas de prevención faltaron. Tener a mano las fichas de emergencia de cada joven hace la diferencia."
+                }
+              ],
+              "bible": {
+                "ref": "Lucas 10,30-37 · El buen samaritano",
+                "comment": "El samaritano se detiene, cura, lleva al herido a un lugar seguro y lo confía a otro. Lee el texto y fíjate en cada verbo. ¿Cuáles de ellos le corresponden a la coordinación en una situación crítica?"
+              },
+              "church": [
+                {
+                  "source": "Integridad en el Servicio Eclesial (CECh)",
+                  "text": "Ante una sospecha o revelación de abuso, las orientaciones de la Iglesia en Chile piden proteger a la víctima, no investigar por cuenta propia y comunicar a la autoridad correspondiente.",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf"
+                }
+              ],
+              "questions": [
+                "¿Sabrías qué hacer si un joven te revela un abuso? Escribe los pasos con tus palabras.",
+                "¿Tiene el equipo las fichas de emergencia de los jóvenes para las salidas?",
+                "¿Quién es el encargado de prevención de la diócesis? Si no lo sabes, averígualo."
+              ],
+              "activity": "Con los asesores, anoten en un lugar visible para la coordinación los contactos de emergencia: asesores, párroco, encargado diocesano de prevención, Salud Responde y emergencias. Revisen juntos los pasos de esta unidad.",
+              "prayer": "Gracias, Señor, por cada joven que nos confías, también en sus momentos de mayor fragilidad. Te ofrezco mi serenidad, mi cercanía y mi disposición a pedir ayuda. Que, como el buen samaritano, sepa acercarme, proteger y confiar a otros lo que me supera, para que nadie quede solo en nuestra comunidad y en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Integridad en el Servicio Eclesial (CECh)",
+                  "url": "https://www.obispadodesanbernardo.cl/wp-content/uploads/2018/11/ise.pdf",
+                  "note": "Consulta con tu diócesis el protocolo vigente y el contacto del encargado de prevención."
+                }
+              ]
+            },
+            {
+              "id": "5.3",
+              "title": "Formar a quienes vienen",
+              "time": "40 min",
+              "objective": "Asumir el relevo como parte del servicio de la coordinación: identificar, formar y acompañar a quienes asumirán después, y cerrar bien el propio período.",
+              "intro": "Los coordinadores sirven por un período de hasta dos años, renovables por otros dos. Un buen coordinador piensa desde el primer día en quiénes vendrán después. En esta unidad vas a mirar el relevo como un acto de amor al grupo.",
+              "sections": [
+                {
+                  "title": "Confíalo a hombres fieles",
+                  "body": "San Pablo le pide a Timoteo: «lo que has oído de mí en presencia de muchos testigos, confíalo a hombres fieles, capaces de enseñar a otros» (2 Tm 2,2). La fe y el servicio se transmiten de generación en generación. La coordinación no es dueña del grupo: lo recibe y lo entrega."
+                },
+                {
+                  "title": "Identificar y formar",
+                  "body": "Desde el comienzo, la coordinación puede:\n\n- Reconocer a los dirigentes con dones de liderazgo y de servicio, sin elegir solo a los amigos.\n- Invitarlos a asumir responsabilidades crecientes: preparar una reunión, llevar el tablero de compromisos, organizar una actividad.\n- Animarlos a completar la formación de dirigentes y, más adelante, la de animación o coordinación.\n- Conversarlo con los asesores, que acompañan el discernimiento."
+                },
+                {
+                  "title": "Entregar bien",
+                  "body": "Al terminar el período, una buena entrega incluye:\n\n- La planificación y las evaluaciones del año.\n- El tablero de compromisos y lo que queda pendiente.\n- La rendición de cuentas y el inventario.\n- Los contactos de la parroquia, de los apoderados y de la diócesis.\n- Un tiempo de acompañamiento a la nueva dupla durante los primeros meses."
+                },
+                {
+                  "title": "Descansar y ser enviado",
+                  "body": "Terminar un servicio no es perder algo: es abrir espacio para que otros crezcan y para que tú sigas creciendo en otro lugar. Da gracias por lo vivido, descansa, y pregúntale al Señor cuál es tu próximo paso en la Iglesia. Cada misa dominical renueva ese envío."
+                }
+              ],
+              "bible": {
+                "ref": "2 Timoteo 2,1-7 · Confíalo a hombres fieles",
+                "comment": "Pablo, ya mayor, prepara a Timoteo para continuar la misión y le pide que forme a otros. Lee el texto y piensa: ¿a quién estás preparando tú? ¿Quién te preparó a ti?"
+              },
+              "church": [
+                {
+                  "source": "Christus vivit 35",
+                  "text": "La Iglesia se renueva cuando recibe la fuerza siempre nueva de la Palabra de Dios, de la Eucaristía y de la presencia de Cristo.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20190325_christus-vivit.html"
+                },
+                {
+                  "source": "Evangelii gaudium 222-225",
+                  "text": "El tiempo es superior al espacio: lo que importa es iniciar procesos que otros puedan continuar.",
+                  "url": "https://www.vatican.va/content/francesco/es/apost_exhortations/documents/papa-francesco_esortazione-ap_20131124_evangelii-gaudium.html"
+                }
+              ],
+              "questions": [
+                "¿Quiénes en tu equipo podrían ser futuros coordinadores? ¿Qué dones ves en ellos?",
+                "¿Qué responsabilidad podrías confiarles este semestre?",
+                "¿Qué te gustaría dejar al grupo cuando termine tu período?"
+              ],
+              "activity": "Elige a uno o dos dirigentes con dones de servicio y confíales una responsabilidad concreta este mes, acompañándolos. Conversa con los asesores sobre cómo preparar el relevo de la coordinación.",
+              "prayer": "Gracias, Señor, por quienes me prepararon para este servicio y por quienes vendrán después de mí. Te ofrezco mi período como coordinador, con lo que alcancé a hacer y lo que quedará en otras manos. Que sepa formar y confiar en otros, entregar con generosidad y seguir respondiendo a tu llamado allí donde me envíes en tu Iglesia. Amén.",
+              "resources": [
+                {
+                  "title": "Biblia en línea: Segunda carta a Timoteo",
+                  "url": "https://www.vatican.va/archive/ESL0506/_INDEX.HTM",
+                  "note": "Capítulo 2."
+                }
+              ]
+            }
+          ],
+          "quiz": {
+            "badge": "Evaluación Módulo 5 · Prevención y relevo",
+            "title": "Cuidar a todos y preparar el relevo",
+            "questions": [
+              {
+                "q": "1. Un joven te cuenta que alguien abusó de él. ¿Qué haces?",
+                "options": [
+                  "Le prometes no contarle a nadie.",
+                  "Lo escuchas, le crees, no lo interrogas y avisas el mismo día a los asesores y al párroco.",
+                  "Confrontas a la persona señalada."
+                ],
+                "correct": 1,
+                "feedback": "Se protege a la víctima, no se investiga por cuenta propia y se avisa de inmediato a quien sigue el protocolo."
+              },
+              {
+                "q": "2. ¿Qué se necesita antes de una salida con menores?",
+                "options": [
+                  "Solo avisar por WhatsApp.",
+                  "Autorizaciones firmadas, adultos responsables suficientes, fichas de emergencia y el programa informado.",
+                  "Que vayan los que quieran."
+                ],
+                "correct": 1,
+                "feedback": "La lista de revisión de salidas protege a todos."
+              },
+              {
+                "q": "3. Un joven dice que no quiere seguir viviendo. ¿Qué corresponde?",
+                "options": [
+                  "Pedirle que no exagere.",
+                  "No dejarlo solo, avisar de inmediato a su familia y a un asesor, y llamar a emergencias si hay riesgo inmediato.",
+                  "Esperar a ver si se le pasa."
+                ],
+                "correct": 1,
+                "feedback": "Se toma en serio, se acompaña y se deriva de inmediato, sin reemplazar a los profesionales."
+              },
+              {
+                "q": "4. ¿Cuándo debe empezar a pensar la coordinación en el relevo?",
+                "options": [
+                  "En el último mes del período.",
+                  "Desde el comienzo, formando y confiando responsabilidades a otros.",
+                  "Nunca: los asesores eligen."
+                ],
+                "correct": 1,
+                "feedback": "Un buen coordinador forma desde el primer día a quienes vendrán después."
+              }
+            ]
+          }
+        }
+      ]
     }
   ],
   "about": {

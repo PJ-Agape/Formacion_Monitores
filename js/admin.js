@@ -259,7 +259,7 @@ function coursesView(d) {
     <span class="spacer"></span>
     <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button>
   </header>
-  <div class="note" style="margin-bottom:14px"><b>Novedades del curso de dirigentes.</b> Hay contenido nuevo en el sitio: las oraciones finales de acción de gracias, las unidades 1.5 y 1.6 (Eucaristía, oración y reconciliación), el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
+  <div class="note" style="margin-bottom:14px"><b>Novedades en los cursos.</b> Hay contenido nuevo en el sitio: el curso <b>«Coordinar es servir»</b> (formación para coordinadores, 5 módulos), y en el curso de dirigentes las oraciones finales de acción de gracias, las unidades 1.5 y 1.6, el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
     <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncCourse">${icon("ul")} Traer las novedades</button></div></div>
   <div class="stack" style="--gap:12px">
     ${d.courses.map((c, i) => {
@@ -1175,10 +1175,12 @@ function bindActions() {
   // unidades y módulos que falten, oraciones finales, y solo las secciones que se corrigieron en el sitio.
   const SECTION_UPDATES = { "curso-dirigentes-agape": [["1.4", "La primera comunidad como modelo"], ["5.1", "Tu vida de oración"], ["5.5", "Tu compromiso"]] };
   const PHASE_TEXT_UPDATES = { "curso-dirigentes-agape": [1] }; // phaseNum con descripción e introducción nuevas
+  const NEW_COURSES = ["formacion-coordinadores"]; // cursos nuevos del sitio que se agregan enteros si faltan
   function mergeCourseNews(d, repo) {
     let n = 0;
     for (const rc of repo.courses || []) {
-      const c = d.courses.find((x) => x.id === rc.id); if (!c) continue;
+      const c = d.courses.find((x) => x.id === rc.id);
+      if (!c) { if (NEW_COURSES.includes(rc.id)) { d.courses.push(clone(rc)); n++; } continue; }
       if (c.description && c.description.includes("5 módulos y 21 unidades") && rc.description !== c.description) { c.description = rc.description; n++; }
       rc.phases.forEach((rp) => {
         let ph = c.phases.find((x) => x.phaseNum === rp.phaseNum);
@@ -1203,7 +1205,7 @@ function bindActions() {
     try {
       const repo = await (await fetch("data/contenido.json", { cache: "no-store" })).json();
       const n = mergeCourseNews(clone(S.getDraft() || S.publishedContent()), repo);
-      if (!n) { toast("El curso ya está al día"); el.disabled = false; return; }
+      if (!n) { toast("Los cursos ya están al día"); el.disabled = false; return; }
       commit((d) => { mergeCourseNews(d, repo); }, { snapshot: true, msg: `${n} cambios traídos al borrador. Revísalos y publica.` });
     } catch (e) { console.warn(e); toast("No se pudieron traer las novedades", ""); el.disabled = false; }
   };
