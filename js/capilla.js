@@ -1,5 +1,5 @@
 // Capilla Ágape: la sección de oración como una capilla virtual.
-// Rincones: entrada (oración según la hora y tiempo litúrgico), un minuto de silencio,
+// Rincones: entrada (oración según la hora y tiempo litúrgico), «Un rato con Jesús» (oración personal),
 // velas de la comunidad, la Palabra, María (misterios del día) y oraciones.
 
 import { esc, rich, icon, toast } from "./util.js";
@@ -324,7 +324,7 @@ export function view(opt = {}) {
     <div class="cap-guide-txt">
       <span class="cap-hand">Él te está esperando</span>
       <h2 id="capGuideT">Un rato con <em>Jesús</em></h2>
-      <p>Una oración guiada, paso a paso, para encontrarte con Él. Elige dónde estás y déjate acompañar. Son unos 10 minutos.</p>
+      <p>Una guía de oración personal, paso a paso, al estilo de Santa Teresa de Jesús: escuchar su Palabra, pensarla, conversar con Él y quedarte a su lado. Son unos 10 minutos.</p>
       <div class="cap-guide-btns">
         <button class="btn cap-guide-btn" data-action="capGuide" data-k="casa">${icon("flame")} En casa o donde estés</button>
         <button class="btn cap-guide-btn alt" data-action="capGuide" data-k="adoracion">${icon("sparkle")} Ante el Santísimo</button>
@@ -507,29 +507,35 @@ function bell() {
     });
   } catch {}
 }
-// Oración guiada «Un rato con Jesús»: en casa (o donde estés) o ante el Santísimo.
-// Se avanza paso a paso; el silencio tiene un minuto con respiración (se puede seguir antes).
+// Oración guiada «Un rato con Jesús»: oración personal al estilo de Santa Teresa de Jesús
+// (oración mental: prepararse, ponerse en su presencia, leer, pensar, conversar, quedarse con Él,
+// agradecer, ofrecer y pedir). En casa (o donde estés) o ante el Santísimo.
+// No usa técnicas de respiración ni de concentración: el centro es siempre Jesús.
 const COMUNION = (ORACIONES.find((o) => o.t === "Comunión espiritual") || {}).x || "";
 function guideSteps(k) {
   const [vt, vr] = VERSES[dayIndex(VERSES.length)];
-  const palabra = { t: "Escucha su Palabra", txt: "Lee esta frase despacio, dos o tres veces. ¿Qué palabra te toca el corazón? Quédate con ella.", verse: [vt, vr] };
-  const cuenta = { t: "Cuéntale cómo estás", txt: "Háblale como a un amigo: ¿qué te alegra hoy?, ¿qué te pesa?, ¿por quién quieres pedir? No necesitas palabras bonitas: Él te conoce y te quiere.",
+  const palabra = { t: "Escucha su Palabra", txt: "Jesús te habla. Lee esta frase despacio, dos o tres veces.", verse: [vt, vr] };
+  const piensa = { t: "Piénsala con Él", txt: "No es para estudiar: es para conocerlo y quererlo más. Pregúntate: ¿qué me dice Jesús con esto?, ¿qué palabra me toca?, ¿qué me pide hoy?" };
+  const habla = { t: "Háblale como a un amigo", txt: "Cuéntale lo que pensaste, lo que te alegra y lo que te pesa. No necesitas palabras bonitas: Él te conoce y te quiere.",
+    pr: "Orar es «tratar de amistad, estando muchas veces tratando a solas con quien sabemos nos ama».", ref: "Santa Teresa de Jesús, Libro de la Vida 8,5",
     note: "Si algo te pesa mucho, cuéntaselo también a alguien de confianza: tu dirigente o tu familia. No estás solo ni sola." };
+  const agradece = { t: "Agradece, ofrece y pide", txt: "Termina tu conversación con tres frases:", pr: "Gracias, Jesús, por…\nTe ofrezco…\nTe pido por…" };
   if (k === "adoracion") return [
     { t: "Al llegar", txt: "Haz una genuflexión (o una inclinación) y busca un lugar tranquilo. Jesús está realmente presente en la Eucaristía: estás frente a Él.", candle: true },
-    { t: "Adóralo", txt: "Reza despacio, con el corazón:", pr: "Dios mío, yo creo, adoro, espero y te amo.\nTe pido perdón por los que no creen, no adoran, no esperan y no te aman.", ref: "Oración del Ángel de Fátima" },
-    { t: "Míralo y déjate mirar", txt: "Un campesino le contó al santo cura de Ars cómo rezaba: «Yo lo miro y Él me mira». Haz lo mismo, en silencio.", breath: 60 },
-    palabra, cuenta,
+    { t: "Adóralo", txt: "Haz la señal de la cruz y reza despacio, con el corazón:", pr: "Dios mío, yo creo, adoro, espero y te amo.\nTe pido perdón por los que no creen, no adoran, no esperan y no te aman.", ref: "Oración del Ángel de Fátima" },
+    { t: "Míralo y déjate mirar", txt: "Mira a Jesús en la Hostia. Santa Teresa decía: «No os pido más de que le miréis» (Camino de perfección 26,3). Y un campesino le contó al santo cura de Ars: «Yo lo miro y Él me mira». Quédate así, en silencio.", quiet: 60 },
+    palabra, piensa, habla,
     { t: "Comunión espiritual", txt: "Pídele que entre en tu corazón:", pr: COMUNION },
+    agradece,
     { t: "Despídete", txt: "Antes de salir, agradécele y haz una genuflexión.", pr: "Gracias, Jesús, por este rato contigo.\nQuédate conmigo hoy.\nQue lo que haga y lo que diga hable de Ti.\nAmén.", end: true },
   ];
   return [
-    { t: "Prepárate", txt: "Busca un lugar tranquilo: tu pieza, la micro, una plaza. Silencia las notificaciones y ponte cómodo.", candle: true },
-    { t: "Ponte en su presencia", txt: "Haz la señal de la cruz y dile:", pr: "Jesús, aquí estoy.\nCreo que estás conmigo.\nQuiero estar un rato contigo.", ref: "En el nombre del Padre, y del Hijo, y del Espíritu Santo. Amén." },
-    { t: "Respira y haz silencio", txt: "Deja afuera el ruido. Respira con calma y sigue el círculo.", breath: 60 },
-    palabra, cuenta,
-    { t: "Agradece y pide", txt: "Termina tu conversación con dos frases:", pr: "Gracias, Jesús, por…\nTe pido por…" },
-    { t: "Quédate con Él", txt: "Reza un Padre nuestro y despídete:", pr: "Gracias, Jesús, por este rato contigo.\nQuédate conmigo hoy.\nQue lo que haga y lo que diga hable de Ti.\nAmén.", note: "Llévate la palabra que te tocó y repítela durante el día.", end: true },
+    { t: "Prepárate", txt: "Busca un lugar tranquilo: tu pieza, la micro, una plaza. Silencia las notificaciones. Vas a encontrarte con Alguien que te quiere.", candle: true },
+    { t: "Ponte en su presencia", txt: "Haz la señal de la cruz. Jesús está contigo ahora mismo. Dile:", pr: "Jesús, aquí estoy.\nCreo que estás conmigo.\nPerdóname lo que hice mal\ny enséñame a orar.", ref: "En el nombre del Padre, y del Hijo, y del Espíritu Santo. Amén." },
+    palabra, piensa, habla,
+    { t: "Quédate con Él", txt: "Ya no hacen falta más palabras. Quédate un momento con Jesús, como con un amigo. Si te distraes, no te preocupes: vuelve a Él diciéndole despacio «Jesús».", quiet: 60 },
+    agradece,
+    { t: "Despídete", txt: "Reza un Padre nuestro y despídete:", pr: "Gracias, Jesús, por este rato contigo.\nQuédate conmigo hoy.\nQue lo que haga y lo que diga hable de Ti.\nAmén.", note: "Llévate la palabra que te tocó y repítela durante el día.", end: true },
   ];
 }
 let gd = null; // { k, steps, i }
@@ -552,27 +558,25 @@ function guidePaint() {
       <button class="cap-gd-x" data-action="capStop" aria-label="Cerrar">${icon("x")}</button></div>
     <div class="cap-gd-bar" aria-hidden="true"><i style="width:${((gd.i + 1) / n) * 100}%"></i></div>
     ${s.candle ? candleSVG(true, "big") : ""}
-    ${s.breath ? `<div class="cap-breath" aria-hidden="true"><i></i></div><p class="cap-breath-t" id="capBreathT">Inhala…</p>` : ""}
     <h2 class="cap-gd-t">${esc(s.t)}</h2>
     <p class="cap-gd-txt">${esc(s.txt)}</p>
     ${s.verse ? `<p class="cap-verse">«${esc(s.verse[0])}»</p><span class="cap-ref">${esc(s.verse[1])}</span>` : ""}
     ${s.pr ? `<p class="cap-gd-pr">${esc(s.pr).replace(/\n/g, "<br>")}</p>` : ""}
     ${s.ref ? `<p class="cap-gd-ref">${esc(s.ref)}</p>` : ""}
     ${s.note ? `<p class="cap-gd-note">${esc(s.note)}</p>` : ""}
-    ${s.breath ? `<p class="cap-left" id="capLeft"></p>` : ""}
+    ${s.quiet ? `<p class="cap-left" id="capLeft"></p>` : ""}
     <div class="cap-gd-nav">
       ${gd.i ? `<button class="btn btn-glass" data-action="capGdPrev">${icon("left")} Atrás</button>` : ""}
       ${s.end ? `<button class="btn btn-gold" data-action="capGdEnd">Amén ${icon("right")}</button>` : `<button class="btn btn-gold" data-action="capGdNext" id="capGdNext">Seguir ${icon("right")}</button>`}
     </div></div>`;
   ov.scrollTop = 0;
   (ov.querySelector("#capGdNext") || ov.querySelector("[data-action=capGdEnd]"))?.focus();
-  if (s.breath) {
-    const end = Date.now() + s.breath * 1000; let k = 0;
+  if (s.quiet) {
+    const end = Date.now() + s.quiet * 1000;
     const tick = () => {
       const left = Math.max(0, end - Date.now()), sec = Math.ceil(left / 1000);
       const el = document.getElementById("capLeft"); if (el) el.textContent = left ? `${Math.floor(sec / 60)}:${String(sec % 60).padStart(2, "0")}` : "";
-      const bt = document.getElementById("capBreathT"); if (bt) bt.textContent = left ? (Math.floor(k / 4) % 2 ? "Exhala…" : "Inhala…") : "Cuando quieras, sigue.";
-      k++;
+      if (!left && el) el.textContent = "Cuando quieras, sigue.";
       if (!left) { clearInterval(silTimer); silTimer = null; bell(); }
     };
     silTimer = setInterval(tick, 1000); tick();

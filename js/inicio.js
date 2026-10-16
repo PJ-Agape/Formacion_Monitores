@@ -74,7 +74,7 @@ const ITEMS = [
   { b: "espiritu", e: "🕯️", t: "Nuestras intenciones", d: "Comparte tu intención y reza por las de otros.", href: "#/oracion/velas", kw: "vela intencion rezar por", ok: () => true },
   { b: "espiritu", e: "🎶", t: "Cancionero", d: "Canciones con acordes para la misa.", href: "#/cancionero", kw: "cancionero canciones acordes misa cantos guitarra", ok: () => true },
   { b: "espiritu", e: "📻", t: "Radios católicas", d: "Radio María, El Sembrador y Regina Coeli.", href: "#/oracion/radio", kw: "radio maria sembrador regina coeli escuchar", ok: () => true },
-  { b: "espiritu", e: "🕯️", t: "Un rato con Jesús", d: "Oración guiada en casa o ante el Santísimo.", href: "#/oracion/silencio", kw: "silencio pausa calma respirar oracion guiada adoracion santisimo", ok: () => true },
+  { b: "espiritu", e: "🕯️", t: "Un rato con Jesús", d: "Oración personal en casa o ante el Santísimo.", href: "#/oracion/silencio", kw: "silencio oracion personal mental teresa guiada adoracion santisimo", ok: () => true },
 ];
 const descFor = (k, w) => k !== "formacion" ? BLOCKS[k].d
   : w.equipo ? BLOCKS.formacion.d

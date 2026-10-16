@@ -1610,11 +1610,6 @@ dialog.sheet { border: 3px solid var(--z-b); box-shadow: 8px 8px 0 var(--z-b); }
 @keyframes capIn { from { opacity: 0; } }
 .cap-ov-in { max-width: 520px; display: flex; flex-direction: column; align-items: center; gap: 12px; }
 .cap-overlay .cap-verse { color: #fff6e5; } .cap-overlay .cap-ref { color: #ffba03; }
-.cap-breath { width: 120px; height: 120px; border-radius: 50%; border: 2px solid rgba(138,210,250,.6); display: grid; place-items: center; }
-.cap-breath i { width: 40px; height: 40px; border-radius: 50%; background: rgba(138,210,250,.45); }
-@media (prefers-reduced-motion: no-preference) { .cap-breath i { animation: capBreath 8s ease-in-out infinite; } }
-@keyframes capBreath { 0%,100% { transform: scale(1); } 50% { transform: scale(2.7); } }
-.cap-breath-t { font-family: var(--font-hand); font-size: 1.6rem; color: #8ad2fa; }
 .cap-left { font-variant-numeric: tabular-nums; font-weight: 800; letter-spacing: .1em; opacity: .7; }
 body.cap-quiet { overflow: hidden; }
 
