@@ -96,7 +96,7 @@ _${x.fecha}${fiesta ? " · " + fiesta : ""}_
 
 ${frase ? `«${frase}»\n` : ""}${x.cita}
 
-Léelo completo y míralo en video aquí:
+Léelo completo y míralo en video en la Capilla de agAPPe:
 ${APP}#/evangelio`;
 }
 const partFuera = (x) => `<article class="sal-part fuera">
