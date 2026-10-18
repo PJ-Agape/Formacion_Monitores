@@ -88,6 +88,7 @@ async function load() {
 
 // Versión general, para compartir fuera de la comunidad (canal, estados, otros grupos):
 // la fecha, la frase del Evangelio, la cita y el enlace. Nada más.
+const VIDEO = "https://www.youtube.com/channel/UCmHasgewuTBMTMAvT6_ghNw/videos"; // canal con el Evangelio de cada día
 function fuera(x) {
   const m = x.dia.match(/📖[^\n]*\n_«(.+?)»_/), frase = m ? m[1] : "";
   const fiesta = x.titulo.includes(" · ") ? x.titulo.split(" · ").slice(1).join(" · ") : /domingo/i.test(x.titulo) ? x.titulo : "";
@@ -97,14 +98,19 @@ _${x.fecha}${fiesta ? " · " + fiesta : ""}_
 ${frase ? `«${frase}»\n` : ""}${x.cita}
 
 Léelo completo aquí:
-${APP}#/evangelio`;
+${APP}#/evangelio
+
+Reflexión en video del P. Pedro Brassesco:
+${VIDEO}`;
 }
 const partFuera = (x) => `<article class="sal-part fuera">
     <h3>Para compartir fuera <small>Canal, estados u otros grupos</small></h3>
-    <p class="xs muted">Un mensaje general, sin referencias a la comunidad, con el enlace al Evangelio del día. El enlace abre sin cuenta.</p>
+    <p class="xs muted">Un mensaje general, sin referencias a la comunidad, con la imagen de buenos días, el enlace al Evangelio del día (abre sin cuenta) y el canal de video del P. Pedro Brassesco.</p>
+    <img class="sal-img" src="${img("dia", x.iso)}" alt="Imagen del Evangelio del ${esc(x.fecha)}" loading="lazy">
     <div class="row-wrap" style="gap:8px">
       <button class="btn btn-gold" data-action="salShare" data-iso="${x.iso}" data-k="fuera">📤 Enviar a WhatsApp</button>
       <button class="btn btn-soft btn-sm" data-action="salCopy" data-iso="${x.iso}" data-k="fuera">${icon("copy")} Copiar texto</button>
+      <a class="btn btn-ghost btn-sm" href="${img("dia", x.iso)}" download="evangelio-del-dia-${x.iso}.jpg">${icon("dl")} Guardar imagen</a>
     </div>
     <div class="sal-wa">${wa(fuera(x))}</div>
   </article>`;
