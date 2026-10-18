@@ -348,14 +348,20 @@ export function buildCourse(blocks, opts = {}) {
 // ---------------------------------------------------------------------------
 // 3) Pantalla: Gestión → Cursos → Importar
 // ---------------------------------------------------------------------------
-const st = { result: null, file: "", busy: false, para: {}, autoPrayer: true, blocks: null };
+const st = { result: null, file: "", busy: false, para: {}, autoPrayer: true, blocks: null, update: "" };
 const chip = (ok, t) => `<span class="imp-chip ${ok ? "ok" : "no"}">${ok ? "✓" : "–"} ${esc(t)}</span>`;
 
-export function view(PARA) {
+// opts.update = { id, title }: se reemplaza el contenido de un curso ya publicado (se conserva su id,
+// así quienes lo están haciendo no pierden su avance si las unidades mantienen su número).
+export function view(PARA, opts = {}) {
+  const up = opts.update || null;
+  if ((up ? up.id : "") !== st.update) { st.update = up ? up.id : ""; st.result = null; st.file = ""; st.blocks = null; st.para = up && up.para ? { ...up.para } : {}; }
   const r = st.result;
-  return `<nav class="crumbs"><a href="#/admin/itinerarios">Cursos</a>${icon("right")}<span>Importar un curso</span></nav>
-  <header class="page-head"><span class="eyebrow">Gestión · Cursos</span><h1>Importar un <em>curso</em></h1>
-    <p>Sube el documento del curso (Word, PDF o texto) y la app lo convierte en módulos, unidades y diapositivas. El curso queda <b>oculto</b> hasta que lo revises y lo publiques.</p></header>
+  return `<nav class="crumbs"><a href="#/admin/formacion">Cursos de la comunidad</a>${icon("right")}<span>${up ? "Actualizar" : "Importar"}</span></nav>
+  <header class="page-head"><span class="eyebrow">Gestión · Formación</span>${up ? `<h1>Actualizar <em>${esc(up.title)}</em></h1>
+    <p>Sube la versión corregida del documento. El curso conserva su lugar y su estado (oculto o publicado). Si mantienes la numeración de las unidades, nadie pierde su avance.</p>`
+    : `<h1>Importar un <em>curso</em></h1>
+    <p>Sube el documento del curso (Word, PDF o texto) y la app lo convierte en módulos, unidades y diapositivas. El curso queda <b>oculto</b> hasta que lo revises y lo publiques.</p>`}</header>
   <section class="card stack" style="--gap:12px">
     <h2 style="font-size:1.1rem">1. El documento</h2>
     <label class="imp-drop" id="impDrop">
@@ -395,9 +401,9 @@ function previewHTML(r, PARA) {
       <details class="imp-mod"><summary><b>Módulo ${ph.phaseNum}</b> · ${esc(ph.title)} <span class="muted small">${ph.sessions.length} u.${ph.quiz ? ` · evaluación de ${ph.quiz.questions.length}` : " · sin evaluación"}</span></summary>
         <ul class="imp-units">${ph.sessions.map((s) => `<li><b>${esc(s.id)}</b> ${esc(s.title)}
           <div class="imp-chips">${chip(!!s.objective, "objetivo")}${chip(!!s.intro, "introducción")}${chip(s.sections.length > 0, `${s.sections.length} ${s.sections.length === 1 ? "sección" : "secciones"}`)}${chip(!!(s.bible && s.bible.ref), "Palabra")}${chip(s.church.length > 0, "Iglesia")}${chip(s.questions.length > 0, `${s.questions.length} preguntas`)}${chip(!!s.activity, "actividad")}${chip(!!s.prayer, s.autoPrayer ? "oración (automática)" : "oración")}</div></li>`).join("")}</ul></details>`).join("")}</div>
-    <div class="row-wrap" style="gap:8px"><button class="btn btn-primary" data-action="impCreate" ${nU ? "" : "disabled"}>${icon("plus")} Crear el curso (oculto)</button>
+    <div class="row-wrap" style="gap:8px"><button class="btn btn-primary" data-action="impCreate" ${nU ? "" : "disabled"}>${st.update ? `${icon("check")} Actualizar el curso` : `${icon("plus")} Crear el curso (oculto)`}</button>
       <button class="btn btn-ghost btn-sm" data-action="impReset">Empezar de nuevo</button></div>
-    <p class="xs muted">Se crea como borrador oculto: solo los administradores lo ven. Con «Vista previa» lo miras como diapositivas; corrige lo que haga falta en el editor y, cuando esté listo, márcalo como público y publica.</p>
+    <p class="xs muted">${st.update ? "El curso se reemplaza por esta versión." : "Se crea oculto: solo lo ven los administradores y formadores. Míralo con «Vista previa» y, cuando esté listo, publícalo con un toque."} Para corregir algo, arréglalo en el documento y vuelve a subirlo con «Actualizar».</p>
   </section>`;
 }
 
@@ -427,7 +433,7 @@ export function registerActions(A, { render, createCourse, PARA }) {
   });
   A.impPaste = () => { const t = document.getElementById("impText")?.value || ""; if (!t.trim()) return toast("Pega el texto primero", ""); run(async () => textToBlocks(t), "Texto pegado"); };
   A.impReset = () => { st.result = null; st.file = ""; st.blocks = null; render(); };
-  A.impCreate = () => {
+  A.impCreate = async () => {
     const r = st.result; if (!r) return;
     const c = JSON.parse(JSON.stringify(r.course));
     c.title = (document.getElementById("impTitle")?.value || c.title).trim() || "Curso nuevo";
@@ -435,7 +441,7 @@ export function registerActions(A, { render, createCourse, PARA }) {
     const para = {}; for (const [k] of PARA) if (st.para[k]) para[k] = true;
     if (Object.keys(para).length) c.para = para;
     c.phases.forEach((ph) => ph.sessions.forEach((s) => { delete s.autoPrayer; }));
-    createCourse(c);
-    st.result = null; st.file = ""; st.blocks = null; st.para = {};
+    const done = await createCourse(c, st.update);
+    if (done !== false) { st.result = null; st.file = ""; st.blocks = null; st.para = {}; st.update = ""; }
   };
 }

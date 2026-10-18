@@ -72,8 +72,26 @@ export const paraDe = (c) => (c && c.para ? PARA.map(([k]) => k).filter((k) => c
 let courseRule = () => true, filtered = null, filteredFrom = null, filteredKey = "";
 export const setCourseRule = (fn) => { courseRule = fn; filtered = null; };
 export const setHiddenCourseRule = (fn) => setCourseRule((c) => fn() || !c.hidden); // compatibilidad
+// Cursos de la comunidad (colección «cursos»): se suman a los del contenido publicado.
+// Si alguno repite el id de un curso oficial, manda el oficial.
+let extra = read("agape_cursos_extra") || [], extraKey = "", merged = null, mergedFrom = null;
+export function setExtraCourses(list) {
+  const clean = (list || []).filter((c) => c && c.id && Array.isArray(c.phases));
+  const key = JSON.stringify(clean);
+  if (key === extraKey) return false;
+  extra = clean; extraKey = key; merged = null; filtered = null; write("agape_cursos_extra", clean);
+  return true;
+}
+export const extraCourses = () => extra;
+function withExtra(c) {
+  if (!c || !Array.isArray(c.courses) || !extra.length) return c;
+  if (mergedFrom === c && merged) return merged;
+  const ids = new Set(c.courses.map((x) => x.id));
+  merged = { ...c, courses: [...c.courses, ...extra.filter((x) => !ids.has(x.id)).map((x) => ({ ...x, comunidad: true }))] };
+  mergedFrom = c; return merged;
+}
 export function content() {
-  const c = isPreview() ? read(K.draft) : published;
+  const c = withExtra(isPreview() ? read(K.draft) : published);
   if (!c || !Array.isArray(c.courses)) return c;
   const vis = c.courses.filter((x) => courseRule(x));
   if (vis.length === c.courses.length) return c;

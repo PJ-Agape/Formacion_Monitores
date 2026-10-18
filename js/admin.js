@@ -16,7 +16,7 @@ import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as familiasAdmin from "./familias-admin.js";
-import * as importar from "./importar-curso.js";
+import * as cursosCom from "./cursos-comunidad.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -43,6 +43,8 @@ export async function renderAdmin(sub, _api) {
     if (!st.ready) return cloudGate(st);
     // Gestión se ajusta al rol: coordinación ve casi todo; los dirigentes, su tablero «Hoy» y su familia.
     if (!st.isAdmin) {
+      const pg0 = sub.split("/").filter(Boolean)[0] || "";
+      if (st.canCourses && (pg0 === "formacion" || !st.isGuide)) return shell("formacion", await cursosCom.view(pg0 === "formacion" ? sub : "formacion"));
       if (!st.isGuide) return `<div class="card" style="max-width:480px;margin:6vh auto 0;text-align:center;padding:32px">
         <div class="tile-ico" style="margin:0 auto 12px">${icon("lock")}</div>
         <h1 class="display" style="font-size:1.6rem">Gestión es para el equipo</h1>
@@ -66,7 +68,8 @@ export async function renderAdmin(sub, _api) {
     case "resumen": body = await summaryView(draft); break;
     case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
     case "asignar": body = cloudOn ? await asignarView() : summaryView(draft); break;
-    case "itinerarios": body = parts[1] === "importar" ? importar.view(S.PARA) : parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
+    case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
+    case "formacion": body = cloudOn ? await cursosCom.view(sub) : summaryView(draft); break;
     case "portada": body = portada.adminView(); break;
     case "inicio": body = cloudOn ? inicioAdmin.adminView() : summaryView(draft); break;
     case "saludos": body = await saludos.adminView(); break;
@@ -121,6 +124,7 @@ function navGroups() {
     ]],
     ["Contenidos", [
       ["itinerarios", "#/admin/itinerarios", "Cursos", "route", A],
+      ["formacion", "#/admin/formacion", "Cursos de la comunidad", "route", cloudOn && !!st.canCourses],
       ["materiales", "#/admin/materiales", "Materiales", "book", A],
       ["oracion", "#/admin/oracion", "Oración", "flame", A],
       ["evangelio", "#/admin/evangelio", "Evangelio y fiestas", "book", cloudOn && A],
@@ -258,7 +262,7 @@ function coursesView(d) {
   <header class="page-head row-wrap" style="align-items:flex-end">
     <div><span class="eyebrow">Gestión</span><h1>Cursos</h1><p>Cada curso tiene módulos, unidades de estudio y una evaluación por módulo. Los cursos <b>ocultos</b> solo los ven los administradores: puedes prepararlos con calma y publicarlos cuando se necesiten. En «Editar» → «Dirigido a» eliges para quiénes es cada formación (asesores, coordinadores, dirigentes o aspirantes).</p></div>
     <span class="spacer"></span>
-    <div class="row-wrap" style="gap:8px"><a class="btn btn-soft" href="#/admin/itinerarios/importar">${icon("ul")} Importar desde Word o PDF</a>
+    <div class="row-wrap" style="gap:8px"><a class="btn btn-soft" href="#/admin/formacion">${icon("ul")} Cursos de la comunidad (Word o PDF)</a>
     <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button></div>
   </header>
   <div class="note" style="margin-bottom:14px"><b>Novedades en los cursos.</b> Hay contenido nuevo en el sitio: los cursos <b>«Asesorar es acompañar»</b> (para asesores) y <b>«Coordinar es servir»</b> (para coordinadores), de 5 módulos cada uno, y en el curso de dirigentes las oraciones finales de acción de gracias, las unidades 1.5 y 1.6, el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
@@ -558,7 +562,7 @@ async function peopleView() {
       <tbody>
       ${list.length ? list.map(({ u, r }) => `<tr class="${u.active === false ? "paused" : ""}">
         <td><a href="#/admin/dirigentes/${esc(u.uid)}"><b>${esc(u.name || u.email)}</b></a>
-          <span class="sub">${esc(u.parish || "")}${u.role && u.role !== "dirigente" ? ` · <span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>` : ""}${u.asesor ? ` · <span class="chip">Asesor</span>` : ""}${u.cantor ? ` · <span class="chip" title="Apostolado del cancionero">🎵 Cancionero</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
+          <span class="sub">${esc(u.parish || "")}${u.role && u.role !== "dirigente" ? ` · <span class="chip ${api.cloud.isStaffRole(u.role) ? "warn" : "accent"}">${esc(api.cloud.roleLabel(u.role))}</span>` : ""}${u.asesor ? ` · <span class="chip">Asesor</span>` : ""}${u.formador ? ` · <span class="chip">Formación</span>` : ""}${u.cantor ? ` · <span class="chip" title="Apostolado del cancionero">🎵 Cancionero</span>` : ""}${u.active === false ? ` · <span class="chip">En pausa</span>` : ""}</span></td>
         <td><div class="cell-bar"><div class="mini-bar"><i style="width:${t.units ? (r.units / t.units) * 100 : 0}%"></i></div><span>${r.units}/${t.units}</span></div></td>
         <td>${r.modules}/${t.modules}</td>
         <td>${ago(r.last)}</td>
@@ -731,6 +735,12 @@ async function personView(uid) {
     <p class="muted small" style="margin-top:4px">Los asesores ven las formaciones dirigidas a asesores, además de las de su rol.</p>
     <label class="chip ${u.asesor ? "accent" : ""}" style="cursor:pointer;padding:8px 12px;margin-top:12px">
       <input type="checkbox" data-action="aUserAsesor" data-uid="${esc(u.uid)}" ${u.asesor ? "checked" : ""}> Es asesor o asesora de Ágape</label>
+  </div>
+  <div class="card"><h3>Formación</h3>
+    ${u.role === "admin" ? `<p class="muted small" style="margin-top:4px">Como administrador, ya puede importar y publicar cursos.</p>`
+      : `<p class="muted small" style="margin-top:4px">Puede importar cursos desde un Word o PDF, revisarlos y publicarlos en «Cursos de la comunidad». No toca el resto de la app.</p>
+      <label class="chip ${u.formador ? "accent" : ""}" style="cursor:pointer;padding:8px 12px;margin-top:12px">
+        <input type="checkbox" data-action="aUserFormador" data-uid="${esc(u.uid)}" ${u.formador ? "checked" : ""}> Prepara cursos de formación</label>`}
   </div>
   <div class="card"><h3>Apostolado del cancionero</h3>
     ${api.cloud.isStaffRole(u.role) ? `<p class="muted small" style="margin-top:4px">Como ${esc(api.cloud.roleLabel(u.role).toLowerCase())}, ya puede agregar y editar canciones y celebraciones.</p>`
@@ -976,14 +986,7 @@ function bindActions() {
   if (bound) return; bound = true;
   const A = api.actions;
   saludos.registerActions(A, () => api.render());
-  importar.registerActions(A, {
-    render: () => api.render(), PARA: S.PARA,
-    createCourse: (c) => commit((d) => {
-      c.id = slug(c.title) + "-" + Date.now().toString(36); c.theme = c.theme || "amanecer"; c.hidden = true;
-      d.courses.push(c);
-      setTimeout(() => (location.hash = `#/admin/itinerarios/${d.courses.length - 1}`));
-    }, { msg: "Curso creado como borrador oculto. Revísalo y publícalo cuando esté listo." }),
-  });
+  cursosCom.setup(api);
   evAdmin.registerActions(A, () => api.render());
 
   document.addEventListener("submit", async (e) => {
@@ -1115,6 +1118,14 @@ function bindActions() {
     if (!u) return;
     const on = !u.asesor; el.checked = on;
     try { await api.cloud.updateUser(u.uid, { asesor: on }); await loadPeople(true); api.render(); toast(on ? "Marcado como asesor" : "Ya no figura como asesor"); }
+    catch (e) { el.checked = !on; toast("No se pudo cambiar: " + (e.code || e.message), ""); }
+  };
+  A.aUserFormador = async (el) => {
+    const data = await loadPeople();
+    const u = data.users.find((x) => x.uid === el.dataset.uid);
+    if (!u) return;
+    const on = !u.formador; el.checked = on;
+    try { await api.cloud.updateUser(u.uid, { formador: on }); await loadPeople(true); api.render(); toast(on ? "Ya puede preparar y publicar cursos" : "Ya no prepara cursos"); }
     catch (e) { el.checked = !on; toast("No se pudo cambiar: " + (e.code || e.message), ""); }
   };
   A.aUserCantor = async (el) => {

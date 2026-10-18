@@ -69,6 +69,8 @@ function realState(account, va) {
     isJoven: !!(account && account.active !== false && ["ingreso", "madurez"].includes(account.role)),
     // Apostolado del cancionero: además del equipo, quienes un administrador habilita.
     canSongs: !!(account && account.active !== false && (STAFF.includes(account.role) || account.cantor === true)),
+    // Formación: los administradores y quienes tienen la marca «formador» importan y publican cursos de la comunidad.
+    canCourses: !!(account && account.active !== false && (account.role === "admin" || account.formador === true)),
     ready: status === "ready",
   };
 }
@@ -765,6 +767,22 @@ export const deleteCancion = (id) => fb.deleteDoc(fb.doc(db, "canciones", id));
 export const watchRepertorios = watchCol("repertorios");
 export const saveRepertorio = saveIn("repertorios");
 export const deleteRepertorio = (id) => fb.deleteDoc(fb.doc(db, "repertorios", id));
+
+// Cursos de la comunidad (colección «cursos»): los publican administradores y formadores, sin tocar el
+// resto del contenido. Cada documento guarda un curso completo como JSON. Los lee cualquiera.
+export async function getCursos() {
+  if (!enabled || !db) return null;
+  try {
+    const qs = await withTimeout(fb.getDocs(fb.collection(db, "cursos")), 8000);
+    return snapRows(qs).map((r) => { const c = safeJSON(r.json, null); return c && c.id ? { ...c, _meta: { by: r.by || "", updatedAt: r.updatedAt && r.updatedAt.toMillis ? r.updatedAt.toMillis() : 0 } } : null; }).filter(Boolean);
+  } catch (e) { console.warn("cursos:", e && (e.code || e.message)); return null; }
+}
+export async function saveCurso(course) {
+  const c = { ...course }; delete c._meta;
+  await fb.setDoc(fb.doc(db, "cursos", c.id), { json: JSON.stringify(c), title: String(c.title || "Curso").slice(0, 120), hidden: !!c.hidden,
+    by: (account && (account.name || account.email)) || "", updatedBy: account.email, updatedAt: fb.serverTimestamp() });
+}
+export const deleteCurso = (id) => fb.deleteDoc(fb.doc(db, "cursos", id));
 
 // Archivo de revistas de años anteriores (content/archivo): lo lee cualquiera, lo edita un administrador.
 export async function getArchivo() {

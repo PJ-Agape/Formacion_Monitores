@@ -1493,7 +1493,8 @@ agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud })
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 S.setCourseRule((c) => {
   if (cloud.enabled ? !!cloud.state().isAdmin : S.isAdmin()) return true;
-  if (c.hidden) return false;
+  // Los cursos ocultos de la comunidad los ven también los formadores, para revisarlos antes de publicarlos.
+  if (c.hidden) return !!(c.comunidad && cloud.enabled && cloud.state().canCourses);
   const para = S.paraDe(c);
   if (!para.length || !cloud.enabled) return true;
   const st = cloud.state();
@@ -1544,6 +1545,8 @@ async function boot() {
       document.addEventListener("visibilitychange", () => { if (document.visibilityState === "visible") recheck(false); });
     }
     if (cloud.enabled) cloud.onChange(render); // después de cargar el contenido, para no dibujar sin datos
+    // Cursos de la comunidad: se traen al abrir (la copia guardada se muestra mientras tanto).
+    if (cloud.enabled) cloud.getCursos().then((l) => { if (l && S.setExtraCourses(l) && !/^#\/admin/.test(location.hash)) render(); });
     // Al volver a la app (celular en segundo plano, otra pestaña), se trae el avance hecho en otro dispositivo.
     // Solo se vuelve a dibujar si algo cambió y la persona no está escribiendo ni en medio de una unidad.
     if (cloud.enabled) {

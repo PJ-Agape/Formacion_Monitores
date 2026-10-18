@@ -286,6 +286,18 @@ service cloud.firestore {
       allow delete: if isStaff() || (isMember() && resource.data.authorUid == request.auth.uid);
     }
 
+    // Cursos de la comunidad (Gestión → Cursos de la comunidad): un curso completo por documento, como JSON.
+    // Los lee cualquiera (como el contenido del curso). Los crean, corrigen, publican y borran los
+    // administradores y quienes un administrador marca como formadores (users.formador).
+    function canCourses() { return isAdmin() || (isMember() && me().get('formador', false) == true); }
+    match /cursos/{cursoId} {
+      allow read: if true;
+      allow create, update: if canCourses()
+        && request.resource.data.json is string && request.resource.data.json.size() > 0 && request.resource.data.json.size() <= 900000
+        && validText(request.resource.data.title, 120) && request.resource.data.hidden is bool;
+      allow delete: if canCourses();
+    }
+
     // Cancionero: lo ve la comunidad con cuenta (uso interno). Lo editan el equipo y quienes un
     // administrador habilita para el apostolado del cancionero (users.cantor); borrar es solo del equipo.
     function canSongs() { return isStaff() || (isMember() && me().get('cantor', false) == true); }

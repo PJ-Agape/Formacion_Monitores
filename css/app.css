@@ -3795,3 +3795,7 @@ body.solo-on .help-fab { display: none; }
 .imp-chip { font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
 .imp-chip.ok { background: #e3f4ea; color: #0f6b43; }
 .imp-chip.no { background: #f1f2f6; color: #7a849a; }
+.cc-row { display: grid; gap: 10px; }
+.cc-main h3 { font-size: 1.05rem; margin: 0 0 2px; }
+.cc-main .chip { margin-top: 6px; display: inline-block; }
+.cc-para summary { cursor: pointer; }
