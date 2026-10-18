@@ -1,11 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-16": {
-   "titulo": "Viernes de la 28.ª semana del Tiempo Ordinario",
-   "cita": "Lc 12,1-7",
-   "frase": "Ustedes valen más que muchos pájaros. No teman."
-  },
   "2026-10-17": {
    "titulo": "Sábado de la 28.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,8-12",
@@ -55,6 +50,11 @@
    "titulo": "Lunes de la 30.ª semana del Tiempo Ordinario",
    "cita": "Lc 13,10-17",
    "frase": "Mujer, quedas libre de tu enfermedad."
+  },
+  "2026-10-27": {
+   "titulo": "Martes de la 30.ª semana del Tiempo Ordinario",
+   "cita": "Lc 13,18-21",
+   "frase": "El Reino de Dios se parece a un grano de mostaza."
   }
  }
 }
