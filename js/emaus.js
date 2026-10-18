@@ -304,11 +304,11 @@ const CHAPTERS = [
   // ------------------------------------------------------------------ 5
   { n: 5, title: "Cuidado y envío", mod: "Módulo 5 · Cuidado personal, cuidado mutuo y envío", st: "levantate", badge: "Enviado",
     intro: [L(N, "Llevas semanas sirviendo en el grupo. Estás contento… y bien cansado."), L(N, "Hoy el Padre Andrés quiere enviar a los nuevos dirigentes.")],
-    npcs: () => [{ id: "sofi", x: 19, y: 18 }, { id: "tomas", x: 30, y: 19 }, { id: "benja", x: 34, y: 22 }, { id: "nico", x: 6, y: 28, sit: true }, { id: "ana", x: 15, y: 25 }, { id: "carmen", x: 10, y: 6 }, { id: "padre", x: 13, y: 6 }],
+    npcs: () => [{ id: "sofi", x: 19, y: 18 }, { id: "tomas", x: 30, y: 19 }, { id: "benja", x: 34, y: 22 }, { id: "nico", x: 6, y: 28, sit: true, hide: !!Q().nico }, { id: "ana", x: 15, y: 25 }, { id: "padre", x: 13, y: 6 }],
     quests: [
       { t: "Descansa en el Señor en el cerro", u: "5.1", done: () => !!Q().rest, at: { x: 36, y: 3 } },
       { t: "Ayuda a Sofi a sostener la carga", u: "5.2", done: () => !!Q().held, at: () => (Q().help || []).length >= 2 ? { x: 19, y: 18 } : (Q().help || []).includes("tomas") ? { x: 34, y: 22 } : { x: 30, y: 19 } },
-      { t: "Nico está bajo el arbusto: acompáñalo", u: "5.4", done: () => !!Q().nico, at: () => (Q().bread ? (Q().nicoTold ? { x: 10, y: 6 } : { x: 6, y: 28 }) : Q().nicoSeen ? { x: 15, y: 25 } : { x: 6, y: 28 }) },
+      { t: "Nico volvió agotado de la misión: comparte con él", u: "5.4", done: () => !!Q().nico, at: () => (Q().nicoSeen && !Q().bread ? { x: 15, y: 25 } : { x: 6, y: 28 }) },
     ],
     talk: {
       sofi: () => {
@@ -320,23 +320,15 @@ const CHAPTERS = [
       tomas: () => { if (!Q().asked) return say([L(P("tomas"), "¡Hola! Hoy es el envío.")]); (Q().help = Q().help || []).includes("tomas") || Q().help.push("tomas"); say([L(P("tomas"), "¿Sofi necesita ayuda? ¡Voy altiro!")]); },
       benja: () => { if (!Q().asked) return say([L(P("benja"), "Estoy ensayando la canción del envío.")]); (Q().help = Q().help || []).includes("benja") || Q().help.push("benja"); say([L(P("benja"), "Dejo la guitarra y voy a ayudar.")]); },
       nico: () => {
-        if (Q().nico) return say([L(P("nico"), "Gracias por no dejarme solo.")]);
-        if (Q().bread && !Q().nicoTold) {
-          return say([L(P("nico"), "(Come un poco) Gracias… hace días que no tengo ganas de nada. Estoy cansado de todo."), L(P("nico"), "No le digas a nadie, ¿ya?")], () =>
-            ask(meW(), "¿Qué haces?", [
-              ["«Te quiero mucho, por eso no voy a guardar esto solo. Vamos juntos a conversar con la Tía Carmen.»", [L(P("nico"), "…Está bien. Si vienes conmigo."), L(N, "Cuando algo es serio, no se guarda en secreto: se busca a un adulto de confianza, con cariño.")]],
-              ["«Tranquilo, no le diré a nadie.»", [L(N, "Guardar el secreto parece lealtad, pero Nico necesita más ayuda de la que tú solo puedes dar. Elías, agotado bajo el arbusto, recibió pan y compañía (1 Re 19,4-8).")]],
-            ], 0, () => { Q().nicoTold = 1; }));
+        if (Q().bread) {
+          Q().nico = 1; join("nico");
+          return say([L(P("nico"), "¿Pan y agua? ¡Gracias! Con la misión se me olvidó comer."), L(P("nico"), "Uno a veces se olvida de cuidarse. Ya me siento mejor: ¿vamos juntos al envío?"),
+            L(N, "El ángel le dijo a Elías: «Levántate y come, que el camino es largo» (1 Re 19,7). Cuidarnos también es fijarnos en el cansancio del otro.")]);
         }
-        if (Q().nicoTold) return say([L(P("nico"), "¿Vamos donde la Tía Carmen? Está frente al salón.")]);
         Q().nicoSeen = 1;
-        say([L(N, "Nico está sentado bajo un arbusto, como el profeta Elías cuando ya no podía más."), L(P("nico"), "…Déjame solo."), L(N, "No tiene fuerzas ni para hablar. Ana, en el pueblo, tiene pan y agua.")]);
+        say([L(N, "Nico está sentado a la sombra de un arbusto, como el profeta Elías en el camino."), L(P("nico"), "Estoy reventado. Cargué cosas toda la mañana para la misión y no he comido nada."), L(N, "Ana, en el pueblo, tiene pan y agua.")]);
       },
-      ana: () => { if (Q().nicoSeen && !Q().bread) { Q().bread = 1; return say([L(P("ana"), "¿Para Nico? Toma, lleva pan y agua. Y no lo dejes solo."), L(N, "Elías comió, bebió y recobró fuerzas para seguir caminando.")]); } say([L(P("ana"), "Hoy es el envío. ¡Qué emoción!")]); },
-      carmen: () => {
-        if (Q().nicoTold && !Q().nico) { Q().nico = 1; return say([L(P("carmen"), "Gracias por traerlo y por confiar en mí. Hiciste lo correcto."), L(P("carmen"), "Nico, vamos a conversar con calma y a buscar ayuda junto a tu familia. No estás solo."), L(N, "Si alguna vez te pasa a ti, habla con un adulto de confianza. También existe la línea *4141 del Ministerio de Salud.")]); }
-        say([L(P("carmen"), "Aquí estoy por si alguien necesita conversar.")]);
-      },
+      ana: () => { if (Q().nicoSeen && !Q().bread) { Q().bread = 1; return say([L(P("ana"), "¿Para Nico? Toma, lleva pan y agua. ¡Y que descanse un rato!")]); } say([L(P("ana"), "Hoy es el envío. ¡Qué emoción!")]); },
       padre: () => {
         if (goalsLeft()) return say([L(P("padre"), `El envío es en el encuentro. Antes, termina lo que falta (${goalsLeft()}).`)]);
         say([L(P("padre"), "¡Ya están todos! Vamos al salón para el envío.")]);
@@ -344,9 +336,9 @@ const CHAPTERS = [
     },
     tile: (tx, ty) => { if (S.lamp && !Q().rest && tx >= 36 && tx <= 38 && ty <= 4) rest(); },
     end: { word: "Jn 20,19-23", lines: [L(P("padre"), "Jesús resucitado se puso en medio de sus discípulos y les dijo: «Como el Padre me envió, así los envío yo»."),
-      L(P("camin"), "Para ser enviado hay que descansar en Él, dejarse sostener y saber pedir ayuda. Nadie es enviado solo."),
+      L(P("camin"), "Para ser enviado hay que descansar en Él, dejarse sostener y cuidar a los demás. Nadie es enviado solo."),
       { who: { n: "", st: "levantate", big: true }, t: "El Padre Andrés te entrega una pequeña cruz. Desde hoy eres dirigente de Ágape." }],
-      idea: "Cuidarse y cuidarnos es parte de la misión: descansar en el Señor, sostenernos y pedir ayuda a tiempo." } },
+      idea: "Cuidarse y cuidarnos es parte de la misión: descansar en el Señor, sostenernos y fijarnos en el cansancio del otro." } },
 
   // ------------------------------------------------------------------ 6
   { n: 6, title: "Lo reconocieron al partir el pan", mod: "Módulo 6 · La Eucaristía, corazón de nuestra Pastoral Juvenil", st: "eucaristia", badge: "Eucaristía",
