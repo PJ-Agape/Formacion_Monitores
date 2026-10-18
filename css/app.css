@@ -3799,3 +3799,62 @@ body.solo-on .help-fab { display: none; }
 .cc-main h3 { font-size: 1.05rem; margin: 0 0 2px; }
 .cc-main .chip { margin-top: 6px; display: inline-block; }
 .cc-para summary { cursor: pointer; }
+
+/* Emaús (juego de rol) */
+.em { position: fixed; inset: 0; z-index: 60; background: #bfe3a6; overflow: hidden; touch-action: none; user-select: none; -webkit-user-select: none; color: #0b2566; }
+.em canvas { display: block; }
+.em-hud { position: absolute; top: max(10px, env(safe-area-inset-top)); left: 10px; right: 10px; display: grid; grid-template-columns: 1fr auto; gap: 6px; pointer-events: none; }
+.em-vals { display: flex; gap: 6px; }
+.em-v { display: grid; justify-items: center; gap: 1px; background: rgba(255,255,255,.85); border: 2px solid #0b2566; border-radius: 12px; padding: 4px 6px 3px; opacity: .55; min-width: 54px; }
+.em-v.on { opacity: 1; background: #ffba03; }
+.em-v.center.on { background: #fff6e5; box-shadow: 0 0 0 3px #ffba03; }
+.em-v svg { width: 20px; height: 20px; fill: none; stroke: #0b2566; stroke-width: 2; stroke-linecap: round; }
+.em-v small { font-size: .62rem; font-weight: 800; }
+.em-goal { grid-column: 1 / -1; margin: 0; background: rgba(11,37,102,.88); color: #fff; font-weight: 700; font-size: .85rem; padding: 6px 10px; border-radius: 10px; justify-self: start; max-width: 100%; }
+.em-menu-btn { pointer-events: auto; grid-row: 1; grid-column: 2; align-self: start; background: #fff; border: 2px solid #0b2566; border-radius: 10px; font-weight: 800; padding: 6px 10px; color: #0b2566; }
+.em-pad { position: absolute; left: 18px; bottom: max(22px, env(safe-area-inset-bottom)); width: 118px; height: 118px; border-radius: 50%; background: rgba(255,255,255,.45); border: 2px solid rgba(11,37,102,.5); touch-action: none; }
+.em-pad span { position: absolute; width: 0; height: 0; border: 10px solid transparent; }
+.em-pad [data-d=u] { left: 49px; top: 8px; border-bottom: 14px solid #0b2566; }
+.em-pad [data-d=d] { left: 49px; bottom: 8px; border-top: 14px solid #0b2566; }
+.em-pad [data-d=l] { top: 49px; left: 8px; border-right: 14px solid #0b2566; }
+.em-pad [data-d=r] { top: 49px; right: 8px; border-left: 14px solid #0b2566; }
+.em-act { position: absolute; right: 20px; bottom: max(36px, env(safe-area-inset-bottom)); width: 84px; height: 84px; border-radius: 50%; background: #ffba03; border: 3px solid #0b2566; box-shadow: 4px 4px 0 #0b2566; font-weight: 800; color: #0b2566; }
+@media (hover: hover) and (pointer: fine) { .em-pad { display: none; } }
+.em-dlg { position: absolute; left: 10px; right: 10px; bottom: max(14px, env(safe-area-inset-bottom)); display: grid; gap: 8px; justify-items: center; }
+.em-scene { width: min(280px, 70vw); aspect-ratio: 1; background: #fff6e5; border: 3px solid #0b2566; border-radius: 20px; box-shadow: 6px 6px 0 #0b2566; }
+.em-box { width: min(620px, 100%); display: flex; gap: 10px; align-items: flex-start; background: #fff; border: 3px solid #0b2566; border-radius: 16px; box-shadow: 5px 5px 0 #0b2566; padding: 12px 14px; }
+.em-txt { flex: 1; min-width: 0; }
+.em-txt b { display: block; font-size: .78rem; letter-spacing: .06em; text-transform: uppercase; color: #ef591c; }
+.em-txt p { margin: 2px 0 0; font-size: 1rem; line-height: 1.4; }
+.em-more { display: block; text-align: right; font-size: .72rem; color: #4a5d7a; margin-top: 4px; }
+.em-ch { display: grid; gap: 6px; margin-top: 8px; }
+.em-ch button { text-align: left; background: #fff6e5; border: 2px solid #0b2566; border-radius: 10px; padding: 8px 10px; font: inherit; font-weight: 600; color: #0b2566; }
+.em-ch button:hover { background: #ffba03; }
+.em-face { flex: 0 0 44px; width: 44px; height: 44px; border-radius: 50%; border: 2px solid #0b2566; background: radial-gradient(circle at 50% 38%, var(--skin) 0 15px, transparent 16px), linear-gradient(var(--shirt), var(--shirt)) bottom / 100% 30% no-repeat, #e8f4fc; position: relative; overflow: hidden; }
+.em-face i { position: absolute; left: 7px; right: 7px; top: 1px; height: 13px; border-radius: 14px 14px 4px 4px; background: var(--hair); }
+.em-dog { background: radial-gradient(circle at 60% 45%, #b5793f 0 14px, transparent 15px), #e8f4fc; }
+.em-quiet { width: min(520px, 100%); background: rgba(255,246,229,.95); border: 3px solid #0b2566; border-radius: 16px; padding: 18px; text-align: center; font-weight: 700; }
+.em-bar { height: 6px; background: #e2dccf; border-radius: 6px; overflow: hidden; margin-top: 10px; }
+.em-bar i { display: block; height: 100%; width: 100%; background: #ffba03; transform-origin: left; animation: em-bar linear forwards; }
+@keyframes em-bar { from { transform: scaleX(0); } to { transform: scaleX(1); } }
+.em-start, .em-menu { position: absolute; inset: 0; display: grid; place-items: center; background: rgba(11,37,102,.55); padding: 16px; overflow: auto; }
+.em-menu[hidden] { display: none; }
+.em-card { width: min(440px, 100%); background: #fff6e5; border: 3px solid #0b2566; border-radius: 22px; box-shadow: 8px 8px 0 #0b2566; padding: 20px; display: grid; gap: 10px; text-align: center; }
+.em-card h1 { font-family: var(--font-display); font-size: 2.4rem; margin: 0; line-height: 1; }
+.em-end .em-card h1 { font-size: 1.6rem; }
+.em-card h2 { margin: 0; }
+.em-hero { width: 150px; height: 150px; margin: 0 auto; background: #fff; border: 3px solid #0b2566; border-radius: 50%; }
+.em-sub { margin: 0; line-height: 1.4; }
+.em-inv { margin: 0; background: #ffba03; border: 2px solid #0b2566; border-radius: 12px; padding: 8px; font-weight: 700; font-size: .9rem; }
+.em-lbl { display: grid; gap: 4px; text-align: left; font-weight: 800; font-size: .85rem; }
+.em-lbl small { font-weight: 500; color: #4a5d7a; }
+.em-lbl input { font: inherit; padding: 10px; border: 2px solid #0b2566; border-radius: 10px; background: #fff; }
+.em-looks { display: flex; justify-content: center; gap: 10px; }
+.em-looks button { background: none; border: 3px solid transparent; border-radius: 50%; padding: 2px; }
+.em-looks button.on { border-color: #ef591c; }
+.em-help { font-size: .78rem; color: #4a5d7a; margin: 0; }
+.em-back { font-size: .85rem; color: #1351a4; }
+.em-toast { position: absolute; left: 50%; top: 40%; transform: translateX(-50%); background: #0b2566; color: #fff; padding: 10px 14px; border-radius: 12px; font-weight: 700; max-width: 80vw; text-align: center; }
+.jg-card.is-em { background: linear-gradient(135deg, #fff6e5, #ffe7b3); }
+.em-looks button { width: 54px; height: 54px; display: grid; place-items: center; }
+.em-looks .em-face { width: 44px; height: 44px; }

@@ -10,6 +10,7 @@ import { artSvg as memSvg } from "./memorice.js";
 import { artSvg as mjSvg } from "./mahjong.js";
 import { artSvg as spSvg } from "./sopa.js";
 import { artSvg as cwSvg } from "./crucigrama.js";
+import { artSvg as emSvg } from "./emaus.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave }
 export function setup(c) { ctx = c; registerActions(); }
@@ -89,6 +90,10 @@ function stopTimer() { if (timer) clearInterval(timer); timer = null; }
 export function view() {
   return `<header class="page-head"><span class="eyebrow">La Plaza Ágape</span><h1>Juegos <em>Ágape</em></h1>
       <p>Para jugar en grupo, en el encuentro, en el bus o donde estemos juntos. Y otros para un rato a solas.</p></header>
+    <a class="jg-card is-em" href="#/juegos/emaus">
+      <span class="jg-card-art" aria-hidden="true">${emSvg()}</span>
+      <span class="jg-card-txt"><small>Juego de rol · para jugar solo</small><b>Emaús</b>
+        <span>Recorre el pueblo, invita a los que están solos, busca la Palabra y sube a rezar. Al atardecer, alguien te espera en la capilla.</span></span>${icon("right")}</a>
     <h2 class="jg-h">Para jugar en grupo</h2>
     <a class="jg-card" href="#/juegos/impostor">
       <span class="jg-card-art" aria-hidden="true">${maskSvg()}</span>

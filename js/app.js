@@ -26,6 +26,7 @@ import * as trivia from "./trivia.js";
 import * as cursoPrint from "./curso-print.js";
 import * as ultima from "./ultima.js";
 import * as memorice from "./memorice.js";
+import * as emaus from "./emaus.js";
 import * as mahjong from "./mahjong.js";
 import * as sopa from "./sopa.js";
 import * as crucigrama from "./crucigrama.js";
@@ -111,6 +112,7 @@ const routes = [
   [/^\/juegos\/trivia$/, () => trivia.view(), "red"],
   [/^\/juegos\/ultima(?:\?(.*))?$/, (q) => ultima.view(q || ""), "red"],
   [/^\/juegos\/memorice$/, () => memorice.view(), "red"],
+  [/^\/juegos\/emaus(?:\?(.*))?$/, (q) => emaus.view(q || ""), "red"],
   [/^\/juegos\/mahjong$/, () => mahjong.view(), "red"],
   [/^\/juegos\/sopa$/, () => sopa.view(), "red"],
   [/^\/juegos\/crucigrama$/, () => crucigrama.view(), "red"],
@@ -1517,7 +1519,7 @@ frente.setup({ actions, onAfterRender, onLeave });
 trivia.setup({ actions, onAfterRender, onLeave });
 cursoPrint.setup({ actions, onAfterRender, onLeave, S, render: () => render() });
 ultima.setup({ actions, onAfterRender, onLeave, cloud });
-for (const m of [memorice, mahjong, sopa, crucigrama]) m.setup({ actions, onAfterRender, onLeave });
+for (const m of [memorice, mahjong, sopa, crucigrama, emaus]) m.setup({ actions, onAfterRender, onLeave });
 podcast.setup({ actions, render: () => render(), onAfterRender, cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);
