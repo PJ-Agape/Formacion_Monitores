@@ -96,8 +96,8 @@ _${x.fecha}${fiesta ? " · " + fiesta : ""}_
 
 ${frase ? `«${frase}»\n` : ""}${x.cita}
 
-Léelo completo y míralo en video en la Capilla de agAPPe:
-${APP}#/evangelio`;
+Te invitamos a la Capilla Ágape:
+${APP}capilla`;
 }
 const partFuera = (x) => `<article class="sal-part fuera">
     <h3>Para compartir fuera <small>Canal, estados u otros grupos</small></h3>
