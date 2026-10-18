@@ -92,8 +92,8 @@ export function view() {
       <p>Para jugar en grupo, en el encuentro, en el bus o donde estemos juntos. Y otros para un rato a solas.</p></header>
     <a class="jg-card is-em" href="#/juegos/emaus">
       <span class="jg-card-art" aria-hidden="true">${emSvg()}</span>
-      <span class="jg-card-txt"><small>Juego de rol · para jugar solo</small><b>Emaús</b>
-        <span>Recorre el pueblo, invita a los que están solos, busca la Palabra y sube a rezar. Al atardecer, alguien te espera en la capilla.</span></span>${icon("right")}</a>
+      <span class="jg-card-txt"><small>Juego de rol · 6 capítulos</small><b>Emaús</b>
+        <span>El arte de encontrarnos: sábado a sábado haces amigos, aprendes a acoger, escuchar y cuidar… y un Caminante te acompaña.</span></span>${icon("right")}</a>
     <h2 class="jg-h">Para jugar en grupo</h2>
     <a class="jg-card" href="#/juegos/impostor">
       <span class="jg-card-art" aria-hidden="true">${maskSvg()}</span>
