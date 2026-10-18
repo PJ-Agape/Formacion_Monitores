@@ -16,6 +16,7 @@ import * as S from "./store.js";
 import * as portada from "./portada.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as familiasAdmin from "./familias-admin.js";
+import * as importar from "./importar-curso.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -65,7 +66,7 @@ export async function renderAdmin(sub, _api) {
     case "resumen": body = await summaryView(draft); break;
     case "dirigentes": body = cloudOn ? await (parts[1] ? personView(parts[1]) : peopleView()) : summaryView(draft); break;
     case "asignar": body = cloudOn ? await asignarView() : summaryView(draft); break;
-    case "itinerarios": body = parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
+    case "itinerarios": body = parts[1] === "importar" ? importar.view(S.PARA) : parts[1] != null ? courseView(draft, +parts[1]) : coursesView(draft); break;
     case "portada": body = portada.adminView(); break;
     case "inicio": body = cloudOn ? inicioAdmin.adminView() : summaryView(draft); break;
     case "saludos": body = await saludos.adminView(); break;
@@ -257,7 +258,8 @@ function coursesView(d) {
   <header class="page-head row-wrap" style="align-items:flex-end">
     <div><span class="eyebrow">Gestión</span><h1>Cursos</h1><p>Cada curso tiene módulos, unidades de estudio y una evaluación por módulo. Los cursos <b>ocultos</b> solo los ven los administradores: puedes prepararlos con calma y publicarlos cuando se necesiten. En «Editar» → «Dirigido a» eliges para quiénes es cada formación (asesores, coordinadores, dirigentes o aspirantes).</p></div>
     <span class="spacer"></span>
-    <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button>
+    <div class="row-wrap" style="gap:8px"><a class="btn btn-soft" href="#/admin/itinerarios/importar">${icon("ul")} Importar desde Word o PDF</a>
+    <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button></div>
   </header>
   <div class="note" style="margin-bottom:14px"><b>Novedades en los cursos.</b> Hay contenido nuevo en el sitio: los cursos <b>«Asesorar es acompañar»</b> (para asesores) y <b>«Coordinar es servir»</b> (para coordinadores), de 5 módulos cada uno, y en el curso de dirigentes las oraciones finales de acción de gracias, las unidades 1.5 y 1.6, el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
     <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncCourse">${icon("ul")} Traer las novedades</button></div></div>
@@ -974,6 +976,14 @@ function bindActions() {
   if (bound) return; bound = true;
   const A = api.actions;
   saludos.registerActions(A, () => api.render());
+  importar.registerActions(A, {
+    render: () => api.render(), PARA: S.PARA,
+    createCourse: (c) => commit((d) => {
+      c.id = slug(c.title) + "-" + Date.now().toString(36); c.theme = c.theme || "amanecer"; c.hidden = true;
+      d.courses.push(c);
+      setTimeout(() => (location.hash = `#/admin/itinerarios/${d.courses.length - 1}`));
+    }, { msg: "Curso creado como borrador oculto. Revísalo y publícalo cuando esté listo." }),
+  });
   evAdmin.registerActions(A, () => api.render());
 
   document.addEventListener("submit", async (e) => {

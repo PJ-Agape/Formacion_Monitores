@@ -258,11 +258,14 @@ export const setPreviewOpen = (v) => { PREVIEW_OPEN = !!v; };
 // Estado derivado útil para las vistas
 export function courseState(course) {
   const p = progress(course.id);
-  const phases = course.phases.map((ph, i) => {
-    const done = !!p.phases[i];
-    const open = PREVIEW_OPEN || i === 0 || !!p.phases[i - 1];
+  // Un módulo sin evaluación se completa al leer todas sus unidades (cursos importados o en preparación).
+  const phases = [];
+  course.phases.forEach((ph, i) => {
     const read = ph.sessions.filter((s) => p.read[sessionKey(i, s)]).length;
-    return { done, open, read, total: ph.sessions.length, score: p.scores[i] };
+    const noQuiz = !(ph.quiz && ph.quiz.questions && ph.quiz.questions.length);
+    const done = !!p.phases[i] || (noQuiz && ph.sessions.length > 0 && read === ph.sessions.length);
+    const open = PREVIEW_OPEN || i === 0 || !!(phases[i - 1] && phases[i - 1].done);
+    phases.push({ done, open, read, total: ph.sessions.length, score: p.scores[i] });
   });
   const donePhases = phases.filter((x) => x.done).length;
   const totalSessions = phases.reduce((a, x) => a + x.total, 0);

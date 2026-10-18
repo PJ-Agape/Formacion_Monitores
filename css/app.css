@@ -3783,3 +3783,15 @@ body.solo-on .help-fab { display: none; }
 .ev-read summary { cursor: pointer; font-weight: 800; color: var(--cn, #0b2566); padding: 6px 0; }
 .ev-frame { width: 100%; height: 65vh; min-height: 400px; border: 1px solid rgba(11,37,102,.18); border-radius: 12px; background: #fff; margin-top: 6px; }
 .linklike { background: none; border: 0; padding: 0; font: inherit; color: var(--cb, #1351a4); text-decoration: underline; cursor: pointer; }
+
+/* Gestión → Cursos → Importar */
+.imp-drop { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 26px 16px; border: 2.5px dashed rgba(11,37,102,.35); border-radius: 18px; background: rgba(255,255,255,.6); text-align: center; cursor: pointer; }
+.imp-drop:hover { background: #fff; }
+.imp-drop small { color: #4a5d7a; }
+.imp-mod { border: 1px solid rgba(11,37,102,.15); border-radius: 12px; padding: 8px 12px; background: #fff; }
+.imp-mod summary { cursor: pointer; }
+.imp-units { list-style: none; padding: 0; margin: 8px 0 0; display: grid; gap: 8px; }
+.imp-chips { display: flex; flex-wrap: wrap; gap: 4px; margin-top: 4px; }
+.imp-chip { font-size: .7rem; font-weight: 700; padding: 2px 7px; border-radius: 999px; }
+.imp-chip.ok { background: #e3f4ea; color: #0f6b43; }
+.imp-chip.no { background: #f1f2f6; color: #7a849a; }
