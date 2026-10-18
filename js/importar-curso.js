@@ -18,7 +18,7 @@ const words = (s) => plainOf(s).split(/\s+/).filter(Boolean).length;
 // ---------------------------------------------------------------------------
 // 1) Del archivo a una lista de bloques: { k: "h1"|"h2"|"h3"|"p"|"li", t: texto con <strong>/<em> }
 // ---------------------------------------------------------------------------
-function htmlToBlocks(html) {
+export function htmlToBlocks(html) {
   const doc = new DOMParser().parseFromString(`<div>${html}</div>`, "text/html");
   const out = [];
   const inline = (el) => {
@@ -26,15 +26,23 @@ function htmlToBlocks(html) {
     el.childNodes.forEach((n) => {
       if (n.nodeType === 3) s += n.textContent.replace(/</g, "&lt;").replace(/>/g, "&gt;");
       else if (n.nodeType === 1) {
-        const tg = n.tagName.toLowerCase(), inner = inline(n);
-        if (tg === "strong" || tg === "b") s += inner.trim() ? `<strong>${inner}</strong>` : inner;
-        else if (tg === "em" || tg === "i") s += inner.trim() ? `<em>${inner}</em>` : inner;
-        else if (tg === "a") { const h = n.getAttribute("href") || ""; s += /^https?:/.test(h) && !inner.includes(h) ? `${inner} ${h}` : inner; }
+        const tg = n.tagName.toLowerCase(), inner = inline(n), css = (n.getAttribute("style") || "").toLowerCase();
+        // Google Docs marca la negrita y la cursiva con estilos (y envuelve todo en un <b style="font-weight:normal">)
+        const w = (/font-weight:\s*(\d+|bold|normal)/.exec(css) || [])[1];
+        const bold = w ? (w === "bold" || +w >= 600) : (tg === "strong" || tg === "b");
+        const ital = /font-style:\s*italic/.test(css) || tg === "em" || tg === "i";
+        if (tg === "a") {
+          let h = n.getAttribute("href") || "";
+          const g = /^https?:\/\/(?:www\.)?google\.[a-z.]+\/url\?q=([^&]+)/.exec(h); if (g) h = decodeURIComponent(g[1]);
+          s += /^https?:/.test(h) && !inner.includes(h) ? `${inner} ${h}` : inner;
+        }
+        else if (bold && inner.trim()) s += `<strong>${inner}</strong>`;
+        else if (ital && inner.trim()) s += `<em>${inner}</em>`;
         else if (tg === "br") s += " ";
         else s += inner;
       }
     });
-    return s.replace(/<\/strong>(\s*)<strong>/g, "$1").replace(/\s+/g, " ");
+    return s.replace(/<\/strong>(\s*)<strong>/g, "$1").replace(/<strong>(\s*)<\/strong>/g, "$1").replace(/\s+/g, " ");
   };
   const walk = (el) => {
     el.childNodes.forEach((n) => {
@@ -71,7 +79,7 @@ function textToBlocks(txt) {
     // Rótulo en su propia línea («Objetivo:», «MÓDULO 2») o línea corta sin punto final → la tratamos como línea suelta
     if (/:$/.test(l) || /^(m[oó]dulo|tema|cap[ií]tulo|parte|unidad|sesi[oó]n|lecci[oó]n|clase|evaluaci[oó]n|cuestionario)\b/i.test(l)) { flush(); out.push({ k: "p", t: md(l) }); continue; }
     // Texto sin líneas en blanco: cada rótulo («Objetivo: …»), cada título corto y cada línea que cierra una frase va aparte.
-    const titleLike = l.split(/\s+/).length <= 8 && !/[.,;:?!»”")]$/.test(l) && /^[A-ZÁÉÍÓÚÑ¿¡«"]/.test(l) && l.length < 70;
+    const titleLike = !/https?:\/\//.test(l) && l.split(/\s+/).length <= 8 && !/[.,;:?!»”")]$/.test(l) && /^[A-ZÁÉÍÓÚÑ¿¡«"]/.test(l) && l.length < 70;
     const labelLike = /^[^:]{2,40}:/.test(l) && labelOf(l);
     if (para.length && (labelLike || titleLike || /[.!?»”:]$/.test(para[para.length - 1]))) flush();
     para.push(l);
@@ -151,7 +159,7 @@ const LABELS = [
   ["resources", /^(recursos|para profundizar|bibliografia|enlaces|materiales?( complementarios?)?|lecturas recomendadas)\b/],
 ];
 const labelOf = (plain) => { const n = norm(plain).replace(/^[\d.]+\s*/, ""); for (const [k, re] of LABELS) { const m = re.exec(n); if (m && n.length - m[0].length < 160) return k; } return null; };
-const isShortTitle = (b) => (b.k === "p" && /^<strong>[^<]{2,90}<\/strong>:?$/.test(b.t.trim())) || (b.k === "p" && words(b.t) <= 9 && !/[.,;?!»”")]$/.test(plainOf(b.t)) && /^[A-ZÁÉÍÓÚÑ¿¡«"]/.test(plainOf(b.t)) && plainOf(b.t).length < 70 && !/^\d/.test(plainOf(b.t)));
+const isShortTitle = (b) => !/https?:\/\//.test(b.t) && ((b.k === "p" && /^<strong>[^<]{2,90}<\/strong>:?$/.test(b.t.trim())) || (b.k === "p" && words(b.t) <= 9 && !/[.,;?!»”")]$/.test(plainOf(b.t)) && /^[A-ZÁÉÍÓÚÑ¿¡«"]/.test(plainOf(b.t)) && plainOf(b.t).length < 70 && !/^\d/.test(plainOf(b.t))));
 
 const BIBLE_REF = /^((?:[1-3]\s?)?[A-ZÁÉÍÓÚ][a-záéíóúñ]{1,14}\.?\s+\d{1,3}(?:\s*[,:]\s*\d{1,3}[a-z]?(?:\s*[-–]\s*\d{1,3}[a-z]?)?(?:\s*[.;]\s*\d{1,3}(?:\s*[-–]\s*\d{1,3})?)*)?)/;
 
@@ -348,7 +356,7 @@ export function buildCourse(blocks, opts = {}) {
 // ---------------------------------------------------------------------------
 // 3) Pantalla: Gestión → Cursos → Importar
 // ---------------------------------------------------------------------------
-const st = { result: null, file: "", busy: false, para: {}, autoPrayer: true, blocks: null, update: "" };
+const st = { result: null, file: "", busy: false, para: {}, autoPrayer: true, blocks: null, update: "", html: "" };
 const chip = (ok, t) => `<span class="imp-chip ${ok ? "ok" : "no"}">${ok ? "✓" : "–"} ${esc(t)}</span>`;
 
 // opts.update = { id, title }: se reemplaza el contenido de un curso ya publicado (se conserva su id,
@@ -367,11 +375,13 @@ export function view(PARA, opts = {}) {
     <label class="imp-drop" id="impDrop">
       <input type="file" id="impFile" accept=".docx,.pdf,.txt,.md,text/plain,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document" hidden>
       ${icon("ul")} <b>${st.busy ? "Leyendo…" : st.file ? esc(st.file) : "Elige o arrastra un archivo"}</b>
-      <small>Word (.docx), PDF o texto (.txt). Mejor en Word: los títulos se reconocen solos.</small>
+      <small>Word (.docx), PDF o texto (.txt). Desde Google Docs, pégalo abajo. Mejor en Word o Google Docs: los títulos se reconocen solos.</small>
     </label>
-    <details><summary class="small">O pega el texto aquí</summary>
-      <textarea class="input" id="impText" rows="8" placeholder="Módulo 1: …&#10;Unidad 1.1: …&#10;Objetivo: …"></textarea>
-      <button class="btn btn-soft btn-sm" style="margin-top:8px" data-action="impPaste">Leer el texto</button></details>
+    <details ${st.html ? "open" : ""}><summary class="small"><b>¿Está en Google Docs?</b> Cópialo y pégalo aquí</summary>
+      <p class="xs muted" style="margin:6px 0">En Google Docs: selecciona todo (Ctrl+A o «Seleccionar todo»), copia y pega en este recuadro. Se conservan los títulos, las negritas y las listas. También puedes descargarlo con <i>Archivo → Descargar → Microsoft Word (.docx)</i> y subir ese archivo.</p>
+      <textarea class="input" id="impText" rows="8" placeholder="Pega aquí el documento (de Google Docs, Word o un texto)…"></textarea>
+      ${st.html ? `<p class="xs" style="margin-top:4px">Pegado con formato: se reconocerán los títulos del documento.</p>` : ""}
+      <button class="btn btn-soft btn-sm" style="margin-top:8px" data-action="impPaste">Leer lo pegado</button></details>
     <details class="small"><summary>¿Cómo escribir el documento?</summary>
       <ul class="prose-list" style="margin-top:8px">
         <li>Arriba, el <b>nombre del curso</b> y, si quieres, un párrafo que lo presente.</li>
@@ -431,8 +441,20 @@ export function registerActions(A, { render, createCourse, PARA }) {
     if (!(e.target.closest && e.target.closest("#impDrop"))) return;
     e.preventDefault(); const f = e.dataTransfer.files[0]; if (f) run(() => fileToBlocks(f), f.name);
   });
-  A.impPaste = () => { const t = document.getElementById("impText")?.value || ""; if (!t.trim()) return toast("Pega el texto primero", ""); run(async () => textToBlocks(t), "Texto pegado"); };
-  A.impReset = () => { st.result = null; st.file = ""; st.blocks = null; render(); };
+  // Al pegar desde Google Docs (o Word, o una página) llega también el HTML: así se conservan los títulos.
+  document.addEventListener("paste", (e) => {
+    if (!e.target || e.target.id !== "impText") return;
+    const html = e.clipboardData && e.clipboardData.getData("text/html");
+    st.html = html && /<(h[1-6]|p|li|span)\b/i.test(html) ? html : "";
+  });
+  document.addEventListener("input", (e) => { if (e.target && e.target.id === "impText" && !e.target.value.trim()) st.html = ""; });
+  A.impPaste = () => {
+    const t = document.getElementById("impText")?.value || "";
+    if (!t.trim()) return toast("Pega el documento primero", "");
+    const html = st.html;
+    run(async () => (html ? htmlToBlocks(html) : textToBlocks(t)), /docs-internal-guid/.test(html) ? "Pegado desde Google Docs" : "Texto pegado");
+  };
+  A.impReset = () => { st.result = null; st.file = ""; st.blocks = null; st.html = ""; render(); };
   A.impCreate = async () => {
     const r = st.result; if (!r) return;
     const c = JSON.parse(JSON.stringify(r.course));
