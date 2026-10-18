@@ -86,6 +86,28 @@ async function load() {
   return data;
 }
 
+// Versión general, para compartir fuera de la comunidad (canal, estados, otros grupos):
+// la fecha, la frase del Evangelio, la cita y el enlace. Nada más.
+function fuera(x) {
+  const m = x.dia.match(/📖[^\n]*\n_«(.+?)»_/), frase = m ? m[1] : "";
+  const fiesta = x.titulo.includes(" · ") ? x.titulo.split(" · ").slice(1).join(" · ") : /domingo/i.test(x.titulo) ? x.titulo : "";
+  return `*Evangelio del día*
+_${x.fecha}${fiesta ? " · " + fiesta : ""}_
+
+${frase ? `«${frase}»\n` : ""}${x.cita}
+
+Léelo completo aquí:
+${APP}#/evangelio`;
+}
+const partFuera = (x) => `<article class="sal-part fuera">
+    <h3>Para compartir fuera <small>Canal, estados u otros grupos</small></h3>
+    <p class="xs muted">Un mensaje general, sin referencias a la comunidad, con el enlace al Evangelio del día. El enlace abre sin cuenta.</p>
+    <div class="row-wrap" style="gap:8px">
+      <button class="btn btn-gold" data-action="salShare" data-iso="${x.iso}" data-k="fuera">📤 Enviar a WhatsApp</button>
+      <button class="btn btn-soft btn-sm" data-action="salCopy" data-iso="${x.iso}" data-k="fuera">${icon("copy")} Copiar texto</button>
+    </div>
+    <div class="sal-wa">${wa(fuera(x))}</div>
+  </article>`;
 const part = (x, k) => `<article class="sal-part ${k}">
     <h3>${k === "noche" ? "🌙 Buenas noches" : "☀️ Buenos días"} <small>${esc(k === "noche" ? `${x.ref} · ${x.salmo}` : `Evangelio · ${x.cita}`)}</small></h3>
     ${k === "dia" && x.propio ? `<p class="xs note">Fiesta propia: el texto ya trae su Evangelio. La imagen conserva el del calendario general.</p>` : ""}
@@ -112,11 +134,11 @@ export async function adminView() {
   ${bienv}
   <div class="sal-days" role="list">${d.dias.map((y) => `<button role="listitem" class="sal-day ${y.iso === sel ? "on" : ""} ${y.iso === t ? "today" : ""} ${y.iso < t ? "past" : ""}" data-action="salPick" data-iso="${y.iso}" title="${esc(y.titulo)}"><small>${esc(y.fecha.split(" ")[0].slice(0, 3))}</small><b>${+y.iso.slice(8)}</b><small>${["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"][+y.iso.slice(5, 7) - 1]}</small></button>`).join("")}</div>
   <section class="card sal-card"><div class="sal-top"><h2>${sel === t ? "Hoy · " : ""}${esc(x.fecha)}</h2><span class="muted small">${esc(x.titulo)}</span></div>
-    <div class="sal-grid">${(night ? ["noche", "dia"] : ["dia", "noche"]).map((k) => part(x, k)).join("")}</div></section>
+    <div class="sal-grid">${(night ? ["noche", "dia"] : ["dia", "noche"]).map((k) => part(x, k)).join("")}${partFuera(x)}</div></section>
   <p class="xs muted">Los versículos de la noche vienen del salmo de Vísperas de cada día, en traducción sencilla. Para la antífona oficial, revisa la Liturgia de las Horas.</p>`;
 }
 
-function pick(iso, k) { const x = data && data.dias.find((y) => y.iso === iso); return x ? { x, text: k === "noche" ? x.noche : x.dia } : null; }
+function pick(iso, k) { const x = data && data.dias.find((y) => y.iso === iso); return x ? { x, text: k === "fuera" ? fuera(x) : k === "noche" ? x.noche : x.dia } : null; }
 
 async function shareImg(blob, name, text) {
   try { await navigator.clipboard.writeText(text); } catch {}
@@ -165,8 +187,8 @@ export function registerActions(actions, render) {
     const p = pick(el.dataset.iso, el.dataset.k); if (!p) return;
     try { await navigator.clipboard.writeText(p.text); } catch {}
     try {
-      const blob = await fetch(img(el.dataset.k, p.x.iso)).then((r) => r.blob());
-      const file = new File([blob], `agAPPe-${el.dataset.k === "noche" ? "buenas-noches" : "buenos-dias"}-${p.x.iso}.jpg`, { type: "image/jpeg" });
+      const blob = await fetch(img(el.dataset.k === "fuera" ? "dia" : el.dataset.k, p.x.iso)).then((r) => r.blob());
+      const file = new File([blob], `${el.dataset.k === "fuera" ? "evangelio-del-dia" : el.dataset.k === "noche" ? "agAPPe-buenas-noches" : "agAPPe-buenos-dias"}-${p.x.iso}.jpg`, { type: "image/jpeg" });
       if (navigator.canShare && navigator.canShare({ files: [file] })) { await navigator.share({ files: [file], text: p.text }); return; }
       if (navigator.share) { await navigator.share({ text: p.text }); toast("Se envió el texto. La imagen la guardas con «Guardar imagen».", ""); return; }
       toast("En el computador: guarda la imagen y pega el texto (ya está copiado).", "");
