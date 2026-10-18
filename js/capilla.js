@@ -413,16 +413,17 @@ const EV_WIDGET = "https://evangeli.net/evangelio/widget/web";
 const fechaLarga = () => { const t = new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" }); return t.charAt(0).toUpperCase() + t.slice(1); };
 function evBody(g) {
   if (!g || !g.cita) return `<div class="note">Todavía no está el Evangelio de hoy. Puedes leerlo en <a href="${READ_URL}" target="_blank" rel="noopener">Vatican News ↗</a>.</div>`;
-  const vid = !g.propio && g.video && /^[\w-]{6,20}$/.test(g.video) ? g.video : "";
+  const ok = (v) => (!g.propio && v && /^[\w-]{6,20}$/.test(v) ? v : "");
+  const vid = ok(g.video) || ok(g.reflexion), ref = ok(g.video) && ok(g.reflexion) ? g.reflexion : "";
   return `
     ${g.titulo ? `<p class="ev-day">${esc(g.titulo)}</p>` : ""}
     ${g.frase ? `<blockquote class="ev-quote">«${esc(g.frase)}»<cite>${esc(g.cita)}</cite></blockquote>` : `<p class="ev-quote"><cite>${esc(g.cita)}</cite></p>`}
     <section class="ev-block">
-      <h2>Reflexión en video</h2>
+      <h2>En video</h2>
       ${vid ? `<button type="button" class="ev-video" data-action="evPlay" data-id="${vid}" aria-label="Ver el video del Evangelio de hoy">
           <img src="https://i.ytimg.com/vi/${vid}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
           <span class="ev-play" aria-hidden="true"></span></button>
-        <p class="xs muted">P. Pedro Brassesco · YouTube</p>`
+        <p class="xs muted">P. Pedro Brassesco · YouTube${ref ? ` · <button type="button" class="linklike" data-action="evPlay" data-id="${ref}" data-swap="1">Ver su breve reflexión</button>` : ""}</p>`
         : `<p class="muted small">${g.propio ? "Hoy celebramos una fiesta propia: el video del canal puede traer otro Evangelio." : "El video de hoy todavía no está disponible."} <a href="${CANAL_VIDEOS}" target="_blank" rel="noopener">Ver los videos del P. Pedro Brassesco ↗</a></p>`}
     </section>
     <details class="ev-block ev-read" id="evRead">
@@ -802,7 +803,9 @@ function registerActions() {
     const id = el.dataset.id; if (!/^[\w-]{6,20}$/.test(id)) return;
     const w = document.createElement("div"); w.className = "ev-video";
     w.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" title="Evangelio del día en video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
-    el.replaceWith(w);
+    const cur = el.dataset.swap ? document.querySelector(".ev-block .ev-video") : el;
+    if (el.dataset.swap) el.remove();
+    (cur || el).replaceWith(w);
   };
   A.evShare = async () => {
     const g = pick(), url = location.origin + location.pathname + "#/evangelio";

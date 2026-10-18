@@ -105,12 +105,14 @@ try {
     const f = id && fechaDeTitulo(title); if (!f) continue;
     const y = f.y || (+py + (f.mo === 1 && pm === "12" ? 1 : 0));
     const iso = `${y}-${String(f.mo).padStart(2, "0")}-${String(f.d).padStart(2, "0")}`;
-    if (days[iso] && !days[iso].video) days[iso].video = id;
+    // El canal tiene dos series: el Evangelio leído y una breve reflexión. Se guardan las dos.
+    const k = /reflexi|reflection/i.test(title) ? "reflexion" : "video";
+    if (days[iso] && !days[iso][k]) days[iso][k] = id;
   }
-  console.log("videos:", Object.values(days).filter((x) => x.video).length);
+  console.log("videos:", Object.values(days).filter((x) => x.video).length, "reflexiones:", Object.values(days).filter((x) => x.reflexion).length);
 } catch (e) {
   console.warn("video:", e.message);
-  for (const [iso, x] of Object.entries(days)) if (!x.video && prev.days && prev.days[iso] && prev.days[iso].video && prev.days[iso].cita === x.cita) x.video = prev.days[iso].video;
+  for (const [iso, x] of Object.entries(days)) for (const k of ["video", "reflexion"]) if (!x[k] && prev.days && prev.days[iso] && prev.days[iso][k] && prev.days[iso].cita === x.cita) x[k] = prev.days[iso][k];
 }
 
 const out = { fuente: "evangeliodeldia.org · El Libro del Pueblo de Dios", days };
