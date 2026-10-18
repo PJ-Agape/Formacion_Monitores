@@ -1,6 +1,7 @@
 // Guarda en data/evangelio.json el Evangelio de los próximos días (nombre litúrgico del día,
 // cita y una frase breve) a partir de evangeliodeldia.org. Lo ejecuta una acción de GitHub cada día.
 // La Capilla muestra la frase del día con su cita y un enlace al Evangelio completo.
+// También guarda el video del día del canal del P. Pedro Brassesco, si lo encuentra.
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OUT = process.argv[2] || "data/evangelio.json";
@@ -81,6 +82,37 @@ for (let i = -1; i < DAYS; i++) {
     if (prev.days && prev.days[iso]) days[iso] = prev.days[iso];
   }
 }
+// Video del día: el P. Pedro Brassesco publica cada día el Evangelio en video. Se busca en el RSS público
+// de su canal el video cuyo título trae la fecha de ese día («... 17 de octubre de 2026», o «October 17, 2026»).
+const CANAL = "UCmHasgewuTBMTMAvT6_ghNw";
+const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
+const MONTHS = ["january", "february", "march", "april", "may", "june", "july", "august", "september", "october", "november", "december"];
+function fechaDeTitulo(t) {
+  const s = t.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("setiembre", "septiembre");
+  let m = s.match(/\b(\d{1,2})\s+de\s+([a-z]+)(?:\s+(?:de|del)\s+(\d{4}))?/);
+  if (m && MESES.includes(m[2])) return { d: +m[1], mo: MESES.indexOf(m[2]) + 1, y: m[3] ? +m[3] : null };
+  m = s.match(/\b([a-z]+)\s+(\d{1,2}),?\s+(\d{4})/);
+  if (m && MONTHS.includes(m[1])) return { d: +m[2], mo: MONTHS.indexOf(m[1]) + 1, y: +m[3] };
+  return null;
+}
+try {
+  const r = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${CANAL}`, { headers: { "User-Agent": "PastoralAgape/1.0" } });
+  if (!r.ok) throw new Error(`RSS ${r.status}`);
+  const xml = await r.text();
+  for (const e of xml.split("<entry>").slice(1)) {
+    const id = (e.match(/<yt:videoId>([^<]+)</) || [])[1], title = (e.match(/<title>([^<]+)</) || [])[1] || "";
+    const [, py, pm] = e.match(/<published>(\d{4})-(\d{2})/) || [];
+    const f = id && fechaDeTitulo(title); if (!f) continue;
+    const y = f.y || (+py + (f.mo === 1 && pm === "12" ? 1 : 0));
+    const iso = `${y}-${String(f.mo).padStart(2, "0")}-${String(f.d).padStart(2, "0")}`;
+    if (days[iso] && !days[iso].video) days[iso].video = id;
+  }
+  console.log("videos:", Object.values(days).filter((x) => x.video).length);
+} catch (e) {
+  console.warn("video:", e.message);
+  for (const [iso, x] of Object.entries(days)) if (!x.video && prev.days && prev.days[iso] && prev.days[iso].video && prev.days[iso].cita === x.cita) x.video = prev.days[iso].video;
+}
+
 const out = { fuente: "evangeliodeldia.org · El Libro del Pueblo de Dios", days };
 if (JSON.stringify(out.days) !== JSON.stringify(prev.days)) { writeFileSync(OUT, JSON.stringify(out, null, 1) + "\n"); console.log("evangelio.json:", Object.keys(days).length, "días"); }
 else console.log("evangelio.json sin cambios");

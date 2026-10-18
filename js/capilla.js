@@ -403,6 +403,55 @@ export async function todayGospel() {
   if (gospelFresh && pick() && (pick().propio || (gospel && gospel.days && gospel.days[todayKey()]))) return pick();
   await loadGospel(); return pick();
 }
+// ---------------------------------------------------------------------------
+// Página propia del Evangelio del día (#/evangelio): abierta a todos, sin cuenta.
+// La frase y la cita (data/evangelio.json), el video del día del P. Pedro Brassesco
+// (se carga solo al tocarlo) y el texto completo con el widget oficial de evangeli.net.
+// ---------------------------------------------------------------------------
+const CANAL_VIDEOS = "https://www.youtube.com/channel/UCmHasgewuTBMTMAvT6_ghNw/videos";
+const EV_WIDGET = "https://evangeli.net/evangelio/widget/web";
+const fechaLarga = () => { const t = new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" }); return t.charAt(0).toUpperCase() + t.slice(1); };
+function evBody(g) {
+  if (!g || !g.cita) return `<div class="note">Todavía no está el Evangelio de hoy. Puedes leerlo en <a href="${READ_URL}" target="_blank" rel="noopener">Vatican News ↗</a>.</div>`;
+  const vid = !g.propio && g.video && /^[\w-]{6,20}$/.test(g.video) ? g.video : "";
+  return `
+    ${g.titulo ? `<p class="ev-day">${esc(g.titulo)}</p>` : ""}
+    ${g.frase ? `<blockquote class="ev-quote">«${esc(g.frase)}»<cite>${esc(g.cita)}</cite></blockquote>` : `<p class="ev-quote"><cite>${esc(g.cita)}</cite></p>`}
+    <section class="ev-block">
+      <h2>Reflexión en video</h2>
+      ${vid ? `<button type="button" class="ev-video" data-action="evPlay" data-id="${vid}" aria-label="Ver el video del Evangelio de hoy">
+          <img src="https://i.ytimg.com/vi/${vid}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
+          <span class="ev-play" aria-hidden="true"></span></button>
+        <p class="xs muted">P. Pedro Brassesco · YouTube</p>`
+        : `<p class="muted small">${g.propio ? "Hoy celebramos una fiesta propia: el video del canal puede traer otro Evangelio." : "El video de hoy todavía no está disponible."} <a href="${CANAL_VIDEOS}" target="_blank" rel="noopener">Ver los videos del P. Pedro Brassesco ↗</a></p>`}
+    </section>
+    <details class="ev-block ev-read" id="evRead">
+      <summary><h2>Leer el Evangelio completo</h2></summary>
+      <div id="evFrame"></div>
+      <p class="xs muted">Texto y comentario de <a href="https://evangeli.net/evangelio" target="_blank" rel="noopener">evangeli.net</a>. ${g.propio ? "En las fiestas propias puede mostrar el Evangelio del calendario general. " : ""}También puedes leerlo en <a href="${READ_URL}" target="_blank" rel="noopener">Vatican News ↗</a>.</p>
+    </details>
+    <div class="row-wrap ev-more">
+      <a class="btn btn-soft" href="#/oracion/rosario">${icon("right")} Rezar el Rosario</a>
+      <a class="btn btn-ghost" href="#/oracion">Ir a la Capilla</a>
+      <button type="button" class="btn btn-ghost" data-action="evShare">${icon("send")} Compartir</button>
+    </div>`;
+}
+export function evangelioView() {
+  ctx.onAfterRender(async () => {
+    await loadPropio(); await loadGospel();
+    const box = document.getElementById("evBody"); if (box) box.innerHTML = evBody(pick());
+    document.getElementById("evRead")?.addEventListener("toggle", (e) => {
+      const f = document.getElementById("evFrame");
+      if (e.target.open && f && !f.firstChild) f.innerHTML = `<iframe class="ev-frame" src="${EV_WIDGET}" title="Evangelio del día completo" loading="lazy"></iframe>`;
+    });
+  });
+  return `<article class="ev-page">
+    <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<span>Evangelio del día</span></nav>
+    <header class="page-head"><span class="eyebrow">Evangelio del día</span><h1>${esc(fechaLarga())}</h1></header>
+    <div id="evBody">${evBody(pick())}</div>
+  </article>`;
+}
+
 export const propioDe = async (iso) => { await loadPropio(); return (propio.dias || {})[iso] || null; };
 export const resetPropio = () => { propio = null; };
 function gospelHTML(s) {
@@ -749,6 +798,18 @@ function rosMove(n) {
 
 function registerActions() {
   const A = ctx.actions;
+  A.evPlay = (el) => {
+    const id = el.dataset.id; if (!/^[\w-]{6,20}$/.test(id)) return;
+    const w = document.createElement("div"); w.className = "ev-video";
+    w.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" title="Evangelio del día en video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    el.replaceWith(w);
+  };
+  A.evShare = async () => {
+    const g = pick(), url = location.origin + location.pathname + "#/evangelio";
+    const text = g && g.frase ? `«${g.frase}» ${g.cita}` : "Evangelio del día";
+    try { if (navigator.share) { await navigator.share({ title: "Evangelio del día", text, url }); return; } } catch (e) { if (e && e.name === "AbortError") return; }
+    try { await navigator.clipboard.writeText(`${text}\n${url}`); toast("Enlace copiado", "ok"); } catch { toast("No se pudo compartir", ""); }
+  };
   // Devocionario: un selector y una sola tarjeta con la oración elegida
   document.addEventListener("change", (e) => { if (e.target.id === "capDevSel") devShow(e.target.value); });
   A.capProject = () => devProject(document.getElementById("capDevSel")?.value || devCurrent());

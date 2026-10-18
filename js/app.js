@@ -93,7 +93,7 @@ const routes = [
   [/^\/materiales$/, viewMaterials, "materiales"],
   [/^\/imprimir\/curso(?:\/(\d+))?(?:\/(\d+))?$/, (ci, pi) => cursoPrint.view(ci || 0, pi ?? ""), "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
-  [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
+  [/^\/evangelio$/, () => capilla.evangelioView(), "oracion"],
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
   [/^\/oremus(?:\/([^/?]+))?$/, (t) => capilla.oremusView(t ? decodeURIComponent(t) : ""), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
