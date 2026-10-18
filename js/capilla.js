@@ -405,10 +405,9 @@ export async function todayGospel() {
 }
 // ---------------------------------------------------------------------------
 // Evangelio del día en la Capilla (abierta a todos, sin cuenta): el video del día del
-// P. Pedro Brassesco (se carga solo al tocarlo) y el texto completo con el widget de evangeli.net.
+// P. Pedro Brassesco (se carga solo al tocarlo) y el enlace al texto completo en Vatican News.
 // ---------------------------------------------------------------------------
 const CANAL_VIDEOS = "https://www.youtube.com/channel/UCmHasgewuTBMTMAvT6_ghNw/videos";
-const EV_WIDGET = "https://evangeli.net/evangelio/widget/web";
 function evExtras(g) {
   const ok = (v) => (!g.propio && v && /^[\w-]{6,20}$/.test(v) ? v : "");
   const vid = ok(g.video) || ok(g.reflexion), ref = ok(g.video) && ok(g.reflexion) ? g.reflexion : "";
@@ -418,11 +417,7 @@ function evExtras(g) {
         <span class="ev-play" aria-hidden="true"></span></button>
       <p class="cap-ev-note">En video con el P. Pedro Brassesco${ref ? ` · <button type="button" class="linklike" data-action="evPlay" data-id="${ref}" data-swap="1">ver su breve reflexión</button>` : ""}</p>`
       : `<p class="cap-ev-note"><a href="${CANAL_VIDEOS}" target="_blank" rel="noopener">Ver en video con el P. Pedro Brassesco ↗</a></p>`}
-    <details class="ev-read" id="evRead">
-      <summary>Leer el Evangelio completo</summary>
-      <div id="evFrame"></div>
-      <p class="cap-ev-note">Texto y comentario de <a href="https://evangeli.net/evangelio" target="_blank" rel="noopener">evangeli.net</a> · también en <a href="${READ_URL}" target="_blank" rel="noopener">Vatican News ↗</a></p>
-    </details></div>`;
+    <a class="btn btn-soft btn-sm ev-full" href="${esc(g.url || READ_URL)}" target="_blank" rel="noopener">Leer el Evangelio completo en Vatican News ↗</a></div>`;
 }
 
 export const propioDe = async (iso) => { await loadPropio(); return (propio.dias || {})[iso] || null; };
@@ -780,11 +775,7 @@ function registerActions() {
     if (el.dataset.swap) el.remove();
     (cur || el).replaceWith(w);
   };
-document.addEventListener("toggle", (e) => {
-    if (e.target.id !== "evRead" || !e.target.open) return;
-    const f = document.getElementById("evFrame");
-    if (f && !f.firstChild) f.innerHTML = `<iframe class="ev-frame" src="${EV_WIDGET}" title="Evangelio del día completo" loading="lazy"></iframe>`;
-  }, true);
+
   // Devocionario: un selector y una sola tarjeta con la oración elegida
   document.addEventListener("change", (e) => { if (e.target.id === "capDevSel") devShow(e.target.value); });
   A.capProject = () => devProject(document.getElementById("capDevSel")?.value || devCurrent());
