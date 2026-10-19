@@ -111,7 +111,9 @@ function contactHTML(c) {
 
 async function main() {
   await initDb();
-  const [saved, evs, cam, hon] = await Promise.all([content("familias"), eventos(), camino(), content("honor")]);
+  const [saved, evs, cam, hon, gos] = await Promise.all([content("familias"), eventos(), camino(), content("honor"),
+    fetch("../data/evangelio.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null)]);
+  const ev = gos && gos.days ? gos.days[today] : null;
   const C = merge(saved);
   EVS = proximas(evs);
   const sem = semana(cam);
@@ -126,12 +128,21 @@ async function main() {
       <span class="fam-k">Para las familias</span>
       <h1>Caminamos junto a <span class="mk">sus hijos.</span></h1>
       <p>${esc(C.bienvenida)}</p>
-      <div class="fam-hero-btns"><a class="btn btn-primary" href="#actividades">Próximas actividades</a><a class="btn btn-ghost" href="#contacto">Contacto</a></div>
+      <div class="fam-hero-btns"><a class="btn btn-primary" href="#actividades">Próximas actividades</a><a class="btn btn-gold" href="#rezar">Recen con nosotros</a><a class="btn btn-ghost" href="#contacto">Contacto</a></div>
     </div>
     <div class="fam-hero-ill">${illus("familia")}</div>
   </section>
 
   ${(() => { const c = cuenta.pick(evs); return c ? cuenta.html(c) : ""; })()}
+
+  <section class="fam-sec fam-rezar" id="rezar">
+    <div><span class="fam-k">Capilla Ágape</span><h2>Recen con <span class="mk">nosotros.</span></h2>
+      <p>Muchas familias acompañan a Ágape con su oración. La Capilla Ágape está abierta para ustedes, sin cuenta: el Evangelio de cada día, el Santo Rosario y oraciones para rezar en casa.</p>
+      ${ev && ev.frase ? `<a class="fam-ev" href="../capilla/"><small>Evangelio de hoy · ${esc(ev.cita)}</small><b>«${esc(ev.frase)}»</b></a>` : ""}
+      <div class="fam-hero-btns"><a class="btn btn-primary" href="../capilla/">Entrar a la Capilla Ágape</a><a class="btn btn-ghost" href="../#/oracion/rosario">Rezar el Rosario</a></div>
+      <details class="fam-oracion"><summary>Una oración por los jóvenes de Ágape</summary>
+        <p>Señor Jesús, te encomendamos a los jóvenes de la Pastoral Juvenil Ágape y a quienes los acompañan. Que en el grupo encuentren amigos verdaderos y, sobre todo, te encuentren a Ti. Cuídalos en su camino, bendice a nuestras familias y haz de nuestra parroquia un hogar para todos. María, Madre nuestra, ruega por ellos. Amén.</p></details>
+    </div>${illus("jesus")}</section>
   ${carta ? `<section class="fam-sec fam-carta"><span class="fam-k alt">Carta a las familias</span>
     ${C.carta.titulo ? `<h2>${esc(C.carta.titulo)}</h2>` : ""}<div class="fam-carta-t">${esc(C.carta.texto).replace(/\n/g, "<br>")}</div>
     ${C.carta.firma ? `<p class="fam-firma">${esc(C.carta.firma)}</p>` : ""}</section>` : ""}

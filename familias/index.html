@@ -46,6 +46,14 @@
     .fam-firma { font-family: "Caveat", "Segoe Print", cursive; font-size: 1.6rem; color: #ef591c; margin-top: 10px; }
     .fam-semana, .fam-cuidado { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: center; }
     .fam-semana { background: #e1f3fd; --il-bg: #fff; }
+    .fam-rezar { display: grid; grid-template-columns: minmax(0, 1fr) minmax(0, 300px); gap: 24px; align-items: center; background: #fff3d1; --il-bg: #fff; }
+    .fam-rezar p { color: #24406e; line-height: 1.55; }
+    .fam-ev { display: grid; grid-template-columns: 1fr; gap: 4px; margin: 14px 0; padding: 14px 16px; background: #fff; border: 2.5px solid #0b2566; border-radius: 16px; box-shadow: 4px 4px 0 #0b2566; text-decoration: none; color: #0b2566; }
+    .fam-ev small { font-size: .74rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #ef591c; }
+    .fam-ev b { font-size: 1.1rem; line-height: 1.35; }
+    .fam-oracion { margin-top: 14px; background: #fff; border-radius: 14px; padding: 10px 14px; border: 1.5px dashed rgba(11,37,102,.35); }
+    .fam-oracion summary { cursor: pointer; font-weight: 800; }
+    .fam-oracion p { font-style: italic; margin: 8px 0 0; }
     .fam-lema { font-weight: 700; color: #1351a4; margin-bottom: 8px; }
     .fam-semana p { color: #24406e; line-height: 1.55; }
     .fam-mesa { margin-top: 14px; background: #fff; border: 2.5px dashed #0b2566; border-radius: 18px; padding: 14px 16px; line-height: 1.5; color: #24406e; }
@@ -89,9 +97,9 @@
     .fam-foot { text-align: center; color: #4a5d7a; font-size: .85rem; padding: 0 20px 40px; }
     .fam-foot a { color: #1351a4; font-weight: 700; }
     @media (max-width: 760px) {
-      .fam-hero, .fam-semana, .fam-cuidado { grid-template-columns: 1fr; }
+      .fam-hero, .fam-semana, .fam-cuidado, .fam-rezar { grid-template-columns: 1fr; }
       .fam-hero-ill { max-width: 300px; }
-      .fam-semana .z-illus, .fam-cuidado .z-illus { max-width: 240px; }
+      .fam-semana .z-illus, .fam-cuidado .z-illus, .fam-rezar .z-illus { max-width: 240px; }
     }
   </style>
   <script type="module" src="../js/familias.js"></script>
