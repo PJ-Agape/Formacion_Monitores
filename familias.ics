@@ -72,8 +72,31 @@ DESCRIPTION:Algo para compartir en comunidad\n\nPastoral Juvenil Ágape ·
 CATEGORIES:Actividad
 END:VEVENT
 BEGIN:VEVENT
+UID:NNOTAX1BuHUKV8aH031i@pj-agape
+DTSTAMP:20261020T220623Z
+DTSTART;VALUE=DATE:20261024
+DTEND;VALUE=DATE:20261025
+SUMMARY:Misa bendición de las familias
+LOCATION:Templo Parroquial
+DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
+ es/familias/
+CATEGORIES:Liturgia
+TRANSP:TRANSPARENT
+END:VEVENT
+BEGIN:VEVENT
+UID:3CvJPI64qAowRztBN3Ta@pj-agape
+DTSTAMP:20261020T221211Z
+DTSTART;TZID=America/Santiago:20261101T113000
+DTEND;TZID=America/Santiago:20261101T113000
+SUMMARY:Misa de todos los Santos
+LOCATION:Cementerio municipal de Yungay
+DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
+ es/familias/
+CATEGORIES:Liturgia
+END:VEVENT
+BEGIN:VEVENT
 UID:VeMwHiLQVTKbhMDx6w2u@pj-agape
-DTSTAMP:20261020T014429Z
+DTSTAMP:20261020T172709Z
 DTSTART;VALUE=DATE:20261120
 DTEND;VALUE=DATE:20261121
 SUMMARY:Inscripciones Encuentro juvenil en Quillon
