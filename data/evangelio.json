@@ -1,23 +1,18 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-18": {
-   "titulo": "29.º domingo del Tiempo Ordinario",
-   "cita": "Mt 22,15-21",
-   "frase": "Den al César lo que es del César, y a Dios lo que es de Dios.",
-   "reflexion": "v1Hs4Kt46M8",
-   "video": "d2LXGlezinE"
-  },
   "2026-10-19": {
    "titulo": "Lunes de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,13-21",
    "frase": "Cuídense de toda avaricia: la vida no está asegurada por las riquezas.",
+   "reflexion": "e4oGsm0Rk8w",
    "video": "cLuNyDjQhsg"
   },
   "2026-10-20": {
    "titulo": "Martes de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,35-38",
-   "frase": "Estén preparados, ceñidos y con las lámparas encendidas."
+   "frase": "Estén preparados, ceñidos y con las lámparas encendidas.",
+   "video": "3NcLPOZnFV4"
   },
   "2026-10-21": {
    "titulo": "Miércoles de la 29.ª semana del Tiempo Ordinario",
@@ -58,6 +53,11 @@
    "titulo": "Santos Simón y Judas, apóstoles",
    "cita": "Lc 6,12-19",
    "frase": "Jesús pasó toda la noche en oración, y eligió a doce."
+  },
+  "2026-10-29": {
+   "titulo": "Jueves de la 30.ª semana del Tiempo Ordinario",
+   "cita": "Lc 13,31-35",
+   "frase": "¡Cuántas veces quise reunir a tus hijos, como la gallina reúne a sus pollitos!"
   }
  }
 }
