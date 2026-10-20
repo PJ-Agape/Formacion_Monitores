@@ -75,6 +75,7 @@ const PEOPLE = {
   carmen: { n: "Tía Carmen", look: { hair: "#5a3a26", skin: "#d7a77c", shirt: "#c0397a" }, old: true },
   padre: { n: "Padre Andrés", look: { hair: "#444", skin: "#e2b48c", shirt: "#222" }, priest: true },
   pepe: { n: "Pepe, el sacristán", look: { hair: "#777", skin: "#e2b48c", shirt: K.navy }, old: true },
+  pato: { n: "Don Pato, el de los completos", look: { hair: "#5b4636", skin: "#d9a57b", shirt: "#ffffff" }, old: true },
   camin: { n: "Caminante", look: { hair: "#4b3426", skin: "#d7a77c", shirt: "#f3efe6" }, robe: true },
 };
 const LOOKS = [
@@ -343,7 +344,7 @@ const CHAPTERS = [
   // ------------------------------------------------------------------ 6
   { n: 6, title: "Lo reconocieron al partir el pan", mod: "Módulo 6 · La Eucaristía, corazón de nuestra Pastoral Juvenil", st: "eucaristia", badge: "Eucaristía",
     intro: [L(N, "Es domingo. Hoy el grupo anima la misa en la capilla."), L(N, "Pero no todos tienen ganas de ir…")],
-    npcs: () => [{ id: "tomas", x: 26, y: 28 }, { id: "pepe", x: 23, y: 7 }, { id: "ana", x: 19, y: 9 }, { id: "benja", x: 24, y: 10 }, { id: "martina", x: 19, y: 13 }, { id: "nico", x: 25, y: 13 }, { id: "camin", x: 23, y: 17 }],
+    npcs: () => [{ id: "tomas", x: 26, y: 28 }, { id: "pepe", x: 23, y: 7 }, { id: "pato", x: 26, y: 8 }, { id: "ana", x: 19, y: 9 }, { id: "benja", x: 24, y: 10 }, { id: "martina", x: 19, y: 13 }, { id: "nico", x: 25, y: 13 }, { id: "camin", x: 23, y: 17 }],
     quests: [
       { t: "Tomás dice que la misa es fome: acompáñalo", u: "6.1", done: () => party().includes("tomas"), at: { x: 26, y: 28 } },
       { t: "Ayuda a Pepe a preparar la misa", u: "6.2", done: () => !!Q().steps, at: { x: 23, y: 7 } },
@@ -365,6 +366,7 @@ const CHAPTERS = [
       martina: () => role(2, "martina", "Martina quiere ayudar, pero es tímida.", ["Llevar las ofrendas de pan y vino", "Hacer la homilía", "Animar el canto"]),
       nico: () => role(3, "nico", "Nico sabe lo que es llegar y no conocer a nadie.", ["Proclamar la lectura", "Animar el canto", "Recibir a los que llegan en la puerta"]),
       camin: () => say([L(P("camin"), goalsLeft() ? "Ya casi es la hora. Te acompaño hasta la capilla." : "¿Entramos? Quédate conmigo, que ya es tarde.")]),
+      pato: () => say([L(P("pato"), "¡Hola! Los completos son después de la misa, como siempre. Italianos, con harta palta."), L(P("pato"), "Primero lo primero: el Pan de la misa. Después, el pan de los completos. ¡Los espero a todos!")]),
     },
     end: null, // la escena final es la misa
   },
@@ -462,6 +464,8 @@ function finale() {
     B("jesus", "«¿No ardía nuestro corazón mientras nos hablaba en el camino?» (cf. Lc 24,32)"),
     B("eucaristia", "Después de la comunión se quedan un momento en silencio. Lo miras y te dejas mirar por Él."),
     B("amigos", "«Pueden ir en paz.» Y como los discípulos de Emaús, salen a contarlo y a servir a los demás."),
+    B("comunidad", "Afuera, Don Pato ya tiene listo el carrito de completos. Italianos para todos, conversación, risas y un par de abrazos: después de la misa, a los completos."),
+    B("amigos", "Porque la comunidad que se reúne en torno al altar sigue compartiendo la mesa afuera. Así se vive Ágape."),
   ], () => endScreen());
 }
 
@@ -589,6 +593,16 @@ function food(x, y, t, fish) {
   else { g2.fillStyle = "#e3a857"; g2.beginPath(); g2.ellipse(0, 0, 10, 7, 0, 0, 7); g2.fill(); g2.stroke(); g2.beginPath(); g2.moveTo(-4, -4); g2.lineTo(-2, 2); g2.moveTo(2, -5); g2.lineTo(4, 1); g2.stroke(); }
   g2.restore();
 }
+function cart(x, y) { // carrito de completos con su quitasol
+  g2.save(); g2.translate(x, y); g2.lineWidth = 2; g2.strokeStyle = K.navy;
+  g2.fillStyle = "#e8e8ee"; g2.fillRect(-18, -6, 36, 18); g2.strokeRect(-18, -6, 36, 18);
+  g2.fillStyle = K.orange; g2.fillRect(-18, -6, 36, 6); g2.strokeRect(-18, -6, 36, 6);
+  g2.fillStyle = K.white; g2.font = "bold 7px sans-serif"; g2.textAlign = "center"; g2.fillText("COMPLETOS", 0, 9);
+  g2.fillStyle = "#555"; g2.beginPath(); g2.arc(-11, 14, 4, 0, 7); g2.fill(); g2.stroke(); g2.beginPath(); g2.arc(11, 14, 4, 0, 7); g2.fill(); g2.stroke();
+  g2.beginPath(); g2.moveTo(0, -6); g2.lineTo(0, -22); g2.stroke();
+  for (let i = 0; i < 4; i++) { g2.fillStyle = i % 2 ? K.yellow : K.orange; g2.beginPath(); g2.moveTo(0, -30); g2.lineTo(-22 + i * 11, -20); g2.lineTo(-11 + i * 11, -20); g2.closePath(); g2.fill(); g2.stroke(); }
+  g2.restore();
+}
 function bubble(x, y) { g2.fillStyle = K.white; g2.strokeStyle = K.navy; g2.lineWidth = 2; g2.beginPath(); g2.arc(x + 12, y - 26, 8, 0, 7); g2.fill(); g2.stroke(); g2.fillStyle = K.navy; g2.font = "bold 11px sans-serif"; g2.textAlign = "center"; g2.fillText("…", x + 12, y - 23); }
 function draw(t) {
   if (!g2) return;
@@ -606,6 +620,7 @@ function draw(t) {
       if (it.kind === "dog") dog(a.x, a.y, t); else if (it.kind === "page") pageIco(a.x, a.y, t); else if (it.kind === "spark") sparkle(a.x, a.y, t, K.sky); else food(a.x, a.y, t, it.kind === "fish");
     }
     if (S.lamp && ((S.ch === 4 && !Q().examen && Q().plan) || (S.ch === 5 && !Q().rest))) sparkle(38.5 * T, 2.5 * T - 8, t);
+    if (S.ch === 6) { const a = AT({ x: 27, y: 8 }); list.push({ y: a.y, f: () => cart(a.x, a.y) }); }
     for (const n of npcsNow()) {
       const p = PEOPLE[n.id], a = AT(n), yy = n.tree ? a.y - 14 : a.y;
       list.push({ y: a.y, f: () => { person(a.x, yy, p.look, { robe: p.robe, old: p.old, kid: p.kid, priest: p.priest, sit: n.sit, sad: n.sit && (n.id === "nico" || n.id === "lucho"), dir: 0 }); if (near(n, n.tree ? 2.2 : 1.7) && !dlg) bubble(a.x, yy); } });

@@ -1,5 +1,5 @@
 // Textos y enlaces de Inicio que el equipo puede cambiar desde Gestión → Inicio y enlaces:
-// el saludo, La Plaza Ágape, Nuestras familias y las radios católicas.
+// el saludo, La Plaza Ágape, Nuestras familias, las radios católicas y los enlaces de interés.
 // Se guarda en el mismo documento de la Portada (content/portada, campo «inicio»), que editan
 // administradores y coordinadores. Lo que no se cambia usa el texto original de abajo.
 import { RADIOS as RADIOS_BASE } from "./capilla.js";
@@ -26,6 +26,7 @@ export const DEFAULTS = {
     },
   },
   radios: RADIOS_BASE.map((r) => ({ ...r })),
+  enlaces: [], // Enlaces de interés: pastoral juvenil diocesana, parroquia, diócesis… (los agrega el equipo)
   playlist: { label: "Playlist Ágape", url: "https://open.spotify.com/playlist/5oR6IXXnU6H9AdFJuwdiaB" },
   redes: {
     instagram: "https://www.instagram.com/pj_agape_joven/",
@@ -58,7 +59,8 @@ function merge(base, over) {
 export function cfg() {
   const c = merge(DEFAULTS, saved);
   const radios = Array.isArray(saved.radios) ? saved.radios.filter((r) => r && r.name && /^https?:\/\//i.test(r.url || "")) : DEFAULTS.radios;
-  return { ...c, radios };
+  const enlaces = Array.isArray(saved.enlaces) ? saved.enlaces.filter((r) => r && r.name && /^https?:\/\//i.test(r.url || "")) : DEFAULTS.enlaces;
+  return { ...c, radios, enlaces };
 }
 export const savedRaw = () => saved;
 export function adopt(v) {

@@ -422,8 +422,13 @@ function radiosHTML() {
       <a class="hr-pod" href="#/podcast">${podcast.MIC} Podcast Ágape${podcast.hasEpisodes() ? "" : ` <small>pronto</small>`}</a>
       ${/^https:\/\//.test(pl.url || "") ? `<a class="hr-pl" href="${esc(pl.url)}" target="_blank" rel="noopener">${BRAND_ICO.spotify} ${esc(pl.label || "Playlist Ágape")}</a>` : ""}
     </span>
-  </nav>`;
+  </nav>
+  ${(inicioCfg().enlaces || []).length ? `<nav class="home-radios home-links" aria-label="Enlaces de interés">
+    <span class="hr-lbl">${LINK_ICO} Enlaces de interés</span>
+    <div class="hr-list">${inicioCfg().enlaces.map((r) => `<a href="${esc(r.url)}" target="_blank" rel="noopener" title="${esc([r.name, r.where].filter(Boolean).join(" · "))}">${esc(r.short || r.name)}</a>`).join("")}</div>
+  </nav>` : ""}`;
 }
+const LINK_ICO = `<svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M10 14a4.5 4.5 0 0 0 6.4 0l3-3a4.5 4.5 0 0 0-6.4-6.4l-1.2 1.2"/><path d="M14 10a4.5 4.5 0 0 0-6.4 0l-3 3a4.5 4.5 0 0 0 6.4 6.4l1.2-1.2"/></svg>`;
 let carTimer = null, carI = 0;
 function startCarousel() {
   const track = document.getElementById("carTrack");
