@@ -72,6 +72,11 @@ async function fetchAll() {
     href: `#/muro/${encodeURIComponent(p.id)}`, t: p.type === "anuncio" ? "Nuevo aviso en el muro" : p.type === "logro" ? "Un nuevo logro en el muro" : p.type === "encuesta" ? "Nueva encuesta" : p.type === "tema" ? "Nuevo tema de conversación" : `${p.authorName || "Alguien"} publicó en el muro`, d: short(p.title || p.body) }); });
   agenda.forEach((e) => { const ts = ms(e.updatedAt); if (ts > since && e.title && (!e.date || e.date >= new Date(Date.now() - DAY).toISOString().slice(0, 10))) out.push({ ts, e: "📅", href: e.date ? `#/agenda/${e.date}` : "#/agenda",
     t: "Novedad en la agenda", d: short(`${e.title}${e.date ? " · " + e.date.split("-").reverse().join("/") : ""}`) }); });
+  // Avisos del equipo pendientes de «Recibido» (siempre, para dirigentes y coordinación)
+  if (["admin", "coordinador", "dirigente"].includes(cloud.state().role)) {
+    (await cloud.myPendingAvisos()).forEach((a) => out.push({ ts: ms(a.createdAt) || Date.now(), e: a.kind === "tarea" ? "✅" : "📌", href: "#/avisos",
+      t: `${a.kind === "tarea" ? "Nueva tarea" : "Nuevo aviso"} de ${a.byName || "la coordinación"}`, d: short(a.title) }));
+  }
   const now = Date.now();
   if (isOn("chat")) {
     await cloud.loadSalas().catch(() => []);

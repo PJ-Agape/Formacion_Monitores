@@ -40,6 +40,7 @@ export function tabs(active) {
   return `<nav class="wall-tabs row-wrap" aria-label="Muro y chat">
     <a class="btn btn-sm ${active === "muro" ? "btn-primary" : "btn-ghost"}" href="#/muro">${icon("sparkle")} Muro</a>
     <a class="btn btn-sm ${active === "chat" ? "btn-primary" : "btn-ghost"}" href="#/chat">${icon("chat")} Chat</a>
+    ${ctx && ["admin", "coordinador", "dirigente"].includes(st().role) ? `<a class="btn btn-sm btn-ghost" href="#/avisos">${icon("check")} Avisos del equipo</a>` : ""}
   </nav>`;
 }
 function gate() {

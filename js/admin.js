@@ -119,6 +119,7 @@ function navGroups() {
       ["inicio", "#/admin/inicio", "Inicio y enlaces", "home", cloudOn && C],
       ["agenda", "#/admin/agenda", "Agenda", "grid", C],
       ["saludos", "#/admin/saludos", "Saludos WhatsApp", "send", C],
+      ["", "#/avisos", "Avisos del equipo", "check", cloudOn && C, true],
       ["moderacion", "#/admin/moderacion", "Moderación de muro y chat", "chat", cloudOn && C],
       ["familias", "#/admin/familias", "Página para familias", "users", cloudOn && C],
     ]],

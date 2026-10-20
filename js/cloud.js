@@ -567,6 +567,31 @@ export async function listPeople() {
   try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "users")), 8000)).filter((u) => u.active !== false).map((u) => ({ uid: u.id, name: u.name || u.email, role: u.role })); }
   catch { return []; }
 }
+// ---------------------------------------------------------------------------
+// Avisos del equipo: la coordinación envía avisos o tareas a dirigentes y coordinadores; cada uno marca
+// «Recibido» y, si es tarea, «Listo». No hay respuestas: las conversaciones siguen por WhatsApp.
+// ---------------------------------------------------------------------------
+export function watchMyAvisos(cb, onErr) {
+  if (!enabled || !db || !user) { onErr && onErr(new Error("offline")); return () => {}; }
+  return fb.onSnapshot(fb.query(fb.collection(db, "avisos"), fb.where("to", "array-contains", user.uid)), (qs) => cb(snapRows(qs)), (e) => { console.warn("avisos:", e && e.code); onErr && onErr(e); });
+}
+export function watchSentAvisos(cb, onErr) {
+  return fb.onSnapshot(fb.query(fb.collection(db, "avisos"), fb.orderBy("createdAt", "desc"), fb.limit(60)), (qs) => cb(snapRows(qs)), (e) => { console.warn("avisos:", e && e.code); onErr && onErr(e); });
+}
+export async function myPendingAvisos() {
+  if (!enabled || !db || !user) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.query(fb.collection(db, "avisos"), fb.where("to", "array-contains", user.uid))), 6000)).filter((a) => !(a.acks && a.acks[user.uid] && a.acks[user.uid].r)); }
+  catch { return []; }
+}
+export async function createAviso({ kind, title, text, due, to, toNames }) {
+  const ref = fb.doc(fb.collection(db, "avisos"));
+  await fb.setDoc(ref, { kind: kind === "tarea" ? "tarea" : "aviso", title: String(title).slice(0, 120), text: String(text || "").slice(0, 2000), due: due || "",
+    to, toNames, by: user.uid, byName: String(account.name || account.email || "").slice(0, 60), acks: {}, createdAt: fb.serverTimestamp() });
+  return ref.id;
+}
+export const ackAviso = (id, done) => fb.updateDoc(fb.doc(db, "avisos", id), { [`acks.${user.uid}`]: done ? { r: true, d: true, at: fb.serverTimestamp() } : { r: true, at: fb.serverTimestamp() } });
+export const deleteAviso = (id) => fb.deleteDoc(fb.doc(db, "avisos", id));
+
 // Ajustes del chat (horario y limpieza): content/chat, lo edita un administrador.
 export const CHAT_DEFAULT = { desde: "08:00", hasta: "22:30", dias: 90 };
 let chatCfg = null;

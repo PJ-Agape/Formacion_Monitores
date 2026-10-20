@@ -298,6 +298,22 @@ service cloud.firestore {
       allow delete: if canCourses();
     }
 
+    // Avisos del equipo: la coordinación (administradores y coordinadores) envía avisos o tareas a dirigentes y coordinadores.
+    // Cada destinatario solo puede marcar su propio «Recibido» o «Listo». No hay respuestas: lo conversado va por WhatsApp.
+    match /avisos/{id} {
+      allow read: if isStaff() || (isGuide() && request.auth.uid in resource.data.to);
+      allow create: if isStaff()
+        && request.resource.data.keys().hasOnly(['kind', 'title', 'text', 'due', 'to', 'toNames', 'by', 'byName', 'acks', 'createdAt'])
+        && request.resource.data.kind in ['aviso', 'tarea'] && validText(request.resource.data.title, 120)
+        && request.resource.data.text is string && request.resource.data.text.size() <= 2000
+        && request.resource.data.to is list && request.resource.data.to.size() >= 1 && request.resource.data.to.size() <= 100
+        && request.resource.data.by == request.auth.uid && request.resource.data.acks.size() == 0
+        && request.resource.data.createdAt == request.time;
+      allow update: if isGuide() && request.auth.uid in resource.data.to
+        && changed().hasOnly(['acks']) && onlyMyKey('acks');
+      allow delete: if isStaff();
+    }
+
     // Cancionero: lo ve la comunidad con cuenta (uso interno). Lo editan el equipo y quienes un
     // administrador habilita para el apostolado del cancionero (users.cantor); borrar es solo del equipo.
     function canSongs() { return isStaff() || (isMember() && me().get('cantor', false) == true); }

@@ -10,6 +10,7 @@ import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
 import * as chat from "./chat.js";
+import * as avisos from "./avisos.js";
 import * as agenda from "./agenda.js";
 import * as portada from "./portada.js";
 import * as familiasAdmin from "./familias-admin.js";
@@ -78,6 +79,7 @@ const routes = [
   [/^\/muro$/, () => wall.viewWall(), "muro"],
   [/^\/agenda$/, () => agenda.viewAgenda(), "agenda"],
   [/^\/agenda\/(\d{4}-\d{2}-\d{2})$/, (d) => agenda.viewAgenda(d), "agenda"],
+  [/^\/avisos$/, () => avisos.view(), "muro"],
   [/^\/chat$/, () => chat.viewRooms(), "muro"],
   [/^\/chat\/([A-Za-z0-9_-]+)$/, (k) => chat.viewRoom(k), "muro"],
   [/^\/muro\/([^/]+)$/, (id) => wall.viewPost(id), "muro"],
@@ -1491,6 +1493,7 @@ wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 window.addEventListener("agape:logro", () => toast("🎉 ¡Felicitaciones! Compartimos tu logro en el muro de la comunidad", "ok", 6000));
 camino.setup({ actions, render: () => render(), cloud });
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
+avisos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 S.setCourseRule((c) => {

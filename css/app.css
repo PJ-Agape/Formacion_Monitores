@@ -3882,3 +3882,21 @@ body.solo-on .help-fab { display: none; }
 .em-list em { font-style: normal; font-size: .74rem; color: #4a5d7a; }
 .em-ql { text-align: left; margin: 0; padding-left: 18px; font-size: .88rem; }
 .em-ql li.on { text-decoration: line-through; opacity: .6; }
+
+/* Avisos del equipo */
+.av-card { display: grid; gap: 8px; }
+.av-card.is-new { border-color: #ef591c; box-shadow: 4px 4px 0 #ffba03; }
+.av-card h3 { margin: 0; font-size: 1.05rem; }
+.av-card p { margin: 0; }
+.av-top { display: flex; gap: 8px; align-items: center; flex-wrap: wrap; }
+.av-due { font-weight: 700; color: #ef591c; }
+.av-ok { display: inline-flex; align-items: center; gap: 4px; font-weight: 700; color: #0f6b43; font-size: .9rem; }
+.av-bar { height: 8px; background: #e8edf5; border-radius: 8px; overflow: hidden; }
+.av-bar i { display: block; height: 100%; background: #3aa57a; }
+.av-who { list-style: none; padding: 0; margin: 8px 0; display: grid; gap: 4px; font-size: .9rem; }
+.av-who li { display: flex; justify-content: space-between; gap: 8px; border-bottom: 1px solid #eef1f6; padding-bottom: 3px; }
+.av-who .ok { color: #0f6b43; font-weight: 700; }
+.av-who span:last-child:not(.ok) { color: #a33a0c; }
+.av-people { display: grid; gap: 4px; max-height: 260px; overflow: auto; border: 1px solid #e2e7ef; border-radius: 10px; padding: 8px; margin-top: 8px; }
+.av-people small { color: #6b7a96; }
+.av-old summary { cursor: pointer; font-weight: 700; margin-top: 12px; }
