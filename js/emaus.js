@@ -620,7 +620,7 @@ function draw(t) {
       if (it.kind === "dog") dog(a.x, a.y, t); else if (it.kind === "page") pageIco(a.x, a.y, t); else if (it.kind === "spark") sparkle(a.x, a.y, t, K.sky); else food(a.x, a.y, t, it.kind === "fish");
     }
     if (S.lamp && ((S.ch === 4 && !Q().examen && Q().plan) || (S.ch === 5 && !Q().rest))) sparkle(38.5 * T, 2.5 * T - 8, t);
-    if (S.ch === 6) { const a = AT({ x: 27, y: 8 }); list.push({ y: a.y, f: () => cart(a.x, a.y) }); }
+    { const a = AT({ x: 27, y: 8 }); list.push({ y: a.y, f: () => cart(a.x, a.y) }); } // el carrito de completos: parte del pueblo
     for (const n of npcsNow()) {
       const p = PEOPLE[n.id], a = AT(n), yy = n.tree ? a.y - 14 : a.y;
       list.push({ y: a.y, f: () => { person(a.x, yy, p.look, { robe: p.robe, old: p.old, kid: p.kid, priest: p.priest, sit: n.sit, sad: n.sit && (n.id === "nico" || n.id === "lucho"), dir: 0 }); if (near(n, n.tree ? 2.2 : 1.7) && !dlg) bubble(a.x, yy); } });
