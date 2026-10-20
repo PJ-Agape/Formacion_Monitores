@@ -367,6 +367,7 @@ function viewHome() {
   const carousel = () => {
     const slides = [...portada.current()];
     if (papa.enCarrusel()) slides.splice(Math.min(1, slides.length), 0, { papa: true, label: "Con el Papa" });
+    if (!slides.length) return "";
     return `<section class="carousel" id="homeCarousel" aria-roledescription="carrusel" aria-label="Bienvenida">
     <div class="car-track" id="carTrack">${slides.map((x) => (x.papa ? papa.slideHTML() : x.course ? courseSlide : portada.slideHTML(x))).join("")}</div>
     ${slides.length > 1 ? `<div class="car-ctrl">

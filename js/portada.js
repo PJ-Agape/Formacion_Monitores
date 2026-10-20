@@ -81,16 +81,18 @@ const saveCache = () => { try { localStorage.setItem(CACHE, JSON.stringify({ ove
 
 // Todas las diapositivas (sin filtrar por fecha), ordenadas.
 export function allSlides() {
-  const base = DEFAULTS.map((d) => (over[d.key] ? { ...d, ...over[d.key], key: d.key, course: d.course, builtin: true, edited: true } : { ...d, builtin: true }));
-  const custom = Object.entries(over).filter(([k]) => !DEF[k]).map(([k, v]) => ({ ...v, key: k }));
-  const evs = featured.map(fromEvent);
+  // Cualquier diapositiva se puede borrar: las de base y las de la Agenda quedan marcadas «deleted».
+  const gone = (k) => !!(over[k] && over[k].deleted);
+  const base = DEFAULTS.filter((d) => !gone(d.key)).map((d) => (over[d.key] ? { ...d, ...over[d.key], key: d.key, course: d.course, builtin: true, edited: true } : { ...d, builtin: true }));
+  const custom = Object.entries(over).filter(([k, v]) => !DEF[k] && !k.startsWith("ev-") && !(v && v.deleted)).map(([k, v]) => ({ ...v, key: k }));
+  const evs = featured.map(fromEvent).filter((e) => !gone(e.key));
   return [...base, ...custom, ...evs].sort((a, b) => (a.order ?? 50) - (b.order ?? 50) || String(a.date || a.from || "").localeCompare(String(b.date || b.from || "")));
 }
 export const status = (x, t = todayIso()) => x.hidden ? "hidden" : x.from && t < x.from ? "soon" : x.to && t > x.to ? "past" : "live";
 export function current() {
   const t = todayIso();
   const list = allSlides().filter((x) => status(x, t) === "live");
-  return list.length ? list : [DEFAULTS[0]];
+  return list;
 }
 
 export async function refresh() {
@@ -211,13 +213,14 @@ export function adminView() {
             ? `<a class="btn btn-sm btn-soft" href="#/agenda/${esc(x.date)}">${icon("edit")} En la Agenda</a>`
             : `<button class="btn btn-sm btn-soft" data-action="pEdit" data-k="${esc(x.key)}">${icon("edit")} Editar</button>
                <button class="btn btn-sm btn-ghost" data-action="pHide" data-k="${esc(x.key)}" data-on="${x.hidden ? 0 : 1}">${icon(x.hidden ? "eye" : "x")} ${x.hidden ? "Mostrar" : "Ocultar"}</button>
-               ${x.builtin ? (x.edited ? `<button class="btn btn-sm btn-ghost" data-action="pReset" data-k="${esc(x.key)}">${icon("undo")} Restaurar</button>` : "")
-                 : `<button class="btn btn-sm btn-danger" data-action="pDel" data-k="${esc(x.key)}">${icon("trash")} Borrar</button>`}`}
+               ${x.builtin && x.edited ? `<button class="btn btn-sm btn-ghost" data-action="pReset" data-k="${esc(x.key)}">${icon("undo")} Restaurar</button>` : ""}`}
+          <button class="btn btn-sm btn-danger" data-action="pDel" data-k="${esc(x.key)}">${icon("trash")} ${x.event ? "Quitar de Inicio" : "Borrar"}</button>
         </div>
       </article>`;
     }).join("")}
   </div>
-  <p class="xs muted">Consejo: para resaltar una actividad, créala en la Agenda y marca «Destacar en Inicio». Desaparece sola cuando pasa su fecha.</p>`;
+  <p class="xs muted">Consejo: para resaltar una actividad, créala en la Agenda y marca «Destacar en Inicio». Desaparece sola cuando pasa su fecha.</p>
+  ${Object.values(over).some((v) => v && v.deleted) ? `<button class="btn btn-ghost btn-sm" data-action="pRestoreAll">${icon("undo")} Recuperar las diapositivas borradas de base</button>` : ""}`;
 }
 
 // Editor (diálogo con vista previa)
@@ -334,8 +337,16 @@ function registerActions() {
     const n = { ...over }; delete n[el.dataset.k]; persist(n, "Diapositiva restaurada");
   };
   A.pDel = (el) => {
-    if (!confirm("¿Borrar esta diapositiva de la portada?")) return;
-    const n = { ...over }; delete n[el.dataset.k]; persist(n, "Diapositiva borrada");
+    const k = el.dataset.k, ev = k.startsWith("ev-");
+    if (!confirm(ev ? "¿Quitar este evento de la portada? Sigue en la Agenda." : "¿Borrar esta diapositiva de la portada?")) return;
+    const n = { ...over };
+    if (DEF[k] || ev) n[k] = { deleted: true }; else delete n[k]; // las de base y las de la Agenda quedan marcadas como borradas
+    persist(n, ev ? "Evento quitado de la portada" : "Diapositiva borrada");
+  };
+  A.pRestoreAll = () => {
+    if (!confirm("¿Recuperar las diapositivas de base y los eventos que se habían borrado de la portada?")) return;
+    const n = {}; for (const [k, v] of Object.entries(over)) if (!(v && v.deleted)) n[k] = v;
+    persist(n, "Diapositivas recuperadas");
   };
   A.pMove = async (el) => {
     const list = allSlides(), i = list.findIndex((s) => s.key === el.dataset.k), j = i + +el.dataset.d;
