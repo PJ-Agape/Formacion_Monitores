@@ -34,7 +34,7 @@ export const DEFAULTS = [
     text: "Somos jóvenes de la parroquia que caminan juntos para encontrarse con Jesús, formarse y servir. Aquí nadie es espectador: cada uno importa, con su historia y lo que aporta.",
     chips: ["Familiar y comunitario", "Intuitivo", "Activo"],
     b1: { label: "Conoce la comunidad", href: "#/red" }, b2: { label: "Ver la agenda", href: "#/agenda" } },
-  { key: "curso", label: "Curso de dirigentes", order: 20, course: true },
+  { key: "curso", label: "Guía de agAPPe", order: 20, course: true },
   { key: "familia", label: "Mes de la Familia", theme: "blue", order: 5, from: "2026-10-01", to: "2026-10-31", illus: "sagradafamilia",
     kicker: "Octubre · Mes de la Familia", hand: "la familia, primera comunidad",
     title: "Mes de la *Familia*",
@@ -198,12 +198,12 @@ export function adminView() {
     ${list.map((x, i) => {
       const s = status(x, t), [sl, sc] = STATUS[s];
       const dates = x.from || x.to ? `${x.from ? `desde ${fmt(x.from)}` : ""}${x.from && x.to ? " " : ""}${x.to ? `hasta ${fmt(x.to)}` : ""}` : "sin fechas: siempre";
-      const src = x.event ? "Desde la Agenda" : x.course ? "Curso (automática)" : x.builtin ? (x.edited ? "Base · editada" : "Base") : "Creada por el equipo";
+      const src = x.event ? "Desde la Agenda" : x.course ? "Guía (automática)" : x.builtin ? (x.edited ? "Base · editada" : "Base") : "Creada por el equipo";
       return `<article class="card p-row" data-theme-c="${esc(x.course ? "blue" : x.theme || "sky")}">
         <span class="p-sw"></span>
         <div class="p-main">
           <div class="row-wrap" style="gap:6px"><span class="chip ${sc}">${sl}</span><span class="chip">${esc(src)}</span></div>
-          <strong>${esc(x.course ? "Curso «El Arte de Encontrarnos»" : (x.title || x.label || "").replace(/\*/g, ""))}</strong>
+          <strong>${esc(x.course ? "Guía de agAPPe: recorre la app" : (x.title || x.label || "").replace(/\*/g, ""))}</strong>
           <span class="muted small">${esc(dates)}</span>
         </div>
         <div class="p-btns">
@@ -233,10 +233,10 @@ function editor(x, isNew) {
   const opt = (obj, cur) => Object.entries(obj).map(([k, l]) => `<option value="${k}" ${cur === k ? "selected" : ""}>${esc(l)}</option>`).join("");
   const scenes = Object.fromEntries([["", "Sin ilustración"], ...SCENE_KEYS.map((k) => [k, ILLUS_LABEL(k)])]);
   dlg.innerHTML = `<form method="dialog" id="pForm">
-    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Portada</span><h2>${isNew ? "Nueva diapositiva" : x.course ? "Diapositiva del curso" : "Editar diapositiva"}</h2></div>
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Portada</span><h2>${isNew ? "Nueva diapositiva" : x.course ? "Diapositiva de la Guía de agAPPe" : "Editar diapositiva"}</h2></div>
       <button type="button" class="icon-btn" data-action="pClose" aria-label="Cerrar">${icon("x")}</button></div>
     <div class="sheet-body stack" style="--gap:12px">
-      ${x.course ? `<p class="muted small">El contenido de esta diapositiva lo toma del curso y del avance de cada persona. Aquí solo eliges cuándo se muestra.</p>` : `
+      ${x.course ? `<p class="muted small">Esta diapositiva invita a recorrer la Guía de agAPPe. Su contenido es fijo; aquí solo eliges cuándo se muestra.</p>` : `
       <div class="p-prev" id="pPrev" aria-hidden="true"></div>
       <div class="field"><label>Título</label><input class="input" name="title" required maxlength="80" value="${v("title")}" placeholder="Ej: Retiro de *primavera*">
         <span class="xs muted">Pon entre asteriscos la palabra que quieres resaltar: Retiro de *primavera*.</span></div>

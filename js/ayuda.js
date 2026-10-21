@@ -17,6 +17,7 @@ const TEMAS = [
 ];
 const T = [
   // Primeros pasos
+  { t: "inicio", q: "¿Hay una guía para conocer la app?", who: ["visitante", ...CUENTA], a: ["Sí: en Formación está la «Guía de agAPPe».", "Toca «Comenzar el recorrido» y pasa las historias tocando la pantalla.", "Más abajo está el mapa de la app: qué hay en cada pestaña y qué se abre con cuenta."], go: "#/recorrido" },
   { t: "inicio", q: "¿Cómo entro a la app?", who: ["visitante"], a: ["Toca «Ingresar» arriba a la derecha.", "Elige «Continuar con Google» con el correo con que te invitaron.", "Si dice que tu correo no está invitado, pídele al equipo que te invite con ese correo."], go: "#/perfil", el: "[data-action=signIn]" },
   { t: "inicio", q: "¿Cómo instalo la app en mi celular?", who: ["visitante", ...CUENTA], a: ["En Android (Chrome): menú ⋮ → «Instalar app» o «Agregar a pantalla principal».", "En iPhone (Safari): botón Compartir → «Agregar a inicio».", "Queda como un ícono más y funciona aunque tengas poca señal."], go: "#/perfil", el: "[data-action=install]" },
   { t: "inicio", q: "¿Cómo pongo el marco de Ágape en mi foto de perfil?", who: CUENTA, a: ["En Comunidad toca «Estudio de difusión» → «Marco de foto».", "Elige tu foto y un marco; ajusta con «Acercar» y «Mover».", "Toca «Descargar» y ponla de foto en WhatsApp o Facebook. Tu foto no se sube a ninguna parte."], go: "#/difusion", el: ".dif-tabs" },

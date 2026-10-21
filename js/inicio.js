@@ -11,6 +11,7 @@ import { songList } from "./cancionero.js";
 import { helpFor, perfil } from "./ayuda.js";
 import { todayGospel } from "./capilla.js";
 import { cfg as inicioCfg, adopt as adoptInicio } from "./inicio-config.js";
+import { bannerHTML as guiaBanner } from "./recorrido.js";
 
 let ctx = null; // { actions, onAfterRender, render }
 export function setup(c) { ctx = c; registerActions(); }
@@ -36,7 +37,7 @@ function who() {
 // ---------------------------------------------------------------------------
 export const BLOCKS = {
   formacion: { t: "Formación", hand: "para crecer", href: "#/formacion", ill: "apostoles", c: "#1351a4", soft: "#e1f3fd",
-    d: "El curso de dirigentes, Nuestra Revista con los encuentros y los recursos para preparar." },
+    d: "La guía de agAPPe, los cursos, Nuestra Revista con los encuentros y los recursos para preparar." },
   red: { t: "Comunidad", hand: "para encontrarnos", href: "#/red", ill: "amigos", c: "#ef591c", soft: "#fde0d2",
     d: "El muro, el chat, la agenda y todo lo que compartimos como grupo." },
   espiritu: { t: "Espiritualidad", hand: "para rezar", href: "#/oracion", ill: "jesus", c: "#c98a00", soft: "#fff0c2",
@@ -44,8 +45,9 @@ export const BLOCKS = {
 };
 // e: emoji · t: título · d: descripción · kw: palabras para el buscador · ok: quién lo ve
 const ITEMS = [
+  { b: "formacion", e: "📱", t: "Guía de agAPPe", d: "Recorre la app y mira qué hay en cada pestaña.", href: "#/recorrido", kw: "guia tutorial recorrido manual ayuda como funciona app navegar mapa", ok: () => true },
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
-  { b: "formacion", e: "🎓", t: "Curso de dirigentes", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
+  { b: "formacion", e: "🎓", t: "Cursos de formación", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
   { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo, hub: false }, // vive en Materiales → Revistas
   { b: "formacion", e: "🪪", t: "Credenciales", d: "Tarjetas de solapa con foto, nombre y parroquia para los encuentros.", href: "#/credenciales", kw: "credenciales credencial tarjeta solapa lanyard portacredencial gafete nombre encuentro retiro", ok: () => true },
@@ -77,7 +79,7 @@ const ITEMS = [
 const descFor = (k, w) => k !== "formacion" ? BLOCKS[k].d
   : w.equipo ? BLOCKS.formacion.d
   : w.camino ? (w.curso ? "Mi Camino y el curso de dirigentes." : "Mi Camino: el encuentro de tu etapa, semana a semana.")
-  : "Crecer en la fe y aprender a acompañar a otros.";
+  : "Crecer en la fe, conocer la app y aprender a acompañar a otros.";
 export const itemsFor = (b) => { const w = who(); return ITEMS.filter((x) => x.b === b && x.ok(w)); };
 const inHub = (x) => { const h = x.hub; return h === undefined ? true : typeof h === "function" ? h(who()) : h; };
 const itemCard = (x) => x.links ? `<div class="card hub-item hub-multi">
@@ -153,6 +155,8 @@ export function blocksHTML() {
 // Páginas de bloque
 // ---------------------------------------------------------------------------
 // El curso, en grande: como las diapositivas de Inicio (ilustración, título y el paso que sigue).
+// Por ahora sin uso: la Guía de agAPPe ocupa su lugar en Formación.
+// eslint-disable-next-line no-unused-vars
 function courseBanner(course, st) {
   const pct = st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0;
   const nx = st.next, ses = nx && nx.type === "session" ? nx.session : null;
@@ -175,14 +179,14 @@ function courseBanner(course, st) {
   </section>`;
 }
 export function viewFormacion() {
-  const w = who(), course = S.activeCourse(), st = S.courseState(course);
+  const w = who();
   const b = BLOCKS.formacion;
   if (w.camino) ctx.onAfterRender(() => ctx.camJ.homeCard());
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 1 · ${esc(b.hand)}</span><h1>Formación</h1><p>${esc(descFor("formacion", w))}</p></header>
   ${w.camino ? `<div id="mcSlot"></div>` : ""}
-  ${w.curso ? courseBanner(course, st) : ""}
-  <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
-  ${w.guest ? `<p class="muted small" style="margin-top:14px">Para ver el curso y los encuentros, <a href="#/perfil">ingresa con tu cuenta</a>.</p>` : ""}`;
+  ${guiaBanner()}
+  <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/mi-camino" && x.href !== "#/recorrido").map(itemCard).join("")}</div>
+  ${w.guest ? `<p class="muted small" style="margin-top:14px">Mi Camino y los cursos se abren con tu cuenta. <a href="#/recorrido?mapa">Mira qué más se abre</a>.</p>` : ""}`;
 }
 // La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)
 // y lo que nos decimos (Chat). Cada parte sigue funcionando igual; esto es solo la puerta de entrada.
