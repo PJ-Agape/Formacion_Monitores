@@ -48,9 +48,9 @@ const ITEMS = [
   { b: "formacion", e: "🎓", t: "Cursos", d: "La guía de agAPPe y los cursos de formación.", href: "#/itinerario", kw: "curso cursos formacion itinerario unidades modulos guia tutorial bienvenido agappe manual como funciona", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
   { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo, hub: false }, // vive en Materiales → Revistas
-  { b: "formacion", e: "🪪", t: "Credenciales", d: "Tarjetas de solapa con foto, nombre y parroquia para los encuentros.", href: "#/credenciales", kw: "credenciales credencial tarjeta solapa lanyard portacredencial gafete nombre encuentro retiro", ok: (w) => w.equipo, hub: false }, // vive en Materiales → Para imprimir
-  { b: "formacion", e: "🧰", t: "Materiales", d: "Revistas, presentaciones, guías, banco de dinámicas y todo lo que se imprime.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links imprimir presentaciones guias dinamicas credenciales", ok: (w) => w.equipo },
-  { b: "formacion", e: "🧰", t: "Materiales", d: "Difusión, cancionero, oraciones y la biblioteca digital.", href: "#/materiales", kw: "materiales recursos biblioteca difusion cancionero oremus", ok: (w) => !w.equipo },
+  { b: "formacion", e: "🪪", t: "Credenciales", d: "Tarjetas de solapa con foto, nombre y parroquia para los encuentros.", href: "#/credenciales", kw: "credenciales credencial tarjeta solapa lanyard portacredencial gafete nombre encuentro retiro", ok: (w) => w.equipo || w.asp, hub: false }, // vive en Materiales → Para imprimir
+  { b: "formacion", e: "🧰", t: "Materiales", d: "Revistas, presentaciones, guías, banco de dinámicas y todo lo que se imprime.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links imprimir presentaciones guias dinamicas credenciales", ok: (w) => w.equipo || w.asp },
+  { b: "formacion", e: "🧰", t: "Materiales", d: "Difusión, cancionero, oraciones y la biblioteca digital.", href: "#/materiales", kw: "materiales recursos biblioteca difusion cancionero oremus", ok: (w) => !w.equipo && !w.asp },
   { b: "formacion", e: "🎲", t: "Dinámicas", d: "Juegos, rompehielos y dinámicas de oración.", href: "#/dinamicas", kw: "dinamicas juegos rompehielos actividades", ok: (w) => w.equipo, hub: false },
   { b: "formacion", e: "🌉", t: "¿Quieres ser dirigente?", d: "Presentación «Sé puente».", href: "presentaciones/se-puente.html", ext: true, kw: "dirigente se puente vocacion servir", ok: (w) => w.guest || w.joven },
   { b: "red", e: "📌", t: "Muro", d: "Avisos, logros y conversaciones del grupo.", href: "#/muro", kw: "muro avisos publicaciones noticias logros encuesta plaza", ok: () => true, hub: false }, // en La Plaza Ágape
@@ -155,7 +155,7 @@ export function blocksHTML() {
 // ---------------------------------------------------------------------------
 // Materiales, en grande como el curso: lo que trae cada uno según si tiene cuenta.
 function matBanner(w) {
-  const team = w.equipo;
+  const team = w.equipo || w.asp; // los aspirantes también ven los materiales completos
   const L = { Revistas: "#/encuentros", Difusión: "#/difusion", Cancionero: "#/cancionero", Oremus: "#/oremus", Dinámicas: "#/dinamicas" };
   const parts = team ? ["Revistas", "Presentaciones", "Difusión", "Cancionero", "Oremus", "Dinámicas", "Para imprimir", "Biblioteca digital"]
     : ["Difusión", "Cancionero", "Oremus", "Biblioteca digital"];
