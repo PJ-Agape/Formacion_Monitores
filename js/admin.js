@@ -1177,15 +1177,10 @@ function bindActions() {
         .catch((e) => toast("No se pudo invitar: " + (e.code || e.message), "", 5000));
     },
   });
-  // Mensaje de bienvenida para WhatsApp: cambia según el rol con que entra la persona.
-  const inviteMsg = (email, name, role) => {
+  // Mensaje de bienvenida para WhatsApp: el mismo para todas las cuentas nuevas.
+  const inviteMsg = (email, name) => {
     const url = location.origin + location.pathname, n = name ? " " + name.split(" ")[0] : "";
-    const que = {
-      ingreso: "Aquí vas a encontrar el encuentro de tu etapa cada semana, la Capilla para rezar, el muro y el chat del grupo, juegos y mucho más.",
-      madurez: "Aquí vas a encontrar el encuentro de tu etapa cada semana, la Capilla para rezar, el muro y el chat del grupo, juegos y mucho más.",
-      aspirante: "Aquí vas a encontrar el encuentro de tu etapa, la formación para prepararte a servir como dirigente, los materiales del equipo, la Capilla y la comunidad.",
-      dirigente: "Aquí vas a encontrar tu formación, los materiales para preparar los encuentros, el acompañamiento de tus jóvenes, la Capilla y la comunidad.",
-    }[role] || "Aquí vas a encontrar la formación, los materiales del equipo, la Capilla y la comunidad, todo en un mismo lugar.";
+    const que = "Aquí vas a encontrar el encuentro de tu etapa cada semana, la Capilla para rezar, el muro y el chat del grupo, juegos y mucho más.";
     return `¡Hola${n}! Te damos la bienvenida a *agAPPe*, la casa virtual de la Pastoral Juvenil Ágape.
 
 Ya tienes tu cuenta. ${que}
@@ -1198,7 +1193,7 @@ Te recomendamos partir por «Bienvenido a agAPPe», en Formación: es un recorri
 ¡Qué alegría tenerte en la comunidad!`;
   };
   const shareInvite = (email, name, role) => {
-    window.open(`https://wa.me/?text=${encodeURIComponent(inviteMsg(email, name, role))}`, "_blank", "noopener");
+    window.open(`https://wa.me/?text=${encodeURIComponent(inviteMsg(email, name))}`, "_blank", "noopener");
   };
   A.aConsentPdf = async () => {
     const o = (E && E.obj) || {};
