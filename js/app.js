@@ -25,7 +25,6 @@ import * as juegos from "./juegos.js";
 import * as frente from "./frente.js";
 import * as trivia from "./trivia.js";
 import * as cursoPrint from "./curso-print.js";
-import * as recorrido from "./recorrido.js";
 import * as ultima from "./ultima.js";
 import * as memorice from "./memorice.js";
 import * as emaus from "./emaus.js";
@@ -102,7 +101,6 @@ const routes = [
   [/^\/oremus(?:\/([^/?]+))?$/, (t) => capilla.oremusView(t ? decodeURIComponent(t) : ""), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
-  [/^\/(?:recorrido|tutorial|guia)(?:\?(.*))?$/, (q) => recorrido.view(q || ""), "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
   [/^\/nuestras-familias\/registro$/, () => famReg.viewRegistro(), "familiasag"],
   [/^\/nuestras-familias\/(f\d+)\/registro(?:\/(\d{4}-\d{2}-\d{2}))?$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
@@ -347,21 +345,26 @@ function nextLink(course, st) {
 
 function viewHome() {
   onAfterRender(() => { novedades.refresh(); inicio.paintGospel(); agenda.homeNext(); });
+  const course = S.activeCourse();
+  const st = S.courseState(course);
   const p = S.getProfile();
   const first = (p.name || "").split(" ")[0];
 
-  // La diapositiva automática de Inicio ahora invita a la Guía de agAPPe (el curso queda en Formación).
-  const courseSlide = `<article class="car-slide car-go" data-theme-c="blue" aria-roledescription="diapositiva" data-go="#/recorrido?play" title="Recorrer agAPPe">
+  const courseSlide = `<article class="car-slide car-go" data-theme-c="blue" aria-roledescription="diapositiva" data-go="${resumeLink(course, st)}" title="Abrir el curso donde quedaste">
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
       <div class="car-body">
-        <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Guía de agAPPe</span>
-        <h2 class="car-title">${heroTitle("Tu espacio para encontrarnos")}</h2>
-        <p class="lead">Recorre la app en dos minutos: qué hay en cada pestaña, qué puedes hacer sin cuenta y qué se abre con ella.</p>
+        <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Curso de formación de dirigentes</span>
+        <h2 class="car-title">${heroTitle(course.title)}</h2>
+        <p class="lead">${esc(S.courseDesc(course))}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
         <div class="actions">
-          <a class="btn btn-gold" href="#/recorrido?play">Comenzar el recorrido ${icon("arrowR")}</a>
+          <a class="btn btn-gold" href="${resumeLink(course, st)}">Ir a la formación ${icon("arrowR")}</a>
+        </div>
+        <div class="hero-progress">
+          <div class="bar"><i style="width:${st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0}%"></i></div>
+          <span class="small"><b>${st.readSessions}/${st.totalSessions}</b> unidades</span>
         </div>
       </div>
-      ${illus("celular", "car-illus")}
+      ${illus("apostoles", "car-illus")}
     </article>`;
   const carousel = () => {
     const slides = [...portada.current()];
@@ -1533,7 +1536,6 @@ juegos.setup({ actions, render: () => render(), onAfterRender, onLeave });
 frente.setup({ actions, onAfterRender, onLeave });
 trivia.setup({ actions, onAfterRender, onLeave });
 cursoPrint.setup({ actions, onAfterRender, onLeave, S, render: () => render() });
-recorrido.setup({ actions, onAfterRender, onLeave, cloud, render: () => render() });
 ultima.setup({ actions, onAfterRender, onLeave, cloud });
 for (const m of [memorice, mahjong, sopa, crucigrama, emaus]) m.setup({ actions, onAfterRender, onLeave });
 podcast.setup({ actions, render: () => render(), onAfterRender, cloud });
