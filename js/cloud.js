@@ -898,6 +898,16 @@ export async function getGrupoWA(force) {
 export async function saveGrupoWA(d) { await fb.setDoc(fb.doc(db, "privado", "whatsapp"), { ...d, updatedAt: fb.serverTimestamp(), updatedBy: account.email }); waCache = d; }
 export const saveSesion = (fecha, data) => fb.setDoc(fb.doc(db, "sesiones", fecha), { ...data, by: account.email, at: fb.serverTimestamp() });
 export const deleteSesion = (fecha) => fb.deleteDoc(fb.doc(db, "sesiones", fecha));
+// Ficha privada del joven (fichas/{id de la lista de jóvenes}): datos para emergencias, nunca públicos.
+export async function getJoven(id) {
+  if (!enabled || !db) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "jovenes", id)), 6000); return s.exists() ? { id: s.id, ...s.data() } : null; } catch { return null; }
+}
+export async function getFicha(id) {
+  if (!enabled || !db) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "fichas", id)), 6000); return s.exists() ? s.data({ serverTimestamps: "estimate" }) : null; } catch { return null; }
+}
+export const saveFicha = (id, data) => fb.setDoc(fb.doc(db, "fichas", id), { ...data, jid: id, updatedAt: fb.serverTimestamp(), updatedBy: account.email });
 export async function myJoven() {
   if (!enabled || !db || !user) return null;
   try { const qs = await withTimeout(fb.getDocs(fb.query(fb.collection(db, "jovenes"), fb.where("uid", "==", user.uid))), 6000); return snapRows(qs)[0] || null; }

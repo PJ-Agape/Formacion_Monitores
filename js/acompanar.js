@@ -5,6 +5,7 @@
 
 import { esc, icon, toast, initials } from "./util.js";
 import { svg as avatarSvg } from "./avatares.js";
+import { planilla as fichasXlsx } from "./ficha.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -186,7 +187,8 @@ function jovenesHTML() {
   };
   return `<div class="row-wrap" style="margin:6px 0 12px"><input class="input" id="acSearch" placeholder="Buscar por nombre…" value="${esc(qJ)}" style="flex:1;min-width:200px">
       ${hasMine ? `<button class="chip ${soloMios ? "accent" : ""}" data-action="acMios">🤝 Mis jóvenes</button>` : ""}
-      <button class="btn btn-gold btn-sm" data-action="acNew">${icon("plus")} Agregar joven</button></div>
+      <button class="btn btn-gold btn-sm" data-action="acNew">${icon("plus")} Agregar joven</button>
+      ${st().isStaff || hasMine ? `<button class="btn btn-soft btn-sm" data-action="acFichasXlsx" title="RUT, contacto de emergencia, alergias…">${icon("dl")} Planilla de fichas (Excel)</button>` : ""}</div>
     ${groups.map((g) => `<h3 class="mag-hub-sub"><span class="ac-dot" style="background:${g.e.c}"></span>${g.e.l} · ${g.list.length}</h3><div class="ac-jlist">${g.list.map(row).join("")}</div>`).join("") || `<div class="card" style="text-align:center;padding:26px"><p class="muted">Agrega a los jóvenes de tu grupo para empezar a pasar lista.</p></div>`}
     ${off.length ? `<h3 class="mag-hub-sub">En pausa · ${off.length}</h3><div class="ac-jlist">${off.map(row).join("")}</div>` : ""}
     <p class="xs muted" style="margin-top:14px">Los jóvenes no necesitan cuenta para estar en la lista. Si tienen cuenta, un administrador o coordinador la vincula para que vean su pasaporte.</p>`;
@@ -252,7 +254,10 @@ function passportHTML(j, { guide = false, own = false, sessions = null } = {}) {
         return `<${can ? "button" : "div"} class="stamp ${d ? "on" : ""} ${can ? "can" : ""}" ${can ? `data-action="acSello" data-id="${esc(j.id)}" data-k="${s.k}"` : ""} title="${esc(s.l)}${d ? " · " + fdate(d) : ""}">
           <span class="stamp-e">${s.e}</span><span class="stamp-l">${esc(s.l)}</span><span class="stamp-d">${d ? fdate(d) : s.auto ? "con tu asistencia" : can ? "tocar para entregar" : "por ganar"}</span></${can ? "button" : "div"}>`;
       }).join("")}</div>
+      ${own ? `<div class="row-wrap" style="margin-top:14px"><a class="btn btn-sm btn-soft" href="#/ficha/${encodeURIComponent(j.id)}">${icon("lock")} Mis datos privados</a>
+        <span class="xs muted">Tu RUT, contacto de emergencia y alergias. Solo los ve el equipo.</span></div>` : ""}
       ${guide ? `<div class="row-wrap" style="margin-top:14px"><button class="btn btn-sm btn-soft" data-action="acEdit" data-id="${esc(j.id)}">${icon("edit")} Editar datos</button>
+        ${st().isStaff || j.guia === ctx.cloud.myUid() || j.guia2 === ctx.cloud.myUid() ? `<a class="btn btn-sm btn-primary" href="#/ficha/${encodeURIComponent(j.id)}">${icon("lock")} Ficha privada</a>` : ""}
         <span class="xs muted">Los sellos con 🎯🔥⭐ se ganan solos con la asistencia; los demás los entrega un guía.</span></div>` : ""}
     </div>
   </article>`;
@@ -344,6 +349,16 @@ export async function homeCards() {
 function registerActions() {
   const A = ctx.actions;
   A.acMios = () => { soloMios = !soloMios; paintMain(); };
+  // Planilla Excel con las fichas privadas: el equipo, de todos; cada dirigente, de los jóvenes que acompaña.
+  A.acFichasXlsx = async (el) => {
+    const me = ctx.cloud.myUid();
+    const list = (jovenes || []).filter((j) => j.activo !== false && j.etapa !== "equipo" && (st().isStaff || j.guia === me || j.guia2 === me));
+    if (!list.length) { toast("No hay jóvenes para la planilla", ""); return; }
+    el.disabled = true;
+    try { const n = await fichasXlsx(list, ETAPAS); toast(`Planilla descargada con ${n} joven${n === 1 ? "" : "es"}. Guárdala en un lugar seguro: tiene datos personales.`, "ok", 6000); }
+    catch (e) { console.warn(e); toast("No se pudo armar la planilla", ""); }
+    el.disabled = false;
+  };
   A.acEtapa = (el) => { etapaF = el.dataset.e; paintMain(); };
   A.acToggle = (el) => { const id = el.dataset.id; if (draft.has(id)) draft.delete(id); else draft.add(id); paintMain(); };
   A.acAll = () => { activos().filter((j) => !etapaF || j.etapa === etapaF).forEach((j) => draft.add(j.id)); paintMain(); };

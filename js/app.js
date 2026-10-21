@@ -36,6 +36,7 @@ import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as credenciales from "./credenciales.js";
 import * as solicitud from "./solicitud.js";
+import * as ficha from "./ficha.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -103,6 +104,7 @@ const routes = [
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
   [/^\/solicitar$/, () => solicitud.view(), "perfil"],
+  [/^\/ficha\/([^/?]+)$/, (id) => ficha.view(decodeURIComponent(id)), "acompanar"],
   [/^\/(?:recorrido|tutorial|guia)(?:\?.*)?$/, () => { location.replace("#/formacion"); return null; }, "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
   [/^\/nuestras-familias\/registro$/, () => famReg.viewRegistro(), "familiasag"],
@@ -1542,6 +1544,7 @@ S.setCourseRule((c) => {
 inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 credenciales.setup({ actions, onAfterRender });
 solicitud.setup({ actions, render: () => render(), onAfterRender, cloud });
+ficha.setup({ actions, render: () => render(), onAfterRender, cloud });
 familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });

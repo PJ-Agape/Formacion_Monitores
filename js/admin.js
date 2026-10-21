@@ -752,6 +752,11 @@ async function personView(uid) {
       ${api.cloud.state().isAdmin ? `<button class="btn btn-sm btn-danger" data-action="aUserDelete" data-uid="${esc(u.uid)}" data-email="${esc(u.email)}" data-name="${esc(u.name)}">${icon("trash")} Eliminar cuenta</button>` : ""}
     </div>` : ""}
   </div>
+  ${(() => { const jv = (jovenesAll || []).find((j) => j.uid === u.uid); return jv ? `<div class="card"><h3>Ficha privada</h3>
+    <p class="muted small" style="margin-top:4px">RUT, edad, dirección, contacto de emergencia, alergias y lo que la familia quiera informar. No se publica: la ven el equipo, sus dirigentes y la propia persona.</p>
+    <div class="row-wrap" style="margin-top:12px"><a class="btn btn-sm btn-primary" href="#/ficha/${encodeURIComponent(jv.id)}">${icon("lock")} Abrir la ficha privada</a>
+      <a class="btn btn-sm btn-ghost" href="#/acompanar/joven/${encodeURIComponent(jv.id)}">Ver su pasaporte</a></div></div>`
+    : YOUTH.includes(u.role) ? `<div class="card"><h3>Ficha privada</h3><p class="muted small" style="margin-top:4px">Para tener su ficha privada, agrégalo a la lista de jóvenes en <a href="#/acompanar/jovenes">Acompañar</a> y vincula su cuenta.</p></div>` : ""; })()}
   ${YOUTH.includes(u.role) || u.consent ? `<div class="card"><h3>Consentimiento de la familia</h3>
     <p class="muted small" style="margin-top:4px">El papel firmado se guarda en la carpeta de consentimientos de la pastoral; aquí queda registrado qué autorizó la familia. Si cambia algo (por ejemplo, ya no autoriza fotos), edítalo aquí.</p>
     <div class="row-wrap" style="margin-top:10px">${consentChip(u)}</div>
@@ -1102,7 +1107,15 @@ function bindActions() {
   A.aSolApprove = async (el) => {
     const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
     openInvite({ email: s.email, name: shortName(s.name), parish: s.parish || "", role: "ingreso", consent: +s.edad >= 18 ? { mayor: true } : {} },
-      { title: `Aprobar a ${s.name}`, done: () => api.cloud.deleteSolicitud(s.uid || s.id) });
+      { title: `Aprobar a ${s.name}`, done: async () => {
+        // Queda en la lista de jóvenes (vinculado a su cuenta) y con su ficha privada ya iniciada.
+        const uid = s.uid || s.id, js = await loadJovenes(true);
+        let jid = (js.find((j) => j.uid === uid) || {}).id;
+        if (!jid) jid = await api.cloud.saveJoven(null, { nombre: s.name, etapa: "ingreso", cumple: "", publico: false, activo: true, uid,
+          fechas: [], sellos: {}, auto: {}, desde: new Date().toISOString().slice(0, 10), lema: "", portada: 0, avatar: "" }).catch(() => "");
+        if (jid && !(await api.cloud.getFicha(jid))) await api.cloud.saveFicha(jid, { nombre: s.name, email: s.email || "" }).catch(() => {});
+        await api.cloud.deleteSolicitud(uid);
+      } });
   };
   A.aSolPdf = async (el) => {
     const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
