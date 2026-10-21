@@ -1,76 +1,85 @@
 // Guía de agAPPe (#/recorrido): la puerta de entrada a la app, para todos.
-// Una carta de bienvenida, un recorrido corto que se pasa tocando la pantalla
-// y un mapa de la casa con lo que hay en cada pestaña.
+// Un recorrido en historias (se pasa tocando, como los estados) y un mapa de la app que dice
+// qué hay en cada pestaña y qué se abre con cuenta. Dos vistas: «Sin cuenta» y «Con cuenta».
 import { esc, icon } from "./util.js";
 import { illus } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); }
 const $ = (s, r = document) => r.querySelector(s);
-const st = () => (ctx.cloud.enabled ? ctx.cloud.state() : { ready: true });
-const guest = () => ctx.cloud.enabled && !st().ready;
+const st = () => (ctx.cloud.enabled ? ctx.cloud.state() : { ready: true, enabled: false });
+const em = (t) => esc(t).replace(/\*(.+?)\*/g, "<em>$1</em>");
+
+// Vista elegida: parte según si la persona ingresó; se puede cambiar para ver la otra.
+let mode = null;
+const curMode = () => mode || (st().ready ? "cuenta" : "visita");
 
 // ---------------------------------------------------------------------------
-// El recorrido: una idea por pantalla
+// El recorrido: una historia por parada
 // ---------------------------------------------------------------------------
-// bg: fondo · ink: texto · sun: círculo detrás del dibujo
-const NAVY = "#0b2566", CREAM = "#fff6e5";
+// c: fondo · ink: color del texto · ill: ilustración · go: [texto, enlace]
+// v/a: lo que cambia sin cuenta (visita) o con cuenta (a)
 const NAV_MOCK = `<div class="rc-mock-nav" aria-hidden="true">
-  <span>${icon("home")}<b>Inicio</b></span><span>${icon("route")}<b>Formación</b></span>
+  <span class="on">${icon("home")}<b>Inicio</b></span><span>${icon("route")}<b>Formación</b></span>
   <span>${icon("users")}<b>Comunidad</b></span><span>${icon("flame")}<b>Espiritualidad</b></span></div>`;
+const tags = (list, m) => `<div class="rc-tags" aria-hidden="true">${list.map(([t, lock]) => `<span class="${lock && m === "visita" ? "is-lock" : ""}">${lock && m === "visita" ? icon("lock") : ""}${esc(t)}</span>`).join("")}</div>`;
 
 const STOPS = [
-  { bg: NAVY, ink: CREAM, sun: "#ffba03", ill: "acogida", hand: "hola",
-    t: "Te estábamos esperando",
-    p: "Esta es agAPPe, la casa virtual de la Pastoral Juvenil Ágape. Acompáñanos a conocerla por dentro." },
-  { bg: CREAM, ink: NAVY, sun: "#8ad2fa", ill: "camino", hand: "para moverte",
-    t: "Cuatro puertas",
-    p: "Inicio, Formación, Comunidad y Espiritualidad. En el celular están abajo; en el computador, arriba.",
-    extra: () => NAV_MOCK },
-  { bg: "#fff0c2", ink: NAVY, sun: "#ffba03", ill: "luz", hand: "inicio",
-    t: "Cada día, algo nuevo",
-    p: "Al entrar te recibe el Evangelio del día y lo que está pasando en la pastoral.",
-    go: ["Ir a Inicio", "#/"] },
-  { bg: "#fff6e5", ink: NAVY, sun: "#f6d77a", ill: "oracion", hand: "espiritualidad",
-    t: "Un lugar para rezar",
-    p: "La Capilla siempre está abierta: la Palabra de cada día, el Rosario y un rato de silencio con Jesús.",
-    go: ["Entrar a la Capilla", "#/oracion"] },
-  { bg: "#fde0d2", ink: NAVY, sun: "#ef591c", ill: "amigos", hand: "comunidad",
-    t: "Donde nos encontramos",
-    p: "Las fotos de lo que vivimos, el muro, el chat, la agenda y algunos juegos para compartir.",
-    go: ["Ir a Comunidad", "#/red"] },
-  { bg: "#e1f3fd", ink: NAVY, sun: "#8ad2fa", ill: "apostoles", hand: "formación",
-    t: "Para seguir creciendo",
-    p: "Los encuentros de cada etapa y la formación de quienes acompañan a otros.",
-    go: ["Ir a Formación", "#/formacion"] },
-  { bg: NAVY, ink: CREAM, sun: "#8ad2fa", ill: "escuchar",
-    hand: { g: "tu cuenta", a: "tu perfil" },
-    t: { g: "Tu lugar te espera", a: "Tu rincón en la casa" },
-    p: { g: "Pide a tu dirigente que te invite con tu correo de Google. Con tu cuenta se abren el muro, el chat y tus encuentros.",
-      a: "En Mi perfil puedes armar tu avatar y ver tu pasaporte con los encuentros a los que has ido." },
-    go: { g: ["Ingresar", "#/perfil"], a: ["Ir a Mi perfil", "#/perfil"] } },
-  { bg: NAVY, ink: CREAM, sun: "#ffba03", ill: "eucaristia", hand: "nos vemos",
-    t: "Esto es solo una puerta",
-    p: "El encuentro verdadero es con Jesús, en la Eucaristía y en la comunidad. Te esperamos.",
-    go: ["Ver el mapa de la casa", "#/recorrido?mapa"], end: true },
+  { k: "hola", c: "#0b2566", ink: "#fff6e5", pop: "#ffba03", ill: "celular", hand: "bienvenido a casa", t: "Esto es *agAPPe*",
+    p: ["El espacio virtual de encuentro de la Pastoral Juvenil Ágape.", "Aquí rezamos, nos encontramos y crecemos juntos, estés donde estés."],
+    foot: "Parroquia San Miguel de Yungay" },
+  { k: "moverte", c: "#8ad2fa", ink: "#0b2566", pop: "#ef591c", ill: "camino", hand: "cómo moverte", t: "Cuatro pestañas, *todo a mano*",
+    p: ["En el celular están abajo; en el computador, arriba.", "La lupa busca en toda la app: una canción, una oración o un juego."],
+    mock: () => NAV_MOCK },
+  { k: "inicio", c: "#ffba03", ink: "#0b2566", pop: "#ef591c", ill: "luz", hand: "inicio", t: "Lo de hoy, *de un vistazo*",
+    p: ["El Evangelio del día, las novedades de la pastoral, lo que viene en la agenda y radios católicas en vivo."],
+    mock: (m) => tags([["Evangelio de hoy"], ["Novedades"], ["Agenda"], ["Radios"], ["Desafío de la semana", 1]], m), go: ["Ir a Inicio", "#/"] },
+  { k: "espiritu", c: "#fff0c2", ink: "#0b2566", pop: "#c98a00", ill: "oracion", hand: "espiritualidad", t: "Un lugar para *estar con Jesús*",
+    p: ["La Capilla Ágape: el Evangelio con un video breve, el Rosario paso a paso, Oremus y un rato de oración."],
+    v: "Está abierta para todos, también para tu familia.",
+    a: "Con tu cuenta compartes tus intenciones, rezas por las de otros y abres todo el cancionero.",
+    mock: (m) => tags([["Evangelio"], ["Rosario"], ["Oremus"], ["Un rato con Jesús"], ["Intenciones", 1], ["Cancionero", 1]], m), go: ["Entrar a la Capilla", "#/oracion"] },
+  { k: "comunidad", c: "#ef591c", ink: "#fff6e5", pop: "#ffba03", ill: "amigos", hand: "comunidad", t: "La Plaza *Ágape*",
+    p: ["Lo que vivimos y conversamos como grupo, y todo lo que viene en la agenda."],
+    v: "Sin cuenta puedes jugar (prueba Emaús) y ver la agenda. El muro, el chat y los momentos son de la comunidad con cuenta.",
+    a: "Publica en el muro, conversa en las salas, sube momentos y suma sellos en tu pasaporte.",
+    mock: (m) => tags([["Juegos"], ["Agenda"], ["Momentos", 1], ["Muro", 1], ["Chat", 1], ["Mi pasaporte", 1]], m), go: ["Ir a Comunidad", "#/red"] },
+  { k: "formacion", c: "#e1f3fd", ink: "#0b2566", pop: "#1351a4", ill: "apostoles", hand: "formación", t: "Para *crecer* en la fe",
+    p: ["Esta guía, las credenciales para los encuentros y «Sé puente», si te tinca ser dirigente."],
+    v: "Con cuenta, cada joven tiene Mi Camino: el encuentro de su etapa, semana a semana.",
+    a: "Mi Camino te muestra el encuentro de tu etapa. Los dirigentes tienen sus cursos, la Revista y los materiales.",
+    mock: (m) => tags([["Guía de agAPPe"], ["Credenciales"], ["Sé puente"], ["Mi Camino", 1], ["Cursos", 1]], m), go: ["Ir a Formación", "#/formacion"] },
+  { k: "cuenta", c: "#0b2566", ink: "#fff6e5", pop: "#8ad2fa", ill: "acogida",
+    hand: { v: "tu cuenta", a: "tu perfil" }, t: { v: "¿Quieres *tu cuenta*?", a: "Esta app *es tuya*" },
+    p: { v: ["Pídele a tu dirigente que te invite con tu correo de Google.", "Después toca «Ingresar» arriba y elige ese correo. ¡Listo!"],
+      a: ["Arma tu avatar en Mi perfil y mira tu pasaporte.", "En la campana te avisamos lo nuevo, sin molestar."] },
+    go: { v: ["Ingresar", "#/perfil"], a: ["Ir a Mi perfil", "#/perfil"] } },
+  { k: "llevala", c: "#8ad2fa", ink: "#0b2566", pop: "#ffba03", ill: "escuchar", hand: "llévala contigo", t: "En tu celular, *como una app*",
+    p: ["Android: menú ⋮ → «Instalar app».", "iPhone: Compartir → «Agregar a inicio».", "¿Dudas? Toca el botón ? en cualquier pantalla."],
+    foot: "En Accesibilidad puedes agrandar la letra o hacer que te lea en voz alta." },
+  { k: "fin", c: "#0b2566", ink: "#fff6e5", pop: "#ffba03", ill: "eucaristia", hand: "nos vemos", t: "La app es *una puerta*",
+    p: ["El encuentro de verdad es con Jesús y en la comunidad, en la Eucaristía y en cada encuentro.", "¡Te esperamos!"],
+    go: ["Ver el mapa de la app", "#/recorrido?mapa"], end: true },
 ];
-const pick = (x) => (x && typeof x === "object" && !Array.isArray(x) && "g" in x ? x[guest() ? "g" : "a"] : x);
+const pick = (x, m) => (x && typeof x === "object" && !Array.isArray(x) && ("v" in x || "a" in x) ? x[m === "visita" ? "v" : "a"] : x);
 
-function stopHTML(s, i) {
-  const go = pick(s.go);
-  return `<section class="rc-stop" aria-roledescription="pantalla" aria-label="${i + 1} de ${STOPS.length}">
+function stopHTML(s, i, m) {
+  const p = pick(s.p, m), go = pick(s.go, m), extra = m === "visita" ? s.v : s.a;
+  return `<section class="rc-stop" style="--sb:${s.c};--si:${s.ink};--sp:${s.pop}" aria-roledescription="historia" aria-label="${i + 1} de ${STOPS.length}">
     <div class="rc-stop-art"><i class="rc-sun"></i>${illus(s.ill, "rc-stop-il")}</div>
     <div class="rc-stop-txt">
-      <span class="rc-hand">${esc(pick(s.hand))}</span>
-      <h2>${esc(pick(s.t))}</h2>
-      <p>${esc(pick(s.p))}</p>
-      ${s.extra ? s.extra() : ""}
-      ${go ? `<a class="rc-go" href="${go[1]}" data-action="rcGo">${esc(go[0])} ${icon("arrowR")}</a>` : ""}
+      <span class="rc-hand">${esc(pick(s.hand, m))}</span>
+      <h2>${em(pick(s.t, m))}</h2>
+      ${p.map((x) => `<p>${esc(x)}</p>`).join("")}
+      ${s.mock ? s.mock(m) : ""}
+      ${extra ? `<p class="rc-extra">${m === "visita" ? icon("lock") : icon("check")}<span>${esc(extra)}</span></p>` : ""}
+      ${s.foot ? `<p class="rc-foot">${esc(s.foot)}</p>` : ""}
+      ${go ? `<a class="btn rc-go" href="${go[1]}" data-action="rcGo">${esc(go[0])} ${icon("arrowR")}</a>` : ""}
     </div>
   </section>`;
 }
 
-// Pantalla completa: se toca a la derecha para seguir y a la izquierda para volver.
+// Reproductor a pantalla completa: toca a la derecha para seguir y a la izquierda para volver.
 let at = 0;
 function openPlayer(i = 0) {
   closePlayer();
@@ -78,10 +87,11 @@ function openPlayer(i = 0) {
   const d = document.createElement("div");
   d.id = "rcPlay"; d.className = "rc-play"; d.setAttribute("role", "dialog"); d.setAttribute("aria-modal", "true"); d.setAttribute("aria-label", "Recorrido por agAPPe");
   d.innerHTML = `<div class="rc-bars" aria-hidden="true">${STOPS.map(() => "<i><b></b></i>").join("")}</div>
-    <button class="rc-x" data-action="rcClose" aria-label="Cerrar">${icon("x")}</button>
+    <button class="rc-x" data-action="rcClose" aria-label="Cerrar el recorrido">${icon("x")}</button>
     <div class="rc-stage" id="rcStage" aria-live="polite"></div>
     <div class="rc-ctrl">
       <button class="rc-arrow" data-action="rcStep" data-d="-1" aria-label="Anterior">${icon("arrowL")}</button>
+      <span class="rc-count" id="rcCount"></span>
       <button class="rc-arrow is-next" data-action="rcStep" data-d="1" aria-label="Siguiente">${icon("arrowR")}</button>
     </div>`;
   document.body.appendChild(d);
@@ -95,9 +105,10 @@ function openPlayer(i = 0) {
 function paintStop() {
   const d = $("#rcPlay"); if (!d) return;
   const s = STOPS[at];
-  d.style.setProperty("--sb", s.bg); d.style.setProperty("--si", s.ink); d.style.setProperty("--sp", s.sun);
+  d.style.setProperty("--sb", s.c); d.style.setProperty("--si", s.ink); d.style.setProperty("--sp", s.pop);
   d.querySelectorAll(".rc-bars i").forEach((b, k) => { b.className = k < at ? "done" : k === at ? "on" : ""; });
-  $("#rcStage").innerHTML = stopHTML(s, at);
+  $("#rcStage").innerHTML = stopHTML(s, at, curMode());
+  $("#rcCount").textContent = `${at + 1} / ${STOPS.length}`;
   d.querySelector('[data-d="-1"]').disabled = at === 0;
   const nx = d.querySelector(".is-next");
   nx.innerHTML = s.end ? icon("check") : icon("arrowR");
@@ -130,143 +141,149 @@ const onUp = (e) => {
 };
 
 // ---------------------------------------------------------------------------
-// El mapa de la casa
+// El mapa de la app: qué hay en cada pestaña y quién lo ve
 // ---------------------------------------------------------------------------
-// q: quién lo ve · todos | cuenta | jovenes (jóvenes y aspirantes) | dirigentes
-const ROOMS = [
-  { t: "Inicio", hand: "la entrada", ill: "luz", c: "#0b2566", s: "#fff0c2", href: "#/",
-    d: "Lo primero que ves al abrir la app. Aquí te espera la Palabra del día y lo que se viene.",
-    items: [["El Evangelio del día", "#/evangelio", "todos"], ["Las novedades de la pastoral", "#/", "todos"],
-      ["La agenda de las próximas semanas", "#/agenda", "todos"], ["Radios católicas y nuestro podcast", "#/oracion/radio", "todos"],
-      ["El desafío de la semana", "#/", "cuenta"]] },
-  { t: "Espiritualidad", hand: "la capilla", ill: "oracion", c: "#c98a00", s: "#fff6e5", href: "#/oracion",
-    d: "Un lugar tranquilo para estar con Jesús, cuando quieras y desde donde estés. Abierto también para tu familia.",
-    items: [["El Evangelio con un video breve", "#/oracion", "todos"], ["El Rosario, paso a paso", "#/oracion/rosario", "todos"],
-      ["Oremus: nuestras oraciones", "#/oremus", "todos"], ["Un rato con Jesús", "#/oracion/silencio", "todos"],
-      ["Las intenciones de la comunidad", "#/oracion/velas", "cuenta"], ["El cancionero completo", "#/cancionero", "cuenta"]] },
-  { t: "Comunidad", hand: "la plaza", ill: "amigos", c: "#ef591c", s: "#fde0d2", href: "#/red",
-    d: "Donde compartimos lo que vivimos entre un encuentro y otro.",
-    items: [["La agenda de la pastoral", "#/agenda", "todos"], ["Juegos, como Emaús o la Trivia", "#/juegos", "todos"],
-      ["Momentos: nuestras fotos", "#/momentos", "cuenta"], ["El muro del grupo", "#/muro", "cuenta"],
-      ["El chat", "#/chat", "cuenta"], ["Tu familia de Ágape y tu pasaporte", "#/nuestras-familias", "cuenta"]] },
-  { t: "Formación", hand: "el taller", ill: "apostoles", c: "#1351a4", s: "#e1f3fd", href: "#/formacion",
-    d: "Para seguir creciendo en la fe y aprender a acompañar a otros.",
-    items: [["Esta guía", "#/recorrido", "todos"], ["Credenciales para los encuentros", "#/credenciales", "todos"],
-      ["«Sé puente»: ser dirigente en Ágape", "presentaciones/se-puente.html", "todos"],
-      ["Mi Camino: el encuentro de tu etapa", "#/mi-camino", "jovenes"],
-      ["Cursos, revistas y materiales", "#/materiales", "dirigentes"]] },
+// q: quién · todos | cuenta | jovenes (jóvenes y aspirantes) | dirigentes | equipo
+const Q = { todos: "Para todos", cuenta: "Con cuenta", jovenes: "Jóvenes con cuenta", dirigentes: "Dirigentes", equipo: "Equipo" };
+const MAP = [
+  { t: "Inicio", hand: "lo de hoy", c: "#0b2566", s: "#e8eef9", ico: "home", href: "#/", items: [
+    ["Evangelio de hoy", "La frase del día. Tócala para leerlo entero.", "#/evangelio", "todos"],
+    ["Novedades", "Las diapositivas con lo que está pasando en la pastoral.", "#/", "todos"],
+    ["Cuentas regresivas y agenda", "Lo que viene: encuentros, misas y actividades.", "#/agenda", "todos"],
+    ["Radios y podcast", "Radios católicas en vivo y nuestro podcast.", "#/oracion/radio", "todos"],
+    ["Desafío de la semana", "Un gesto concreto para vivir lo del encuentro.", "#/", "cuenta"],
+  ] },
+  { t: "Formación", hand: "para crecer", c: "#1351a4", s: "#e1f3fd", ico: "route", href: "#/formacion", items: [
+    ["Guía de agAPPe", "Este recorrido y el mapa de la app.", "#/recorrido", "todos"],
+    ["Credenciales", "Tarjetas con tu foto y nombre para los encuentros.", "#/credenciales", "todos"],
+    ["¿Quieres ser dirigente?", "La presentación «Sé puente».", "presentaciones/se-puente.html", "todos"],
+    ["Mi Camino", "El encuentro de tu etapa, semana a semana.", "#/mi-camino", "jovenes"],
+    ["Cursos de formación", "Unidades, evaluaciones y tu avance.", "#/itinerario", "dirigentes"],
+    ["Materiales y dinámicas", "Nuestra Revista, presentaciones, guías y juegos para preparar.", "#/materiales", "dirigentes"],
+  ] },
+  { t: "Comunidad", hand: "para encontrarnos", c: "#ef591c", s: "#fde0d2", ico: "users", href: "#/red", items: [
+    ["Juegos", "Emaús, Trivia Ágape, ¡En la frente!, El Impostor y más.", "#/juegos", "todos"],
+    ["Agenda", "El calendario de la pastoral. Puedes sumarlo a tu celular.", "#/agenda", "todos"],
+    ["Momentos", "Las fotos de lo que vivimos juntos.", "#/momentos", "cuenta"],
+    ["Muro", "Avisos, preguntas, encuestas y logros del grupo.", "#/muro", "cuenta"],
+    ["Chat", "Salas para conversar en grupo.", "#/chat", "cuenta"],
+    ["Nuestras familias y pasaporte", "Tu grupo pequeño, tus encuentros y tus sellos.", "#/nuestras-familias", "cuenta"],
+    ["Estudio de difusión", "Marco de foto, historias y stickers para invitar.", "#/difusion", "cuenta"],
+  ] },
+  { t: "Espiritualidad", hand: "para rezar", c: "#c98a00", s: "#fff0c2", ico: "flame", href: "#/oracion", items: [
+    ["Capilla Ágape", "El Evangelio del día con un video breve.", "#/oracion", "todos"],
+    ["Rezar el Rosario", "Paso a paso, cuenta a cuenta, con María.", "#/oracion/rosario", "todos"],
+    ["Oremus", "Nuestras oraciones y las de siempre.", "#/oremus", "todos"],
+    ["Un rato con Jesús", "Oración personal en casa o ante el Santísimo.", "#/oracion/silencio", "todos"],
+    ["Intenciones", "Comparte por quién rezas y reza por los demás.", "#/oracion/velas", "cuenta"],
+    ["Cancionero", "Canciones con acordes. Sin cuenta ves las originales de Ágape.", "#/cancionero", "cuenta"],
+  ] },
+  { t: "Siempre a mano", hand: "en cualquier pantalla", c: "#0b2566", s: "#fff6e5", ico: "sparkle", items: [
+    ["La lupa", "Busca en toda la app.", "#/buscar", "todos"],
+    ["El botón ?", "Respuestas cortas a «¿cómo hago…?» y te muestra dónde tocar.", "#/ayuda", "todos"],
+    ["Accesibilidad", "Letra más grande, lectura fácil y «Escuchar».", "#/accesibilidad", "todos"],
+    ["Para las familias", "Una página para papás, mamás y apoderados.", "familias/", "todos"],
+    ["Mi perfil", "Tu avatar, tu pasaporte y tus datos.", "#/perfil", "cuenta"],
+    ["La campana", "Te avisa lo nuevo: avisos, intenciones y respuestas.", "", "cuenta"],
+  ] },
 ];
-const canSee = (q) => {
-  if (q === "todos" || !ctx.cloud.enabled) return true;
+const canSee = (q, m) => {
+  if (q === "todos") return true;
+  if (m === "visita") return false;
+  if (!ctx.cloud.enabled) return true;
   const s = st();
-  if (!s.ready) return false;
+  if (!s.ready) return true; // está mirando la vista «Con cuenta» sin haber ingresado
   if (q === "jovenes") return !!s.isJoven || s.role === "aspirante";
   if (q === "dirigentes") return !s.isJoven && s.role !== "aspirante";
+  if (q === "equipo") return !!s.isStaff;
   return true;
 };
-function roomsHTML() {
-  const g = guest();
-  return ROOMS.map((r, i) => {
-    const list = r.items.filter(([, , q]) => g || canSee(q));
-    return `<section class="rc-room${i % 2 ? " is-alt" : ""}" style="--bc:${r.c};--bs:${r.s}">
-      <div class="rc-room-art" aria-hidden="true">${illus(r.ill, "rc-room-il")}</div>
-      <div class="rc-room-txt">
-        <span class="rc-hand">${esc(r.hand)}</span>
-        <h3>${esc(r.t)}</h3>
-        <p>${esc(r.d)}</p>
-        <ul>${list.map(([t, href, q]) => {
-          const lock = !canSee(q), ext = !href.startsWith("#");
-          return lock ? `<li class="is-lock">${icon("lock")}<span>${esc(t)}</span></li>`
-            : `<li><a href="${href}" ${ext ? 'target="_blank" rel="noopener"' : ""}>${esc(t)}</a></li>`;
-        }).join("")}</ul>
-        <a class="rc-room-go" href="${r.href}">Entrar ${icon("arrowR")}</a>
-      </div>
-    </section>`;
-  }).join("");
+function mapHTML(m) {
+  return `<div class="rc-map">${MAP.map((b) => `<section class="rc-blk" style="--bc:${b.c};--bs:${b.s}">
+    <header>${b.href ? `<a href="${b.href}" class="rc-blk-h">` : `<span class="rc-blk-h">`}<span class="rc-blk-ico">${icon(b.ico)}</span>
+      <span><small>${esc(b.hand)}</small><strong>${esc(b.t)}</strong></span>${b.href ? `${icon("right")}</a>` : "</span>"}</header>
+    <ul>${b.items.map(([t, d, href, q]) => {
+      const ok = canSee(q, m), lock = !ok;
+      const tag = q === "todos" ? "" : `<span class="rc-q ${lock ? "is-lock" : ""}">${lock ? icon("lock") : ""}${esc(Q[q])}</span>`;
+      const inner = `<span class="rc-it"><span class="rc-it-t"><strong>${esc(t)}</strong>${tag}</span><span class="rc-it-d">${esc(d)}</span></span>`;
+      const ext = href && !href.startsWith("#");
+      return `<li class="${lock ? "is-lock" : ""}">${href && ok ? `<a href="${href}" ${ext ? 'target="_blank" rel="noopener"' : ""}>${inner}${icon("right")}</a>` : `<div>${inner}</div>`}</li>`;
+    }).join("")}</ul>
+  </section>`).join("")}</div>`;
 }
 
 // ---------------------------------------------------------------------------
 // La página
 // ---------------------------------------------------------------------------
 export function view(q = "") {
-  const g = guest();
+  const m = curMode(), s = st();
   ctx.onLeave(closePlayer);
   if (/(^|&)play\b/.test(q)) ctx.onAfterRender(() => openPlayer(0));
   if (/(^|&)mapa\b/.test(q)) ctx.onAfterRender(() => document.getElementById("rcMapa")?.scrollIntoView({ behavior: "smooth", block: "start" }));
+  let seen = 0; try { seen = +localStorage.getItem("agape_recorrido") || 0; } catch {}
   return `<div class="rc">
-  <section class="rc-letter" aria-labelledby="rcT">
-    <div class="rc-letter-art" aria-hidden="true"><i class="rc-sun"></i>${illus("acogida", "rc-letter-il")}</div>
-    <div class="rc-letter-txt">
-      <span class="rc-hand">hola, qué alegría que estés aquí</span>
-      <h1 id="rcT">Bienvenido a agAPPe</h1>
-      <p>Esta es la casa virtual de la Pastoral Juvenil Ágape. La hicimos pensando en ti, para que podamos rezar juntos, compartir lo que vivimos y seguir creciendo en la fe, también entre un encuentro y otro.</p>
-      <p>Pasa, ponte cómodo y recórrela con calma.</p>
-      <span class="rc-sign">Tus dirigentes de Ágape</span>
-      <div class="rc-letter-btns">
-        <button class="btn btn-primary" data-action="rcPlay" data-i="0">Recorrer la casa ${icon("arrowR")}</button>
-        <button class="btn btn-ghost" data-action="rcMapa">Ver el mapa</button>
+  <section class="rc-hero" aria-labelledby="rcT">
+    <div class="rc-hero-txt">
+      <span class="eyebrow">Guía de agAPPe · para todos</span>
+      <span class="rc-hand">bienvenido a casa</span>
+      <h1 id="rcT">Tu espacio para <em>encontrarnos</em></h1>
+      <p>agAPPe es la casa virtual de la Pastoral Juvenil Ágape. En dos minutos te mostramos todo lo que hay y cómo moverte.</p>
+      <div class="rc-hero-btns">
+        <button class="btn btn-gold" data-action="rcPlay" data-i="0">${icon("arrowR")} ${seen ? "Ver el recorrido otra vez" : "Comenzar el recorrido"}</button>
+        <a class="btn rc-btn-line" href="#/recorrido?mapa" data-action="rcMapa">Ver el mapa de la app</a>
       </div>
     </div>
+    <div class="rc-hero-art" aria-hidden="true"><i class="rc-sun"></i>${illus("celular", "rc-hero-il")}</div>
   </section>
 
-  <section class="rc-sec rc-move" aria-labelledby="rcNT">
-    <span class="rc-hand">antes de empezar</span>
-    <h2 id="rcNT">Cómo moverte</h2>
-    <p class="rc-lead">Toda la app está ordenada en cuatro pestañas. En el celular las encuentras abajo; en el computador, arriba.</p>
-    ${NAV_MOCK}
-    <div class="rc-tips">
-      <div><span class="rc-tip-ico">${icon("search")}</span><p><strong>La lupa</strong> busca en toda la app: una canción, una oración o un juego.</p></div>
-      <div><span class="rc-tip-ico rc-tip-q">?</span><p><strong>El botón de ayuda</strong> responde dudas y te muestra dónde tocar.</p></div>
-      <div><span class="rc-tip-ico">${icon("eye")}</span><p><strong>Accesibilidad</strong> agranda la letra o lee los textos en voz alta.</p></div>
-    </div>
-  </section>
+  <nav class="rc-reel" aria-label="Paradas del recorrido">
+    ${STOPS.map((x, i) => `<button class="rc-reel-it" data-action="rcPlay" data-i="${i}" style="--sb:${x.c};--si:${x.ink};--sp:${x.pop}">
+      <span class="rc-reel-ring${i <= seen && seen ? " is-seen" : ""}"><span>${illus(x.ill, "rc-reel-il")}</span></span>
+      <span class="rc-reel-l">${esc(pick(x.hand, m))}</span></button>`).join("")}
+  </nav>
 
   <section class="rc-sec" id="rcMapa" aria-labelledby="rcMT">
-    <span class="rc-hand">qué hay en cada lugar</span>
-    <h2 id="rcMT">El mapa de la casa</h2>
-    ${g ? `<p class="rc-lead">Sin cuenta ya puedes rezar, jugar y ver la agenda. Lo que tiene un candado ${icon("lock")} se abre cuando ingresas.</p>` : ""}
-    <div class="rc-rooms">${roomsHTML()}</div>
+    <div class="rc-sec-head">
+      <div><span class="rc-hand">manual de navegación</span><h2 id="rcMT">El mapa de <em>agAPPe</em></h2>
+      <p class="muted">Qué hay en cada pestaña y qué se abre con tu cuenta.</p></div>
+      <div class="rc-switch" role="radiogroup" aria-label="Ver la app">
+        <button role="radio" aria-checked="${m === "visita"}" data-action="rcMode" data-m="visita">${icon("eye")} Sin cuenta</button>
+        <button role="radio" aria-checked="${m === "cuenta"}" data-action="rcMode" data-m="cuenta">${icon("users")} Con cuenta</button>
+      </div>
+    </div>
+    ${mapHTML(m)}
   </section>
 
-  ${g ? `<section class="rc-sec rc-join" aria-labelledby="rcCT">
-    <span class="rc-hand">tu lugar te espera</span>
-    <h2 id="rcCT">Cómo tener tu cuenta</h2>
+  ${m === "visita" ? `<section class="rc-sec rc-steps" aria-labelledby="rcCT">
+    <div><span class="rc-hand">sin cuenta también puedes rezar y jugar</span><h2 id="rcCT">¿Cómo tengo <em>mi cuenta</em>?</h2></div>
     <ol>
-      <li><b>1</b><p>Conversa con tu dirigente y pídele que te invite con tu correo de Google.</p></li>
-      <li><b>2</b><p>Toca «Ingresar», arriba a la derecha, y elige ese mismo correo.</p></li>
-      <li><b>3</b><p>Arma tu avatar y pasa a saludar a la comunidad.</p></li>
+      <li><b>1</b><span><strong>Habla con tu dirigente</strong>Pídele que te invite con tu correo de Google.</span></li>
+      <li><b>2</b><span><strong>Toca «Ingresar»</strong>Arriba a la derecha, con ese mismo correo.</span></li>
+      <li><b>3</b><span><strong>¡Bienvenido!</strong>Arma tu avatar y date una vuelta por la Plaza.</span></li>
     </ol>
-    ${ctx.cloud.enabled ? `<button class="btn btn-primary" data-action="signIn">Ingresar</button>` : ""}
+    ${ctx.cloud.enabled && !s.ready ? `<button class="btn btn-primary" data-action="signIn">Ingresar</button>` : ""}
   </section>` : ""}
 
-  <section class="rc-sec rc-install" aria-labelledby="rcIT">
-    <h2 id="rcIT">Tenla en tu celular</h2>
-    <p class="rc-lead">Puedes dejar agAPPe en tu pantalla de inicio y abrirla como cualquier aplicación.</p>
-    <div class="rc-tips">
-      <div><span class="rc-tip-ico">${icon("phone")}</span><p><strong>Android</strong> En Chrome, abre el menú ⋮ y elige «Instalar app».</p></div>
-      <div><span class="rc-tip-ico">${icon("phone")}</span><p><strong>iPhone</strong> En Safari, toca Compartir y luego «Agregar a inicio».</p></div>
-    </div>
-  </section>
-
-  <section class="rc-close">
-    ${illus("eucaristia", "rc-close-il")}
-    <p>Que esta casa nos ayude a encontrarnos con Jesús y entre nosotros.<br>Nos vemos en el próximo encuentro.</p>
-    <span class="rc-sign">Pastoral Juvenil Ágape</span>
+  <section class="rc-end">
+    <div><span class="rc-hand">¿te quedó alguna duda?</span>
+    <p>Toca el botón <b class="rc-q-dot">?</b> en cualquier pantalla: te respondemos corto y te mostramos dónde tocar.</p></div>
+    <a class="btn btn-ghost" href="#/ayuda">Abrir la ayuda ${icon("arrowR")}</a>
   </section>
   </div>`;
 }
 
-// Tarjeta para Formación
+// Tarjeta grande para Formación y la diapositiva de Inicio
 export function bannerHTML() {
+  let seen = 0; try { seen = +localStorage.getItem("agape_recorrido") || 0; } catch {}
   return `<section class="hub-cbanner rc-banner" aria-labelledby="rcBT">
     <div class="hub-cb-txt">
-      <span class="eyebrow">Guía de agAPPe</span>
-      <span class="hub-cb-hand">empieza por aquí</span>
-      <h2 id="rcBT">Bienvenido a agAPPe</h2>
-      <p class="hub-cb-meta">Te mostramos la casa por dentro: qué hay en cada pestaña y cómo moverte.</p>
-      <div class="hub-cb-btns"><a class="btn btn-gold" href="#/recorrido?play">Recorrer la casa ${icon("arrowR")}</a><a class="btn btn-ghost" href="#/recorrido">Ver la guía</a></div>
+      <span class="eyebrow">Guía de agAPPe · para todos</span>
+      <span class="hub-cb-hand">${seen ? "date otra vuelta" : "empieza por aquí"}</span>
+      <h2 id="rcBT">Recorre agAPPe en dos minutos</h2>
+      <p class="hub-cb-meta">Qué hay en cada pestaña, qué puedes hacer sin cuenta y qué se abre con ella.</p>
+      <div class="hub-cb-btns"><a class="btn btn-gold" href="#/recorrido?play">${seen ? "Ver el recorrido" : "Comenzar el recorrido"} ${icon("arrowR")}</a><a class="btn btn-ghost" href="#/recorrido?mapa">Mapa de la app</a></div>
     </div>
-    <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus("acogida", "hub-cb-il")}</div>
+    <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus("celular", "hub-cb-il")}</div>
   </section>`;
 }
 
@@ -275,10 +292,10 @@ function registerActions() {
   A.rcPlay = (el) => openPlayer(+el.dataset.i || 0);
   A.rcClose = () => closePlayer();
   A.rcStep = (el) => step(+el.dataset.d);
-  A.rcGo = (el) => {
-    const h = el.getAttribute("href"); closePlayer();
-    if (h === "#/recorrido?mapa" && location.hash.startsWith("#/recorrido")) { document.getElementById("rcMapa")?.scrollIntoView({ behavior: "smooth", block: "start" }); return; }
-    location.hash = h.replace(/^#/, "");
-  };
+  A.rcGo = (el) => { const h = el.getAttribute("href"); closePlayer(); location.hash = h.replace(/^#/, ""); if (h === "#/recorrido?mapa") ctx.render(); };
   A.rcMapa = () => document.getElementById("rcMapa")?.scrollIntoView({ behavior: "smooth", block: "start" });
+  A.rcMode = (el) => {
+    mode = el.dataset.m; const y = window.scrollY;
+    Promise.resolve(ctx.render()).then(() => window.scrollTo(0, y));
+  };
 }

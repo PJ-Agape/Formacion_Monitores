@@ -33,7 +33,7 @@ import * as mahjong from "./mahjong.js";
 import * as sopa from "./sopa.js";
 import * as crucigrama from "./crucigrama.js";
 import * as podcast from "./podcast.js";
-import { cfg as inicioCfg, REDES, BRAND_ICO, guiaOn } from "./inicio-config.js";
+import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as credenciales from "./credenciales.js";
 import * as viva from "./unidad-viva.js";
@@ -355,16 +355,16 @@ function viewHome() {
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
       <div class="car-body">
         <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Guía de agAPPe</span>
-        <h2 class="car-title">${heroTitle("Bienvenido a agAPPe")}</h2>
-        <p class="lead">La casa virtual de la Pastoral Juvenil Ágape. Te mostramos qué hay en cada pestaña y cómo moverte.</p>
+        <h2 class="car-title">${heroTitle("Tu espacio para encontrarnos")}</h2>
+        <p class="lead">Recorre la app en dos minutos: qué hay en cada pestaña, qué puedes hacer sin cuenta y qué se abre con ella.</p>
         <div class="actions">
-          <a class="btn btn-gold" href="#/recorrido?play">Recorrer la casa ${icon("arrowR")}</a>
+          <a class="btn btn-gold" href="#/recorrido?play">Comenzar el recorrido ${icon("arrowR")}</a>
         </div>
       </div>
-      ${illus("acogida", "car-illus")}
+      ${illus("celular", "car-illus")}
     </article>`;
   const carousel = () => {
-    const slides = portada.current().filter((x) => !x.course || guiaOn());
+    const slides = [...portada.current()];
     if (papa.enCarrusel()) slides.splice(Math.min(1, slides.length), 0, { papa: true, label: "Con el Papa" });
     if (!slides.length) return "";
     return `<section class="carousel" id="homeCarousel" aria-roledescription="carrusel" aria-label="Bienvenida">
