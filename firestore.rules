@@ -491,6 +491,18 @@ service cloud.firestore {
     match /agenda/{eventId} {
       allow read: if true;
       allow write: if isStaff();
+      // Confirmaciones de asistencia de las familias (página para familias, sin cuenta), solo en
+      // actividades con «Invitar a las familias». Las ven los guías y las borra el equipo.
+      match /confirmaciones/{cid} {
+        allow read: if isGuide();
+        allow create: if get(/databases/$(database)/documents/agenda/$(eventId)).data.get('invFam', false) == true
+          && request.resource.data.keys().hasOnly(['joven', 'personas', 'fecha', 'createdAt'])
+          && request.resource.data.joven is string && request.resource.data.joven.size() >= 2 && request.resource.data.joven.size() <= 60
+          && request.resource.data.personas is int && request.resource.data.personas >= 1 && request.resource.data.personas <= 5
+          && request.resource.data.fecha is string && request.resource.data.fecha.size() == 10
+          && request.resource.data.createdAt == request.time;
+        allow delete: if isStaff();
+      }
     }
 
     // Juegos en línea («¡Última!»): una sala por código de 4 letras. La ven quienes tienen cuenta.

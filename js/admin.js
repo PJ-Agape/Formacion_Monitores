@@ -884,6 +884,7 @@ const SPECS = {
         ["consent.cumple", "Autorizó: cumpleaños visible en la app", "check"],
         ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
         ["consent.ficha", "Autorizó: guardar su ficha privada (datos de la página 2)", "check"],
+        ["consent.avisos", "Autorizó: usar su teléfono de contacto para avisos de la pastoral", "check"],
       ]),
     ] : [])],
   consent: (o) => [
@@ -896,6 +897,7 @@ const SPECS = {
       ["consent.cumple", "Autorizó: cumpleaños visible en la app", "check"],
       ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
       ["consent.ficha", "Autorizó: guardar su ficha privada (datos de la página 2)", "check"],
+      ["consent.avisos", "Autorizó: usar su teléfono de contacto para avisos de la pastoral", "check"],
     ]),
   ],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
@@ -913,7 +915,7 @@ function consentChip(u) {
   const c = u && u.consent; if (!c) return YOUTH.includes(u && u.role) ? ` <span class="chip danger">Sin consentimiento registrado</span>` : "";
   if (c.mayor) return ` <span class="chip">Mayor de edad</span>`;
   const f = c.fecha ? c.fecha.split("-").reverse().join("/") : "";
-  const ok = [c.honor && "honor", c.cumple && "cumpleaños", c.fotos && "fotos", c.ficha && "ficha"].filter(Boolean).join(", ");
+  const ok = [c.honor && "honor", c.cumple && "cumpleaños", c.fotos && "fotos", c.ficha && "ficha", c.avisos && "avisos"].filter(Boolean).join(", ");
   return ` <span class="chip ok" title="Registrado por ${esc(c.registradoPor || "")}">✓ Consentimiento ${esc(f)}${ok ? " · " + esc(ok) : ""}</span>`;
 }
 let E = null; // { title, spec, specArgs, obj, onSave, isNew }
@@ -1142,7 +1144,7 @@ function bindActions() {
       onSave: (o) => {
         const c = o.consent || {};
         if (!c.mayor && (!c.ok || !/^\d{4}-\d{2}-\d{2}$/.test(c.fecha || ""))) { toast("Marca que recibiste el consentimiento firmado y su fecha", "", 4500); return false; }
-        const consent = { ...(c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos, ficha: !!c.ficha }), registradoPor: api.cloud.state().account?.email || "" };
+        const consent = { ...(c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos, ficha: !!c.ficha, avisos: !!c.avisos }), registradoPor: api.cloud.state().account?.email || "" };
         api.cloud.updateUser(u.uid, { consent })
           .then(async () => { await loadPeople(true); api.render(); toast("Consentimiento registrado"); })
           .catch((e) => toast("No se pudo guardar: " + (e.code || e.message), "", 5000));
@@ -1163,7 +1165,7 @@ function bindActions() {
       if (YOUTH.includes(o.role)) {
         const c = o.consent || {};
         if (!c.mayor && (!c.ok || !/^\d{4}-\d{2}-\d{2}$/.test(c.fecha || ""))) { toast("Primero registra el consentimiento firmado y su fecha", "", 4500); return false; }
-        consent = c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos, ficha: !!c.ficha };
+        consent = c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos, ficha: !!c.ficha, avisos: !!c.avisos };
       }
       api.cloud.invite({ email, name: o.name.trim(), parish: (o.parish || "").trim(), role: o.role, consent })
         .then(async () => {

@@ -46,6 +46,41 @@ const iso = (d) => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate(
 const parse = (s) => { const [y, m, d] = s.split("-").map(Number); return new Date(y, m - 1, d); };
 const todayIso = () => iso(new Date());
 const longDate = (s) => parse(s).toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
+// Invitación a las familias: el joven la manda por WhatsApp; la familia confirma en su página.
+const APP = new URL("./", location.href.split("#")[0]).href;
+const famLink = (e) => `${APP}familias/#ev-${e.baseId || e.id}`;
+function invMsg(e) {
+  const cuando = `${longDate(e.date)}${e.start ? `, a las ${e.start} h` : ""}`;
+  return `¡Hola! Te invito a *${e.title}* de la Pastoral Juvenil Ágape.\n\n${cuando.charAt(0).toUpperCase() + cuando.slice(1)}${e.place ? `\n${e.place}` : ""}\n\nPor favor, confirma si puedes venir aquí: ${famLink(e)}`;
+}
+const waHref = (e) => `https://wa.me/?text=${encodeURIComponent(invMsg(e))}`;
+// Tarjeta en Inicio para los jóvenes: la próxima actividad a la que se invita a las familias.
+export async function homeInvite() {
+  const slot = document.getElementById("famInvSlot"); if (!slot) return;
+  const s = ctx.cloud.state();
+  if (!s.ready || !["ingreso", "madurez", "aspirante"].includes(s.role)) return;
+  const t = todayIso();
+  const list = expand((await ctx.cloud.listAgenda()).filter((e) => e.invFam && e.date), t, shiftIso(t, 60)).filter((e) => e.date >= t)
+    .sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")));
+  const e = list[0]; if (!e || !document.getElementById("famInvSlot")) return;
+  document.getElementById("famInvSlot").innerHTML = `<section class="card fam-inv">
+    <span class="fam-inv-hand">invita a tu familia</span>
+    <h3>${esc(e.title)}</h3>
+    <p class="muted">${esc(longDate(e.date))}${e.start ? ` · ${esc(e.start)} h` : ""}${e.place ? ` · ${esc(e.place)}` : ""}</p>
+    <p class="small">Mándale la invitación a tu mamá, papá o apoderado. Desde el mensaje pueden confirmar si vienen.</p>
+    <a class="btn btn-primary" href="${waHref(e)}" target="_blank" rel="noopener">${icon("send")} Enviar por WhatsApp</a>
+  </section>`;
+}
+async function paintConf(id) {
+  const box = document.querySelector(`[data-conf="${CSS.escape(id)}"]`); if (!box) return;
+  const rows = await ctx.cloud.listConfirmaciones(id);
+  if (rows === null) { box.innerHTML = `<p class="xs muted">No se pudieron cargar las confirmaciones.</p>`; return; }
+  const n = rows.reduce((a, r) => a + (+r.personas || 0), 0);
+  rows.sort((a, b) => String(a.joven).localeCompare(String(b.joven), "es"));
+  box.innerHTML = `<p class="small"><b>Confirmaciones de las familias:</b> ${rows.length ? `${rows.length} familia${rows.length === 1 ? "" : "s"} · ${n} persona${n === 1 ? "" : "s"}` : "todavía ninguna"}</p>
+    ${rows.length ? `<ul class="ag-conf-list">${rows.map((r) => `<li><span>${esc(r.joven)} · ${+r.personas || 1} persona${+r.personas === 1 ? "" : "s"}</span>
+      <button class="icon-btn" data-action="agConfDel" data-id="${esc(id)}" data-cid="${esc(r.id)}" aria-label="Quitar">${icon("x")}</button></li>`).join("")}</ul>` : ""}`;
+}
 
 let events = null, camino = [], showCamino = true, month = null, selDay = null, openId = null;
 
@@ -185,12 +220,15 @@ function paintList() {
         <div class="row-wrap" style="margin-top:8px">
           <button class="btn btn-sm btn-ghost" data-action="agIcs" data-id="${esc(e.id)}">${icon("dl")} Agregar a mi calendario</button>
           ${autz.hasAuth(e) ? `<button class="btn btn-sm btn-gold" data-action="agAuthPdf" data-id="${esc(e.id)}">✍️ Autorización (PDF)</button>` : ""}
+          ${e.invFam ? `<a class="btn btn-sm btn-primary" href="${waHref(e)}" target="_blank" rel="noopener">${icon("send")} Invitar a mi familia</a>` : ""}
           ${admin && !e.camino && !e.cumple ? `<button class="btn btn-sm btn-soft" data-action="agEdit" data-id="${esc(e.baseId || e.id)}">${icon("edit")} Editar${e.baseId ? " la serie" : ""}</button>
             ${e.baseId ? `<button class="btn btn-sm btn-ghost" data-action="agSkip" data-id="${esc(e.baseId)}" data-date="${esc(e.date)}">${icon("x")} Saltar esta fecha</button>` : ""}
             <button class="btn btn-sm btn-danger" data-action="agDel" data-id="${esc(e.baseId || e.id)}" data-rep="${e.baseId ? 1 : 0}">${icon("trash")} Borrar${e.baseId ? " la serie" : ""}</button>` : ""}
-        </div></div>` : ""}
+        </div>
+        ${admin && e.invFam ? `<div class="ag-conf" data-conf="${esc(e.baseId || e.id)}"><p class="xs muted">Cargando confirmaciones…</p></div>` : ""}</div>` : ""}
     </article>`;
   }).join("");
+  box.querySelectorAll("[data-conf]").forEach((b) => paintConf(b.dataset.conf));
 }
 
 // ---------------------------------------------------------------------------
@@ -317,6 +355,10 @@ function registerActions() {
   A.agMonth = (el) => { month = new Date(month.getFullYear(), month.getMonth() + +el.dataset.d, 1); selDay = null; paint(); };
   A.agToday = () => { const n = new Date(); month = new Date(n.getFullYear(), n.getMonth(), 1); selDay = todayIso(); paint(); };
   A.agDay = (el) => { selDay = el.dataset.day || null; openId = null; paint(); if (selDay && matchMedia("(max-width: 900px)").matches) $("#agList")?.scrollIntoView({ behavior: "smooth", block: "start" }); };
+  A.agConfDel = async (el) => {
+    if (!confirm("¿Quitar esta confirmación?")) return;
+    try { await ctx.cloud.deleteConfirmacion(el.dataset.id, el.dataset.cid); paintConf(el.dataset.id); } catch { toast("No se pudo quitar", ""); }
+  };
   A.agOpen = (el) => { openId = openId === el.dataset.id ? null : el.dataset.id; paintList(); };
   A.agNew = () => openForm(null);
   A.agEdit = (el) => openForm((events || []).find((e) => e.id === el.dataset.id));
@@ -352,6 +394,7 @@ function registerActions() {
   document.addEventListener("change", (e) => {
     if (e.target.id === "agCamino") { showCamino = e.target.checked; paint(); }
     if (e.target.id === "agCount") { const o = $("#agCountOpts"); if (o) o.hidden = !e.target.checked; const b = $("#agCountBg"); if (b) b.hidden = !e.target.checked; }
+    if (e.target.id === "agInv" && e.target.checked) { const fam = $("#agFam"); if (fam) fam.checked = true; }
     if (e.target.id === "agAuth") { const o = $("#agAuthOpts"); if (o) o.hidden = !e.target.checked; const fam = $("#agFam"); if (e.target.checked && fam) fam.checked = true; }
     if (e.target.id === "agFeat") { const o = $("#agFeatOpts"); if (o) o.hidden = !e.target.checked; }
     if (e.target.id === "agRepeat") { const o = $("#agUntilBox"); if (o) o.hidden = !e.target.value; }
@@ -366,7 +409,8 @@ function registerActions() {
     data.repeat = REPEATS[String(f.get("repeat") || "")] ? String(f.get("repeat") || "") : "";
     data.until = data.repeat ? String(f.get("until") || "") : "";
     if (data.until && data.until < data.date) { toast("«Hasta» es anterior a la fecha del evento", ""); return; }
-    data.familias = f.get("familias") === "on";
+    data.invFam = f.get("invFam") === "on";
+    data.familias = f.get("familias") === "on" || data.invFam;
     data.count = f.get("count") === "on";
     data.countFrom = data.count ? String(f.get("countFrom") || "") : "";
     data.countBg = data.count ? fondo.get() : "";

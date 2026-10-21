@@ -352,7 +352,7 @@ function nextLink(course, st) {
 }
 
 function viewHome() {
-  onAfterRender(() => { novedades.refresh(); inicio.paintGospel(); agenda.homeNext(); });
+  onAfterRender(() => { novedades.refresh(); inicio.paintGospel(); agenda.homeNext(); agenda.homeInvite(); });
   const course = S.activeCourse();
   const st = S.courseState(course);
   const p = S.getProfile();
@@ -412,6 +412,7 @@ function viewHome() {
   ${solicitud.homeCard()}
   <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
+  <div id="famInvSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
   ${radiosHTML()}
   ${cloud.enabled && !cloud.state().ready ? `<a class="card link camino-banner" href="presentaciones/se-puente.html" target="_blank" rel="noopener" style="margin-top:16px">

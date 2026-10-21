@@ -119,11 +119,11 @@ async function paintCons() {
   const yes = (v) => (v ? "✓" : "—");
   const falta = list.filter((u) => !u.consent).length;
   box.innerHTML = `${falta ? `<div class="note warn" style="margin-bottom:12px">🖊️ <b>${falta}</b> joven${falta > 1 ? "es" : ""} sin consentimiento registrado.</div>` : `<div class="note" style="margin-bottom:12px">✓ Todos los jóvenes tienen su consentimiento registrado.</div>`}
-    <div class="gf-tablewrap"><table class="gf-table gc-table"><thead><tr><th>Joven</th><th>Rol</th><th>Consentimiento</th><th>Cuadro de honor</th><th>Cumpleaños</th><th>Fotos</th><th>Ficha privada</th><th></th></tr></thead>
+    <div class="gf-tablewrap"><table class="gf-table gc-table"><thead><tr><th>Joven</th><th>Rol</th><th>Consentimiento</th><th>Cuadro de honor</th><th>Cumpleaños</th><th>Fotos</th><th>Ficha privada</th><th>Avisos</th><th></th></tr></thead>
     <tbody>${list.map((u) => { const c = u.consent || {};
       return `<tr class="${u.consent ? "" : "dirty"}"><th>${esc(corto(u.name))}${u.pend ? ` <span class="chip">Invitación</span>` : ""}</th><td>${esc(cloud.roleLabel(u.role))}</td>
-        <td>${!u.consent ? `<b class="gm-rep">Falta</b>` : c.mayor ? "Mayor de 18" : `✓ ${esc(c.fecha || "")}`}</td><td>${c.mayor ? "—" : yes(c.honor)}</td><td>${c.mayor ? "—" : yes(c.cumple)}</td><td>${c.mayor ? "—" : yes(c.fotos)}</td><td>${c.mayor ? "—" : yes(c.ficha)}</td>
-        <td><a class="btn btn-sm btn-ghost" href="${u.link}">${icon("edit")}</a></td></tr>`; }).join("") || `<tr><td colspan="8" class="muted">Aún no hay cuentas de jóvenes.</td></tr>`}</tbody></table></div>`;
+        <td>${!u.consent ? `<b class="gm-rep">Falta</b>` : c.mayor ? "Mayor de 18" : `✓ ${esc(c.fecha || "")}`}</td><td>${c.mayor ? "—" : yes(c.honor)}</td><td>${c.mayor ? "—" : yes(c.cumple)}</td><td>${c.mayor ? "—" : yes(c.fotos)}</td><td>${c.mayor ? "—" : yes(c.ficha)}</td><td>${c.mayor ? "—" : yes(c.avisos)}</td>
+        <td><a class="btn btn-sm btn-ghost" href="${u.link}">${icon("edit")}</a></td></tr>`; }).join("") || `<tr><td colspan="9" class="muted">Aún no hay cuentas de jóvenes.</td></tr>`}</tbody></table></div>`;
 }
 
 // ---------------------------------------------------------------------------

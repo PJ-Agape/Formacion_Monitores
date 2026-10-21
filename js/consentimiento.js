@@ -77,7 +77,8 @@ export async function pdfBytes({ nombre = "", etapa = "", correo = "", ficha = {
   y = check("Puede aparecer con su nombre e inicial en el cuadro de honor del grupo (también visible en la página para familias).", y) - 6;
   y = check("Su cumpleaños (día y mes) puede mostrarse en la app a los demás miembros del grupo.", y) - 6;
   y = check("Puede aparecer en fotos de la pastoral, solo en sus canales oficiales.", y) - 6;
-  y = check("El equipo puede guardar su ficha privada con los datos de la página 2, revisados por mí.", y) - 30;
+  y = check("El equipo puede guardar su ficha privada con los datos de la página 2, revisados por mí.", y) - 6;
+  y = check("Pueden usar el teléfono de contacto para avisos de la pastoral (por ejemplo, reuniones de apoderados), además de emergencias.", y) - 26;
 
   const sw = W * 0.58;
   field("Firma", M, y, sw); field("Fecha", M + sw + G, y, W - sw - G); y -= 24;

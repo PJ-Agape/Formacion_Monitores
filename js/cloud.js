@@ -721,6 +721,12 @@ export async function saveEvent(id, data) {
   return ref.id;
 }
 export const deleteEvent = (id) => fb.deleteDoc(fb.doc(db, "agenda", id));
+// Confirmaciones de asistencia de las familias (agenda/{id}/confirmaciones), las escriben desde su página.
+export async function listConfirmaciones(id) {
+  if (!enabled || !db) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "agenda", id, "confirmaciones")), 6000)); } catch { return null; }
+}
+export const deleteConfirmacion = (id, cid) => fb.deleteDoc(fb.doc(db, "agenda", id, "confirmaciones", cid));
 export const patchEvent = (id, data) => fb.updateDoc(fb.doc(db, "agenda", id), data);
 
 // ---------------------------------------------------------------------------

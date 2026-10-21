@@ -25,6 +25,8 @@ export function formHTML(e) {
   return `<fieldset class="p-dates ag-fam-box">
       <label class="row" style="gap:8px;font-weight:800"><input type="checkbox" name="familias" id="agFam" ${e && e.familias ? "checked" : ""}> 🏠 Visible para familias</label>
       <span class="xs muted">Aparece en la página para familias y en su calendario.</span>
+      <label class="row" style="gap:8px;font-weight:800;margin-top:12px"><input type="checkbox" name="invFam" id="agInv" ${e && e.invFam ? "checked" : ""}> Invitar a las familias (por ejemplo, una reunión de apoderados)</label>
+      <span class="xs muted">Cada joven recibe en Inicio una invitación para mandarla a su familia por WhatsApp, y las familias confirman su asistencia en su página. Las confirmaciones las ves en este evento.</span>
       <label class="row" style="gap:8px;font-weight:800;margin-top:12px"><input type="checkbox" name="authReq" id="agAuth" ${on ? "checked" : ""}> ✍️ ¿Requiere autorización de papás o apoderados?</label>
       <div class="stack" id="agAuthOpts" style="--gap:10px;margin-top:10px" ${on ? "" : "hidden"}>
         <p class="xs muted">Con esto se arma la autorización en PDF. La familia puede completarla en el mismo PDF o imprimirla y firmarla.</p>

@@ -73,7 +73,8 @@ function proximas(list) {
 }
 function evHTML(e) {
   const d = parse(e.date);
-  return `<article class="fam-ev">
+  const evId = (e.base && e.base.id) || e.id;
+  return `<article class="fam-ev" id="ev-${esc(evId)}">
     <span class="fam-date"><b>${d.getDate()}</b><small>${MESES[d.getMonth()].slice(0, 3)}</small></span>
     <div class="fam-ev-main">
       <span class="fam-ev-day">${esc(longDate(e.date))}${e.start ? ` · ${esc(e.start)}${e.end ? `–${esc(e.end)}` : ""} h` : ""}</span>
@@ -83,8 +84,43 @@ function evHTML(e) {
       ${e.base && isRepeat(e.base) ? `<p class="fam-ev-where">↻ ${esc(repeatText(e.base))}</p>` : ""}
       ${autz.hasAuth(e) ? `<div class="fam-auth"><span>✍️ <b>Requiere autorización</b>${e.auth.plazo ? ` · entregar a más tardar el ${esc(autz.fecha(e.auth.plazo))}` : ""}</span>
         <button class="btn btn-sm btn-gold" data-auth="${esc(e.key)}">Descargar autorización (PDF)</button></div>` : ""}
+      ${e.invFam ? confHTML(e, evId) : ""}
     </div></article>`;
 }
+// Confirmar asistencia (sin cuenta): nombre del joven y cuántos van. Solo el equipo ve las respuestas.
+const confKey = (e) => `agape_conf_${e.key}`;
+function confHTML(e, evId) {
+  let done = null; try { done = JSON.parse(localStorage.getItem(confKey(e)) || "null"); } catch {}
+  if (done) return `<div class="fam-conf is-done"><b>¡Gracias! Confirmaron su asistencia.</b><span>${esc(done.joven)} · ${done.personas} persona${done.personas === 1 ? "" : "s"}</span>
+    <button class="btn btn-sm btn-ghost" data-conf-again="${esc(e.key)}">Confirmar por otro joven</button></div>`;
+  return `<form class="fam-conf" data-conf-form="${esc(e.key)}" data-ev="${esc(evId)}">
+    <b>¿Vienen? Confirmen su asistencia</b>
+    <div class="fam-conf-row">
+      <label><span>Nombre del joven</span><input name="joven" required maxlength="60" placeholder="Nombre y apellido"></label>
+      <label><span>¿Cuántos vienen?</span><select name="personas">${[1, 2, 3, 4, 5].map((n) => `<option value="${n}">${n}</option>`).join("")}</select></label>
+    </div>
+    <button class="btn btn-sm btn-primary" type="submit">Confirmamos</button>
+  </form>`;
+}
+document.addEventListener("submit", async (ev) => {
+  const f = ev.target.closest("[data-conf-form]"); if (!f) return;
+  ev.preventDefault();
+  const e = EVS.find((x) => x.key === f.dataset.confForm); if (!e || !db) { alert("No pudimos enviar la confirmación. Revisa tu conexión."); return; }
+  const joven = String(new FormData(f).get("joven") || "").trim().replace(/\s+/g, " "), personas = +new FormData(f).get("personas") || 1;
+  if (joven.length < 2) return;
+  const btn = f.querySelector("[type=submit]"); btn.disabled = true; btn.textContent = "Enviando…";
+  try {
+    await timeout(fb.addDoc(fb.collection(db, "agenda", f.dataset.ev, "confirmaciones"), { joven: joven.slice(0, 60), personas, fecha: e.date, createdAt: fb.serverTimestamp() }));
+    try { localStorage.setItem(confKey(e), JSON.stringify({ joven, personas })); } catch {}
+    f.outerHTML = confHTML(e, f.dataset.ev);
+  } catch (err) { console.warn(err); btn.disabled = false; btn.textContent = "Confirmamos"; alert("No pudimos enviar la confirmación. Inténtalo de nuevo."); }
+});
+document.addEventListener("click", (ev) => {
+  const b = ev.target.closest("[data-conf-again]"); if (!b) return;
+  const e = EVS.find((x) => x.key === b.dataset.confAgain); if (!e) return;
+  try { localStorage.removeItem(confKey(e)); } catch {}
+  b.closest(".fam-conf").outerHTML = confHTML(e, (e.base && e.base.id) || e.id);
+});
 const SUB = () => {
   const url = BASE + "familias.ics", webcal = url.replace(/^https?:/, "webcal:");
   return `<div class="fam-sub">
@@ -189,6 +225,8 @@ async function main() {
     <span class="fam-k alt">Contacto</span><h2>Conversemos.</h2>${contactHTML(C.contacto)}
   </section>`;
   cuenta.start();
+  // Si llegaron desde la invitación (…/familias/#ev-…), se va directo a esa actividad.
+  if (/^#ev-/.test(location.hash)) setTimeout(() => document.getElementById(location.hash.slice(1))?.scrollIntoView({ behavior: "smooth", block: "center" }), 150);
 }
 
 document.addEventListener("click", async (e) => {
