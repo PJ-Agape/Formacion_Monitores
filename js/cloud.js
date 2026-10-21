@@ -403,12 +403,13 @@ export async function visitStats(days = 30) {
   return out.map((k, i) => ({ dia: k, v: (rows[i] && rows[i].v) || 0, c: (rows[i] && rows[i].c) || 0, g: (rows[i] && rows[i].g) || 0 }));
 }
 export async function adminData() {
-  const [users, progress, invites] = await Promise.all([all("users"), all("progress"), all("invites")]);
+  const [users, progress, invites, solicitudes] = await Promise.all([all("users"), all("progress"), all("invites"), all("solicitudes").catch(() => [])]);
   const prog = Object.fromEntries(progress.map((p) => [p.id, p]));
   const used = new Set(users.map((u) => lower(u.email)));
   return {
     users: users.map((u) => ({ ...u, uid: u.id, progress: prog[u.id] || null })),
     invites: invites.filter((i) => !used.has(i.id)),
+    solicitudes: solicitudes.filter((s) => !used.has(lower(s.email))).sort((a, b) => String(a.name).localeCompare(String(b.name), "es")),
   };
 }
 export async function invite({ email, name, parish, role, consent }) {
@@ -417,6 +418,23 @@ export async function invite({ email, name, parish, role, consent }) {
   if (consent) data.consent = { ...consent, registradoPor: account.email };
   await fb.setDoc(fb.doc(db, "invites", email), data);
 }
+// Solicitudes de cuenta: quien entra con Google sin invitación deja su nombre, edad y parroquia.
+export async function getMySolicitud() {
+  if (!enabled || !db || !user) return null;
+  try { const s = await withTimeout(fb.getDoc(fb.doc(db, "solicitudes", user.uid)), 6000); return s.exists() ? s.data() : null; }
+  catch { return null; }
+}
+export async function saveSolicitud({ name, edad, parish }) {
+  await fb.setDoc(fb.doc(db, "solicitudes", user.uid), { uid: user.uid, email: lower(user.email), name: String(name).slice(0, 80), edad: Math.round(+edad),
+    parish: String(parish || "").slice(0, 120), createdAt: fb.serverTimestamp() });
+}
+export async function pendingSolicitudes() {
+  if (!enabled || !db || !state().isAdmin) return [];
+  try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "solicitudes")), 6000)); } catch { return []; }
+}
+export const deleteSolicitud = (uid) => fb.deleteDoc(fb.doc(db, "solicitudes", uid));
+// Vuelve a mirar si ya hay invitación (después de que el equipo aprobó la solicitud).
+export async function recheck() { if (user) { await handleUser(user); emit(); } }
 export const deleteInvite = (email) => fb.deleteDoc(fb.doc(db, "invites", lower(email)));
 export const updateUser = (uid, data) => fb.updateDoc(fb.doc(db, "users", uid), data);
 // Elimina una cuenta: su ficha, su avance y su invitación. Sin invitación ya no puede volver a entrar.

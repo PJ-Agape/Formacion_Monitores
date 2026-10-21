@@ -35,6 +35,7 @@ import * as podcast from "./podcast.js";
 import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as credenciales from "./credenciales.js";
+import * as solicitud from "./solicitud.js";
 import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -101,6 +102,7 @@ const routes = [
   [/^\/oremus(?:\/([^/?]+))?$/, (t) => capilla.oremusView(t ? decodeURIComponent(t) : ""), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
+  [/^\/solicitar$/, () => solicitud.view(), "perfil"],
   [/^\/(?:recorrido|tutorial|guia)(?:\?.*)?$/, () => { location.replace("#/formacion"); return null; }, "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
   [/^\/nuestras-familias\/registro$/, () => famReg.viewRegistro(), "familiasag"],
@@ -405,6 +407,7 @@ function viewHome() {
   return `
   ${inicio.greetHTML()}
   ${inicio.doorsHTML()}
+  ${solicitud.homeCard()}
   <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
   <div id="agendaSlot" style="margin-top:16px"></div>
@@ -1316,9 +1319,9 @@ function viewLogin(kind = "curso") {
   const st = cloud.state();
   const R = kind === "recursos", MU = kind === "muro";
   const msg = {
-    "not-invited": `<h2 class="display">Tu correo aún no está invitado</h2>
-      <p class="muted" style="margin-top:8px">Entraste como <b>${esc(st.user?.email || "")}</b>. Pide al equipo coordinador que te invite con ese correo y vuelve a intentarlo.</p>
-      <div class="row-wrap" style="justify-content:center;margin-top:18px"><button class="btn btn-ghost" data-action="signOut">Usar otra cuenta</button><button class="btn btn-primary" data-action="retryAccount">Ya me invitaron</button></div>`,
+    "not-invited": `<h2 class="display">Tu correo aún no tiene cuenta</h2>
+      <p class="muted" style="margin-top:8px">Entraste como <b>${esc(st.user?.email || "")}</b>. Si quieres formar parte o ya participas de Ágape, solicita tu cuenta con un formulario corto.</p>
+      <div class="row-wrap" style="justify-content:center;margin-top:18px"><button class="btn btn-ghost" data-action="signOut">Usar otra cuenta</button><a class="btn btn-primary" href="#/solicitar">Solicitar mi cuenta</a></div>`,
     inactive: `<h2 class="display">Tu cuenta está en pausa</h2>
       <p class="muted" style="margin-top:8px">Conversa con el equipo coordinador para reactivarla.</p>
       <button class="btn btn-ghost" style="margin-top:18px" data-action="signOut">Cerrar sesión</button>`,
@@ -1336,7 +1339,7 @@ function viewLogin(kind = "curso") {
     </section>
     <div class="card" style="text-align:center;padding:28px">
       ${msg || `<button class="btn btn-primary btn-block google-btn" data-action="signIn">${googleIcon()} Continuar con Google</button>
-        <p class="xs muted" style="margin-top:12px">Solo pueden ingresar quienes fueron invitados por el equipo coordinador.</p>`}
+        <p class="xs muted" style="margin-top:12px">¿Aún no tienes cuenta? <a href="#/solicitar"><b>Solicítala aquí</b></a>.</p>`}
       <p class="small" style="margin-top:14px">¿Aún no eres dirigente? <a href="presentaciones/se-puente.html" target="_blank" rel="noopener"><b>Mira «Sé puente»</b></a></p>
     </div>
   </div>`;
@@ -1538,6 +1541,7 @@ S.setCourseRule((c) => {
 });
 inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 credenciales.setup({ actions, onAfterRender });
+solicitud.setup({ actions, render: () => render(), onAfterRender, cloud });
 familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });

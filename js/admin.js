@@ -555,6 +555,8 @@ async function peopleView() {
 
   <div class="seg people-mode" role="radiogroup" aria-label="Cómo ver">${[["cuadros", "Cuadros por rol"], ["tabla", "Tabla"]].map(([k, l]) => `<label><input type="radio" name="peopleMode" value="${k}" ${peopleMode === k ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
 
+  ${solicitudesCard(data.solicitudes || [])}
+
   ${inactiveCard(data.users, course)}
 
   ${peopleMode === "cuadros" ? peopleCards(list, course, t) : `<div class="card people-table">
@@ -581,6 +583,22 @@ async function peopleView() {
         <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
         ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
   </div>` : ""}`;
+}
+
+// ---------- Solicitudes de cuenta (Inicio → «Solicitar mi cuenta») ----------
+// Todas las cuentas nuevas parten como Joven · Ingreso; después se ajusta el rol en la ficha.
+function solicitudesCard(list) {
+  if (!list.length) return "";
+  const fecha = (t) => { const d = tsDate(t); return d && !isNaN(d) ? d.toLocaleDateString("es-CL", { day: "numeric", month: "short" }) : ""; };
+  return `<div class="card sol-admin">
+    <h3>Solicitudes de cuenta · ${list.length}</h3>
+    <p class="muted small" style="margin-top:4px">Personas que pidieron su cuenta desde Inicio. Al aprobar, entran como <b>Joven · Ingreso</b>; después puedes cambiar su rol en su ficha. A los menores de 18 años primero regístrales el consentimiento firmado de su familia.</p>
+    <div class="stack" style="--gap:6px;margin-top:12px">${list.map((s) => `
+      <div class="tree-item"><div class="t"><strong>${esc(s.name || s.email)}</strong>
+        <span>${esc(s.email)} · ${esc(String(s.edad || "?"))} años${s.parish ? " · " + esc(s.parish) : ""}${fecha(s.createdAt) ? " · " + fecha(s.createdAt) : ""}${+s.edad < 18 ? ` <span class="chip warn">Menor de edad</span>` : ""}</span></div>
+        <div class="tools"><button class="btn btn-sm btn-primary" data-action="aSolApprove" data-uid="${esc(s.uid || s.id)}">${icon("check")} Aprobar</button>
+        ${iconBtn("trash", "aSolDelete", `data-uid="${esc(s.uid || s.id)}" data-name="${esc(s.name || "")}"`, "Descartar solicitud", false, "danger")}</div></div>`).join("")}</div>
+  </div>`;
 }
 
 // ---------- Quién lleva días sin entrar ----------
@@ -1060,8 +1078,21 @@ function bindActions() {
     } catch (e) { console.warn(e); toast("No se pudo guardar. Revisa la conexión o las reglas de Firestore.", ""); }
   };
   A.aPeopleCsv = () => peopleCsv();
-  A.aInvite = () => openEditor({
-    title: "Invitar a una persona", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente", consent: {} },
+  A.aInvite = () => openInvite();
+  // Aprobar una solicitud: abre la misma invitación, ya completa, como Joven · Ingreso.
+  const shortName = (n) => { const w = String(n || "").trim().split(/\s+/); return w.length > 1 ? `${w[0]} ${w[1].charAt(0).toUpperCase()}.` : w[0] || ""; };
+  A.aSolApprove = async (el) => {
+    const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
+    openInvite({ email: s.email, name: shortName(s.name), parish: s.parish || "", role: "ingreso", consent: +s.edad >= 18 ? { mayor: true } : {} },
+      { title: `Aprobar a ${s.name}`, done: () => api.cloud.deleteSolicitud(s.uid || s.id) });
+  };
+  A.aSolDelete = async (el) => {
+    if (!confirm(`¿Descartar la solicitud de ${el.dataset.name || "esta persona"}? No se le avisa; si vuelve a pedirla, aparecerá de nuevo.`)) return;
+    try { await api.cloud.deleteSolicitud(el.dataset.uid); await loadPeople(true); api.render(); toast("Solicitud descartada"); }
+    catch (e) { toast("No se pudo descartar: " + (e.code || e.message), ""); }
+  };
+  const openInvite = (pre = {}, opt = {}) => openEditor({
+    title: opt.title || "Invitar a una persona", spec: "invite", obj: { email: "", name: "", parish: "", role: "dirigente", consent: {}, ...pre },
     onSave: (o) => {
       const email = String(o.email || "").trim().toLowerCase();
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { toast("Escribe un correo válido", ""); return false; }
@@ -1073,7 +1104,12 @@ function bindActions() {
         consent = c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos };
       }
       api.cloud.invite({ email, name: o.name.trim(), parish: (o.parish || "").trim(), role: o.role, consent })
-        .then(async () => { await loadPeople(true); api.render(); toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim()); })
+        .then(async () => {
+          if (opt.done) await opt.done().catch(() => {});
+          await loadPeople(true); api.render();
+          if (opt.done) toast(`Listo: ${o.name.trim()} ya tiene acceso. Entrará la próxima vez que abra la app.`, "ok", 5000);
+          else { toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim()); }
+        })
         .catch((e) => toast("No se pudo invitar: " + (e.code || e.message), "", 5000));
     },
   });

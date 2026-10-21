@@ -3909,3 +3909,15 @@ body.solo-on .help-fab { display: none; }
 .hub-cbanner.is-mat .hub-cb-sun { background: #ffba03; }
 .hub-mat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
 .hub-mat-tags a { text-decoration: none;  padding: 4px 10px; border-radius: 99px; background: #fff; border: 2px solid var(--cn, #0b2566); color: var(--cn, #0b2566); font-size: .8rem; font-weight: 700; }
+
+/* Solicitar cuenta: tarjeta de Inicio y formulario */
+.hub-cbanner.sol-banner { background: #fff0c2; margin-top: 18px; }
+.hub-cbanner.sol-banner h2 { font-size: clamp(1.7rem, 4.4vw, 2.5rem); line-height: 1; }
+.hub-cbanner.sol-banner .hub-cb-sun { background: #ef591c; opacity: .85; }
+.sol-card { max-width: 620px; margin-top: 16px; padding: 24px; }
+.sol-il { width: 180px; height: auto; color: var(--cn, #0b2566); --il-bg: var(--surface); --il-pop: #ef591c; }
+.sol-steps { list-style: none; margin: 0 0 20px; padding: 0; display: grid; gap: 14px; }
+.sol-steps li { display: flex; gap: 14px; align-items: flex-start; }
+.sol-steps li b { flex: none; display: grid; place-items: center; width: 34px; height: 34px; border-radius: 50%; background: #ef591c; color: #fff; font-weight: 800; }
+.sol-steps li span { display: grid; gap: 2px; line-height: 1.5; color: var(--ink-2); }
+.sol-steps li strong { color: var(--ink); }

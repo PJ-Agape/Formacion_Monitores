@@ -77,6 +77,12 @@ async function fetchAll() {
     (await cloud.myPendingAvisos()).forEach((a) => out.push({ ts: ms(a.createdAt) || Date.now(), e: a.kind === "tarea" ? "✅" : "📌", href: "#/avisos",
       t: `${a.kind === "tarea" ? "Nueva tarea" : "Nuevo aviso"} de ${a.byName || "la coordinación"}`, d: short(a.title) }));
   }
+  // Solicitudes de cuenta por revisar (administradores)
+  if (cloud.state().isAdmin) {
+    const sols = await cloud.pendingSolicitudes();
+    if (sols.length) out.push({ ts: Math.max(...sols.map((x) => ms(x.createdAt) || 0)) || Date.now(), e: "🙋", href: "#/admin/dirigentes",
+      t: sols.length === 1 ? "Una solicitud de cuenta por revisar" : `${sols.length} solicitudes de cuenta por revisar`, d: short(sols.map((x) => String(x.name || "").split(" ")[0]).join(", ")) });
+  }
   const now = Date.now();
   if (isOn("chat")) {
     await cloud.loadSalas().catch(() => []);
