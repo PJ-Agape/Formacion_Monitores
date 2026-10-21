@@ -56,17 +56,22 @@ service cloud.firestore {
     }
 
     // Solicitudes de cuenta (Inicio → «Solicitar mi cuenta»): quien entra con Google sin invitación deja
-    // su nombre, edad y parroquia o capilla. Solo la ven esa persona y los administradores, que la aprueban.
+    // su nombre, edad, parroquia o capilla y los datos de su ficha privada (que su familia revisa en el
+    // consentimiento). Solo la ven esa persona y los administradores, que la aprueban.
     match /solicitudes/{uid} {
       allow get: if signedIn() && request.auth.uid == uid;
       allow list, delete: if isAdmin();
       allow create, update: if signedIn() && request.auth.uid == uid
-        && request.resource.data.keys().hasOnly(['uid', 'email', 'name', 'edad', 'parish', 'createdAt'])
+        && request.resource.data.keys().hasOnly(['uid', 'email', 'name', 'edad', 'parish', 'createdAt', 'nacimiento', 'rut', 'direccion', 'emergNombre', 'emergTel', 'alergias', 'notas'])
         && request.resource.data.uid == uid
         && request.resource.data.email == myEmail()
         && validText(request.resource.data.name, 80)
         && request.resource.data.edad is int && request.resource.data.edad >= 8 && request.resource.data.edad <= 99
-        && request.resource.data.parish is string && request.resource.data.parish.size() > 0 && request.resource.data.parish.size() <= 120;
+        && request.resource.data.parish is string && request.resource.data.parish.size() > 0 && request.resource.data.parish.size() <= 120
+        && request.resource.data.get('nacimiento', '').size() <= 10 && request.resource.data.get('rut', '').size() <= 15
+        && request.resource.data.get('direccion', '').size() <= 160 && request.resource.data.get('emergNombre', '').size() <= 80
+        && request.resource.data.get('emergTel', '').size() <= 40 && request.resource.data.get('alergias', '').size() <= 500
+        && request.resource.data.get('notas', '').size() <= 1000;
     }
 
     // Cuentas. Cada persona crea la suya al entrar por primera vez, solo si fue invitada

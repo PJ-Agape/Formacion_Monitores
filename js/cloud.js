@@ -424,9 +424,11 @@ export async function getMySolicitud() {
   try { const s = await withTimeout(fb.getDoc(fb.doc(db, "solicitudes", user.uid)), 6000); return s.exists() ? s.data() : null; }
   catch { return null; }
 }
-export async function saveSolicitud({ name, edad, parish }) {
+const SOL_FICHA = { nacimiento: 10, rut: 15, direccion: 160, emergNombre: 80, emergTel: 40, alergias: 500, notas: 1000 };
+export async function saveSolicitud({ name, edad, parish, ...ficha }) {
+  const extra = Object.fromEntries(Object.entries(SOL_FICHA).map(([k, max]) => [k, String(ficha[k] || "").slice(0, max)]));
   await fb.setDoc(fb.doc(db, "solicitudes", user.uid), { uid: user.uid, email: lower(user.email), name: String(name).slice(0, 80), edad: Math.round(+edad),
-    parish: String(parish || "").slice(0, 120), createdAt: fb.serverTimestamp() });
+    parish: String(parish || "").slice(0, 120), ...extra, createdAt: fb.serverTimestamp() });
 }
 export async function pendingSolicitudes() {
   if (!enabled || !db || !state().isAdmin) return [];

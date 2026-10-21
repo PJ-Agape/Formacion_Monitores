@@ -883,6 +883,7 @@ const SPECS = {
         ["consent.honor", "Autorizó: cuadro de honor", "check"],
         ["consent.cumple", "Autorizó: cumpleaños visible en la app", "check"],
         ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
+        ["consent.ficha", "Autorizó: guardar su ficha privada (datos de la página 2)", "check"],
       ]),
     ] : [])],
   consent: (o) => [
@@ -894,6 +895,7 @@ const SPECS = {
       ["consent.honor", "Autorizó: cuadro de honor", "check"],
       ["consent.cumple", "Autorizó: cumpleaños visible en la app", "check"],
       ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
+      ["consent.ficha", "Autorizó: guardar su ficha privada (datos de la página 2)", "check"],
     ]),
   ],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
@@ -911,7 +913,7 @@ function consentChip(u) {
   const c = u && u.consent; if (!c) return YOUTH.includes(u && u.role) ? ` <span class="chip danger">Sin consentimiento registrado</span>` : "";
   if (c.mayor) return ` <span class="chip">Mayor de edad</span>`;
   const f = c.fecha ? c.fecha.split("-").reverse().join("/") : "";
-  const ok = [c.honor && "honor", c.cumple && "cumpleaños", c.fotos && "fotos"].filter(Boolean).join(", ");
+  const ok = [c.honor && "honor", c.cumple && "cumpleaños", c.fotos && "fotos", c.ficha && "ficha"].filter(Boolean).join(", ");
   return ` <span class="chip ok" title="Registrado por ${esc(c.registradoPor || "")}">✓ Consentimiento ${esc(f)}${ok ? " · " + esc(ok) : ""}</span>`;
 }
 let E = null; // { title, spec, specArgs, obj, onSave, isNew }
@@ -1107,25 +1109,29 @@ function bindActions() {
   A.aSolApprove = async (el) => {
     const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
     openInvite({ email: s.email, name: shortName(s.name), parish: s.parish || "", role: "ingreso", consent: +s.edad >= 18 ? { mayor: true } : {} },
-      { title: `Aprobar a ${s.name}`, done: async () => {
+      { title: `Aprobar a ${s.name}`, done: async (consent) => {
         // Queda en la lista de jóvenes (vinculado a su cuenta) y con su ficha privada ya iniciada.
         const uid = s.uid || s.id, js = await loadJovenes(true);
         let jid = (js.find((j) => j.uid === uid) || {}).id;
         if (!jid) jid = await api.cloud.saveJoven(null, { nombre: s.name, etapa: "ingreso", cumple: "", publico: false, activo: true, uid,
           fechas: [], sellos: {}, auto: {}, desde: new Date().toISOString().slice(0, 10), lema: "", portada: 0, avatar: "" }).catch(() => "");
-        if (jid && !(await api.cloud.getFicha(jid))) await api.cloud.saveFicha(jid, { nombre: s.name, email: s.email || "" }).catch(() => {});
+        // La ficha con los datos que escribió el joven solo se guarda si es mayor de edad o su familia lo autorizó.
+        const full = !consent || consent.mayor || consent.ficha;
+        const datos = full ? Object.fromEntries(["nacimiento", "rut", "direccion", "emergNombre", "emergTel", "alergias", "notas"].map((k) => [k, String(s[k] || "")])) : {};
+        if (jid && !(await api.cloud.getFicha(jid))) await api.cloud.saveFicha(jid, { nombre: s.name, email: s.email || "", ...datos }).catch(() => {});
         await api.cloud.deleteSolicitud(uid);
       } });
   };
   A.aSolPdf = async (el) => {
     const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
-    try { const m = await import("./consentimiento.js"); await m.download({ nombre: s.name || "", etapa: "Ingreso", correo: s.email || "" }); }
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: s.name || "", etapa: "Ingreso", correo: s.email || "", ficha: { ...s, nombre: s.name || "" } }); }
     catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
   };
   const etapaDe = (r) => ({ ingreso: "Ingreso", madurez: "Madurez", aspirante: "Aspirante" }[r] || "");
   A.aUserConsentPdf = async (el) => {
     const u = (await loadPeople()).users.find((x) => x.uid === el.dataset.uid); if (!u) return;
-    try { const m = await import("./consentimiento.js"); await m.download({ nombre: u.name || "", etapa: etapaDe(u.role), correo: u.email || "" }); }
+    const jv = (jovenesAll || []).find((j) => j.uid === u.uid), ficha = jv ? (await api.cloud.getFicha(jv.id)) || {} : {};
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: u.name || "", etapa: etapaDe(u.role), correo: u.email || "", ficha }); }
     catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
   };
   A.aUserConsent = async (el) => {
@@ -1136,7 +1142,7 @@ function bindActions() {
       onSave: (o) => {
         const c = o.consent || {};
         if (!c.mayor && (!c.ok || !/^\d{4}-\d{2}-\d{2}$/.test(c.fecha || ""))) { toast("Marca que recibiste el consentimiento firmado y su fecha", "", 4500); return false; }
-        const consent = { ...(c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos }), registradoPor: api.cloud.state().account?.email || "" };
+        const consent = { ...(c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos, ficha: !!c.ficha }), registradoPor: api.cloud.state().account?.email || "" };
         api.cloud.updateUser(u.uid, { consent })
           .then(async () => { await loadPeople(true); api.render(); toast("Consentimiento registrado"); })
           .catch((e) => toast("No se pudo guardar: " + (e.code || e.message), "", 5000));
@@ -1157,11 +1163,11 @@ function bindActions() {
       if (YOUTH.includes(o.role)) {
         const c = o.consent || {};
         if (!c.mayor && (!c.ok || !/^\d{4}-\d{2}-\d{2}$/.test(c.fecha || ""))) { toast("Primero registra el consentimiento firmado y su fecha", "", 4500); return false; }
-        consent = c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos };
+        consent = c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos, ficha: !!c.ficha };
       }
       api.cloud.invite({ email, name: o.name.trim(), parish: (o.parish || "").trim(), role: o.role, consent })
         .then(async () => {
-          if (opt.done) await opt.done().catch(() => {});
+          if (opt.done) await opt.done(consent).catch((e) => console.warn(e));
           await loadPeople(true); api.render();
           if (opt.done) toast(`Listo: ${o.name.trim()} ya tiene acceso. Entrará la próxima vez que abra la app.`, "ok", 5000);
           else { toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim()); }

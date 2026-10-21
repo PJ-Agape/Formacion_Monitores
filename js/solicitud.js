@@ -1,8 +1,12 @@
 // Solicitar una cuenta (#/solicitar): quien quiere formar parte de Ágape, o ya participa, entra con
-// su cuenta de Google y deja su nombre, edad y parroquia o capilla. Un administrador la revisa en
+// su cuenta de Google y deja su nombre, fecha de nacimiento, parroquia o capilla y los datos de su ficha
+// privada (RUT, dirección, contacto de emergencia, alergias…). Un administrador la revisa en
 // Gestión → Cuentas e invitaciones y le da acceso (todas las cuentas nuevas parten como Joven · Ingreso).
 import { esc, icon, toast } from "./util.js";
 import { illus } from "./ilustraciones.js";
+import { CAMPOS, edad as edadDe } from "./ficha.js";
+// Datos de la ficha privada que se piden en la solicitud (el nombre y el correo ya están arriba).
+const FICHA = CAMPOS.filter(([k]) => !["nombre", "email", "nacimiento"].includes(k));
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -17,7 +21,7 @@ export function homeCard() {
     <div class="hub-cb-txt">
       <span class="hub-cb-hand">nos encantaría conocerte</span>
       <h2 id="solHT">¿Quieres formar parte o ya participas de la PJ Ágape?</h2>
-      <p class="hub-cb-meta">Solicita tu cuenta con un formulario corto: tu nombre, tu edad, tu correo de Google y tu parroquia o capilla.</p>
+      <p class="hub-cb-meta">Solicita tu cuenta con un formulario corto: tus datos, tu correo de Google y tu parroquia o capilla.</p>
       <div class="hub-cb-btns"><a class="btn btn-gold" href="#/solicitar">Solicitar mi cuenta ${icon("arrowR")}</a></div>
     </div>
     <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus("acogida", "hub-cb-il")}</div>
@@ -40,7 +44,7 @@ export function view() {
     <div class="card sol-card">
       <ol class="sol-steps">
         <li><b>1</b><span><strong>Entra con tu cuenta de Google</strong>Puede ser tu Gmail. Así podrás ingresar a la app cuando te den acceso.</span></li>
-        <li><b>2</b><span><strong>Completa tus datos</strong>Tu nombre, tu edad y tu parroquia o capilla.</span></li>
+        <li><b>2</b><span><strong>Completa tus datos</strong>Tu nombre, tu fecha de nacimiento, tu parroquia o capilla y los datos para cuidarte en los encuentros.</span></li>
         <li><b>3</b><span><strong>El equipo te da acceso</strong>Revisamos cada solicitud con cariño y te avisamos.</span></li>
       </ol>
       <button class="btn btn-primary btn-block google-btn" data-action="signIn">${GOOGLE} Continuar con Google</button>
@@ -59,12 +63,18 @@ function formHTML(sol) {
   const u = st().user || {};
   return `<form id="solForm" class="stack" style="--gap:14px">
     <div class="field"><label for="solName">Nombre y apellido</label><input class="input big" id="solName" name="name" required maxlength="80" autocomplete="name" value="${esc(sol?.name || u.displayName || "")}"></div>
-    <div class="field"><label for="solEdad">Edad</label><input class="input" id="solEdad" name="edad" type="number" inputmode="numeric" min="8" max="99" required value="${esc(sol?.edad ?? "")}" style="max-width:140px"></div>
+    <div class="field"><label for="solNac">Fecha de nacimiento</label><input class="input" id="solNac" name="nacimiento" type="date" required value="${esc(sol?.nacimiento || "")}" style="max-width:220px"></div>
     <div class="field"><label>Correo de Google</label><input class="input" value="${esc(u.email || "")}" readonly>
       <span class="xs muted">Con este correo entrarás a la app. ¿No es el tuyo? <a href="#" data-action="solOtra">Usar otra cuenta</a></span></div>
     <div class="field"><label for="solPar">Parroquia o capilla de la que vienes</label><input class="input" id="solPar" name="parish" required maxlength="120" list="solParList" value="${esc(sol?.parish || "")}">
       <datalist id="solParList"><option value="Parroquia San Miguel de Yungay"></option></datalist></div>
-    <p class="xs muted">Tus datos solo los ve el equipo que administra la app. En la comunidad aparecerás con tu nombre y la inicial de tu apellido.</p>
+    <fieldset class="sol-ficha"><legend>${icon("lock")} Para cuidarte en los encuentros</legend>
+      <p class="xs muted" style="margin:0 0 6px">Estos datos son privados: nunca se publican. Si eres menor de edad, tu familia los revisa en la autorización y decide si el equipo los guarda.</p>
+      ${FICHA.map(([k, l, t, max, ph]) => `<div class="field"><label for="sol_${k}">${esc(l)}</label>${t === "area"
+        ? `<textarea class="textarea" id="sol_${k}" name="${k}" rows="2" maxlength="${max}" placeholder="${esc(ph)}">${esc(sol?.[k] || "")}</textarea>`
+        : `<input class="input" id="sol_${k}" name="${k}" type="${t}" maxlength="${max}" placeholder="${esc(ph)}" value="${esc(sol?.[k] || "")}">`}</div>`).join("")}
+    </fieldset>
+    <p class="xs muted">Tus datos solo los ve el equipo. En la comunidad aparecerás con tu nombre y la inicial de tu apellido.</p>
     <div class="row-wrap"><button class="btn btn-primary" type="submit">${icon("send")} ${sol ? "Guardar cambios" : "Enviar solicitud"}</button>
       ${sol ? `<button class="btn btn-ghost" type="button" data-action="solCancel">Cancelar</button>` : ""}</div>
   </form>`;
@@ -77,7 +87,7 @@ function sentHTML(sol) {
     <p class="muted" style="margin:8px auto 0;max-width:46ch">El equipo la revisará pronto. Cuando te den acceso, vuelve a abrir la app y entrarás directamente.</p>
     ${+sol.edad < 18 ? `<div class="note sol-auth" style="margin:16px auto 0;max-width:54ch;text-align:left">
       <strong>Falta un paso: la autorización de tu familia</strong>
-      <p style="margin:6px 0 0">Como eres menor de edad, tu papá, mamá o apoderado tiene que firmar una autorización. Descárgala, imprímela, pídele que la firme y entrégasela a tu dirigente. Con eso el equipo activa tu cuenta.</p>
+      <p style="margin:6px 0 0">Como eres menor de edad, tu papá, mamá o apoderado tiene que firmar una autorización. Ya viene con los datos que escribiste: tu familia los revisa, corrige si hace falta y firma. Descárgala, imprímela y entrégasela a tu dirigente. Con eso el equipo activa tu cuenta.</p>
       <button class="btn btn-gold" style="margin-top:12px" data-action="solPdf">${icon("dl")} Descargar la autorización (PDF)</button>
     </div>` : ""}
     <div class="row-wrap" style="justify-content:center;margin-top:18px">
@@ -92,7 +102,7 @@ function registerActions() {
   A.solPdf = async (el) => {
     el.disabled = true;
     const sol = await ctx.cloud.getMySolicitud();
-    try { const m = await import("./consentimiento.js"); await m.download({ nombre: sol?.name || "", etapa: "Ingreso", correo: sol?.email || st().user?.email || "" }); }
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: sol?.name || "", etapa: "Ingreso", correo: sol?.email || st().user?.email || "", ficha: { ...(sol || {}), nombre: sol?.name || "" } }); }
     catch (e) { console.warn(e); toast("No se pudo crear el PDF. Inténtalo de nuevo.", ""); }
     el.disabled = false;
   };
@@ -107,12 +117,15 @@ function registerActions() {
   document.addEventListener("submit", async (e) => {
     if (e.target.id !== "solForm") return;
     e.preventDefault();
-    const fd = new FormData(e.target), name = String(fd.get("name") || "").trim().replace(/\s+/g, " "), parish = String(fd.get("parish") || "").trim(), edad = +fd.get("edad");
+    const fd = new FormData(e.target), name = String(fd.get("name") || "").trim().replace(/\s+/g, " "), parish = String(fd.get("parish") || "").trim();
+    const nacimiento = String(fd.get("nacimiento") || ""), edad = +edadDe(nacimiento);
+    const extra = Object.fromEntries(FICHA.map(([k, , , max]) => [k, String(fd.get(k) || "").trim().slice(0, max)]));
+    if (extra.rut && !/^[0-9.]{6,12}-?[0-9kK]$/.test(extra.rut)) { toast("Revisa el RUT (ej.: 12.345.678-9)", ""); return; }
     if (name.split(" ").length < 2) { toast("Escribe tu nombre y tu apellido", ""); return; }
-    if (!(edad >= 8 && edad <= 99)) { toast("Revisa tu edad", ""); return; }
+    if (!(edad >= 8 && edad <= 99)) { toast("Revisa tu fecha de nacimiento", ""); return; }
     if (!parish) { toast("Cuéntanos de qué parroquia o capilla vienes", ""); return; }
     const btn = e.target.querySelector("[type=submit]"); btn.disabled = true;
-    try { await ctx.cloud.saveSolicitud({ name, edad, parish }); editing = false; toast("¡Solicitud enviada!", "ok"); paint(); }
+    try { await ctx.cloud.saveSolicitud({ name, edad, parish, nacimiento, ...extra }); editing = false; toast("¡Solicitud enviada!", "ok"); paint(); }
     catch (err) { console.warn(err); btn.disabled = false; toast("No se pudo enviar. Revisa tu conexión e inténtalo de nuevo.", ""); }
   });
 }
