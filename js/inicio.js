@@ -45,7 +45,7 @@ export const BLOCKS = {
 };
 // e: emoji · t: título · d: descripción · kw: palabras para el buscador · ok: quién lo ve
 const ITEMS = [
-  { b: "formacion", e: "📱", t: "Guía de agAPPe", d: "Recorre la app y mira qué hay en cada pestaña.", href: "#/recorrido", kw: "guia tutorial recorrido manual ayuda como funciona app navegar mapa", ok: () => true },
+  { b: "formacion", e: "📱", t: "Guía de agAPPe", d: "Conoce la casa por dentro y cómo moverte.", href: "#/recorrido", kw: "guia tutorial recorrido manual ayuda como funciona app navegar mapa", ok: () => true },
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
   { b: "formacion", e: "🎓", t: "Cursos de formación", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },

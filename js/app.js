@@ -353,13 +353,13 @@ function viewHome() {
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
       <div class="car-body">
         <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Guía de agAPPe</span>
-        <h2 class="car-title">${heroTitle("Tu espacio para encontrarnos")}</h2>
-        <p class="lead">Recorre la app en dos minutos: qué hay en cada pestaña, qué puedes hacer sin cuenta y qué se abre con ella.</p>
+        <h2 class="car-title">${heroTitle("Bienvenido a agAPPe")}</h2>
+        <p class="lead">La casa virtual de la Pastoral Juvenil Ágape. Te mostramos qué hay en cada pestaña y cómo moverte.</p>
         <div class="actions">
-          <a class="btn btn-gold" href="#/recorrido?play">Comenzar el recorrido ${icon("arrowR")}</a>
+          <a class="btn btn-gold" href="#/recorrido?play">Recorrer la casa ${icon("arrowR")}</a>
         </div>
       </div>
-      ${illus("celular", "car-illus")}
+      ${illus("acogida", "car-illus")}
     </article>`;
   const carousel = () => {
     const slides = [...portada.current()];
