@@ -752,6 +752,12 @@ async function personView(uid) {
       ${api.cloud.state().isAdmin ? `<button class="btn btn-sm btn-danger" data-action="aUserDelete" data-uid="${esc(u.uid)}" data-email="${esc(u.email)}" data-name="${esc(u.name)}">${icon("trash")} Eliminar cuenta</button>` : ""}
     </div>` : ""}
   </div>
+  ${YOUTH.includes(u.role) || u.consent ? `<div class="card"><h3>Consentimiento de la familia</h3>
+    <p class="muted small" style="margin-top:4px">El papel firmado se guarda en el fichero de la pastoral; aquí queda registrado qué autorizó la familia. Si cambia algo (por ejemplo, ya no autoriza fotos), edítalo aquí.</p>
+    <div class="row-wrap" style="margin-top:10px">${consentChip(u)}</div>
+    <div class="row-wrap" style="margin-top:12px"><button class="btn btn-sm btn-primary" data-action="aUserConsent" data-uid="${esc(u.uid)}">${icon("edit")} ${u.consent ? "Editar el consentimiento" : "Registrar el consentimiento"}</button>
+      <button class="btn btn-sm btn-soft" data-action="aUserConsentPdf" data-uid="${esc(u.uid)}">${icon("dl")} Descargar el PDF con sus datos</button></div>
+  </div>` : ""}
   <div class="card"><h3>Asesor de la pastoral</h3>
     <p class="muted small" style="margin-top:4px">Los asesores ven las formaciones dirigidas a asesores, además de las de su rol.</p>
     <label class="chip ${u.asesor ? "accent" : ""}" style="cursor:pointer;padding:8px 12px;margin-top:12px">
@@ -874,6 +880,17 @@ const SPECS = {
         ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
       ]),
     ] : [])],
+  consent: (o) => [
+    ["", "Marca lo que dice el papel firmado por su papá, mamá o apoderado/a.", "note"],
+    ["consent.mayor", "Es mayor de 18 años (no necesita consentimiento de su familia)", "check"],
+    ...(o.consent && o.consent.mayor ? [] : [
+      ["consent.ok", "Recibí el consentimiento firmado", "check"],
+      ["consent.fecha", "Fecha de la firma", "date"],
+      ["consent.honor", "Autorizó: cuadro de honor", "check"],
+      ["consent.cumple", "Autorizó: cumpleaños visible en la app", "check"],
+      ["consent.fotos", "Autorizó: fotos en canales oficiales", "check"],
+    ]),
+  ],
   intro: () => [["intro", "Introducción de la guía", "textarea"]],
   identity: () => [["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
   methods: () => [["icon", "Emoji", "text", null, "🏡"], ["tag", "Etiqueta", "text"], ["title", "Título", "text"], ["text", "Texto", "textarea"]],
@@ -1091,6 +1108,26 @@ function bindActions() {
     const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
     try { const m = await import("./consentimiento.js"); await m.download({ nombre: s.name || "", etapa: "Ingreso", correo: s.email || "" }); }
     catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
+  };
+  const etapaDe = (r) => ({ ingreso: "Ingreso", madurez: "Madurez", aspirante: "Aspirante" }[r] || "");
+  A.aUserConsentPdf = async (el) => {
+    const u = (await loadPeople()).users.find((x) => x.uid === el.dataset.uid); if (!u) return;
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: u.name || "", etapa: etapaDe(u.role), correo: u.email || "" }); }
+    catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
+  };
+  A.aUserConsent = async (el) => {
+    const u = (await loadPeople()).users.find((x) => x.uid === el.dataset.uid); if (!u) return;
+    const c0 = u.consent || {};
+    openEditor({ title: `Consentimiento de ${u.name || u.email}`, spec: "consent",
+      obj: { name: u.name, email: u.email, role: u.role, consent: { ...c0, ok: !!u.consent && !c0.mayor } },
+      onSave: (o) => {
+        const c = o.consent || {};
+        if (!c.mayor && (!c.ok || !/^\d{4}-\d{2}-\d{2}$/.test(c.fecha || ""))) { toast("Marca que recibiste el consentimiento firmado y su fecha", "", 4500); return false; }
+        const consent = { ...(c.mayor ? { mayor: true } : { mayor: false, fecha: c.fecha, honor: !!c.honor, cumple: !!c.cumple, fotos: !!c.fotos }), registradoPor: api.cloud.state().account?.email || "" };
+        api.cloud.updateUser(u.uid, { consent })
+          .then(async () => { await loadPeople(true); api.render(); toast("Consentimiento registrado"); })
+          .catch((e) => toast("No se pudo guardar: " + (e.code || e.message), "", 5000));
+      } });
   };
   A.aSolDelete = async (el) => {
     if (!confirm(`¿Descartar la solicitud de ${el.dataset.name || "esta persona"}? No se le avisa; si vuelve a pedirla, aparecerá de nuevo.`)) return;
