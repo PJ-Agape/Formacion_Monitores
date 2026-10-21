@@ -105,7 +105,7 @@ const YOUTH = ["ingreso", "madurez", "aspirante"];
 export function consentHTML() {
   setTimeout(paintCons, 0);
   return `<header class="page-head"><span class="eyebrow">Gestión · Personas</span><h1>Consentimientos</h1>
-    <p>Qué familias firmaron el consentimiento y qué autorizaron. El papel se guarda en el fichero; aquí solo queda el registro.</p></header>
+    <p>Qué familias firmaron el consentimiento y qué autorizaron. El papel se guarda en la carpeta de consentimientos; aquí solo queda el registro.</p></header>
     <div class="row-wrap" style="margin-bottom:12px"><button class="btn btn-sm btn-soft" data-action="aConsentPdf">${icon("dl")} Descargar el consentimiento (PDF)</button></div>
     <div id="gcBox"><p class="muted" style="padding:24px;text-align:center">Cargando…</p></div>`;
 }

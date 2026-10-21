@@ -1,5 +1,5 @@
 // Consentimiento de la familia para crear la cuenta de un joven en la app (PDF rellenable).
-// La familia lo firma y el equipo lo guarda en el fichero en papel; en la app solo queda
+// La familia lo firma y el equipo lo guarda en la carpeta de consentimientos; en la app solo queda
 // registrado que se recibió, la fecha y qué autorizaron (honor, cumpleaños, fotos).
 
 const WIN = /[^\n\x20-\x7E\xA0-\xFF–—‘’“”•…€]/g;
@@ -77,7 +77,7 @@ export async function pdfBytes({ nombre = "", etapa = "", correo = "" } = {}) {
   const sw = W * 0.58;
   field("Firma", M, y, sw); field("Fecha", M + sw + G, y, W - sw - G); y -= 24;
   page.drawLine({ start: { x: M, y: 58 }, end: { x: M + W, y: 58 }, thickness: 0.6, color: SOFT });
-  text("Este documento lo guarda el equipo coordinador junto a la ficha del joven. En la app solo se registra que fue recibido, la fecha y lo autorizado.", M, 44, { size: 8, color: SOFT });
+  text("El equipo coordinador guarda este documento firmado en la carpeta de consentimientos de la pastoral. En la app solo se registra que fue recibido, la fecha y lo autorizado.", M, 44, { size: 8, color: SOFT });
   form.updateFieldAppearances(F);
   return doc.save();
 }

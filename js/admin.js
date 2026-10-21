@@ -753,7 +753,7 @@ async function personView(uid) {
     </div>` : ""}
   </div>
   ${YOUTH.includes(u.role) || u.consent ? `<div class="card"><h3>Consentimiento de la familia</h3>
-    <p class="muted small" style="margin-top:4px">El papel firmado se guarda en el fichero de la pastoral; aquí queda registrado qué autorizó la familia. Si cambia algo (por ejemplo, ya no autoriza fotos), edítalo aquí.</p>
+    <p class="muted small" style="margin-top:4px">El papel firmado se guarda en la carpeta de consentimientos de la pastoral; aquí queda registrado qué autorizó la familia. Si cambia algo (por ejemplo, ya no autoriza fotos), edítalo aquí.</p>
     <div class="row-wrap" style="margin-top:10px">${consentChip(u)}</div>
     <div class="row-wrap" style="margin-top:12px"><button class="btn btn-sm btn-primary" data-action="aUserConsent" data-uid="${esc(u.uid)}">${icon("edit")} ${u.consent ? "Editar el consentimiento" : "Registrar el consentimiento"}</button>
       <button class="btn btn-sm btn-soft" data-action="aUserConsentPdf" data-uid="${esc(u.uid)}">${icon("dl")} Descargar el PDF con sus datos</button></div>
@@ -869,7 +869,7 @@ const SPECS = {
     ["role", "Rol", "select", [["ingreso", "Joven · Ingreso (Mi Camino)"], ["madurez", "Joven · Madurez (Mi Camino)"], ["aspirante", "Aspirante (Mi Camino, curso y sala Aspirantes)"], ["dirigente", "Dirigente (hace el curso)"], ["coordinador", "Coordinador (agenda, portada y moderación)"], ["admin", "Administrador (gestión completa)"]]],
     ...(YOUTH.includes(o.role) ? [
       ["", "Consentimiento de la familia", "heading"],
-      ["", "Antes de crear la cuenta de un joven, su papá, mamá o apoderado/a firma el consentimiento. Guárdalo en el fichero en papel; aquí solo queda registrado.", "note"],
+      ["", "Antes de crear la cuenta de un joven, su papá, mamá o apoderado/a firma el consentimiento. Guárdalo en la carpeta de consentimientos; aquí solo queda registrado.", "note"],
       ["", "Descargar el consentimiento (PDF)", "button", "aConsentPdf"],
       ["consent.mayor", "Es mayor de 18 años (no necesita consentimiento de su familia)", "check"],
       ...(o.consent && o.consent.mayor ? [] : [
@@ -901,7 +901,7 @@ const SPECS = {
 };
 
 const YOUTH = ["ingreso", "madurez", "aspirante"];
-// Registro del consentimiento de la familia (solo fecha y lo autorizado; el papel queda en el fichero).
+// Registro del consentimiento de la familia (solo fecha y lo autorizado; el papel queda en la carpeta de consentimientos).
 function consentChip(u) {
   const c = u && u.consent; if (!c) return YOUTH.includes(u && u.role) ? ` <span class="chip danger">Sin consentimiento registrado</span>` : "";
   if (c.mayor) return ` <span class="chip">Mayor de edad</span>`;
