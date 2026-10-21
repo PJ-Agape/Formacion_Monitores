@@ -419,6 +419,13 @@ export async function invite({ email, name, parish, role, consent }) {
 }
 export const deleteInvite = (email) => fb.deleteDoc(fb.doc(db, "invites", lower(email)));
 export const updateUser = (uid, data) => fb.updateDoc(fb.doc(db, "users", uid), data);
+// Elimina una cuenta: su ficha, su avance y su invitación. Sin invitación ya no puede volver a entrar.
+export async function deleteUser(uid, email) {
+  if (isProtected(email)) throw new Error("Cuenta protegida");
+  await fb.deleteDoc(fb.doc(db, "users", uid));
+  await fb.deleteDoc(fb.doc(db, "progress", uid)).catch(() => {});
+  if (email) await fb.deleteDoc(fb.doc(db, "invites", lower(email))).catch(() => {});
+}
 export async function updateMyProfile(data) {
   await fb.updateDoc(fb.doc(db, "users", user.uid), data);
   account = { ...account, ...data };

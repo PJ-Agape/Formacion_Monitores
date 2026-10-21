@@ -730,6 +730,7 @@ async function personView(uid) {
       <label class="field" style="margin:0"><span class="xs muted">Rol</span>
         <select class="select" id="aRoleSel" data-uid="${esc(u.uid)}" style="width:auto">${api.cloud.ROLES.map((r) => `<option value="${r.key}" ${(u.role || "dirigente") === r.key ? "selected" : ""}>${esc(r.label)}</option>`).join("")}</select></label>
       <button class="btn btn-sm ${u.active === false ? "btn-soft" : "btn-danger"}" data-action="aUserActive" data-uid="${esc(u.uid)}" data-active="${u.active === false ? "1" : "0"}">${u.active === false ? "Reactivar cuenta" : "Poner en pausa"}</button>
+      ${api.cloud.state().isAdmin ? `<button class="btn btn-sm btn-danger" data-action="aUserDelete" data-uid="${esc(u.uid)}" data-email="${esc(u.email)}" data-name="${esc(u.name)}">${icon("trash")} Eliminar cuenta</button>` : ""}
     </div>` : ""}
   </div>
   <div class="card"><h3>Asesor de la pastoral</h3>
@@ -1136,6 +1137,12 @@ function bindActions() {
     const on = !u.cantor; el.checked = on;
     try { await api.cloud.updateUser(u.uid, { cantor: on }); await loadPeople(true); api.render(); toast(on ? "Ya puede editar el cancionero 🎵" : "Ya no edita el cancionero"); }
     catch (e) { el.checked = !on; toast("No se pudo cambiar: " + (e.code || e.message), ""); }
+  };
+  A.aUserDelete = async (el) => {
+    const { uid, email, name } = el.dataset;
+    if (!confirm(`¿Eliminar la cuenta de ${name}?\n\nSe borran su ficha, su avance y su invitación. No podrá volver a entrar a menos que la invites de nuevo. Esto no se puede deshacer.`)) return;
+    try { await api.cloud.deleteUser(uid, email); await loadPeople(true); location.hash = "#/admin/dirigentes"; toast("Cuenta eliminada"); }
+    catch (e) { toast("No se pudo eliminar: " + (e.code || e.message), ""); }
   };
   A.aUserActive = async (el) => {
     const on = el.dataset.active === "1";
