@@ -24,7 +24,7 @@ function who() {
   const joven = cloud.enabled && !!s.isJoven, asp = !!s.ready && s.role === "aspirante";
   return {
     s, joven, asp, guest: cloud.enabled && !s.ready,
-    curso: !cloud.enabled || (!!s.ready && !joven),          // curso de dirigentes y cuaderno
+    curso: (!cloud.enabled || (!!s.ready && !joven)) && S.hasVisibleCourse(), // cursos y cuaderno (si hay alguno publicado)
     equipo: !cloud.enabled || (!!s.ready && !joven && !asp), // revistas, materiales, dinámicas, guía
     guia: !cloud.enabled || !!s.isGuide,
     cuenta: !cloud.enabled || !!s.ready,

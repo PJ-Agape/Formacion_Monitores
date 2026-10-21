@@ -162,6 +162,8 @@ export async function render() {
   const recursos = section === "materiales" || /^\/encuentros(\/|$)/.test(path);
   // Jóvenes de Ingreso y Madurez: las secciones del equipo quedan fuera de su espacio.
   if (cloud.enabled && cloud.state().isJoven && (section === "itinerario" || section === "comunidad" || recursos)) fn = viewSoloEquipo;
+  // Cursos en revisión: si todos están ocultos, el curso no se abre (salvo para administradores).
+  if (section === "itinerario" && !(cloud.enabled && cloud.state().isJoven) && !/^\/(constancia|cuaderno)$/.test(path) && !S.hasVisibleCourse()) fn = viewEnRevision;
   if (cloud.enabled && (section === "itinerario" || section === "muro" || recursos) && !cloud.state().ready) fn = () => viewLogin(recursos ? "recursos" : section === "muro" ? "muro" : "curso");
   document.body.classList.toggle("is-admin", section === "admin");
   applyTheme();
@@ -1279,6 +1281,13 @@ function viewNotFound() {
 // ---------------------------------------------------------------------------
 // CUENTAS (cuando Firebase está configurado)
 // ---------------------------------------------------------------------------
+function viewEnRevision() {
+  return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
+    ${illus("apostoles", "")}
+    <h1 class="display" style="font-size:1.6rem;margin-top:10px">La formación está en revisión</h1>
+    <p class="muted" style="margin-top:8px">El equipo está preparando la nueva versión del curso. Tu avance queda guardado. Mientras tanto, te invitamos a conocer la Guía de agAPPe.</p>
+    <a class="btn btn-primary" style="margin-top:16px" href="#/recorrido">Ir a la Guía de agAPPe</a></div>`;
+}
 function viewSoloEquipo() {
   return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
     ${illus("camino", "")}

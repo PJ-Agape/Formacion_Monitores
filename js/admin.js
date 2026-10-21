@@ -1197,8 +1197,7 @@ function bindActions() {
   };
   A.aHideCourse = (el) => {
     const d0 = S.getDraft() || S.publishedContent(), c = d0.courses[+el.dataset.i]; if (!c) return;
-    if (!c.hidden && d0.courses.filter((x) => !x.hidden).length <= 1) { toast("Tiene que quedar al menos un curso público", ""); return; }
-    commit((d) => { d.courses[+el.dataset.i].hidden = !c.hidden; }, { msg: c.hidden ? "Curso público: se verá al publicar los cambios" : "Curso oculto: se aplicará al publicar los cambios" });
+    commit((d) => { d.courses[+el.dataset.i].hidden = !c.hidden; }, { msg: c.hidden ? "Curso público: se verá al publicar los cambios" : "Curso oculto: se aplicará al publicar los cambios. Si no queda ninguno público, Formación muestra solo la Guía de agAPPe." });
   };
   // Trae al borrador las novedades del sitio (data/contenido.json) sin pisar lo editado en Gestión:
   // unidades y módulos que falten, oraciones finales, y solo las secciones que se corrigieron en el sitio.

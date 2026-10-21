@@ -104,6 +104,11 @@ export function content() {
   return filtered;
 }
 export const publishedContent = () => published;
+// ¿Hay algún curso que esta persona pueda ver? (si todos están ocultos, la app no muestra el curso)
+export function hasVisibleCourse() {
+  const c = withExtra(isPreview() ? read(K.draft) : published);
+  return !!(c && Array.isArray(c.courses) && c.courses.some((x) => courseRule(x)));
+}
 export function setPublished(c) { published = c; write(K.cache, c); }
 
 // Borrador del administrador
