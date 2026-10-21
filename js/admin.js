@@ -580,7 +580,7 @@ async function peopleView() {
     <p class="muted small" style="margin-top:4px">Aún no han ingresado. Envíales el enlace de la app para que entren con ese correo de Google.</p>
     <div class="stack" style="--gap:6px;margin-top:12px">${data.invites.map((i) => `
       <div class="tree-item"><div class="t"><strong>${esc(i.name || i.id)}</strong><span>${esc(i.id)} · ${esc(api.cloud.roleLabel(i.role))}${i.parish ? " · " + esc(i.parish) : ""}${consentChip(i)}</span></div>
-        <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}">${icon("chat")} Enviar enlace</button>
+        <div class="tools"><button class="btn btn-sm btn-soft" data-action="aInviteShare" data-email="${esc(i.id)}" data-name="${esc(i.name || "")}" data-role="${esc(i.role || "")}">${icon("chat")} Enviar enlace</button>
         ${iconBtn("trash", "aInviteDelete", `data-email="${esc(i.id)}"`, "Anular invitación", false, "danger")}</div></div>`).join("")}</div>
   </div>` : ""}`;
 }
@@ -1172,15 +1172,33 @@ function bindActions() {
           if (opt.done) await opt.done(consent).catch((e) => console.warn(e));
           await loadPeople(true); api.render();
           if (opt.done) toast(`Listo: ${o.name.trim()} ya tiene acceso. Entrará la próxima vez que abra la app.`, "ok", 5000);
-          else { toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim()); }
+          else { toast(`Invitación creada para ${email}`); shareInvite(email, o.name.trim(), o.role); }
         })
         .catch((e) => toast("No se pudo invitar: " + (e.code || e.message), "", 5000));
     },
   });
-  const shareInvite = (email, name) => {
-    const url = location.origin + location.pathname;
-    const msg = `¡Hola${name ? " " + name.split(" ")[0] : ""}! Te invitamos al curso de formación de dirigentes de la Pastoral Juvenil Ágape. Entra aquí y elige «Continuar con Google» con tu correo ${email}: ${url}`;
-    window.open(`https://wa.me/?text=${encodeURIComponent(msg)}`, "_blank", "noopener");
+  // Mensaje de bienvenida para WhatsApp: cambia según el rol con que entra la persona.
+  const inviteMsg = (email, name, role) => {
+    const url = location.origin + location.pathname, n = name ? " " + name.split(" ")[0] : "";
+    const que = {
+      ingreso: "Aquí vas a encontrar el encuentro de tu etapa cada semana, la Capilla para rezar, el muro y el chat del grupo, juegos y mucho más.",
+      madurez: "Aquí vas a encontrar el encuentro de tu etapa cada semana, la Capilla para rezar, el muro y el chat del grupo, juegos y mucho más.",
+      aspirante: "Aquí vas a encontrar el encuentro de tu etapa, la formación para prepararte a servir como dirigente, los materiales del equipo, la Capilla y la comunidad.",
+      dirigente: "Aquí vas a encontrar tu formación, los materiales para preparar los encuentros, el acompañamiento de tus jóvenes, la Capilla y la comunidad.",
+    }[role] || "Aquí vas a encontrar la formación, los materiales del equipo, la Capilla y la comunidad, todo en un mismo lugar.";
+    return `¡Hola${n}! Te damos la bienvenida a *agAPPe*, la casa virtual de la Pastoral Juvenil Ágape.
+
+Ya tienes tu cuenta. ${que}
+
+Para entrar, abre este enlace, toca «Ingresar» y elige «Continuar con Google» con tu correo ${email}:
+${url}
+
+Te recomendamos partir por «Bienvenido a agAPPe», en Formación: es un recorrido corto para conocer la app.
+
+¡Qué alegría tenerte en la comunidad!`;
+  };
+  const shareInvite = (email, name, role) => {
+    window.open(`https://wa.me/?text=${encodeURIComponent(inviteMsg(email, name, role))}`, "_blank", "noopener");
   };
   A.aConsentPdf = async () => {
     const o = (E && E.obj) || {};
@@ -1188,7 +1206,7 @@ function bindActions() {
     try { const m = await import("./consentimiento.js"); await m.download({ nombre: o.name || "", etapa: et, correo: o.email || "" }); }
     catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
   };
-  A.aInviteShare = (el) => shareInvite(el.dataset.email, el.dataset.name);
+  A.aInviteShare = (el) => shareInvite(el.dataset.email, el.dataset.name, el.dataset.role);
   A.aInviteDelete = async (el) => {
     if (!confirm(`¿Anular la invitación de ${el.dataset.email}?`)) return;
     try { await api.cloud.deleteInvite(el.dataset.email); await loadPeople(true); api.render(); toast("Invitación anulada"); }
