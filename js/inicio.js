@@ -153,6 +153,24 @@ export function blocksHTML() {
 // ---------------------------------------------------------------------------
 // Páginas de bloque
 // ---------------------------------------------------------------------------
+// Materiales, en grande como el curso: lo que trae cada uno según si tiene cuenta.
+function matBanner(w) {
+  const team = w.equipo;
+  const L = { Revistas: "#/encuentros", Difusión: "#/difusion", Cancionero: "#/cancionero", Oremus: "#/oremus", Dinámicas: "#/dinamicas" };
+  const parts = team ? ["Revistas", "Presentaciones", "Difusión", "Cancionero", "Oremus", "Dinámicas", "Para imprimir", "Biblioteca digital"]
+    : ["Difusión", "Cancionero", "Oremus", "Biblioteca digital"];
+  return `<section class="hub-cbanner is-mat" aria-labelledby="hubMT">
+    <div class="hub-cb-txt">
+      <span class="eyebrow">${team ? "Herramientas de la pastoral" : "Para todos"}</span>
+      <span class="hub-cb-hand">${team ? "para preparar cada encuentro" : "para invitar, cantar y rezar"}</span>
+      <h2 id="hubMT">Materiales</h2>
+      <p class="hub-cb-meta">${team ? "Todo lo que necesitas para preparar, animar e invitar, en un solo lugar." : "Arma invitaciones, canta con el cancionero, reza con Oremus y conoce los documentos de la Iglesia."}</p>
+      <div class="hub-mat-tags">${parts.map((t) => `<a href="${L[t] || "#/materiales"}">${esc(t)}</a>`).join("")}</div>
+      <div class="hub-cb-btns"><a class="btn btn-gold" href="#/materiales">Abrir Materiales ${icon("arrowR")}</a><a class="btn btn-ghost" href="#/difusion">Estudio de difusión</a></div>
+    </div>
+    <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus("biblia", "hub-cb-il")}</div>
+  </section>`;
+}
 // El curso, en grande: como las diapositivas de Inicio (ilustración, título y el paso que sigue).
 function courseBanner(course, st) {
   const pct = st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0;
@@ -183,7 +201,8 @@ export function viewFormacion() {
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 1 · ${esc(b.hand)}</span><h1>Formación</h1><p>${esc(descFor("formacion", w))}</p></header>
   ${w.camino ? `<div id="mcSlot"></div>` : ""}
   ${w.curso ? courseBanner(course, st) : ""}
-  <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
+  ${matBanner(w)}
+  <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino" && x.href !== "#/materiales").map(itemCard).join("")}</div>
   ${w.guest ? `<p class="muted small" style="margin-top:14px">Mi Camino y los encuentros de tu etapa se abren cuando <a href="#/perfil">ingresas con tu cuenta</a>.</p>` : ""}`;
 }
 // La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)

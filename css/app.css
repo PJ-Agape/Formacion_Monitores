@@ -2609,6 +2609,7 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .fc-ed canvas { width: 100%; height: auto; border-radius: 12px; border: 2px solid var(--line, #ccd); background: var(--cn, #0b2566); }
 .fc-sl { display: grid; gap: 8px; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); }
 .fc-sl label { display: grid; gap: 2px; font-size: .8rem; font-weight: 700; }
+.hub-mat-tags a:hover { background: #ffba03; }
 .fc-sl input[type=color] { width: 56px; height: 32px; border: 0; padding: 0; background: none; }
 .fc-prev { display: grid; gap: 10px; grid-template-columns: minmax(0, 2fr) minmax(0, 1fr); align-items: start; }
 .fc-mock small { display: block; font-size: .7rem; font-weight: 800; text-transform: uppercase; letter-spacing: .08em; color: var(--muted, #667); margin-bottom: 4px; }
@@ -3901,3 +3902,10 @@ body.solo-on .help-fab { display: none; }
 .av-people small { color: #6b7a96; }
 .av-old summary { cursor: pointer; font-weight: 700; margin-top: 12px; }
 .home-links { box-shadow: 3px 3px 0 #ffba03; }
+
+/* Formación · Materiales en grande, junto al curso */
+.hub-cbanner.is-mat { background: #e1f3fd; }
+.hub-cbanner.is-mat .hub-cb-hand { color: #1351a4; }
+.hub-cbanner.is-mat .hub-cb-sun { background: #ffba03; }
+.hub-mat-tags { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 4px; }
+.hub-mat-tags a { text-decoration: none;  padding: 4px 10px; border-radius: 99px; background: #fff; border: 2px solid var(--cn, #0b2566); color: var(--cn, #0b2566); font-size: .8rem; font-weight: 700; }
