@@ -1,13 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-19": {
-   "titulo": "Lunes de la 29.ª semana del Tiempo Ordinario",
-   "cita": "Lc 12,13-21",
-   "frase": "Cuídense de toda avaricia: la vida no está asegurada por las riquezas.",
-   "reflexion": "e4oGsm0Rk8w",
-   "video": "cLuNyDjQhsg"
-  },
   "2026-10-20": {
    "titulo": "Martes de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,35-38",
@@ -18,7 +11,8 @@
   "2026-10-21": {
    "titulo": "Miércoles de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,39-48",
-   "frase": "Al que se le dio mucho, se le pedirá mucho."
+   "frase": "Al que se le dio mucho, se le pedirá mucho.",
+   "video": "eGNhKEXZos8"
   },
   "2026-10-22": {
    "titulo": "Jueves de la 29.ª semana del Tiempo Ordinario",
@@ -59,6 +53,11 @@
    "titulo": "Jueves de la 30.ª semana del Tiempo Ordinario",
    "cita": "Lc 13,31-35",
    "frase": "¡Cuántas veces quise reunir a tus hijos, como la gallina reúne a sus pollitos!"
+  },
+  "2026-10-30": {
+   "titulo": "Viernes de la 30.ª semana del Tiempo Ordinario",
+   "cita": "Lc 14,1-6",
+   "frase": "¿Está permitido curar en sábado?"
   }
  }
 }
