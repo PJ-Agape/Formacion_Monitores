@@ -75,7 +75,11 @@ function sentHTML(sol) {
     <span class="hub-cb-hand">¡gracias${first ? ", " + esc(first) : ""}!</span>
     <h2 class="display" style="margin-top:4px">Recibimos tu solicitud</h2>
     <p class="muted" style="margin:8px auto 0;max-width:46ch">El equipo la revisará pronto. Cuando te den acceso, vuelve a abrir la app y entrarás directamente.</p>
-    ${+sol.edad < 18 ? `<p class="note" style="margin:14px auto 0;max-width:52ch;text-align:left">Como eres menor de edad, antes de activar tu cuenta el equipo le pedirá a tu papá, mamá o apoderado que firme una autorización.</p>` : ""}
+    ${+sol.edad < 18 ? `<div class="note sol-auth" style="margin:16px auto 0;max-width:54ch;text-align:left">
+      <strong>Falta un paso: la autorización de tu familia</strong>
+      <p style="margin:6px 0 0">Como eres menor de edad, tu papá, mamá o apoderado tiene que firmar una autorización. Descárgala, imprímela, pídele que la firme y entrégasela a tu dirigente. Con eso el equipo activa tu cuenta.</p>
+      <button class="btn btn-gold" style="margin-top:12px" data-action="solPdf">${icon("dl")} Descargar la autorización (PDF)</button>
+    </div>` : ""}
     <div class="row-wrap" style="justify-content:center;margin-top:18px">
       <button class="btn btn-primary" data-action="solCheck">${icon("undo")} Revisar si ya tengo acceso</button>
       <button class="btn btn-ghost" data-action="solEdit">${icon("edit")} Corregir mis datos</button></div>
@@ -85,6 +89,13 @@ function sentHTML(sol) {
 function registerActions() {
   const A = ctx.actions;
   A.solEdit = () => { editing = true; paint(); };
+  A.solPdf = async (el) => {
+    el.disabled = true;
+    const sol = await ctx.cloud.getMySolicitud();
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: sol?.name || "", etapa: "Ingreso", correo: sol?.email || st().user?.email || "" }); }
+    catch (e) { console.warn(e); toast("No se pudo crear el PDF. Inténtalo de nuevo.", ""); }
+    el.disabled = false;
+  };
   A.solCancel = () => { editing = false; paint(); };
   A.solOtra = async () => { await ctx.cloud.signOutUser(); await ctx.cloud.signIn(); };
   A.solCheck = async (el) => {

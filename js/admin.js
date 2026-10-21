@@ -592,11 +592,12 @@ function solicitudesCard(list) {
   const fecha = (t) => { const d = tsDate(t); return d && !isNaN(d) ? d.toLocaleDateString("es-CL", { day: "numeric", month: "short" }) : ""; };
   return `<div class="card sol-admin">
     <h3>Solicitudes de cuenta · ${list.length}</h3>
-    <p class="muted small" style="margin-top:4px">Personas que pidieron su cuenta desde Inicio. Al aprobar, entran como <b>Joven · Ingreso</b>; después puedes cambiar su rol en su ficha. A los menores de 18 años primero regístrales el consentimiento firmado de su familia.</p>
+    <p class="muted small" style="margin-top:4px">Personas que pidieron su cuenta desde Inicio. Al aprobar, entran como <b>Joven · Ingreso</b>; después puedes cambiar su rol en su ficha. A los menores de 18 años primero regístrales el consentimiento firmado de su familia: con «Consentimiento» descargas el PDF con sus datos para que lo firmen (el joven también lo puede descargar desde su solicitud).</p>
     <div class="stack" style="--gap:6px;margin-top:12px">${list.map((s) => `
       <div class="tree-item"><div class="t"><strong>${esc(s.name || s.email)}</strong>
         <span>${esc(s.email)} · ${esc(String(s.edad || "?"))} años${s.parish ? " · " + esc(s.parish) : ""}${fecha(s.createdAt) ? " · " + fecha(s.createdAt) : ""}${+s.edad < 18 ? ` <span class="chip warn">Menor de edad</span>` : ""}</span></div>
-        <div class="tools"><button class="btn btn-sm btn-primary" data-action="aSolApprove" data-uid="${esc(s.uid || s.id)}">${icon("check")} Aprobar</button>
+        <div class="tools">${+s.edad < 18 ? `<button class="btn btn-sm btn-soft" data-action="aSolPdf" data-uid="${esc(s.uid || s.id)}" title="Para que la familia lo firme">${icon("dl")} Consentimiento</button>` : ""}
+        <button class="btn btn-sm btn-primary" data-action="aSolApprove" data-uid="${esc(s.uid || s.id)}">${icon("check")} Aprobar</button>
         ${iconBtn("trash", "aSolDelete", `data-uid="${esc(s.uid || s.id)}" data-name="${esc(s.name || "")}"`, "Descartar solicitud", false, "danger")}</div></div>`).join("")}</div>
   </div>`;
 }
@@ -1085,6 +1086,11 @@ function bindActions() {
     const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
     openInvite({ email: s.email, name: shortName(s.name), parish: s.parish || "", role: "ingreso", consent: +s.edad >= 18 ? { mayor: true } : {} },
       { title: `Aprobar a ${s.name}`, done: () => api.cloud.deleteSolicitud(s.uid || s.id) });
+  };
+  A.aSolPdf = async (el) => {
+    const s = ((await loadPeople()).solicitudes || []).find((x) => (x.uid || x.id) === el.dataset.uid); if (!s) return;
+    try { const m = await import("./consentimiento.js"); await m.download({ nombre: s.name || "", etapa: "Ingreso", correo: s.email || "" }); }
+    catch (e) { console.warn(e); toast("No se pudo crear el PDF", ""); }
   };
   A.aSolDelete = async (el) => {
     if (!confirm(`¿Descartar la solicitud de ${el.dataset.name || "esta persona"}? No se le avisa; si vuelve a pedirla, aparecerá de nuevo.`)) return;
