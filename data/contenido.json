@@ -147,6 +147,220 @@
   },
   "courses": [
     {
+      "id": "guia-agappe",
+      "title": "Bienvenido a agAPPe",
+      "rev": 1,
+      "theme": "esperanza",
+      "abierto": true,
+      "description": "Una guía corta para conocer la casa virtual de la Pastoral Juvenil Ágape: cómo moverte, qué hay en cada pestaña y qué se abre con tu cuenta. Para todos: jóvenes, familias, dirigentes y visitantes.",
+      "phases": [
+        {
+          "phaseNum": 1,
+          "title": "Bienvenido a casa",
+          "desc": "3 unidades · qué es agAPPe, cómo moverte y tu cuenta",
+          "intro": "Te contamos por qué hicimos esta casa, cómo moverte en ella y qué puedes hacer con o sin cuenta.",
+          "sessions": [
+            {
+              "id": "1.1",
+              "title": "Esto es agAPPe",
+              "time": "4 min",
+              "objective": "Saber para qué existe agAPPe y qué lugar ocupa en tu vida de fe.",
+              "intro": "Qué alegría que estés aquí. Antes de recorrer la app, te contamos por qué la hicimos.",
+              "sections": [
+                {
+                  "title": "Una casa abierta",
+                  "body": "Ágape es la palabra griega que usa el Nuevo Testamento para hablar del amor de Dios: un amor que se entrega sin esperar nada a cambio. De ahí viene el nombre de nuestra pastoral juvenil.\n\nagAPPe es nuestra casa virtual. La hicimos para seguir encontrándonos entre un encuentro y otro: para rezar juntos, compartir lo que vivimos y seguir creciendo en la fe."
+                },
+                {
+                  "title": "Una puerta, no un reemplazo",
+                  "body": "La app no reemplaza el encuentro cara a cara ni la Misa del domingo. Es una puerta: nos ayuda a llegar mejor preparados y a no perder el hilo durante la semana.\n\nEl centro sigue siendo Jesús, que nos reúne en la Eucaristía y en la comunidad."
+                },
+                {
+                  "title": "Para todos",
+                  "body": "Esta guía es para todos: jóvenes, dirigentes, familias y también para quienes nos visitan por primera vez. No necesitas cuenta para hacerla."
+                }
+              ],
+              "bible": {
+                "ref": "Hechos 2,42-47 · La primera comunidad",
+                "comment": "Los primeros cristianos escuchaban la enseñanza de los apóstoles, compartían la mesa, partían el pan y rezaban juntos. Mira cuál de esas cosas te gustaría vivir más en Ágape."
+              },
+              "questions": [
+                "¿Qué te gustaría encontrar en agAPPe?"
+              ],
+              "prayer": "Señor Jesús, gracias por reunirnos como comunidad. Que esta casa nos ayude a encontrarte a ti y a encontrarnos entre nosotros. Amén."
+            },
+            {
+              "id": "1.2",
+              "title": "Cómo moverte",
+              "time": "4 min",
+              "objective": "Moverte por la app con confianza y saber dónde pedir ayuda.",
+              "intro": "La app está ordenada como una casa: cuatro puertas y algunas ayudas que siempre tienes a mano.",
+              "sections": [
+                {
+                  "title": "Cuatro puertas",
+                  "body": "En el celular las encuentras abajo; en el computador, arriba. Toca cada tarjeta para ver qué hay detrás:\n\n- <strong>Inicio</strong>: lo de cada día: el Evangelio, las novedades y la agenda.\n- <strong>Formación</strong>: para seguir creciendo en la fe, como esta guía.\n- <strong>Comunidad</strong>: donde compartimos lo que vivimos como grupo.\n- <strong>Espiritualidad</strong>: la Capilla, un lugar para rezar."
+                },
+                {
+                  "title": "Ayudas que siempre están",
+                  "body": "En cualquier pantalla de la app tienes estas ayudas:\n\n- <strong>La lupa</strong>: busca en toda la app una oración, una canción o un juego.\n- <strong>El botón de ayuda</strong>: responde dudas cortas y te muestra dónde tocar.\n- <strong>Accesibilidad</strong>: agranda la letra o hace que el teléfono te lea los textos."
+                },
+                {
+                  "title": "Tenla en tu celular",
+                  "body": "Puedes dejar agAPPe en la pantalla de inicio de tu teléfono y abrirla como cualquier aplicación.\n\n- En Android, desde Chrome: abre el menú ⋮ y elige «Instalar app».\n- En iPhone, desde Safari: toca Compartir y luego «Agregar a inicio»."
+                }
+              ],
+              "activity": "Instala agAPPe en tu celular y usa la lupa para buscar una oración que te guste.",
+              "prayer": "Jesús, tú eres el camino. Acompáñame también en estos pasos pequeños, para que todo lo que haga me acerque a ti y a mis hermanos. Amén."
+            },
+            {
+              "id": "1.3",
+              "title": "Tu cuenta",
+              "time": "4 min",
+              "objective": "Conocer lo que puedes hacer sin cuenta, lo que se abre con ella y cómo tenerla.",
+              "intro": "Puedes entrar a la casa sin cuenta. La cuenta es para quienes participan en Ágape, y abre los espacios del grupo.",
+              "sections": [
+                {
+                  "title": "Sin cuenta",
+                  "body": "No necesitas ingresar para:\n\n- Leer el Evangelio del día y ver su video.\n- Rezar el Rosario y las oraciones de Oremus.\n- Ver la agenda de la pastoral.\n- Jugar, por ejemplo, a Emaús o a la Trivia Ágape.\n- Hacer esta guía."
+                },
+                {
+                  "title": "Con tu cuenta",
+                  "body": "Con tu cuenta se abren los espacios del grupo:\n\n- El muro, el chat y los momentos.\n- Las intenciones de la comunidad y el cancionero completo.\n- Mi Camino, con el encuentro de tu etapa.\n- Tu perfil, tu avatar y tu pasaporte."
+                },
+                {
+                  "title": "Cómo tenerla",
+                  "body": "Es muy simple:\n\n- Pídele a tu dirigente que te invite con tu correo de Google.\n- Toca «Ingresar», arriba a la derecha, y elige ese mismo correo.\n- Arma tu avatar y pasa a saludar a la comunidad."
+                },
+                {
+                  "title": "Nos cuidamos",
+                  "body": "En agAPPe nos tratamos como en casa: con respeto y con cariño. Los jóvenes aparecen solo con su nombre y la inicial del apellido.\n\nLo que escribes en tus reflexiones personales lo lees solo tú."
+                }
+              ],
+              "prayer": "Señor, gracias por la comunidad que me regalas. Enséñame a cuidar a los demás con mis palabras y a recibir a todos como tú los recibes. Amén."
+            }
+          ]
+        },
+        {
+          "phaseNum": 2,
+          "title": "Recorramos la casa",
+          "desc": "4 unidades · Inicio, Espiritualidad, Comunidad y Formación",
+          "intro": "Una visita por cada pestaña de la app, con calma, para que sepas qué te espera en cada lugar.",
+          "sessions": [
+            {
+              "id": "2.1",
+              "title": "Inicio: cada día, algo nuevo",
+              "time": "3 min",
+              "objective": "Saber qué te espera cada vez que abres la app.",
+              "intro": "Inicio es la entrada de la casa. Cambia cada día.",
+              "sections": [
+                {
+                  "title": "La Palabra de hoy",
+                  "body": "Lo primero que ves es una frase del Evangelio del día. Tócala para leerlo completo y ver un video breve que lo comenta.\n\nEmpezar el día con la Palabra de Jesús es la mejor manera de entrar a la casa."
+                },
+                {
+                  "title": "Lo que está pasando",
+                  "body": "Más abajo están las novedades de la pastoral, las cuentas regresivas para lo que se viene y los próximos encuentros de la agenda."
+                },
+                {
+                  "title": "Para escuchar",
+                  "body": "También hay radios católicas en vivo, nuestro podcast y una playlist de Ágape, para acompañarte durante el día."
+                },
+                {
+                  "title": "El desafío de la semana",
+                  "body": "Si tienes cuenta, en Inicio encuentras un gesto concreto para vivir durante la semana lo que conversamos en el encuentro. Cuando lo hagas, toca «¡Lo cumplí!»."
+                }
+              ],
+              "activity": "Mañana, antes de empezar tu día, abre agAPPe y lee la frase del Evangelio.",
+              "prayer": "Señor, que cada día empiece escuchando tu Palabra. Abre mi corazón para reconocerte en lo que vivo. Amén."
+            },
+            {
+              "id": "2.2",
+              "title": "Espiritualidad: un lugar para rezar",
+              "time": "4 min",
+              "objective": "Conocer la Capilla Ágape y las formas de rezar que te ofrece.",
+              "intro": "La Capilla siempre está abierta, para ti y para tu familia, estés donde estés.",
+              "sections": [
+                {
+                  "title": "La Capilla Ágape",
+                  "body": "Aquí está el Evangelio del día con un video breve que lo comenta, y el enlace para leerlo completo en Vatican News."
+                },
+                {
+                  "title": "Formas de rezar",
+                  "body": "Elige la que necesites hoy:\n\n- <strong>El Rosario</strong>: paso a paso, misterio por misterio, junto a María.\n- <strong>Oremus</strong>: nuestras oraciones y las de siempre, como el Padre nuestro y el Credo.\n- <strong>Un rato con Jesús</strong>: para hacer oración personal en tu casa o ante el Santísimo."
+                },
+                {
+                  "title": "Rezamos unos por otros",
+                  "body": "Con tu cuenta puedes compartir tus intenciones y rezar por las de los demás. Cuando alguien reza por tu intención, te avisamos."
+                },
+                {
+                  "title": "El cancionero",
+                  "body": "Canciones con acordes para la Misa y los encuentros. Puedes proyectarlas en una pantalla para que todos canten. Sin cuenta ves las canciones originales de Ágape."
+                }
+              ],
+              "bible": {
+                "ref": "Mateo 18,19-20 · Rezar juntos",
+                "comment": "Jesús promete estar presente donde dos o tres se reúnen en su nombre. Cuando rezas por la intención de otro, aunque estés en tu casa, rezas en comunidad."
+              },
+              "prayer": "Jesús, tú prometiste estar en medio de los que se reúnen en tu nombre. Te pido por cada persona que reza en esta Capilla: que se sienta acompañada por ti. Amén."
+            },
+            {
+              "id": "2.3",
+              "title": "Comunidad: donde nos encontramos",
+              "time": "4 min",
+              "objective": "Conocer los espacios donde compartimos lo que vivimos como grupo.",
+              "intro": "Comunidad es la plaza de la casa: el lugar para compartir entre un encuentro y otro.",
+              "sections": [
+                {
+                  "title": "La Plaza Ágape",
+                  "body": "Cuatro espacios para encontrarnos:\n\n- <strong>Momentos</strong>: las fotos de lo que vivimos juntos.\n- <strong>Muro</strong>: avisos, preguntas, encuestas y logros del grupo.\n- <strong>Chat</strong>: salas para conversar en grupo.\n- <strong>Juegos</strong>: Emaús, la Trivia Ágape y otros para jugar solo o con amigos."
+                },
+                {
+                  "title": "Nuestras familias",
+                  "body": "En Ágape nos organizamos en grupos pequeños que llamamos familias, cada una con su dirigente. Con tu cuenta ves tu familia y tu pasaporte, donde se van sumando los sellos de los encuentros a los que vas."
+                },
+                {
+                  "title": "La agenda",
+                  "body": "Todos los encuentros, misas y actividades de la pastoral. Puedes sumar la agenda al calendario de tu celular y los cambios te llegan solos."
+                },
+                {
+                  "title": "Como si estuviéramos frente a frente",
+                  "body": "Lo que escribimos en el muro y en el chat lo lee todo el grupo. Escribimos como si estuviéramos frente a frente: con respeto, con alegría y pensando en el otro."
+                }
+              ],
+              "prayer": "Señor, gracias por los amigos que me regalas en Ágape. Que nuestras palabras construyan comunidad y que nadie se sienta solo. Amén."
+            },
+            {
+              "id": "2.4",
+              "title": "Formación: para seguir creciendo",
+              "time": "4 min",
+              "objective": "Conocer los caminos de formación de la app y despedirte de esta guía.",
+              "intro": "Formación es el lugar para seguir creciendo en la fe, cada uno a su ritmo.",
+              "sections": [
+                {
+                  "title": "Mi Camino",
+                  "body": "Cada joven con cuenta tiene Mi Camino: el encuentro de su etapa, semana a semana. La frase y el desafío de cada encuentro se abren después de vivirlo, para no adelantar la sorpresa."
+                },
+                {
+                  "title": "Los cursos",
+                  "body": "Como esta guía, los cursos tienen unidades con láminas, actividades y oración. Los dirigentes y el equipo tienen aquí su propia formación para acompañar a otros."
+                },
+                {
+                  "title": "Otras cosas útiles",
+                  "body": "También están las credenciales para los encuentros y «Sé puente», una presentación para quienes sienten el llamado a servir como dirigentes."
+                },
+                {
+                  "title": "Esto es solo una puerta",
+                  "body": "Ya conoces la casa. Ahora lo más importante: el encuentro verdadero es con Jesús, en la Eucaristía y en la comunidad.\n\nTe esperamos en el próximo encuentro."
+                }
+              ],
+              "activity": "Ven al próximo encuentro y saluda a alguien que todavía no conozcas.",
+              "prayer": "Señor Jesús, gracias por este camino que comienza. Que todo lo que encuentre aquí me lleve a ti y a mis hermanos, y que la Eucaristía sea siempre el centro de nuestra comunidad. Amén."
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "curso-dirigentes-agape",
       "title": "El Arte de Encontrarnos",
       "theme": "amanecer",

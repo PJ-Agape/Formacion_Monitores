@@ -23,7 +23,7 @@ function who() {
   const joven = cloud.enabled && !!s.isJoven, asp = !!s.ready && s.role === "aspirante";
   return {
     s, joven, asp, guest: cloud.enabled && !s.ready,
-    curso: (!cloud.enabled || (!!s.ready && !joven)) && S.hasVisibleCourse(), // cursos y cuaderno (si hay alguno publicado)
+    curso: S.hasVisibleCourse(), // hay un curso para esta persona (los visitantes y jóvenes ven solo los abiertos, como la guía)
     equipo: !cloud.enabled || (!!s.ready && !joven && !asp), // revistas, materiales, dinámicas, guía
     guia: !cloud.enabled || !!s.isGuide,
     cuenta: !cloud.enabled || !!s.ready,
@@ -45,7 +45,7 @@ export const BLOCKS = {
 // e: emoji · t: título · d: descripción · kw: palabras para el buscador · ok: quién lo ve
 const ITEMS = [
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
-  { b: "formacion", e: "🎓", t: "Curso de dirigentes", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
+  { b: "formacion", e: "🎓", t: "Cursos", d: "La guía de agAPPe y los cursos de formación.", href: "#/itinerario", kw: "curso cursos formacion itinerario unidades modulos guia tutorial bienvenido agappe manual como funciona", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
   { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo, hub: false }, // vive en Materiales → Revistas
   { b: "formacion", e: "🪪", t: "Credenciales", d: "Tarjetas de solapa con foto, nombre y parroquia para los encuentros.", href: "#/credenciales", kw: "credenciales credencial tarjeta solapa lanyard portacredencial gafete nombre encuentro retiro", ok: () => true },
@@ -76,7 +76,7 @@ const ITEMS = [
 ];
 const descFor = (k, w) => k !== "formacion" ? BLOCKS[k].d
   : w.equipo ? BLOCKS.formacion.d
-  : w.camino ? (w.curso ? "Mi Camino y el curso de dirigentes." : "Mi Camino: el encuentro de tu etapa, semana a semana.")
+  : w.camino ? "Mi Camino: el encuentro de tu etapa, semana a semana."
   : "Crecer en la fe y aprender a acompañar a otros.";
 export const itemsFor = (b) => { const w = who(); return ITEMS.filter((x) => x.b === b && x.ok(w)); };
 const inHub = (x) => { const h = x.hub; return h === undefined ? true : typeof h === "function" ? h(who()) : h; };
@@ -157,21 +157,22 @@ function courseBanner(course, st) {
   const pct = st.totalSessions ? Math.round((st.readSessions / st.totalSessions) * 100) : 0;
   const nx = st.next, ses = nx && nx.type === "session" ? nx.session : null;
   const ph = nx ? (course.phases[nx.phase] || {}) : {};
-  const main = st.complete ? { href: "#/constancia", label: "Ver mi constancia" }
-    : ses ? { href: `#/vivir/${nx.phase}/${encodeURIComponent(ses.id)}`, label: st.readSessions ? "Seguir donde quedé" : "Comenzar el curso" }
+  const ab = !!course.abierto;
+  const main = st.complete ? (ab ? { href: "#/itinerario", label: "Volver a recorrerla" } : { href: "#/constancia", label: "Ver mi constancia" })
+    : ses ? { href: `#/vivir/${nx.phase}/${encodeURIComponent(ses.id)}`, label: st.readSessions ? "Seguir donde quedé" : ab ? "Comenzar" : "Comenzar el curso" }
     : nx ? { href: "#/itinerario", label: `Rendir la evaluación del módulo ${ph.phaseNum || nx.phase + 1}` } : { href: "#/itinerario", label: "Ver el curso" };
-  const now = st.complete ? "¡Completaste el curso! Gracias por tu entrega." : ses ? `Ahora: ${ses.id ? esc(ses.id) + " · " : ""}${esc(ses.title)}` : nx ? `Te falta la evaluación de «${esc(ph.title || "este módulo")}»` : "";
+  const now = st.complete ? (ab ? "¡Ya conoces la casa! Te esperamos en el próximo encuentro." : "¡Completaste el curso! Gracias por tu entrega.") : ses ? `Ahora: ${ses.id ? esc(ses.id) + " · " : ""}${esc(ses.title)}` : nx ? `Te falta la evaluación de «${esc(ph.title || "este módulo")}»` : "";
   return `<section class="hub-cbanner${st.complete ? " is-done" : ""}" aria-labelledby="hubCT">
     <div class="hub-cb-txt">
-      <span class="eyebrow">Curso de formación de dirigentes</span>
-      <span class="hub-cb-hand">${st.complete ? "¡lo lograste!" : "tu camino de dirigente"}</span>
+      <span class="eyebrow">${ab ? "Para todos" : "Curso de formación de dirigentes"}</span>
+      <span class="hub-cb-hand">${st.complete ? (ab ? "bienvenido a casa" : "¡lo lograste!") : ab ? "empieza por aquí" : "tu camino de dirigente"}</span>
       <h2 id="hubCT">${esc(course.title)}</h2>
       <div class="hub-cb-prog" role="progressbar" aria-valuemin="0" aria-valuemax="100" aria-valuenow="${pct}" aria-label="Avance del curso"><i style="width:${pct}%"></i></div>
       <p class="hub-cb-meta"><b>${st.readSessions} de ${st.totalSessions}</b> unidades · <b>${st.donePhases} de ${course.phases.length}</b> módulos</p>
       ${now ? `<p class="hub-cb-now">${now}</p>` : ""}
       <div class="hub-cb-btns"><a class="btn btn-gold" href="${main.href}">${esc(main.label)} ${icon("arrowR")}</a><a class="btn btn-ghost" href="#/itinerario">Ver el itinerario</a></div>
     </div>
-    <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus(st.complete ? "envio" : "camino", "hub-cb-il")}</div>
+    <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus(ab ? "acogida" : st.complete ? "envio" : "camino", "hub-cb-il")}</div>
   </section>`;
 }
 export function viewFormacion() {
@@ -182,7 +183,7 @@ export function viewFormacion() {
   ${w.camino ? `<div id="mcSlot"></div>` : ""}
   ${w.curso ? courseBanner(course, st) : ""}
   <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino").map(itemCard).join("")}</div>
-  ${w.guest ? `<p class="muted small" style="margin-top:14px">Para ver el curso y los encuentros, <a href="#/perfil">ingresa con tu cuenta</a>.</p>` : ""}`;
+  ${w.guest ? `<p class="muted small" style="margin-top:14px">Mi Camino y los encuentros de tu etapa se abren cuando <a href="#/perfil">ingresas con tu cuenta</a>.</p>` : ""}`;
 }
 // La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)
 // y lo que nos decimos (Chat). Cada parte sigue funcionando igual; esto es solo la puerta de entrada.

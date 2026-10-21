@@ -1659,5 +1659,79 @@
     }
    ]
   }
+ },
+ "guia-agappe": {
+  "1.2": {
+   "actividades": [
+    {
+     "after": 1,
+     "type": "pairs",
+     "title": "Une cada pestaña con algo que encuentras en ella",
+     "pairs": [
+      [
+       "Inicio",
+       "La frase del Evangelio del día"
+      ],
+      [
+       "Espiritualidad",
+       "Rezar el Rosario"
+      ],
+      [
+       "Comunidad",
+       "La agenda y los juegos"
+      ],
+      [
+       "Formación",
+       "Esta guía"
+      ]
+     ],
+     "feedback": "Ya conoces las cuatro puertas de la casa."
+    }
+   ]
+  },
+  "1.3": {
+   "actividades": [
+    {
+     "after": 2,
+     "type": "vf",
+     "title": "¿Verdadero o falso?",
+     "items": [
+      {
+       "t": "Para rezar el Rosario en la app necesitas una cuenta.",
+       "v": false,
+       "why": "La Capilla está abierta para todos."
+      },
+      {
+       "t": "Para tener tu cuenta, le pides a tu dirigente que te invite con tu correo de Google.",
+       "v": true,
+       "why": "Así de simple."
+      },
+      {
+       "t": "Tus dirigentes pueden leer lo que escribes en tus reflexiones personales.",
+       "v": false,
+       "why": "Lo que escribes ahí lo lees solo tú."
+      }
+     ]
+    }
+   ]
+  },
+  "2.3": {
+   "actividades": [
+    {
+     "after": 0,
+     "type": "quiz",
+     "label": "¿Dónde lo encuentras?",
+     "q": "Quieres ver las fotos del último retiro. ¿Dónde las buscas?",
+     "options": [
+      "En la Capilla",
+      "En Momentos, dentro de Comunidad",
+      "En el cancionero"
+     ],
+     "correct": 1,
+     "feedback": "Momentos guarda las fotos de lo que vivimos juntos.",
+     "hint": "Piensa en la plaza de la casa."
+    }
+   ]
+  }
  }
 }

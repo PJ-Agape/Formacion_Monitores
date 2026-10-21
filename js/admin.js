@@ -266,7 +266,7 @@ function coursesView(d) {
     <div class="row-wrap" style="gap:8px"><a class="btn btn-soft" href="#/admin/formacion">${icon("ul")} Cursos de la comunidad (Word o PDF)</a>
     <button class="btn btn-primary" data-action="aNewCourse">${icon("plus")} Nuevo curso</button></div>
   </header>
-  <div class="note" style="margin-bottom:14px"><b>Novedades en los cursos.</b> Hay contenido nuevo en el sitio: los cursos <b>«Asesorar es acompañar»</b> (para asesores) y <b>«Coordinar es servir»</b> (para coordinadores), de 5 módulos cada uno, y en el curso de dirigentes las oraciones finales de acción de gracias, las unidades 1.5 y 1.6, el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
+  <div class="note" style="margin-bottom:14px"><b>Novedades en los cursos.</b> Hay contenido nuevo en el sitio: <b>«Bienvenido a agAPPe»</b>, la guía de la app para todos (también para visitantes sin cuenta y para los jóvenes); los cursos <b>«Asesorar es acompañar»</b> (para asesores) y <b>«Coordinar es servir»</b> (para coordinadores), de 5 módulos cada uno, y en el curso de dirigentes las oraciones finales de acción de gracias, las unidades 1.5 y 1.6, el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
     <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncCourse">${icon("ul")} Traer las novedades</button></div></div>
   <div class="stack" style="--gap:12px">
     ${d.courses.map((c, i) => {
@@ -275,7 +275,7 @@ function coursesView(d) {
         <span class="tile-ico" style="margin:0;background:var(--accent-soft);color:var(--accent-text)">${icon("route")}</span>
         <a href="#/admin/itinerarios/${i}" style="flex:1;min-width:0;text-decoration:none;color:inherit">
           <strong style="display:block">${esc(c.title)} ${c.hidden ? `<span class="chip warn" style="vertical-align:middle">Oculto</span>` : `<span class="chip ok" style="vertical-align:middle">Público</span>`}</strong>
-          <span class="muted small">${c.phases.length} módulos · ${n} unidades · ${S.paraDe(c).length ? `para ${esc(S.paraDe(c).map((k) => S.PARA.find((x) => x[0] === k)[1].replace(/ \(.*\)/, "").toLowerCase()).join(", "))}` : "para todos"}</span></a>
+          <span class="muted small">${c.phases.length} módulos · ${n} unidades · ${c.abierto ? "abierto a todos, también sin cuenta" : S.paraDe(c).length ? `para ${esc(S.paraDe(c).map((k) => S.PARA.find((x) => x[0] === k)[1].replace(/ \(.*\)/, "").toLowerCase()).join(", "))}` : "para todos"}</span></a>
         <div class="row" style="gap:4px">
           ${iconBtn("up", "aMoveCourse", `data-i="${i}" data-d="-1"`, "Subir", i === 0)}
           ${iconBtn("down", "aMoveCourse", `data-i="${i}" data-d="1"`, "Bajar", i === d.courses.length - 1)}
@@ -1203,12 +1203,13 @@ function bindActions() {
   // unidades y módulos que falten, oraciones finales, y solo las secciones que se corrigieron en el sitio.
   const SECTION_UPDATES = { "curso-dirigentes-agape": [["1.4", "La primera comunidad como modelo"], ["5.1", "Tu vida de oración"], ["5.5", "Tu compromiso"]] };
   const PHASE_TEXT_UPDATES = { "curso-dirigentes-agape": [1] }; // phaseNum con descripción e introducción nuevas
-  const NEW_COURSES = ["formacion-coordinadores", "formacion-asesores"]; // cursos nuevos del sitio que se agregan enteros si faltan
+  const NEW_COURSES = ["formacion-coordinadores", "formacion-asesores", "guia-agappe"]; // cursos nuevos del sitio que se agregan enteros si faltan
+  const FIRST_COURSES = ["guia-agappe"]; // estos quedan primeros en la lista
   function mergeCourseNews(d, repo) {
     let n = 0;
     for (const rc of repo.courses || []) {
       const c = d.courses.find((x) => x.id === rc.id);
-      if (!c) { if (NEW_COURSES.includes(rc.id)) { d.courses.push(clone(rc)); n++; } continue; }
+      if (!c) { if (NEW_COURSES.includes(rc.id)) { if (FIRST_COURSES.includes(rc.id)) d.courses.unshift(clone(rc)); else d.courses.push(clone(rc)); n++; } continue; }
       // Curso nuevo ya traído antes: si el sitio tiene una revisión más reciente, se reemplaza entero
       // (conservando si está oculto y a quién va dirigido, que se eligen en Gestión).
       if (NEW_COURSES.includes(rc.id) && (rc.rev || 1) > (c.rev || 1)) {

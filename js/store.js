@@ -287,7 +287,8 @@ export function courseState(course) {
     const read = ph.sessions.filter((s) => p.read[sessionKey(i, s)]).length;
     const noQuiz = !(ph.quiz && ph.quiz.questions && ph.quiz.questions.length);
     const done = !!p.phases[i] || (noQuiz && ph.sessions.length > 0 && read === ph.sessions.length);
-    const open = PREVIEW_OPEN || i === 0 || !!(phases[i - 1] && phases[i - 1].done);
+    // En los cursos abiertos (la guía de la app) todos los módulos están abiertos desde el comienzo.
+    const open = PREVIEW_OPEN || !!course.abierto || i === 0 || !!(phases[i - 1] && phases[i - 1].done);
     phases.push({ done, open, read, total: ph.sessions.length, score: p.scores[i] });
   });
   const donePhases = phases.filter((x) => x.done).length;

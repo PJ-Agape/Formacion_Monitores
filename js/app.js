@@ -101,6 +101,7 @@ const routes = [
   [/^\/oremus(?:\/([^/?]+))?$/, (t) => capilla.oremusView(t ? decodeURIComponent(t) : ""), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
+  [/^\/(?:recorrido|tutorial|guia)(?:\?.*)?$/, () => { location.replace("#/formacion"); return null; }, "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
   [/^\/nuestras-familias\/registro$/, () => famReg.viewRegistro(), "familiasag"],
   [/^\/nuestras-familias\/(f\d+)\/registro(?:\/(\d{4}-\d{2}-\d{2}))?$/, (id, f) => famReg.viewFamilia(id, f), "familiasag"],
@@ -159,10 +160,12 @@ export async function render() {
   // Formación, Materiales y revistas del Camino Ágape: solo para cuentas invitadas.
   const recursos = section === "materiales" || /^\/encuentros(\/|$)/.test(path);
   // Jóvenes de Ingreso y Madurez: las secciones del equipo quedan fuera de su espacio.
-  if (cloud.enabled && cloud.state().isJoven && (section === "itinerario" || section === "comunidad" || recursos)) fn = viewSoloEquipo;
+  // Los cursos abiertos (como «Bienvenido a agAPPe») los recorren todos: jóvenes y visitantes sin cuenta.
+  const cursoAbierto = section === "itinerario" && !/^\/(constancia|cuaderno)$/.test(path) && S.hasVisibleCourse();
+  if (cloud.enabled && cloud.state().isJoven && ((section === "itinerario" && !cursoAbierto && path !== "/cuaderno") || section === "comunidad" || recursos)) fn = viewSoloEquipo;
   // Cursos en revisión: si todos están ocultos, el curso no se abre (salvo para administradores).
-  if (section === "itinerario" && !(cloud.enabled && cloud.state().isJoven) && !/^\/(constancia|cuaderno)$/.test(path) && !S.hasVisibleCourse()) fn = viewEnRevision;
-  if (cloud.enabled && (section === "itinerario" || section === "muro" || recursos) && !cloud.state().ready) fn = () => viewLogin(recursos ? "recursos" : section === "muro" ? "muro" : "curso");
+  if (section === "itinerario" && !/^\/(constancia|cuaderno)$/.test(path) && !S.hasVisibleCourse() && !(cloud.enabled && !cloud.state().ready)) fn = viewEnRevision;
+  if (cloud.enabled && ((section === "itinerario" && !cursoAbierto) || section === "muro" || recursos) && !cloud.state().ready) fn = () => viewLogin(recursos ? "recursos" : section === "muro" ? "muro" : "curso");
   document.body.classList.toggle("is-admin", section === "admin");
   applyTheme();
   renderChrome(section);
@@ -335,7 +338,7 @@ function resumeLink(course, st) {
   return nx.quiz != null ? "#/itinerario" : nx.href;
 }
 function nextLink(course, st) {
-  if (st.complete) return { href: "#/constancia", label: "Ver mi constancia" };
+  if (st.complete) return course.abierto ? { href: "#/itinerario", label: "Volver a recorrerla" } : { href: "#/constancia", label: "Ver mi constancia" };
   if (!st.next) return { href: "#/itinerario", label: "Ver itinerario" };
   if (st.next.type === "session") {
     return { href: `#/vivir/${st.next.phase}/${encodeURIComponent(st.next.session.id)}`, label: st.readSessions ? "Continuar donde quedé" : "Comenzar el curso" };
@@ -353,7 +356,7 @@ function viewHome() {
   const courseSlide = `<article class="car-slide car-go" data-theme-c="blue" aria-roledescription="diapositiva" data-go="${resumeLink(course, st)}" title="Abrir el curso donde quedaste">
       <i class="hero-blob b1"></i><i class="hero-blob b3"></i>
       <div class="car-body">
-        <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}Curso de formación de dirigentes</span>
+        <span class="eyebrow">${first ? `Hola, ${esc(first)} · ` : ""}${course.abierto ? "Para todos" : "Curso de formación de dirigentes"}</span>
         <h2 class="car-title">${heroTitle(course.title)}</h2>
         <p class="lead">${esc(S.courseDesc(course))}</p><button type="button" class="car-more" data-action="carLead">Leer más</button>
         <div class="actions">
@@ -367,7 +370,7 @@ function viewHome() {
       ${illus("apostoles", "car-illus")}
     </article>`;
   const carousel = () => {
-    const slides = [...portada.current()];
+    const slides = portada.current().filter((x) => !x.course || S.hasVisibleCourse());
     if (papa.enCarrusel()) slides.splice(Math.min(1, slides.length), 0, { papa: true, label: "Con el Papa" });
     if (!slides.length) return "";
     return `<section class="carousel" id="homeCarousel" aria-roledescription="carrusel" aria-label="Bienvenida">
@@ -507,7 +510,7 @@ function viewItinerary() {
 
   return `
   <header class="page-head">
-    <span class="eyebrow">Curso de formación</span>
+    <span class="eyebrow">${course.abierto ? "Para todos" : "Curso de formación"}</span>
     <h1>${esc(course.title)}</h1>
     <p>${esc(S.courseDesc(course))}</p>
   </header>
@@ -520,11 +523,11 @@ function viewItinerary() {
     ${ring(unitPct)}
     <div>
       <strong>${st.complete ? "¡Curso completado!" : st.readSessions ? "Vas avanzando a tu ritmo" : "Tu camino comienza aquí"}</strong>
-      <p class="muted small" style="margin-top:2px">${st.readSessions} de ${st.totalSessions} unidades completadas · ${st.donePhases} de ${course.phases.length} módulos aprobados</p>
+      <p class="muted small" style="margin-top:2px">${st.readSessions} de ${st.totalSessions} unidades completadas · ${st.donePhases} de ${course.phases.length} módulos ${course.abierto ? "completados" : "aprobados"}</p>
       <div class="row-wrap" style="margin-top:12px">
-        ${st.complete ? `<a class="btn btn-sm btn-ok" href="#/constancia">${icon("award")} Mi constancia</a>` : ""}
-        <a class="btn btn-sm btn-soft" href="#/cuaderno">${icon("book")} Mi cuaderno</a>
-        <button class="btn btn-sm btn-ghost" data-action="shareProgress">${icon("chat")} Enviar avance</button>
+        ${st.complete && !course.abierto ? `<a class="btn btn-sm btn-ok" href="#/constancia">${icon("award")} Mi constancia</a>` : ""}
+        ${!cloud.enabled || cloud.state().ready ? `<a class="btn btn-sm btn-soft" href="#/cuaderno">${icon("book")} Mi cuaderno</a>` : ""}
+        ${course.abierto ? "" : `<button class="btn btn-sm btn-ghost" data-action="shareProgress">${icon("chat")} Enviar avance</button>`}
         <button class="btn btn-sm btn-ghost" data-action="resetProgress">Reiniciar</button>
       </div>
     </div>
@@ -555,7 +558,7 @@ function phaseBlock(course, ph, i, st) {
       <button class="phase-head" ${s.open ? `data-action="togglePhase" data-key="${esc(key)}"` : "disabled"} aria-expanded="${!!exp}">
         <div style="flex:1;min-width:0">
           <div class="row-wrap" style="gap:6px;margin-bottom:6px">
-            <span class="chip ${s.done ? "ok" : s.open ? "accent" : ""}">Módulo ${esc(ph.phaseNum)} · ${s.done ? "Aprobado" : s.open ? "En curso" : "Bloqueado"}</span>
+            <span class="chip ${s.done ? "ok" : s.open ? "accent" : ""}">Módulo ${esc(ph.phaseNum)} · ${s.done ? (qn ? "Aprobado" : "Completado") : s.open ? "En curso" : "Bloqueado"}</span>
             ${s.open ? `<span class="chip">${s.read}/${s.total} unidades</span>` : ""}
             ${s.score ? `<span class="chip">${s.score.right}/${s.score.total} en evaluación</span>` : ""}
           </div>
@@ -577,7 +580,7 @@ function phaseBlock(course, ph, i, st) {
             <span class="arrow">${icon("right")}</span></a>`;
         }).join("")}
         <div class="phase-foot">
-          <span class="xs muted">${ready ? "Completaste todas las unidades del módulo." : `Completa las ${s.total} unidades para habilitar la evaluación.`}</span>
+          <span class="xs muted">${ready ? "Completaste todas las unidades del módulo." : qn ? `Completa las ${s.total} unidades para habilitar la evaluación.` : `Completa las ${s.total} unidades del módulo.`}</span>
           ${qn ? `<button class="btn btn-sm ${s.done ? "btn-ghost" : ready ? "btn-primary" : "btn-ghost"}" data-action="quiz" data-phase="${i}" ${ready || s.done ? "" : "disabled"}>
             ${s.done ? "Repasar evaluación" : `${ready ? "" : icon("lock")} Evaluación · ${qn} pregunta${qn > 1 ? "s" : ""}`}</button>` : ""}
         </div>
@@ -929,6 +932,7 @@ function sendCompletion(course, prog) {
 // ---------------------------------------------------------------------------
 function viewCertificate() {
   const course = S.activeCourse();
+  if (course.abierto) { location.replace("#/itinerario"); return null; } // las guías abiertas no tienen constancia
   const st = S.courseState(course);
   if (!st.complete) {
     return `<div class="card" style="text-align:center;padding:40px;max-width:560px;margin:4vh auto">
@@ -1288,8 +1292,8 @@ function viewEnRevision() {
   return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
     ${illus("apostoles", "")}
     <h1 class="display" style="font-size:1.6rem;margin-top:10px">La formación está en revisión</h1>
-    <p class="muted" style="margin-top:8px">El equipo está preparando la nueva versión del curso. Tu avance queda guardado. Mientras tanto, te invitamos a conocer la Guía de agAPPe.</p>
-    <a class="btn btn-primary" style="margin-top:16px" href="#/recorrido">Ir a la Guía de agAPPe</a></div>`;
+    <p class="muted" style="margin-top:8px">El equipo está preparando la nueva versión del curso. Tu avance queda guardado.</p>
+    <a class="btn btn-primary" style="margin-top:16px" href="#/formacion">Volver a Formación</a></div>`;
 }
 function viewSoloEquipo() {
   return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
@@ -1513,6 +1517,8 @@ agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud })
 portada.setup({ actions, render: () => render(), onAfterRender, cloud });
 S.setCourseRule((c) => {
   if (cloud.enabled ? !!cloud.state().isAdmin : S.isAdmin()) return true;
+  // Visitantes sin cuenta y jóvenes: solo los cursos abiertos a todos (la guía de la app).
+  if (cloud.enabled && (!cloud.state().ready || cloud.state().isJoven)) return !c.hidden && c.abierto === true;
   // Los cursos ocultos de la comunidad los ven también los formadores, para revisarlos antes de publicarlos.
   if (c.hidden) return !!(c.comunidad && cloud.enabled && cloud.state().canCourses);
   const para = S.paraDe(c);
