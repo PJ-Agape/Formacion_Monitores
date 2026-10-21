@@ -106,14 +106,14 @@ function registerActions() {
   A.iaRadioAdd = (el) => { const k = el.dataset.k || "radios"; readRadios(); L(k).push({ name: "", short: "", url: "", where: "" }); paintRadios(k); };
   A.iaRadioDel = (el) => { const k = el.dataset.k || "radios"; readRadios(); L(k).splice(+el.dataset.i, 1); paintRadios(k); };
   A.iaRadioMove = (el) => { const k = el.dataset.k || "radios", ls = L(k); readRadios(); const i = +el.dataset.i, j = i + +el.dataset.d; if (j < 0 || j >= ls.length) return; [ls[i], ls[j]] = [ls[j], ls[i]]; paintRadios(k); };
-  A.iaReset = () => { if (confirm("¿Volver a todos los textos y radios originales?")) persist({}, "Inicio volvió a los textos originales"); };
+  A.iaReset = () => { if (confirm("¿Volver a todos los textos y radios originales?")) persist(savedRaw().guia ? { guia: savedRaw().guia } : {}, "Inicio volvió a los textos originales"); };
   document.addEventListener("submit", (e) => {
     if (e.target.id !== "iaForm") return;
     e.preventDefault(); readRadios();
     const fd = new FormData(e.target), val = (k) => String(fd.get(k) || "").trim();
     const read = (base, path) => Object.fromEntries(Object.entries(base).map(([k, b]) => [k, typeof b === "boolean" ? fd.get(`${path}${k}`) === "on"
       : typeof b === "string" ? val(`${path}${k}`) : read(b, `${path}${k}.`)]));
-    const { radios: _r, enlaces: _e, ...textBase } = DEFAULTS;
+    const { radios: _r, enlaces: _e, guia: _g, ...textBase } = DEFAULTS;
     const v = read(textBase, "");
     const badUrl = ["playlist.url", ...Object.keys(REDES).map((k) => `redes.${k}`)].find((k) => val(k) && !okUrl(val(k)));
     if (badUrl) { toast("Revisa los enlaces de la playlist y las redes: deben empezar con https://", ""); return; }
@@ -126,6 +126,7 @@ function registerActions() {
     const next = diff(textBase, v) || {};
     if (JSON.stringify(rs) !== JSON.stringify(DEFAULTS.radios.map(({ name, short, url, where }) => ({ name, short: short || "", url, where: where || "" })))) next.radios = rs;
     if (es.length) next.enlaces = es;
+    if (savedRaw().guia) next.guia = savedRaw().guia; // la Guía se muestra u oculta desde Gestión → Cursos
     persist(next, "Inicio actualizado");
   });
 }

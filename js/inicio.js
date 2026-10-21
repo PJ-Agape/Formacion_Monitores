@@ -10,7 +10,7 @@ import { BANCO } from "./dinamicas-banco.js";
 import { songList } from "./cancionero.js";
 import { helpFor, perfil } from "./ayuda.js";
 import { todayGospel } from "./capilla.js";
-import { cfg as inicioCfg, adopt as adoptInicio } from "./inicio-config.js";
+import { cfg as inicioCfg, adopt as adoptInicio, guiaOn } from "./inicio-config.js";
 import { bannerHTML as guiaBanner } from "./recorrido.js";
 
 let ctx = null; // { actions, onAfterRender, render }
@@ -45,7 +45,7 @@ export const BLOCKS = {
 };
 // e: emoji · t: título · d: descripción · kw: palabras para el buscador · ok: quién lo ve
 const ITEMS = [
-  { b: "formacion", e: "📱", t: "Guía de agAPPe", d: "Conoce la casa por dentro y cómo moverte.", href: "#/recorrido", kw: "guia tutorial recorrido manual ayuda como funciona app navegar mapa", ok: () => true },
+  { b: "formacion", e: "📱", t: "Guía de agAPPe", d: "Conoce la casa por dentro y cómo moverte.", href: "#/recorrido", kw: "guia tutorial recorrido manual ayuda como funciona app navegar mapa", ok: () => guiaOn() },
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
   { b: "formacion", e: "🎓", t: "Cursos de formación", d: "Unidades, evaluaciones y tu avance.", href: "#/itinerario", kw: "curso formacion itinerario unidades modulos evaluacion el arte de encontrarnos", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
@@ -182,9 +182,10 @@ export function viewFormacion() {
   const w = who();
   const b = BLOCKS.formacion;
   if (w.camino) ctx.onAfterRender(() => ctx.camJ.homeCard());
+  ctx.onAfterRender(() => refreshInicioCfg(() => { if (location.hash === "#/formacion") ctx.render(); }));
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 1 · ${esc(b.hand)}</span><h1>Formación</h1><p>${esc(descFor("formacion", w))}</p></header>
   ${w.camino ? `<div id="mcSlot"></div>` : ""}
-  ${guiaBanner()}
+  ${guiaOn() ? guiaBanner() : ""}
   <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/mi-camino" && x.href !== "#/recorrido").map(itemCard).join("")}</div>
   ${w.guest ? `<p class="muted small" style="margin-top:14px">Mi Camino y los cursos se abren con tu cuenta. <a href="#/recorrido?mapa">Mira qué más se abre</a>.</p>` : ""}`;
 }

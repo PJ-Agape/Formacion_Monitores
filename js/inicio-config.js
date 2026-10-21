@@ -6,6 +6,7 @@ import { RADIOS as RADIOS_BASE } from "./capilla.js";
 
 export const DEFAULTS = {
   saludo: { cuenta: "qué bueno verte", visita: "bienvenido a casa" },
+  guia: { on: true }, // Guía de agAPPe en Formación e Inicio (se muestra u oculta desde Gestión → Cursos)
   plaza: {
     hand: "donde nos encontramos", title: "La Plaza *Ágape*",
     text: "Lo que vivimos, lo que conversamos y lo que nos decimos: todo en un mismo lugar.",
@@ -63,6 +64,7 @@ export function cfg() {
   return { ...c, radios, enlaces };
 }
 export const savedRaw = () => saved;
+export const guiaOn = () => cfg().guia.on !== false;
 export function adopt(v) {
   const next = isObj(v) ? v : {};
   const changed = JSON.stringify(next) !== JSON.stringify(saved);

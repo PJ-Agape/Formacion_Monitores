@@ -17,6 +17,7 @@ import * as portada from "./portada.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as familiasAdmin from "./familias-admin.js";
 import * as cursosCom from "./cursos-comunidad.js";
+import { guiaOn, savedRaw as inicioSaved, adopt as adoptInicio } from "./inicio-config.js";
 import { esc, icon, toast, sha256, download, clone, slug, getPath, setPath, plain } from "./util.js";
 
 const $ = (s, r = document) => r.querySelector(s);
@@ -269,6 +270,15 @@ function coursesView(d) {
   <div class="note" style="margin-bottom:14px"><b>Novedades en los cursos.</b> Hay contenido nuevo en el sitio: los cursos <b>«Asesorar es acompañar»</b> (para asesores) y <b>«Coordinar es servir»</b> (para coordinadores), de 5 módulos cada uno, y en el curso de dirigentes las oraciones finales de acción de gracias, las unidades 1.5 y 1.6, el Módulo 6 sobre la Eucaristía y ajustes en las unidades 1.4, 5.1 y 5.5. Tráelo a tu borrador (lo demás que hayas editado queda igual), revísalo y publica.
     <div style="margin-top:8px"><button class="btn btn-sm btn-soft" data-action="aSyncCourse">${icon("ul")} Traer las novedades</button></div></div>
   <div class="stack" style="--gap:12px">
+    <div class="card row" style="padding:16px 18px">
+      <span class="tile-ico" style="margin:0;background:#fff0c2;color:#0b2566">${icon("home")}</span>
+      <a href="#/recorrido" style="flex:1;min-width:0;text-decoration:none;color:inherit">
+        <strong style="display:block">Guía de agAPPe ${guiaOn() ? `<span class="chip ok" style="vertical-align:middle">Visible</span>` : `<span class="chip warn" style="vertical-align:middle">Oculta</span>`}</strong>
+        <span class="muted small">Página de bienvenida para todos, en Formación y en la portada de Inicio. No es un curso: se muestra u oculta al instante, sin «Publicar».</span></a>
+      <div class="row" style="gap:4px">
+        <button class="btn btn-sm ${guiaOn() ? "btn-ghost" : "btn-primary"}" data-action="aGuiaToggle">${icon(guiaOn() ? "lock" : "eye")} ${guiaOn() ? "Ocultar" : "Mostrar"}</button>
+        <a class="btn btn-sm btn-soft" href="#/recorrido">Ver</a>
+      </div></div>
     ${d.courses.map((c, i) => {
       const n = c.phases.reduce((a, p) => a + p.sessions.length, 0);
       return `<div class="card row" style="padding:16px 18px">
@@ -1194,6 +1204,14 @@ function bindActions() {
   A.aEditCourse = (el) => {
     const ci = +el.dataset.ci, c = S.ensureDraft().courses[ci];
     openEditor({ title: "Datos del curso", spec: "course", obj: { ...c, para: { ...(c.para || {}) } }, onSave: (o) => commit((d) => { Object.assign(d.courses[ci], { title: o.title, theme: o.theme, description: o.description, para: cleanPara(o.para) }); if (!d.courses[ci].para) delete d.courses[ci].para; }) });
+  };
+  A.aGuiaToggle = async (el) => {
+    const on = !guiaOn(), prev = inicioSaved(), next = { ...prev, guia: { on } };
+    if (on) delete next.guia;
+    el.disabled = true; adoptInicio(next);
+    try { await api.cloud.saveInicioCfg(next); toast(on ? "La Guía de agAPPe vuelve a verse" : "La Guía de agAPPe quedó oculta"); }
+    catch (e) { console.warn(e); adoptInicio(prev); toast("No se pudo guardar: " + (e.code || e.message), ""); }
+    api.render();
   };
   A.aHideCourse = (el) => {
     const d0 = S.getDraft() || S.publishedContent(), c = d0.courses[+el.dataset.i]; if (!c) return;

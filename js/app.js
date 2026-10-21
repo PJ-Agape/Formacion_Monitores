@@ -33,7 +33,7 @@ import * as mahjong from "./mahjong.js";
 import * as sopa from "./sopa.js";
 import * as crucigrama from "./crucigrama.js";
 import * as podcast from "./podcast.js";
-import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
+import { cfg as inicioCfg, REDES, BRAND_ICO, guiaOn } from "./inicio-config.js";
 import * as inicioAdmin from "./inicio-admin.js";
 import * as credenciales from "./credenciales.js";
 import * as viva from "./unidad-viva.js";
@@ -364,7 +364,7 @@ function viewHome() {
       ${illus("acogida", "car-illus")}
     </article>`;
   const carousel = () => {
-    const slides = [...portada.current()];
+    const slides = portada.current().filter((x) => !x.course || guiaOn());
     if (papa.enCarrusel()) slides.splice(Math.min(1, slides.length), 0, { papa: true, label: "Con el Papa" });
     if (!slides.length) return "";
     return `<section class="carousel" id="homeCarousel" aria-roledescription="carrusel" aria-label="Bienvenida">
