@@ -120,7 +120,7 @@ const routes = [
   [/^\/juegos\/sopa$/, () => sopa.view(), "red"],
   [/^\/juegos\/crucigrama$/, () => crucigrama.view(), "red"],
   [/^\/podcast$/, () => podcast.view(), "red"],
-  [/^\/credenciales$/, () => credenciales.view(), "formacion"],
+  [/^\/credenciales$/, () => credenciales.view(), "materiales"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
@@ -158,7 +158,8 @@ export async function render() {
   }
   // Con cuentas: el curso pide iniciar sesión; el resto de la app queda abierto.
   // Formación, Materiales y revistas del Camino Ágape: solo para cuentas invitadas.
-  const recursos = section === "materiales" || /^\/encuentros(\/|$)/.test(path);
+  // La portada de Materiales la ven todos (sin cuenta, solo difusión, música, oración y la biblioteca).
+  const recursos = (section === "materiales" && path !== "/materiales") || /^\/encuentros(\/|$)/.test(path);
   // Jóvenes de Ingreso y Madurez: las secciones del equipo quedan fuera de su espacio.
   // Los cursos abiertos (como «Bienvenido a agAPPe») los recorren todos: jóvenes y visitantes sin cuenta.
   const cursoAbierto = section === "itinerario" && !/^\/(constancia|cuaderno)$/.test(path) && S.hasVisibleCourse();
@@ -1022,6 +1023,10 @@ function viewMaterials() {
       <div class="fi-open">${cardHTML(c, "material")}</div></details>`;
   };
   const guides = (m.cards || []).filter((c) => c.type !== "action"), prints = (m.cards || []).filter((c) => c.type === "action");
+  // Sin cuenta (y los jóvenes): difusión, música, oración y la biblioteca digital. El resto es del equipo.
+  const st0 = cloud.enabled ? cloud.state() : { ready: true }, guest = cloud.enabled && !st0.ready;
+  const full = !cloud.enabled || (!!st0.ready && !st0.isJoven);
+  const OPEN = ["difusion", "musica", "oracion"];
   const FILES = [
     ["revistas", "Revistas", "#1351a4", "Nuestra Revista de este año y las de años anteriores.", [row("#/encuentros", "book", "Nuestra Revista", "Los encuentros del grupo, semana a semana"), archivoHTML()], null],
     ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
@@ -1036,7 +1041,7 @@ function viewMaterials() {
       row("#/difusion", "sparkle", "Estudio de difusión", "Marco de foto, historias, invitaciones, fondos de pantalla y stickers"),
     ]],
     ["musica", "Música", "#ffba03", "Para animar las celebraciones.", [
-      row("#/cancionero", "book", "Cancionero Ágape", "Acordes, cambio de tono, proyección y repertorios"),
+      row("#/cancionero", "book", "Cancionero Ágape", guest ? "Las canciones originales de Ágape. Con tu cuenta, el cancionero completo." : "Acordes, cambio de tono, proyección y repertorios"),
     ]],
     ["oracion", "Oración", "#1351a4", "Para rezar solos o en el encuentro.", [
       row("#/oremus", "book", "Oremus", "Nuestras oraciones y las de siempre, en un solo lugar"),
@@ -1044,14 +1049,16 @@ function viewMaterials() {
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
+      row("#/credenciales", "award", "Credenciales", "Tarjetas de solapa con foto, nombre y parroquia para los encuentros"),
       row("#/imprimir/curso", "print", "La formación de dirigentes", "El curso completo o un módulo, como cuaderno de trabajo"),
       row("#/encuentros", "print", "Nuestra Revista", "Se imprimen completas o solo el encuentro de la semana"),
       row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
       ...prints.map(guide),
     ]],
-  ].filter((f) => f[4].length);
-  onAfterRender(() => loadArchivo().then((ch) => { const b = $("#fiArchivo"); if (ch && b) b.outerHTML = archivoHTML(); }));
-  return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(m.title)}</h1><p>${esc(m.desc)}</p></header>
+  ].filter((f) => f[4].length && (full || OPEN.includes(f[0])));
+  if (full) onAfterRender(() => loadArchivo().then((ch) => { const b = $("#fiArchivo"); if (ch && b) b.outerHTML = archivoHTML(); }));
+  return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(full ? m.title : "Materiales")}</h1><p>${esc(full ? m.desc : "Para invitar a otros, cantar, rezar y conocer más nuestra fe.")}</p></header>
+    ${guest ? `<p class="fi-hint">Con tu cuenta se abren también las revistas, presentaciones, guías y dinámicas del equipo.</p>` : ""}
     <p class="fi-hint">Toca un fichero para abrirlo.</p>
     <div class="fi-grid">${FILES.map(([k, t, col, d, items, count], i) => `
       <details class="fichero" id="fi-${k}" style="--fi:${col}" ${fiOpen.has(k) ? "open" : ""} data-fi="${k}">
@@ -1179,7 +1186,10 @@ const libMeta = (url) => { const u = url.toLowerCase(); return LIB_META.find(([k
 const cleanSource = (src) => String(src || "").replace(/\s+\d[\d\s,.\-–y]*$/, "").replace(/\s*\(.*?\)\s*$/, "").trim();
 function buildLibrary() {
   const byUrl = new Map();
-  S.content().courses.forEach((course) => course.phases.forEach((ph, pi) => ph.sessions.forEach((se) => {
+  // La biblioteca junta los documentos oficiales que citan todos los cursos (también los ocultos o
+  // dirigidos a otros roles): son enlaces públicos, útiles para cualquiera.
+  const all = (S.isPreview() ? S.getDraft() : S.publishedContent()) || S.content();
+  ((all && all.courses) || []).forEach((course) => course.phases.forEach((ph, pi) => ph.sessions.forEach((se) => {
     const cite = { course: course.id, courseTitle: course.title, pi, id: se.id, title: se.title };
     const add = (url, title, note, weight) => {
       if (!url || !/^https?:\/\//.test(url)) return;

@@ -38,16 +38,12 @@ const myName = () => ((cloud.enabled && cloud.state().account?.name) || S.getPro
 // Vista
 // ---------------------------------------------------------------------------
 export async function view() {
-  const s = cloud.enabled ? cloud.state() : { ready: true };
-  if (cloud.enabled && !s.ready) return `<header class="page-head"><span class="eyebrow">Difusión</span><h1>Estudio de <em>difusión</em></h1>
-    <p>Marcos de foto, historias, invitaciones y stickers de Ágape. Es para quienes tienen cuenta.</p></header>
-    <div class="card" style="margin-top:16px"><a class="btn btn-primary" href="#/perfil">${icon("users")} Ingresar</a></div>`;
   const today = isoDay(new Date());
   events = (await cloud.listAgenda().catch(() => [])).map((e) => ({ ...e, when: nextOn(e, today) || e.date })).filter((e) => e.when && e.when >= today).sort((a, b) => a.when.localeCompare(b.when)).slice(0, 12);
   if (!st.ev && events[0]) st.ev = events[0].id;
   ctx.onAfterRender(() => { E.ready().then(paint); });
   return `<header class="page-head"><span class="eyebrow">Difusión</span><h1>Estudio de <em>difusión</em></h1>
-    <p>Arma piezas con la identidad de Ágape para tus Estados, historias y grupos. Se hacen en tu teléfono y las descargas o compartes al tiro.</p></header>
+    <p>Arma piezas con la identidad de Ágape para tus Estados, historias y grupos. Se hacen en tu teléfono y las descargas o compartes al instante.</p></header>
     <div class="dif-tabs seg" role="tablist" aria-label="Qué quieres hacer">
       ${[["piezas", "Historias y posts"], ["marco", "Marco de foto"], ["stickers", "Stickers"], ["fondos", "Fondos de pantalla"]].map(([k, l]) => `<label><input type="radio" name="difTab" value="${k}" ${st.tab === k ? "checked" : ""}><span>${l}</span></label>`).join("")}
     </div>
