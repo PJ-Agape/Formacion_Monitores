@@ -716,53 +716,66 @@ function eligibleGuides() {
   return (people?.users || []).filter((u) => guideRoles(u) && meetsReq(u, "dirigente"))
     .sort((a, b) => String(a.name).localeCompare(String(b.name), "es"));
 }
+// Asignar es «pintar»: eliges un dirigente arriba y tocas a los jóvenes que acompañará. Cada toque se guarda solo.
+let asgSel = "", asgMode = "guia", asgFilter = "", famSyncT = null;
+const ASG_COL = ["#1351a4", "#ef591c", "#0f7a52", "#c98a00", "#8a3fb0", "#0b6fb3", "#b4233c", "#3d6b2a"];
+const ini = (n) => String(n || "?").trim().split(/\s+/).slice(0, 2).map((w) => w.charAt(0).toUpperCase()).join("");
+const first = (n) => String(n || "").split(" ")[0];
 async function asignarView() {
   try { await loadPeople(); await loadJovenes(); } catch (e) { return `<div class="note warn">No se pudieron cargar los datos (${esc(e.code || e.message)}).</div>`; }
+  asg = null;
   const guides = eligibleGuides();
   const faltan = (people?.users || []).filter((u) => guideRoles(u) && !meetsReq(u, "dirigente"));
   const reqD = reqCourses("dirigente");
+  const all = (people?.users || []), nameOf = (uid) => { const u = all.find((x) => x.uid === uid); return u ? u.name || u.email : ""; };
+  const color = Object.fromEntries(guides.map((g, i) => [g.uid, ASG_COL[i % ASG_COL.length]]));
+  if (asgSel && !guides.some((g) => g.uid === asgSel)) asgSel = "";
   const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
-  if (!asg) asg = Object.fromEntries(js.map((j) => [j.id, { guia: j.guia || "", guia2: j.guia2 || "" }]));
-  const cur = (j) => asg[j.id] || { guia: "", guia2: "" };
-  const count = {}; js.forEach((j) => { const a = cur(j); [a.guia, a.guia2].filter(Boolean).forEach((g) => (count[g] = (count[g] || 0) + 1)); });
-  const changed = js.filter((j) => (j.guia || "") !== cur(j).guia || (j.guia2 || "") !== cur(j).guia2).length;
-  const sel = (j, k) => { const v = cur(j)[k], extra = v && !guides.some((g) => g.uid === v) ? (people?.users || []).find((u) => u.uid === v) : null;
-    return `<select class="select" data-asg="${esc(j.id)}" data-k="${k}"><option value="">${k === "guia" ? "— Sin asignar —" : "— Sin apoyo —"}</option>${guides.map((g) => `<option value="${esc(g.uid)}" ${v === g.uid ? "selected" : ""}>${esc(g.name || g.email)}</option>`).join("")}${extra ? `<option value="${esc(extra.uid)}" selected>${esc(extra.name || extra.email)} (le falta formación)</option>` : ""}</select>`; };
+  const sin = js.filter((j) => !j.guia).length;
+  const cnt = (uid, k) => js.filter((j) => j[k] === uid).length;
+  const list = js.filter((j) => asgFilter !== "sin" || !j.guia);
+  const chip = (j) => {
+    const on = asgSel && j[asgMode] === asgSel, g = j.guia, g2 = j.guia2;
+    return `<button class="asg-j${on ? " on" : ""}${g ? "" : " free"}" data-action="aAsgTap" data-id="${esc(j.id)}" style="${on ? `--gc:${color[asgSel]}` : g && color[g] ? `--gc:${color[g]}` : ""}" aria-pressed="${!!on}">
+      <strong>${esc(j.nombre)}</strong>
+      <span class="asg-tags">${g ? `<span class="asg-tag" style="--gc:${color[g] || "#7f90aa"}">${esc(first(nameOf(g)))}</span>` : `<span class="asg-tag none">Sin dirigente</span>`}${g2 ? `<span class="asg-tag sup" style="--gc:${color[g2] || "#7f90aa"}">apoyo: ${esc(first(nameOf(g2)))}</span>` : ""}</span></button>`;
+  };
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Asignar <em>jóvenes</em></h1>
-    <p>Cada joven puede tener un dirigente a cargo y, si hace falta, un segundo de apoyo. ${reqD.length ? `Aparecen los dirigentes, coordinadores y administradores que tienen aprobado ${reqD.map((c) => `«${esc(c.title)}»`).join(" y ")}.` : "Aparecen todos los dirigentes, coordinadores y administradores con cuenta activa."} <a href="#/admin/itinerarios">Cambiar la formación requerida</a>.</p></header>
-  ${faltan.length && reqD.length ? `<div class="note" style="margin-bottom:12px">Les falta la formación requerida: ${faltan.map((u) => esc((u.name || u.email).split(" ").slice(0, 2).join(" "))).join(", ")}.</div>` : ""}
-  ${!guides.length ? `<div class="note warn">Todavía no hay dirigentes disponibles para asignar${reqD.length ? " (con la formación requerida aprobada)" : ""}.</div>` : `
-  <div class="card asg-load"><b>Carga de cada dirigente</b><div class="can-chips" style="margin-top:8px">${guides.map((g) => `<span class="chip ${count[g.uid] ? "accent" : ""}">${esc((g.name || g.email).split(" ")[0])} · ${count[g.uid] || 0}</span>`).join("")}</div></div>
-  <div class="row-wrap" style="gap:8px">
-    <button class="btn btn-gold" data-action="aAsgSuggest">✨ Sugerir reparto</button>
-    <span class="xs muted" style="flex:1;min-width:200px">Reparte parejo, por etapa, a quienes aún no tienen dirigente. No cambia lo ya asignado. Revisa y luego guarda.</span>
-    <button class="btn btn-ghost btn-sm" data-action="aAsgReset" ${changed ? "" : "disabled"}>Deshacer cambios</button>
-    <button class="btn btn-primary" data-action="aAsgSave" ${changed ? "" : "disabled"}>${icon("check")} Guardar${changed ? ` (${changed})` : ""}</button>
+    <p><b>1.</b> Elige un dirigente. <b>2.</b> Toca a los jóvenes que acompañará. Se guarda solo; vuelve a tocar para quitarlo.</p></header>
+  ${reqD.length ? `<p class="xs muted" style="margin:-6px 0 12px">Solo aparecen quienes tienen aprobado ${reqD.map((c) => `«${esc(c.title)}»`).join(" y ")}.${faltan.length ? ` Les falta: ${faltan.map((u) => esc(first(u.name || u.email))).join(", ")}.` : ""} <a href="#/admin/itinerarios">Cambiar</a></p>` : ""}
+  ${!guides.length ? `<div class="note warn">Todavía no hay dirigentes disponibles para asignar.</div>` : `
+  <div class="asg-guides" role="radiogroup" aria-label="Dirigente">${guides.map((g) => `<button class="asg-g${asgSel === g.uid ? " on" : ""}" role="radio" aria-checked="${asgSel === g.uid}" data-action="aAsgPick" data-uid="${esc(g.uid)}" style="--gc:${color[g.uid]}">
+      <span class="asg-av">${esc(ini(g.name || g.email))}</span><span class="asg-gn"><b>${esc(String(g.name || g.email).split(" ").slice(0, 2).join(" "))}</b><small>${cnt(g.uid, "guia")} a cargo${cnt(g.uid, "guia2") ? ` · ${cnt(g.uid, "guia2")} de apoyo` : ""}</small></span></button>`).join("")}</div>
+  <div class="asg-bar">
+    <div class="seg asg-mode" role="radiogroup" aria-label="Cómo lo acompaña">${[["guia", "A cargo"], ["guia2", "De apoyo"]].map(([k, l]) => `<label><input type="radio" name="asgMode" value="${k}" ${asgMode === k ? "checked" : ""}><span>${l}</span></label>`).join("")}</div>
+    <div class="row-wrap" style="gap:6px"><button class="chip ${asgFilter ? "" : "accent"}" data-action="aAsgFilter" data-f="">Todos · ${js.length}</button><button class="chip ${asgFilter === "sin" ? "accent" : ""}" data-action="aAsgFilter" data-f="sin">Sin dirigente · ${sin}</button></div>
+    <span class="spacer"></span>
+    ${sin ? `<button class="btn btn-sm btn-soft" data-action="aAsgSuggest">${icon("sparkle")} Repartir a los ${sin} sin dirigente</button>` : ""}
   </div>
-  ${["ingreso", "madurez", "aspirante"].map((e) => { const xs = js.filter((j) => j.etapa === e).sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es"));
-    return xs.length ? `<section class="card asg-sec"><h3>${ETAPA_L[e]}${e === "aspirante" ? " (predirigentes)" : ""} · ${xs.length}</h3>
-      <div class="asg-list">${xs.map((j) => `<div class="asg-row ${(j.guia || "") !== cur(j).guia || (j.guia2 || "") !== cur(j).guia2 ? "changed" : ""}"><b>${esc(j.nombre)}</b>
-        <label><span class="xs muted">A cargo</span>${sel(j, "guia")}</label><label><span class="xs muted">Apoyo (opcional)</span>${sel(j, "guia2")}</label></div>`).join("")}</div></section>` : ""; }).join("")
-    || `<div class="note">No hay jóvenes activos en la lista de Acompañar. <a href="#/acompanar/jovenes">Agrégalos ahí</a>.</div>`}`}
-  <p class="xs muted">La lista de jóvenes es la de Acompañar (con o sin cuenta). Cada dirigente ve a «sus» jóvenes en Acompañar.</p>`;
+  ${asgSel ? `<p class="small asg-hint" style="--gc:${color[asgSel]}">Tocando jóvenes para <b>${esc(nameOf(asgSel))}</b> · ${asgMode === "guia" ? "a cargo" : "de apoyo"}</p>` : `<p class="small muted asg-hint">Elige primero un dirigente arriba.</p>`}
+  ${["ingreso", "madurez", "aspirante"].map((e) => { const xs = list.filter((j) => j.etapa === e).sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es"));
+    return xs.length ? `<section class="asg-sec2"><h3>${ETAPA_L[e]}${e === "aspirante" ? " (predirigentes)" : ""} · ${xs.length}</h3><div class="asg-grid">${xs.map(chip).join("")}</div></section>` : ""; }).join("")
+    || `<div class="note">${asgFilter === "sin" ? "Todos los jóvenes tienen dirigente." : `No hay jóvenes activos en la lista de Acompañar. <a href="#/acompanar/jovenes">Agrégalos ahí</a>.`}</div>`}`}
+  <p class="xs muted" style="margin-top:14px">La lista de jóvenes es la de Acompañar (con o sin cuenta). Cada dirigente ve a «sus» jóvenes en Acompañar, y las familias se arman solas con esta asignación.</p>`;
 }
+// Reparto parejo, por etapa, de los jóvenes sin dirigente a cargo. Devuelve { idJoven: uidDirigente }.
 function suggestAsg() {
   const guides = eligibleGuides().map((g) => g.uid);
-  if (!guides.length) return 0;
+  const out = {};
+  if (!guides.length) return out;
   const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
   const total = {}, byStage = {};
   guides.forEach((g) => (total[g] = 0));
-  js.forEach((j) => { const a = asg[j.id]; if (a && a.guia && total[a.guia] != null) { total[a.guia]++; byStage[j.etapa + a.guia] = (byStage[j.etapa + a.guia] || 0) + 1; } });
-  let n = 0;
+  js.forEach((j) => { if (j.guia && total[j.guia] != null) { total[j.guia]++; byStage[j.etapa + j.guia] = (byStage[j.etapa + j.guia] || 0) + 1; } });
   ["ingreso", "madurez", "aspirante"].forEach((e) => {
-    js.filter((j) => j.etapa === e && !(asg[j.id] && asg[j.id].guia)).sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es")).forEach((j) => {
+    js.filter((j) => j.etapa === e && !j.guia).sort((a, b) => String(a.nombre).localeCompare(String(b.nombre), "es")).forEach((j) => {
       // menos jóvenes de esta etapa primero; a igualdad, menos jóvenes en total
       const g = [...guides].sort((a, b) => (byStage[e + a] || 0) - (byStage[e + b] || 0) || total[a] - total[b])[0];
-      asg[j.id] = { ...(asg[j.id] || { guia2: "" }), guia: g }; total[g]++; byStage[e + g] = (byStage[e + g] || 0) + 1; n++;
+      out[j.id] = g; total[g]++; byStage[e + g] = (byStage[e + g] || 0) + 1;
     });
   });
-  return n;
+  return out;
 }
 
 async function personView(uid) {
@@ -1086,6 +1099,7 @@ function bindActions() {
   document.addEventListener("change", (e) => {
     const t = e.target;
     if (t.name === "peopleMode") { peopleMode = t.value; keepPeople = true; api.render(); return; }
+    if (t.name === "asgMode") { asgMode = t.value === "guia2" ? "guia2" : "guia"; keepPeople = true; api.render(); return; }
     if (t.dataset && t.dataset.asg && asg) {
       const a = asg[t.dataset.asg] = asg[t.dataset.asg] || { guia: "", guia2: "" };
       a[t.dataset.k] = t.value;
@@ -1128,18 +1142,39 @@ function bindActions() {
 
   // Seguimiento de dirigentes
   A.aPeopleRefresh = async () => { await loadPeople(true); api.render(); toast("Datos actualizados"); };
-  A.aAsgSuggest = () => { const n = suggestAsg(); api.render(); toast(n ? `Sugerí dirigente para ${n} joven${n === 1 ? "" : "es"}. Revisa y guarda.` : "Todos ya tienen dirigente a cargo."); };
-  A.aAsgReset = () => { asg = null; api.render(); };
-  A.aAsgSave = async () => {
+  // Guarda a cargo / apoyo de un joven y, al rato, deja las familias al día.
+  const asgWrite = async (j, guia, guia2) => {
     const names = Object.fromEntries((people?.users || []).map((u) => [u.uid, u.name || u.email]));
-    const ch = (jovenesAll || []).filter((j) => asg[j.id] && ((j.guia || "") !== asg[j.id].guia || (j.guia2 || "") !== asg[j.id].guia2));
-    try {
-      await Promise.all(ch.map((j) => { const a = asg[j.id], g2 = a.guia2 && a.guia2 !== a.guia ? a.guia2 : "";
-        return api.cloud.patchJoven(j.id, { nombre: j.nombre, etapa: j.etapa, guia: a.guia, guiaNombre: a.guia ? names[a.guia] || "" : "", guia2: g2, guia2Nombre: g2 ? names[g2] || "" : "" }); }));
-      asg = null; await loadJovenes(true);
-      const nf = await familiasAg.sync(jovenesAll).catch(() => 0); // las familias toman a sus integrantes de esta asignación
-      api.render(); toast(`Asignación guardada (${ch.length})${nf ? ` · ${nf} familia${nf === 1 ? "" : "s"} al día` : ""}`, "ok");
-    } catch (e) { console.warn(e); toast("No se pudo guardar. Revisa la conexión o las reglas de Firestore.", ""); }
+    const g2 = guia2 && guia2 !== guia ? guia2 : "";
+    const prev = { guia: j.guia || "", guia2: j.guia2 || "", guiaNombre: j.guiaNombre || "", guia2Nombre: j.guia2Nombre || "" };
+    Object.assign(j, { guia, guiaNombre: guia ? names[guia] || "" : "", guia2: g2, guia2Nombre: g2 ? names[g2] || "" : "" });
+    try { await api.cloud.patchJoven(j.id, { nombre: j.nombre, etapa: j.etapa, guia: j.guia, guiaNombre: j.guiaNombre, guia2: j.guia2, guia2Nombre: j.guia2Nombre }); }
+    catch (e) { Object.assign(j, prev); throw e; }
+    clearTimeout(famSyncT);
+    famSyncT = setTimeout(() => familiasAg.sync(jovenesAll).catch(() => 0), 2500); // las familias toman a sus integrantes de esta asignación
+  };
+  const asgRender = () => { const y = window.scrollY; keepPeople = true; Promise.resolve(api.render()).then(() => window.scrollTo(0, y)); };
+  A.aAsgPick = (el) => { asgSel = asgSel === el.dataset.uid ? "" : el.dataset.uid; asgRender(); };
+  A.aAsgFilter = (el) => { asgFilter = el.dataset.f || ""; asgRender(); };
+  A.aAsgTap = async (el) => {
+    const j = (jovenesAll || []).find((x) => x.id === el.dataset.id); if (!j) return;
+    if (!asgSel) { toast("Primero elige arriba al dirigente", ""); document.querySelector(".asg-guides")?.scrollIntoView({ behavior: "smooth", block: "center" }); return; }
+    let guia = j.guia || "", guia2 = j.guia2 || "";
+    if (asgMode === "guia") { if (guia === asgSel) guia = ""; else { guia = asgSel; if (guia2 === asgSel) guia2 = ""; } }
+    else { if (guia2 === asgSel) guia2 = ""; else if (guia === asgSel) { toast("Ya lo acompaña a cargo", ""); return; } else guia2 = asgSel; }
+    try { await asgWrite(j, guia, guia2); asgRender(); }
+    catch (e) { console.warn(e); toast("No se pudo guardar. Revisa la conexión.", ""); asgRender(); }
+  };
+  A.aAsgSuggest = async (el) => {
+    const plan = suggestAsg(), ids = Object.keys(plan);
+    if (!ids.length) { toast("Todos ya tienen dirigente a cargo."); return; }
+    const names = Object.fromEntries((people?.users || []).map((u) => [u.uid, first(u.name || u.email)]));
+    const resumen = Object.entries(ids.reduce((a, id) => ((a[plan[id]] = (a[plan[id]] || 0) + 1), a), {})).map(([g, n]) => `${names[g]}: ${n}`).join(", ");
+    if (!confirm(`Repartir ${ids.length} joven${ids.length === 1 ? "" : "es"} sin dirigente, parejo y por etapa:\n\n${resumen}\n\nDespués puedes cambiar a cualquiera tocándolo.`)) return;
+    el.disabled = true;
+    try { for (const id of ids) { const j = jovenesAll.find((x) => x.id === id); await asgWrite(j, plan[id], j.guia2 || ""); } toast(`Listo: ${ids.length} asignado${ids.length === 1 ? "" : "s"}`, "ok"); }
+    catch (e) { console.warn(e); toast("No se pudo terminar el reparto. Revisa la conexión.", ""); }
+    asgRender();
   };
   A.aPeopleCsv = () => peopleCsv();
   A.aInvite = () => openInvite();
