@@ -626,6 +626,28 @@ export async function chatConfig(force) {
   if (!chatCfg || force) chatCfg = { ...CHAT_DEFAULT, ...((await getContent("chat")) || {}) };
   return chatCfg;
 }
+// Nuestra Revista del año: quién la ve mientras se prepara (content/revista, la cambia un administrador).
+// modo: "admin" (solo administradores), "equipo" (dirigentes y equipo) o "todos".
+export const REVISTA_MODOS = ["admin", "equipo", "todos"];
+let revCfg = (() => { try { return JSON.parse(localStorage.getItem("agape_revista") || "null"); } catch { return null; } })();
+let revAt = 0;
+export async function revistaConfig(force) {
+  if (!enabled) return { modo: "todos" };
+  if (force || !revAt || Date.now() - revAt > 5 * 60000) {
+    revAt = Date.now();
+    const c = await getContent("revista");
+    if (c) { revCfg = c; try { localStorage.setItem("agape_revista", JSON.stringify(c)); } catch {} }
+    else if (!revCfg) revCfg = { modo: "admin" };
+  }
+  return revCfg || { modo: "admin" };
+}
+export function revistaVisible() {
+  if (!enabled) return true;
+  const s = state(), modo = (revCfg && revCfg.modo) || "admin";
+  if (s.isAdmin || modo === "todos") return true;
+  return modo === "equipo" && !!s.ready && !s.isJoven && s.role !== "aspirante";
+}
+export async function saveRevistaConfig(data) { await setContent("revista", data); revCfg = data; revAt = Date.now(); try { localStorage.setItem("agape_revista", JSON.stringify(data)); } catch {} }
 // Campanita: qué tipos de novedades están activos (content/novedades, lo cambia un administrador)
 let novCfg = null;
 export async function novConfig(force) { if (!novCfg || force) novCfg = (await getContent("novedades")) || {}; return novCfg; }

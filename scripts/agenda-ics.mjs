@@ -32,6 +32,16 @@ async function agenda() {
   return rows.filter((e) => /^\d{4}-\d{2}-\d{2}$/.test(e.date || "") && e.title);
 }
 
+// Nuestra Revista oculta (content/revista con modo distinto de «todos»): sus encuentros no van al calendario público.
+async function revistaAbierta() {
+  try {
+    const r = await fetch(`https://firestore.googleapis.com/v1/projects/${PROJECT}/databases/(default)/documents/content/revista?key=${KEY}`);
+    if (!r.ok) return false;
+    const j = await r.json();
+    return (JSON.parse(val(j.fields?.json) || "null") || {}).modo === "todos";
+  } catch { return false; }
+}
+
 // --- Camino Ágape (mismo criterio que la Agenda de la app) ---
 function camino() {
   if (!existsSync("data/encuentros.json")) return [];
@@ -94,6 +104,7 @@ function write(out, list, name, desc, fam) {
   if (strip(prev) !== strip(ics)) { writeFileSync(out, ics); console.log(`${out}: ${list.length} eventos`); }
   else console.log(`${out} sin cambios`);
 }
-write(OUT, [...own, ...camino()].sort(byDate), "Agenda Ágape", "Agenda oficial de la Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", false);
+const conCamino = await revistaAbierta();
+write(OUT, [...own, ...(conCamino ? camino() : [])].sort(byDate), "Agenda Ágape", "Agenda oficial de la Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", false);
 // Calendario para familias: solo los eventos marcados «Visible para familias».
 write(process.argv[3] || "familias.ics", own.filter((e) => e.familias === true).sort(byDate), "Ágape · Familias", "Actividades de la Pastoral Juvenil Ágape para las familias · Parroquia San Miguel de Yungay", true);

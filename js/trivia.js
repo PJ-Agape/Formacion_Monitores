@@ -4,6 +4,9 @@
 // Se juega en el teléfono; el mejor puntaje queda solo en este dispositivo.
 import { esc, icon, fetchJSON } from "./util.js";
 import * as S from "./store.js";
+import { revistaVisible } from "./cloud.js";
+// Mientras Nuestra Revista está oculta, la trivia no pregunta por el Camino Ágape ni por Mi Camino.
+const sinRevista = (l) => (revistaVisible() ? l : l.filter((x) => !/Mi Camino/.test(x[0])));
 
 let ctx = null; // { actions, onAfterRender, onLeave }
 export function setup(c) { ctx = c; registerActions(); }
@@ -128,8 +131,8 @@ const stop = () => { if (timer) clearInterval(timer); timer = null; };
 async function pool(cat) {
   if (cat === "camino") return [...BANCO.camino, ...shuffle(await caminoDyn()).slice(0, 12)]; // mitad y mitad
   if (cat === "curso") return cursoDyn();
-  if (cat === "mix") return [...BANCO.comunidad, ...BANCO.camino, ...BANCO.app, ...BANCO.fe, ...(await caminoDyn()).slice(0, 12), ...shuffle(cursoDyn()).slice(0, 6)];
-  return BANCO[cat] || [];
+  if (cat === "mix") return sinRevista([...BANCO.comunidad, ...(revistaVisible() ? BANCO.camino : []), ...BANCO.app, ...BANCO.fe, ...(await caminoDyn()).slice(0, 12), ...shuffle(cursoDyn()).slice(0, 6)]);
+  return sinRevista(BANCO[cat] || []);
 }
 async function start(cat) {
   const all = await pool(cat);
@@ -161,7 +164,7 @@ export { triviaArt as artSvg } from "./juegos-arte.js";
 import { triviaArt as artSvg } from "./juegos-arte.js";
 
 function setupHTML() {
-  const cats = Object.entries(TEMAS).filter(([k]) => k !== "curso" || hasCurso());
+  const cats = Object.entries(TEMAS).filter(([k]) => (k !== "curso" || hasCurso()) && (k !== "camino" || revistaVisible()));
   return `<a class="imp-back" href="#/juegos">${icon("left")} Juegos</a>
   <header class="imp-hero tv-hero">
     <span class="imp-mask" aria-hidden="true">${artSvg()}</span>

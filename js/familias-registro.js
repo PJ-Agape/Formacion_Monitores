@@ -139,7 +139,7 @@ function encBox(f, fecha) {
   const et = ETAPAS[f.etapa], x = (e.etapas || {})[f.etapa] || {};
   return `<div class="fr-enc"><span class="eyebrow">Encuentro N° ${e.n} del año · ${esc(e.domingo)}</span>
     <h3>${esc(x.titulo || e.tema)}</h3><p class="small muted">Tema del grupo: <b>${esc(e.tema)}</b> · 📖 ${esc(e.evangelio?.ref || "")}</p>
-    ${et ? `<a class="chip-link" href="${revistaHref(f.etapa, e.n)}">📰 Abrir en la Revista ${esc(et[0])} ${icon("right")}</a>` : `<span class="xs muted">Define la etapa de la familia para enlazar su revista.</span>`}</div>`;
+    ${et && cloud.revistaVisible() ? `<a class="chip-link" href="${revistaHref(f.etapa, e.n)}">📰 Abrir en la Revista ${esc(et[0])} ${icon("right")}</a>` : `<span class="xs muted">Define la etapa de la familia para enlazar su revista.</span>`}</div>`;
 }
 function paintEval(f, fecha) {
   const e = encDe(fecha), year = (D.cal && D.cal.year) || (e && e.date.getFullYear());

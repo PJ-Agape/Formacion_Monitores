@@ -152,7 +152,7 @@ export function viewAgenda(day) {
     <p>Encuentros, celebraciones y actividades de la pastoral, siempre al día. Lo que está aquí es lo oficial.</p></header>
   <div class="row-wrap" style="margin:14px 0 4px">
     ${admin ? `<button class="btn btn-primary btn-sm" data-action="agNew">${icon("plus")} Nuevo evento</button>` : ""}
-    <label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar los encuentros del grupo</label>
+    ${camino.length ? `<label class="chip ag-toggle"><input type="checkbox" id="agCamino" ${showCamino ? "checked" : ""}> Mostrar los encuentros del grupo</label>` : ""}
     <span class="spacer"></span><button class="btn btn-sm btn-gold" data-action="agSub">${icon("grid")} Suscribirme al calendario</button>
   </div>
   <div class="ag-layout">

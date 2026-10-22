@@ -123,7 +123,7 @@ function card(f) {
     <div class="fam-top">${famIcon(f)}${yo ? `<span class="fam-yo">Tu familia</span>` : ""}
       ${st().isStaff ? `<button class="fam-edit" data-action="famEdit" data-id="${f.id}" aria-label="Armar la familia ${f.i + 1}">${icon("edit")}</button>` : ""}</div>
     <h3 class="fam-name">${f.nombre ? esc(f.nombre) : `<span class="muted">Familia ${f.i + 1}</span>`}</h3>
-    ${ETAPAS[f.etapa] ? `<div class="fam-etapa"><span class="fam-et" style="--ec:${ETAPAS[f.etapa][2]}">${esc(ETAPAS[f.etapa][0])}</span><a class="chip-link" href="${revistaHref(f.etapa)}">📰 Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</a></div>${encHTML(f, calData)}` : ""}
+    ${ETAPAS[f.etapa] ? `<div class="fam-etapa"><span class="fam-et" style="--ec:${ETAPAS[f.etapa][2]}">${esc(ETAPAS[f.etapa][0])}</span>${cloud.revistaVisible() ? `<a class="chip-link" href="${revistaHref(f.etapa)}">📰 Revista ${esc(ETAPAS[f.etapa][0])} ${icon("right")}</a>` : ""}</div>${encHTML(f, calData)}` : ""}
     ${!f.nombre ? `<p class="xs muted">${mine(f) ? "Aún no tiene nombre: ¡pónganle uno entre todos, con su ícono!" : st().isStaff ? "Aún no tiene nombre. Ármala con el lápiz." : "Aún no tiene nombre."}</p>` : ""}
     ${mine(f) && !f.nombre ? `<a class="btn btn-sm btn-gold" href="#/nuestras-familias/${f.id}">✨ Elegir nombre e ícono</a>` : ""}
     <div class="fam-sec"><span class="fam-k">Dirigente${dir.length === 1 ? "" : "s"} a cargo</span>

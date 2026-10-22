@@ -112,7 +112,7 @@ function navGroups() {
       ["", fam ? `#/nuestras-familias/${fam}/registro` : "#/nuestras-familias", "Registro de mi familia", "grid", cloudOn && !C, true],
       ["acompanar", "#/admin/acompanar", "Acompañar y pasaportes", "check", cloudOn],
       ["honor", "#/admin/honor", "Cuadro de honor", "award", cloudOn && C],
-      ["resumen", "#/admin/resumen", "Estadísticas e intención del Papa", "grid", A],
+      ["resumen", "#/admin/resumen", "Ajustes, estadísticas e intención del Papa", "grid", A],
     ]],
     ["Comunicación", [
       ["portada", "#/admin/portada", "Portada de Inicio", "sparkle", cloudOn && C],
@@ -207,6 +207,18 @@ async function doLogin(pass) {
 // ---------------------------------------------------------------------------
 // Resumen
 // ---------------------------------------------------------------------------
+// Nuestra Revista del año: quién la ve mientras el equipo la prepara.
+async function revistaCard() {
+  const c = await api.cloud.revistaConfig(true).catch(() => ({ modo: "admin" }));
+  const admin = api.cloud.state().isAdmin, modo = c.modo || "admin";
+  const O = [["admin", "Oculta", "Solo los administradores la ven, para prepararla."], ["equipo", "Para el equipo", "La ven los dirigentes y el equipo. Los jóvenes todavía no."], ["todos", "Para todos", "Se abre Mi Camino para los jóvenes, el desafío de la semana y los encuentros en la agenda."]];
+  return `<section class="card" id="revAdmin"><h3>Nuestra Revista: quién la ve</h3>
+    <p class="muted small" style="margin-top:4px">Mientras está oculta no aparece en Mi Camino, Materiales, la agenda, el desafío de la semana, la trivia ni la página para familias.</p>
+    <div class="nov-tipos">${O.map(([k, t, dd]) => `<label class="nov-tipo"><input type="radio" name="revModo" value="${k}" ${modo === k ? "checked" : ""} ${admin ? "" : "disabled"}>
+      <span><b>${esc(t)}</b><small>${esc(dd)}</small></span></label>`).join("")}</div>
+    ${admin ? `<button class="btn btn-primary btn-sm" data-action="aRevSave" style="margin-top:10px">Guardar</button>` : `<p class="xs muted" style="margin-top:8px">Solo un administrador puede cambiar esto.</p>`}
+  </section>`;
+}
 async function summaryView(d) {
   const phases = d.courses.reduce((a, c) => a + c.phases.length, 0);
   const sessions = d.courses.reduce((a, c) => a + c.phases.reduce((b, p) => b + p.sessions.length, 0), 0);
@@ -219,6 +231,7 @@ async function summaryView(d) {
   ${cloudOn ? await followSummary() : ""}
   ${cloudOn ? await visitsCard() : ""}
   ${cloudOn ? await grupo.adminHTML() : ""}
+  ${cloudOn ? await revistaCard() : ""}
   ${cloudOn ? await novedades.adminHTML() : ""}
   ${cloudOn ? await papa.adminHTML() : ""}
   ${legacy ? `<div class="card" style="border-color:var(--gold)">
@@ -1382,6 +1395,11 @@ Te recomendamos partir por «Bienvenido a agAPPe», en Formación: es un recorri
     S.saveDraft(d);
     download("contenido.json", JSON.stringify(d, null, 2));
     toast("Descargado. Ahora súbelo a la carpeta data en GitHub.", "ok", 4500);
+  };
+  A.aRevSave = async () => {
+    const modo = document.querySelector("input[name=revModo]:checked")?.value || "admin";
+    try { await api.cloud.saveRevistaConfig({ modo }); toast(modo === "todos" ? "Nuestra Revista quedó abierta para todos" : modo === "equipo" ? "Nuestra Revista quedó visible para el equipo" : "Nuestra Revista quedó oculta", "ok"); }
+    catch (err) { console.warn(err); toast("No se pudo guardar", ""); }
   };
   A.aImportLegacy = () => commit((d) => {
     const l = S.legacyContent();

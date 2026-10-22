@@ -3,7 +3,7 @@
 import { CONFIG } from "./config.js";
 import * as S from "./store.js";
 import * as cloud from "./cloud.js";
-import { esc, rich, plain, icon, toast, initials } from "./util.js";
+import { esc, rich, plain, icon, toast, initials, setRevistaGate } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
 import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
@@ -162,6 +162,7 @@ async function renderNow() {
   if (!S.content()) return; // aún cargando: el arranque dibuja apenas termina
   S.setPreviewOpen(cloud.enabled && !!cloud.viewingAs());
   const path = decodeURIComponent(location.hash.replace(/^#/, "")) || "/";
+  await cloud.revistaConfig().catch(() => null); // quién ve Nuestra Revista (se guarda por 5 minutos)
   let match = null, fn = viewNotFound, section = "";
   for (const [re, f, sec] of routes) {
     const m = path.match(re);
@@ -179,9 +180,11 @@ async function renderNow() {
   // Los cursos abiertos (como «Bienvenido a agAPPe») los recorren todos: jóvenes y visitantes sin cuenta.
   const cursoAbierto = section === "itinerario" && !/^\/(constancia|cuaderno)$/.test(path) && S.hasVisibleCourse();
   if (cloud.enabled && cloud.state().isJoven && ((section === "itinerario" && !cursoAbierto && path !== "/cuaderno") || section === "comunidad" || recursos)) fn = viewSoloEquipo;
+  // Nuestra Revista (y Mi Camino, que sale de ella) quedan ocultas mientras el equipo la prepara.
+  if (/^\/(encuentros|mi-camino|archivo)(\/|$)/.test(path) && !cloud.revistaVisible()) fn = viewRevistaPronto;
   // Cursos en revisión: si todos están ocultos, el curso no se abre (salvo para administradores).
   if (section === "itinerario" && !/^\/(constancia|cuaderno)$/.test(path) && !S.hasVisibleCourse() && !(cloud.enabled && !cloud.state().ready)) fn = viewEnRevision;
-  if (cloud.enabled && ((section === "itinerario" && !cursoAbierto) || section === "muro" || recursos) && !cloud.state().ready) fn = () => viewLogin(recursos ? "recursos" : section === "muro" ? "muro" : "curso");
+  if (cloud.enabled && ((section === "itinerario" && !cursoAbierto) || section === "muro" || recursos) && !cloud.state().ready && fn !== viewRevistaPronto) fn = () => viewLogin(recursos ? "recursos" : section === "muro" ? "muro" : "curso");
   document.body.classList.toggle("is-admin", section === "admin");
   applyTheme();
   renderChrome(section);
@@ -1046,7 +1049,7 @@ function viewMaterials() {
   const full = !cloud.enabled || (!!st0.ready && !st0.isJoven);
   const OPEN = ["difusion", "musica", "oracion"];
   const FILES = [
-    ["revistas", "Revistas", "#1351a4", "Nuestra Revista de este año y las de años anteriores.", [row("#/encuentros", "book", "Nuestra Revista", "Los encuentros del grupo, semana a semana"), archivoHTML()], null],
+    ...(cloud.revistaVisible() ? [["revistas", "Revistas", "#1351a4", "Nuestra Revista de este año y las de años anteriores.", [row("#/encuentros", "book", "Nuestra Revista", "Los encuentros del grupo, semana a semana"), archivoHTML()], null]] : []),
     ["presentaciones", "Presentaciones", "#ef591c", "Para proyectar a pantalla completa.", [
       row("presentaciones/se-puente.html", "sparkle", "Sé puente", "Para invitar a futuros dirigentes al curso", true),
       row("presentaciones/el-arte-de-encontrarnos.html", "grid", "El Arte de Encontrarnos", "Para el consejo pastoral, el párroco y las familias", true),
@@ -1069,11 +1072,11 @@ function viewMaterials() {
     ["imprimir", "Para imprimir", "#fde0d2", "Listos para llevar en papel.", [
       row("#/credenciales", "award", "Credenciales", "Tarjetas de solapa con foto, nombre y parroquia para los encuentros"),
       row("#/imprimir/curso", "print", "La formación de dirigentes", "El curso completo o un módulo, como cuaderno de trabajo"),
-      row("#/encuentros", "print", "Nuestra Revista", "Se imprimen completas o solo el encuentro de la semana"),
+      cloud.revistaVisible() ? row("#/encuentros", "print", "Nuestra Revista", "Se imprimen completas o solo el encuentro de la semana") : "",
       row("#/cancionero", "print", "Cancionero en PDF", "Desde el cancionero: Exportar → PDF"),
       ...prints.map(guide),
     ]],
-  ].filter((f) => f[4].length && (full || OPEN.includes(f[0])));
+  ].map((f) => { f[4] = f[4].filter(Boolean); return f; }).filter((f) => f[4].length && (full || OPEN.includes(f[0])));
   if (full) onAfterRender(() => loadArchivo().then((ch) => { const b = $("#fiArchivo"); if (ch && b) b.outerHTML = archivoHTML(); }));
   return `<header class="page-head"><span class="eyebrow">Herramientas de la pastoral</span><h1>${esc(full ? m.title : "Materiales")}</h1><p>${esc(full ? m.desc : "Para invitar a otros, cantar, rezar y conocer más nuestra fe.")}</p></header>
     ${guest ? `<p class="fi-hint">Con tu cuenta se abren también las revistas, presentaciones, guías y dinámicas del equipo.</p>` : ""}
@@ -1323,7 +1326,19 @@ function viewEnRevision() {
     <p class="muted" style="margin-top:8px">El equipo está preparando la nueva versión del curso. Tu avance queda guardado.</p>
     <a class="btn btn-primary" style="margin-top:16px" href="#/formacion">Volver a Formación</a></div>`;
 }
+function viewRevistaPronto() {
+  return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
+    ${illus("camino", "")}
+    <h1 class="display" style="font-size:1.6rem;margin-top:10px">Nuestra Revista se está preparando</h1>
+    <p class="muted" style="margin-top:8px">El equipo está armando los encuentros del próximo año. Mientras tanto, te esperamos en la comunidad, el muro y la capilla.</p>
+    <div class="row-wrap" style="justify-content:center;margin-top:16px"><a class="btn btn-primary" href="#/red">Ir a Comunidad</a><a class="btn btn-ghost" href="#/oracion">Ir a la Capilla</a></div></div>`;
+}
 function viewSoloEquipo() {
+  if (!cloud.revistaVisible()) return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
+    ${illus("camino", "")}
+    <h1 class="display" style="font-size:1.6rem;margin-top:10px">Esto es para el equipo de dirigentes</h1>
+    <p class="muted" style="margin-top:8px">Tu espacio está en la comunidad: el muro, el chat, la agenda, los juegos y la capilla.</p>
+    <a class="btn btn-primary" style="margin-top:16px" href="#/red">Ir a Comunidad</a></div>`;
   return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
     ${illus("camino", "")}
     <h1 class="display" style="font-size:1.6rem;margin-top:10px">Esto es para el equipo de dirigentes</h1>
@@ -1539,6 +1554,7 @@ actions.install = async () => {
 wall.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 window.addEventListener("agape:logro", () => toast("🎉 ¡Felicitaciones! Compartimos tu logro en el muro de la comunidad", "ok", 6000));
 camino.setup({ actions, render: () => render(), cloud });
+setRevistaGate(() => cloud.revistaVisible());
 chat.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 avisos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 agenda.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });

@@ -39,7 +39,10 @@ async function eventos() {
     return qs.docs.map((d) => ({ id: d.id, ...d.data() }));
   } catch { return []; }
 }
+// Nuestra Revista puede estar oculta mientras el equipo la prepara: entonces no se muestra aquí.
 async function camino() {
+  const rv = await content("revista");
+  if (!rv || rv.modo !== "todos") return null;
   try { return await fetch(BASE + "data/encuentros.json", { cache: "no-cache" }).then((r) => r.json()); } catch { return null; }
 }
 

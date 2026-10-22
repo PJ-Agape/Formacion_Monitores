@@ -81,7 +81,7 @@ export function perfil() {
   if (["ingreso", "madurez"].includes(s.role)) return "joven";
   return s.role || "dirigente";
 }
-export const helpFor = (who) => T.filter((x) => x.who.includes(who));
+export const helpFor = (who) => T.filter((x) => x.who.includes(who) && (x.t !== "camino" || !ctx || !ctx.cloud.enabled || ctx.cloud.revistaVisible()));
 
 let q = "";
 export function view(tema) {

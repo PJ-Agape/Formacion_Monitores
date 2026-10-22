@@ -27,7 +27,8 @@ function who() {
     equipo: !cloud.enabled || (!!s.ready && !joven && !asp), // revistas, materiales, dinámicas, guía
     guia: !cloud.enabled || !!s.isGuide,
     cuenta: !cloud.enabled || !!s.ready,
-    camino: joven || asp,                                    // Mi Camino (encuentros por etapa)
+    camino: (joven || asp) && (!cloud.enabled || cloud.revistaVisible()), // Mi Camino (encuentros por etapa)
+    revista: !cloud.enabled || cloud.revistaVisible(),       // Nuestra Revista (puede estar oculta mientras se prepara)
   };
 }
 
@@ -36,7 +37,7 @@ function who() {
 // ---------------------------------------------------------------------------
 export const BLOCKS = {
   formacion: { t: "Formación", hand: "para crecer", href: "#/formacion", ill: "apostoles", c: "#1351a4", soft: "#e1f3fd",
-    d: "El curso de dirigentes, Nuestra Revista con los encuentros y los recursos para preparar." },
+    d: "El curso de dirigentes, los cursos de la comunidad y los recursos para preparar." },
   red: { t: "Comunidad", hand: "para encontrarnos", href: "#/red", ill: "amigos", c: "#ef591c", soft: "#fde0d2",
     d: "El muro, el chat, la agenda y todo lo que compartimos como grupo." },
   espiritu: { t: "Espiritualidad", hand: "para rezar", href: "#/oracion", ill: "jesus", c: "#c98a00", soft: "#fff0c2",
@@ -47,7 +48,7 @@ const ITEMS = [
   { b: "formacion", e: "🧭", t: "Mi Camino", d: "El encuentro de tu etapa de esta semana.", href: "#/mi-camino", kw: "etapa ingreso madurez encuentro semana", ok: (w) => w.camino },
   { b: "formacion", e: "🎓", t: "Cursos", d: "La guía de agAPPe y los cursos de formación.", href: "#/itinerario", kw: "curso cursos formacion itinerario unidades modulos guia tutorial bienvenido agappe manual como funciona", ok: (w) => w.curso },
   { b: "formacion", e: "📓", t: "Mi cuaderno", d: "Lo que escribiste en las reflexiones.", href: "#/cuaderno", kw: "cuaderno notas reflexion respuestas", ok: (w) => w.curso, hub: false },
-  { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo, hub: false }, // vive en Materiales → Revistas
+  { b: "formacion", e: "📰", t: "Nuestra Revista", d: "Los encuentros del grupo, semana a semana.", href: "#/encuentros", kw: "revista encuentros semanales coordinacion etapas camino", ok: (w) => w.equipo && w.revista, hub: false }, // vive en Materiales → Revistas
   { b: "formacion", e: "🪪", t: "Credenciales", d: "Tarjetas de solapa con foto, nombre y parroquia para los encuentros.", href: "#/credenciales", kw: "credenciales credencial tarjeta solapa lanyard portacredencial gafete nombre encuentro retiro", ok: (w) => w.equipo || w.asp, hub: false }, // vive en Materiales → Para imprimir
   { b: "formacion", e: "🧰", t: "Materiales", d: "Revistas, presentaciones, guías, banco de dinámicas y todo lo que se imprime.", href: "#/materiales", kw: "materiales recursos documentos biblioteca links imprimir presentaciones guias dinamicas credenciales", ok: (w) => w.equipo || w.asp },
   { b: "formacion", e: "🧰", t: "Materiales", d: "Difusión, cancionero, oraciones y la biblioteca digital.", href: "#/materiales", kw: "materiales recursos biblioteca difusion cancionero oremus", ok: (w) => !w.equipo && !w.asp },
@@ -203,7 +204,7 @@ export function viewFormacion() {
   ${w.curso ? courseBanner(course, st) : ""}
   ${matBanner(w)}
   <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino" && x.href !== "#/materiales").map(itemCard).join("")}</div>
-  ${w.guest ? `<p class="muted small" style="margin-top:14px">Mi Camino y los encuentros de tu etapa se abren cuando <a href="#/perfil">ingresas con tu cuenta</a>.</p>` : ""}`;
+  ${w.guest && w.revista ? `<p class="muted small" style="margin-top:14px">Mi Camino y los encuentros de tu etapa se abren cuando <a href="#/perfil">ingresas con tu cuenta</a>.</p>` : ""}`;
 }
 // La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)
 // y lo que nos decimos (Chat). Cada parte sigue funcionando igual; esto es solo la puerta de entrada.
