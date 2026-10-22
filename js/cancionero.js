@@ -147,9 +147,11 @@ export function viewList() {
   <nav class="wall-tabs row-wrap" aria-label="Cancionero">
     <button class="btn btn-sm ${tab === "canciones" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="canciones">${icon("book")} Canciones</button>
     <button class="btn btn-sm ${tab === "misas" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="misas">${icon("grid")} Misas y celebraciones</button>
-    <span class="spacer"></span><button class="btn btn-sm btn-ghost" data-action="canExport">${icon("dl")} Exportar</button>
-    ${staff && tab !== "misas" ? `<button class="btn btn-sm btn-soft" data-action="canImport">${icon("ul")} Importar canciones</button>` : ""}
-    ${staff ? `<button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
+    ${staff ? `<button class="btn btn-sm ${tab === "clasificar" ? "btn-primary" : "btn-ghost"}" data-action="canTab" data-t="clasificar">${icon("check")} Clasificar</button>` : ""}
+    <span class="spacer"></span>
+    ${tab === "misas" ? `<a class="btn btn-sm btn-soft" href="#/cancionero/hoja">${icon("print")} Hoja de cantos</a>` : `<button class="btn btn-sm btn-ghost" data-action="canExport">${icon("dl")} Exportar</button>`}
+    ${staff && tab === "canciones" ? `<button class="btn btn-sm btn-soft" data-action="canImport">${icon("ul")} Importar canciones</button>` : ""}
+    ${staff && tab !== "clasificar" ? `<button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
   </nav>
   <div class="can-wip">
     <span class="can-wip-tag" aria-hidden="true">🚧</span>
@@ -165,9 +167,10 @@ export function viewList() {
       ${MOMENTOS.map(([k, l]) => `<button class="chip ${momento === k ? "accent" : ""}" data-action="canMom" data-m="${k}">${esc(l)}</button>`).join("")}
     </div>
   </div>
-  <div id="canList" class="can-list"></div>` : `<div id="canMisas" class="can-misas"></div>`}`;
+  <div id="canList" class="can-list"></div>` : tab === "clasificar" && staff ? clsView() : `<div id="canMisas" class="can-misas"></div>`}`;
 }
 function paintList() {
+  paintCls();
   const box = $("#canList");
   if (box) {
     const q = query.trim().toLowerCase();
@@ -281,6 +284,7 @@ function paintMisa(id) {
   <div class="row-wrap" style="margin-bottom:14px">
     ${slots.length ? `<button class="btn btn-primary" data-action="canProject" data-scope="misa" data-id="${esc(r.id)}">${icon("eye")} Proyectar toda la misa</button>
     <a class="btn btn-gold" href="#/cancionero/${encodeURIComponent(slots[0].id)}?misa=${encodeURIComponent(r.id)}">Empezar con ${esc(slotLabel(slots[0].m))} ${icon("arrowR")}</a>` : ""}
+    <a class="btn btn-soft" href="#/cancionero/hoja?misa=${encodeURIComponent(r.id)}">${icon("print")} Hoja de cantos</a>
     <button class="btn btn-ghost" data-action="canExport" data-misa="${esc(r.id)}">${icon("dl")} Exportar</button>
     ${canEdit() ? `<span class="spacer"></span><button class="btn btn-sm btn-soft" data-action="canEditMisa" data-id="${esc(r.id)}">${icon("edit")} Editar</button>
       ${st().isStaff ? `<button class="btn btn-sm btn-danger" data-action="canDelMisa" data-id="${esc(r.id)}">${icon("trash")} Borrar</button>` : ""}` : ""}
@@ -428,6 +432,282 @@ function misaEditor(r) {
     <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="canClose">Cancelar</button><button class="btn btn-primary" type="submit">Guardar</button></div>
   </form>`;
   d.showModal();
+}
+
+// ---------------------------------------------------------------------------
+// Clasificar por momento, muchas canciones a la vez (equipo)
+// ---------------------------------------------------------------------------
+const draft = new Map(); // id → momentos sin guardar
+const sel = new Set();   // canciones marcadas
+let clsQ = "", clsF = "sin";
+const sameSet = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
+const momsOf = (s) => draft.get(s.id) || s.momentos || [];
+const MORDER = Object.fromEntries(MOMENTOS.map(([k], i) => [k, i]));
+const sortM = (l) => [...new Set(l)].filter((k) => k in MORDER).sort((a, b) => MORDER[a] - MORDER[b]);
+const plain = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
+const firstLine = (s) => { for (const l of String(s.body || "").split("\n")) { const t = l.replace(/\[[^\]]*\]/g, "").trim(); if (t && !/:$/.test(t) && /[a-záéíóúñ]{3}/i.test(t)) return t; } return ""; };
+// Pistas por el título (y la primera línea). Es solo una sugerencia: la decide quien clasifica.
+const HINTS = [
+  ["santo", /^santo\b|santo,? santo/], ["cordero", /cordero de dios/], ["gloria", /^gloria\b|gloria a dios en el cielo/],
+  ["perdon", /perdon|piedad|kyrie/], ["aleluya", /aleluya/], ["salmo", /^salmo\b/],
+  ["ofertorio", /ofrend|ofrec|ofrezco|pan y (el )?vino|frutos de la tierra|presentamos/],
+  ["comunion", /pan de vida|cuerpo de cristo|tu cuerpo|comunion|eucarist|banquete|tu mesa|la mesa|cena del senor|pan vivo/],
+  ["paz", /^la paz|^paz\b|paz del senor|la paz este/], ["accion", /\bgracias\b/],
+  ["maria", /maria|virgen|madre de dios|madre mia|^ave\b|magnificat|senora/],
+  ["salida", /^id\b|vayan|envia|enviado|misioner|anunciar|mision/],
+  ["entrada", /^venimos|^vienen|reunid|casa del senor|vamos a la casa|alegres vamos|entrada/],
+  ["adoracion", /adora|santisimo|sagrario|^alab/],
+];
+function suggest(s) {
+  const t = plain(s.title), l = plain(firstLine(s)), have = momsOf(s), out = [];
+  for (const [k, re] of HINTS) {
+    if (have.includes(k) || out.includes(k)) continue;
+    // En la primera línea solo se buscan las partes fijas de la misa; lo demás, por el título.
+    const byLine = ["santo", "cordero", "gloria", "perdon", "ofertorio", "comunion"].includes(k);
+    if (re.test(t) || (byLine && re.test(l))) out.push(k);
+  }
+  return out.slice(0, 3);
+}
+const editable = () => (songs || []).slice().sort((a, b) => a.title.localeCompare(b.title, "es"));
+function clsVisible() {
+  const q = plain(clsQ.trim());
+  return editable().filter((s) => {
+    const m = momsOf(s);
+    if (clsF === "sin" && m.length) return false;
+    if (clsF === "sug" && !suggest(s).length) return false;
+    if (clsF && !["sin", "sug", "todas"].includes(clsF) && !m.includes(clsF)) return false;
+    return !q || plain(s.title + " " + (s.author || "") + " " + firstLine(s)).includes(q);
+  });
+}
+const pending = () => editable().filter((s) => draft.has(s.id) && !sameSet(draft.get(s.id), s.momentos || []));
+function setMoms(s, list) { const v = sortM(list); if (sameSet(v, sortM(s.momentos || []))) draft.delete(s.id); else draft.set(s.id, v); }
+
+function clsView() {
+  return `
+  <div class="card cls-help small"><b>Así se clasifica rápido:</b> marca varias canciones y elige el momento abajo, o toca las sugerencias punteadas de cada una. Nada se guarda hasta que tocas «Guardar cambios».</div>
+  <div class="cls-tools">
+    <input class="input" id="clsSearch" placeholder="Buscar canción…" value="${esc(clsQ)}" aria-label="Buscar canción">
+    <select class="select" id="clsFilter" aria-label="Mostrar">
+      <option value="sin" ${clsF === "sin" ? "selected" : ""}>Sin momento</option>
+      <option value="sug" ${clsF === "sug" ? "selected" : ""}>Con sugerencias</option>
+      <option value="todas" ${clsF === "todas" ? "selected" : ""}>Todas</option>
+      <optgroup label="Que ya tienen…">${MOMENTOS.map(([k, l]) => `<option value="${k}" ${clsF === k ? "selected" : ""}>${esc(l)}</option>`).join("")}</optgroup>
+    </select>
+  </div>
+  <div class="cls-bar" role="toolbar" aria-label="Clasificar las marcadas">
+    <label class="cls-all"><input type="checkbox" id="clsAll"> <span id="clsN">0 marcadas</span></label>
+    <select class="select" id="clsMom" aria-label="Momento">${MOMENTOS.map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select>
+    <button class="btn btn-sm btn-soft" data-action="clsAdd">${icon("plus")} Agregar</button>
+    <button class="btn btn-sm btn-ghost" data-action="clsDel">Quitar</button>
+    <button class="btn btn-sm btn-ghost" data-action="clsSugAll" id="clsSugBtn">Aceptar sugerencias</button>
+    <span class="spacer"></span>
+    <button class="btn btn-sm btn-primary" data-action="clsSave" id="clsSave" disabled>Guardar cambios</button>
+  </div>
+  <div id="clsList" class="cls-list"></div>`;
+}
+function paintCls() {
+  const box = $("#clsList"); if (!box) return;
+  if (songs === null) { box.innerHTML = `<p class="muted" style="padding:20px;text-align:center">Cargando canciones…</p>`; return; }
+  const list = clsVisible();
+  box.innerHTML = list.length ? list.map((s) => {
+    const m = momsOf(s), sg = suggest(s), ch = draft.has(s.id) && !sameSet(draft.get(s.id), s.momentos || []);
+    return `<div class="cls-row${sel.has(s.id) ? " on" : ""}${ch ? " changed" : ""}">
+      <input type="checkbox" class="cls-pick" data-id="${esc(s.id)}" ${sel.has(s.id) ? "checked" : ""} aria-label="Marcar ${esc(s.title)}">
+      <div class="cls-main"><a href="#/cancionero/${encodeURIComponent(s.id)}"><strong>${esc(s.title)}</strong></a><span class="xs muted">${esc(firstLine(s).slice(0, 70))}</span></div>
+      <div class="cls-moms">
+        ${m.map((k) => `<button class="chip accent" data-action="clsTog" data-id="${esc(s.id)}" data-m="${k}" title="Quitar">${esc(MLABEL[k] || k)} ×</button>`).join("")}
+        ${sg.map((k) => `<button class="chip cls-sug" data-action="clsTog" data-id="${esc(s.id)}" data-m="${k}" title="Sugerencia: tócala para agregarla">+ ${esc(MLABEL[k])}</button>`).join("")}
+        <select class="cls-add" data-id="${esc(s.id)}" aria-label="Agregar momento a ${esc(s.title)}"><option value="">+ momento</option>${MOMENTOS.filter(([k]) => !m.includes(k)).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select>
+      </div></div>`;
+  }).join("") : `<div class="card" style="text-align:center;padding:24px"><p class="muted">${clsF === "sin" ? "Todas las canciones tienen al menos un momento. ¡Bien!" : "No hay canciones con ese filtro."}</p></div>`;
+  const n = pending().length, vis = list.map((s) => s.id);
+  const sv = $("#clsSave"); if (sv && !sv.dataset.busy) { sv.disabled = !n; sv.textContent = n ? `Guardar cambios (${n})` : "Guardar cambios"; }
+  const cn = $("#clsN"); if (cn) cn.textContent = sel.size ? `${sel.size} marcada${sel.size > 1 ? "s" : ""}` : "Marcar todas";
+  const all_ = $("#clsAll"); if (all_) { all_.checked = vis.length > 0 && vis.every((id) => sel.has(id)); all_.indeterminate = !all_.checked && vis.some((id) => sel.has(id)); }
+  const sb = $("#clsSugBtn"); if (sb) { const k = list.filter((s) => suggest(s).length).length; sb.textContent = k ? `Aceptar sugerencias (${k})` : "Aceptar sugerencias"; sb.disabled = !k; }
+}
+async function clsSave() {
+  const list = pending(); if (!list.length) return;
+  const btn = $("#clsSave"); if (btn) { btn.disabled = true; btn.dataset.busy = "1"; }
+  let ok = 0;
+  for (const s of list) {
+    if (btn) btn.textContent = `Guardando ${ok + 1} de ${list.length}…`;
+    try {
+      await ctx.cloud.saveCancion(s.id, { title: s.title, author: s.author || "", momentos: draft.get(s.id), body: s.body || "", link: s.link || "" });
+      draft.delete(s.id); ok++;
+    } catch (err) { console.warn(err); }
+  }
+  if (btn) delete btn.dataset.busy;
+  toast(ok === list.length ? `${ok} canci${ok > 1 ? "ones clasificadas" : "ón clasificada"}` : `Se guardaron ${ok} de ${list.length}. Revisa tu conexión y vuelve a intentarlo.`, ok ? "ok" : "");
+  paintCls();
+}
+
+// ---------------------------------------------------------------------------
+// Hoja de cantos para la misa: tamaño carta, frente y reverso, la letra se ajusta sola
+// ---------------------------------------------------------------------------
+const HK = "agape_hoja";
+let hoja = null, hojaFs = 0, hojaFit = true;
+function hojaOpts() { let o = {}; try { o = JSON.parse(localStorage.getItem(HK) || "{}"); } catch {} return { chords: false, cols: 2, sides: 2, labels: true, ...o }; }
+const saveHojaOpts = () => { try { localStorage.setItem(HK, JSON.stringify({ chords: hoja.chords, cols: hoja.cols, sides: hoja.sides, labels: hoja.labels })); } catch {} };
+export function viewHoja(misaId) {
+  hoja = { misa: misaId || "", name: "", date: "", picks: {}, ...hojaOpts(), loaded: false };
+  ctx.onAfterRender(() => { repaint = paintHoja; watchAll(); paintHoja(); });
+  return `${gate()}<div id="canHoja"><p class="muted" style="padding:30px;text-align:center">Cargando…</p></div>`;
+}
+function hojaLoad() {
+  if (hoja.loaded) return true;
+  if (hoja.misa) {
+    if (misas === null) return false;
+    const r = misas.find((x) => x.id === hoja.misa);
+    if (r) { hoja.name = r.name || ""; hoja.date = r.date || ""; (r.slots || []).forEach((x) => { if (x.id) hoja.picks[x.m] = x.id; }); }
+  }
+  if (!hoja.name) hoja.name = "Misa juvenil";
+  hoja.loaded = true; return true;
+}
+function paintHoja() {
+  const box = $("#canHoja"); if (!box || !hoja) return;
+  if (st().ready && (songs === null || !hojaLoad())) return;
+  if (!hoja.loaded) hojaLoad();
+  const list = all();
+  const opts = (slot) => {
+    const m = slot === "comunion2" ? "comunion" : slot, cur_ = hoja.picks[slot] || "";
+    const fit = list.filter((s) => (s.momentos || []).includes(m)), rest = list.filter((s) => !(s.momentos || []).includes(m));
+    const o = (s) => `<option value="${esc(s.id)}" ${cur_ === s.id ? "selected" : ""}>${esc(s.title)}</option>`;
+    return `<option value="">—</option>${fit.length ? `<optgroup label="Para ${esc(MLABEL[m])}">${fit.map(o).join("")}</optgroup>` : ""}<optgroup label="${fit.length ? "Otras" : "Todas"}">${rest.map(o).join("")}</optgroup>`;
+  };
+  const r = hoja.misa && (misas || []).find((x) => x.id === hoja.misa);
+  box.innerHTML = `
+  <nav class="crumbs no-print"><a href="#/cancionero">Cancionero</a>${r ? `${icon("right")}<a href="#/cancionero/misa/${encodeURIComponent(r.id)}">${esc(r.name)}</a>` : ""}${icon("right")}<span>Hoja de cantos</span></nav>
+  <header class="can-head"><span class="eyebrow">Para imprimir</span><h1>Hoja de cantos</h1>
+    <p class="muted">Elige los cantos de cada momento. La hoja se arma sola en tamaño carta y la letra se ajusta para que todo quepa.</p></header>
+  <div class="hc-wrap">
+    <form class="card hc-ed stack" id="hcForm" style="--gap:12px" onsubmit="return false">
+      <div class="field"><label>Celebración</label><input class="input" name="name" maxlength="120" value="${esc(hoja.name)}"></div>
+      <div class="field"><label>Fecha</label><input class="input" type="date" name="date" value="${esc(hoja.date)}"></div>
+      <div class="hc-slots">${SLOTS.map((k) => `<div class="field"><label>${esc(slotLabel(k))}</label><select class="select" name="s_${k}">${opts(k)}</select></div>`).join("")}</div>
+      <fieldset class="p-dates"><legend>Cómo se ve</legend><div class="can-opts">
+        <label class="chip"><input type="checkbox" name="chords" ${hoja.chords ? "checked" : ""}> Con acordes</label>
+        <label class="chip"><input type="checkbox" name="labels" ${hoja.labels ? "checked" : ""}> Nombre del momento</label>
+        <label class="chip"><input type="radio" name="sides" value="2" ${hoja.sides === 2 ? "checked" : ""}> Frente y reverso</label>
+        <label class="chip"><input type="radio" name="sides" value="1" ${hoja.sides === 1 ? "checked" : ""}> Una cara</label>
+        <label class="chip"><input type="radio" name="cols" value="2" ${hoja.cols === 2 ? "checked" : ""}> 2 columnas</label>
+        <label class="chip"><input type="radio" name="cols" value="3" ${hoja.cols === 3 ? "checked" : ""}> 3 columnas</label>
+      </div></fieldset>
+      <div class="row-wrap">
+        <button type="button" class="btn btn-primary" data-action="hcPrint">${icon("print")} Imprimir o guardar PDF</button>
+        ${canEdit() ? `<button type="button" class="btn btn-soft" data-action="hcSave">${icon("check")} ${r ? "Actualizar la celebración" : "Guardar como celebración"}</button>` : ""}
+      </div>
+      <p class="xs muted">Al imprimir, elige papel <b>Carta</b>, escala <b>100 %</b> (o «Tamaño real») e <b>imprimir en ambas caras</b>.</p>
+    </form>
+    <div class="hc-prev"><p class="small" id="hcInfo" aria-live="polite"></p><div class="hc-stage" id="hcStage"></div></div>
+  </div>`;
+  hojaBuild();
+}
+function hojaRead() {
+  const f = document.getElementById("hcForm"); if (!f) return;
+  const d = new FormData(f);
+  hoja.name = String(d.get("name") || "").trim(); hoja.date = String(d.get("date") || "");
+  SLOTS.forEach((k) => { hoja.picks[k] = String(d.get("s_" + k) || ""); });
+  hoja.chords = d.get("chords") === "on"; hoja.labels = d.get("labels") === "on";
+  hoja.sides = +d.get("sides") || 2; hoja.cols = +d.get("cols") || 2;
+  saveHojaOpts();
+}
+const hojaItems = () => SLOTS.filter((k) => hoja.picks[k] && byId(hoja.picks[k])).map((k) => ({ m: k, song: byId(hoja.picks[k]) }));
+// Cada estrofa es un bloque que no se corta; el título va pegado a la primera.
+function hojaBlocks(items) {
+  const out = [];
+  items.forEach((x) => {
+    const parts = String(x.song.body || "").replace(/\r/g, "").split(/\n\s*\n/).map((b) => b.replace(/^\n+|\n+$/g, "")).filter((b) => b.replace(/\[[^\]]*\]/g, "").trim() || hoja.chords);
+    const head = `<div class="hc-h">${hoja.labels ? `<span class="hc-m">${esc(slotLabel(x.m))}</span>` : ""}<b>${esc(x.song.title)}</b></div>`;
+    (parts.length ? parts : [""]).forEach((b, i) => {
+      const el = document.createElement("div");
+      // Las estrofas largas pueden seguir en la otra columna, para no dejar huecos grandes.
+      el.className = "hc-b" + (i === 0 ? " hc-first" : "") + (b.split("\n").length > 9 ? " hc-long" : "");
+      el.dataset.title = x.song.title;
+      el.innerHTML = (i === 0 ? head : "") + songBody({ body: b }, prefs.shift[x.song.id] || 0, hoja.chords);
+      out.push(el);
+    });
+  });
+  return out;
+}
+function hojaDate() { return hoja.date ? new Date(hoja.date + "T12:00").toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : ""; }
+function hojaBuild() {
+  const stage = $("#hcStage"); if (!stage) return;
+  const items = hojaItems();
+  const info = $("#hcInfo");
+  stage.innerHTML = `<div class="hc-pages" style="--hc-cols:${hoja.cols}">
+    <section class="hc-page hc-p1"><header class="hc-top"><img src="icons/logo-320.webp" alt="" width="60" height="60">
+      <div><h1>${esc(hoja.name || "Hoja de cantos")}</h1><p>${esc([hojaDate(), "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay"].filter(Boolean).join(" · "))}</p></div></header>
+      <div class="hc-cols"><i class="hc-end"></i></div></section>
+    ${hoja.sides === 2 ? `<section class="hc-page hc-p2"><div class="hc-cols"><i class="hc-end"></i></div><footer class="hc-foot">${esc(hoja.name || "")} · Pastoral Juvenil Ágape</footer></section>` : ""}
+  </div>`;
+  const pages = [...stage.querySelectorAll(".hc-cols")];
+  if (!items.length) { if (info) info.textContent = "Elige al menos un canto para armar la hoja."; hojaScale(); return; }
+  const blocks = hojaBlocks(items);
+  const over = (c) => { const e = c.querySelector(".hc-end"), r = c.getBoundingClientRect(), q = e.getBoundingClientRect(); return q.left >= r.right - 2 || q.top > r.bottom + 1; };
+  const root = stage.querySelector(".hc-pages");
+  // Reparte los bloques en las caras con un tamaño de letra; true si todo cupo.
+  const layout = (fs) => {
+    root.style.setProperty("--hc-fs", fs + "pt");
+    pages.forEach((c) => { c.querySelectorAll(".hc-b, .hc-cont").forEach((n) => n.remove()); });
+    let i = 0;
+    for (let p = 0; p < pages.length; p++) {
+      const c = pages[p], end = c.querySelector(".hc-end");
+      if (p > 0 && i < blocks.length && !blocks[i].classList.contains("hc-first")) {
+        const ct = document.createElement("div"); ct.className = "hc-cont"; ct.textContent = blocks[i].dataset.title + " (continuación)"; c.insertBefore(ct, end);
+      }
+      for (; i < blocks.length; i++) {
+        c.insertBefore(blocks[i], end);
+        if (over(c)) { blocks[i].remove(); break; }
+      }
+    }
+    return i >= blocks.length;
+  };
+  stage.classList.add("measuring");
+  // Búsqueda binaria en cuartos de punto, entre 6,5 y 13 pt.
+  let lo = 26, hi = 52, best = 0;
+  if (layout(hi / 4)) best = hi;
+  else if (layout(lo / 4)) {
+    best = lo;
+    while (hi - lo > 1) { const mid = (lo + hi) >> 1; if (layout(mid / 4)) { best = lo = mid; } else hi = mid; }
+  }
+  best /= 4;
+  hojaFs = best || 6.5; hojaFit = !!best;
+  layout(hojaFs);
+  stage.classList.remove("measuring");
+  if (info) info.innerHTML = hojaFit ? `${items.length} canto${items.length > 1 ? "s" : ""} · letra de <b>${String(hojaFs).replace(".", ",")} pt</b>${hojaFs < 8 ? " (chica: prueba con 3 columnas o sin acordes)" : ""}`
+    : `<span class="can-dup">No cabe todo${hoja.sides === 1 ? " en una cara" : " en la hoja"}.</span> Quita algún canto, ${hoja.sides === 1 ? "usa frente y reverso, " : ""}usa 3 columnas o quita los acordes.`;
+  hojaScale();
+}
+function hojaScale() {
+  const stage = $("#hcStage"), pg = stage && stage.querySelector(".hc-pages"); if (!pg) return;
+  const w = stage.clientWidth, pw = pg.querySelector(".hc-page").offsetWidth;
+  const k = Math.min(1, (w - 4) / pw);
+  pg.style.transform = `scale(${k})`;
+  stage.style.height = Math.ceil(pg.offsetHeight * k) + "px";
+}
+function hojaPrint() {
+  const src = document.querySelector("#hcStage .hc-pages"); if (!src) return;
+  if (!hojaItems().length) { toast("Elige al menos un canto", ""); return; }
+  let book = document.getElementById("hcBook");
+  if (!book) { book = document.createElement("div"); book.id = "hcBook"; document.body.appendChild(book); }
+  const cl = src.cloneNode(true); cl.style.transform = ""; cl.style.setProperty("--hc-fs", (hojaFs * 0.98).toFixed(2) + "pt");
+  book.innerHTML = ""; book.appendChild(cl);
+  document.body.classList.add("hc-printing");
+  const done = () => { document.body.classList.remove("hc-printing"); window.removeEventListener("afterprint", done); };
+  window.addEventListener("afterprint", done);
+  setTimeout(() => window.print(), 200);
+}
+async function hojaSave() {
+  hojaRead();
+  const slots = SLOTS.map((k) => ({ m: k, id: hoja.picks[k] || "" })).filter((x) => x.id);
+  if (!hoja.name) { toast("Ponle un nombre a la celebración", ""); return; }
+  const r = hoja.misa && (misas || []).find((x) => x.id === hoja.misa);
+  try {
+    const id = await ctx.cloud.saveRepertorio(r ? r.id : null, { name: hoja.name, date: hoja.date, note: r ? r.note || "" : "", slots });
+    toast("Celebración guardada", "ok");
+    if (!r) { hoja.misa = id; history.replaceState(null, "", "#/cancionero/hoja?misa=" + encodeURIComponent(id)); }
+  } catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); }
 }
 
 // ---------------------------------------------------------------------------
@@ -606,6 +886,27 @@ function registerActions() {
     try { await ctx.cloud.deleteRepertorio(el.dataset.id); toast("Repertorio borrado"); location.hash = "#/cancionero"; } catch { toast("No se pudo borrar", ""); }
   };
   document.addEventListener("input", (e) => { if (e.target.id === "canSearch") { query = e.target.value; paintList(); } });
+  A.clsTog = (el) => { const s = byId(el.dataset.id); if (!s) return; const m = momsOf(s), k = el.dataset.m; setMoms(s, m.includes(k) ? m.filter((x) => x !== k) : [...m, k]); paintCls(); };
+  A.clsAdd = () => { const k = $("#clsMom")?.value; if (!sel.size) { toast("Primero marca algunas canciones", ""); return; } sel.forEach((id) => { const s = byId(id); if (s) setMoms(s, [...momsOf(s), k]); }); paintCls(); };
+  A.clsDel = () => { const k = $("#clsMom")?.value; if (!sel.size) { toast("Primero marca algunas canciones", ""); return; } sel.forEach((id) => { const s = byId(id); if (s) setMoms(s, momsOf(s).filter((x) => x !== k)); }); paintCls(); };
+  A.clsSugAll = () => { const l = clsVisible().filter((s) => suggest(s).length); if (!l.length) return; if (!confirm(`¿Agregar las sugerencias a ${l.length} canciones? Puedes revisarlas antes de guardar.`)) return; l.forEach((s) => setMoms(s, [...momsOf(s), ...suggest(s)])); paintCls(); };
+  A.clsSave = () => clsSave();
+  A.hcPrint = () => { hojaRead(); hojaBuild(); hojaPrint(); };
+  A.hcSave = () => hojaSave();
+  document.addEventListener("input", (e) => {
+    if (e.target.id === "clsSearch") { clsQ = e.target.value; paintCls(); }
+    if (e.target.closest && e.target.closest("#hcForm") && e.target.name === "name") { clearTimeout(hcT); hcT = setTimeout(() => { hojaRead(); hojaBuild(); }, 350); }
+  });
+  let hcT = 0;
+  document.addEventListener("change", (e) => {
+    const t = e.target;
+    if (t.id === "clsFilter") { clsF = t.value; paintCls(); }
+    else if (t.id === "clsAll") { clsVisible().forEach((s) => (t.checked ? sel.add(s.id) : sel.delete(s.id))); paintCls(); }
+    else if (t.classList.contains("cls-pick")) { t.checked ? sel.add(t.dataset.id) : sel.delete(t.dataset.id); paintCls(); }
+    else if (t.classList.contains("cls-add") && t.value) { const s = byId(t.dataset.id); if (s) setMoms(s, [...momsOf(s), t.value]); paintCls(); }
+    else if (t.closest && t.closest("#hcForm")) { hojaRead(); hojaBuild(); }
+  });
+  window.addEventListener("resize", () => { if ($("#hcStage")) hojaScale(); });
   document.addEventListener("keydown", (e) => {
     if (!document.getElementById("canProj")) return;
     if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); A.canNext(); }

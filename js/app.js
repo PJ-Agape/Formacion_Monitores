@@ -142,6 +142,7 @@ const routes = [
   [/^\/pasaporte$/, () => acompanar.viewMine(), "perfil"],
   [/^\/dinamicas\/([^/?]+)$/, (id) => mod.dinamicas().then((m) => m.viewOne(id)), "materiales"],
   [/^\/cancionero\/misa\/([^/?]+)$/, (id) => cancionero.viewMisa(id), "oracion"],
+  [/^\/cancionero\/hoja(?:\?misa=([^&]+))?$/, (m) => cancionero.viewHoja(m), "oracion"],
   [/^\/cancionero\/([^/?]+)(?:\?misa=([^&]+))?$/, (id, m) => cancionero.viewSong(id, m), "oracion"],
   [/^\/constancia$/, viewCertificate, "itinerario"],
   [/^\/perfil$/, viewProfile, "perfil"],

@@ -1776,6 +1776,71 @@ body.cap-quiet { overflow: hidden; }
   .can-book .can-line, .can-book .cb-ig, .can-book .cb-head { break-inside: avoid; }
 }
 
+/* Clasificar canciones por momento */
+.cls-help { padding: 12px 14px; margin-bottom: 12px; }
+.cls-tools { display: grid; grid-template-columns: 1fr minmax(160px, 220px); gap: 8px; margin-bottom: 10px; }
+.cls-bar { position: sticky; top: 64px; z-index: 4; display: flex; flex-wrap: wrap; gap: 8px; align-items: center; padding: 10px 12px; margin-bottom: 10px;
+  background: #fff6e5; border: 2px solid var(--cn, #0b2566); border-radius: 16px; box-shadow: 3px 3px 0 var(--cn, #0b2566); }
+.cls-bar .select { width: auto; min-width: 150px; padding-block: 6px; }
+.cls-all { display: inline-flex; gap: 6px; align-items: center; font-weight: 800; font-size: .9rem; cursor: pointer; }
+.cls-list { display: grid; gap: 6px; }
+.cls-row { display: grid; grid-template-columns: auto minmax(0, 1fr) minmax(0, 1.3fr); gap: 10px; align-items: center; background: #fff; border: 2px solid rgba(11,37,102,.18); border-radius: 14px; padding: 8px 12px; }
+.cls-row.on { border-color: var(--cn, #0b2566); background: #eef7fe; }
+.cls-row.changed { box-shadow: inset 4px 0 0 #ffba03; }
+.cls-row input[type=checkbox] { width: 20px; height: 20px; }
+.cls-main { display: flex; flex-direction: column; min-width: 0; }
+.cls-main a { color: inherit; text-decoration: none; } .cls-main a:hover strong { text-decoration: underline; }
+.cls-main .xs { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.cls-moms { display: flex; flex-wrap: wrap; gap: 5px; align-items: center; }
+.cls-moms .chip { font-size: .74rem; padding: 3px 9px; cursor: pointer; }
+.cls-sug { border-style: dashed !important; background: transparent; opacity: .8; }
+.cls-sug:hover { opacity: 1; background: #fff3c4; }
+.cls-add { font: inherit; font-size: .78rem; border: 1.5px dashed rgba(11,37,102,.35); border-radius: 999px; padding: 3px 6px; background: transparent; color: inherit; max-width: 130px; }
+@media (max-width: 640px) { .cls-row { grid-template-columns: auto 1fr; } .cls-moms { grid-column: 1 / -1; } .cls-tools { grid-template-columns: 1fr; } .cls-bar { top: 58px; } }
+
+/* Hoja de cantos (carta, frente y reverso) */
+.hc-wrap { display: grid; grid-template-columns: minmax(280px, 380px) minmax(0, 1fr); gap: 18px; align-items: start; }
+.hc-ed { padding: 16px; }
+.hc-slots { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.hc-slots .field label { font-size: .8rem; }
+.hc-slots .select { padding-block: 6px; font-size: .88rem; }
+.hc-prev { position: sticky; top: 76px; min-width: 0; }
+.hc-stage { overflow: hidden; }
+.hc-pages { transform-origin: 0 0; display: flex; flex-direction: column; gap: 8mm; width: 215.9mm; --hc-fs: 10pt; --hc-cols: 2; }
+.hc-page { width: 215.9mm; height: 279.4mm; background: #fff; color: #0b2566; padding: 10mm 11mm 9mm; display: flex; flex-direction: column; box-shadow: 0 2px 14px rgba(11,37,102,.18); border: 1px solid #d8deea; box-sizing: border-box; overflow: hidden; }
+.hc-top { display: flex; gap: 4mm; align-items: center; padding-bottom: 3mm; margin-bottom: 3mm; border-bottom: .6mm solid #ffba03; }
+.hc-top img { width: 15mm; height: 15mm; border-radius: 50%; }
+.hc-top h1 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.02em; font-size: 20pt; line-height: 1; }
+.hc-top p { font-size: 8.5pt; color: #1351a4; margin-top: 1mm; }
+.hc-top p::first-letter { text-transform: uppercase; }
+.hc-cols { flex: 1; min-height: 0; column-count: var(--hc-cols); column-gap: 6mm; column-fill: auto; column-rule: .3mm solid #dfe5f0; overflow: hidden; font-size: var(--hc-fs); line-height: 1.22; font-family: var(--font-body, inherit); }
+.hc-end { display: block; height: 0; }
+.hc-foot { font-size: 7pt; color: #7a86a0; text-align: right; padding-top: 2mm; }
+.hc-b { break-inside: avoid; margin-bottom: .5em; }
+.hc-b.hc-long { break-inside: auto; orphans: 3; widows: 3; }
+.hc-b .can-line { break-inside: avoid; }
+.hc-first { padding-top: .2em; }
+.hc-h { margin-bottom: .25em; line-height: 1.1; break-after: avoid; }
+.hc-h b { font-family: var(--font-display); font-weight: 800; font-size: 1.12em; display: block; }
+.hc-m { font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.05em; display: block; }
+.hc-cont { font-size: .8em; font-style: italic; color: #7a86a0; margin-bottom: .3em; }
+.hc-b .can-line { margin: 0; white-space: pre-wrap; }
+.hc-b .can-line.has-ch { margin: .12em 0 0; }
+.hc-b .can-ch { font-size: .82em; }
+.hc-b .can-sec { font-size: .95em; margin-top: 0; font-family: inherit; font-weight: 800; font-style: italic; color: #1351a4; }
+.hc-b .can-gap { height: .3em; }
+#hcBook { display: none; }
+@media (max-width: 860px) { .hc-wrap { grid-template-columns: 1fr; } .hc-prev { position: static; } }
+@media print {
+  @page hoja { size: letter; margin: 0; }
+  body.hc-printing > *:not(#hcBook) { display: none !important; }
+  body.hc-printing { background: #fff !important; padding: 0 !important; }
+  body.hc-printing #hcBook { display: block; }
+  #hcBook .hc-pages { gap: 0; transform: none !important; }
+  #hcBook .hc-page { page: hoja; box-shadow: none; border: 0; break-after: page; height: 279mm; }
+  #hcBook .hc-page:last-child { break-after: auto; }
+}
+
 /* ===================== Materiales: ficheros ===================== */
 .fi-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); gap: 26px 18px; margin-top: 26px; align-items: start; }
 .fichero { position: relative; scroll-margin-top: 130px; background: #fff; border: 2px solid var(--cn, #0b2566); border-radius: 0 18px 18px 18px; box-shadow: 5px 5px 0 var(--cn, #0b2566); padding: 18px 18px 14px; margin-top: 16px; }
