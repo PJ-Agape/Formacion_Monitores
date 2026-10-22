@@ -1578,10 +1578,8 @@ function loop(ts) { const dt = Math.min(0.05, (ts - (last || ts)) / 1000); last 
 // ---------------------------------------------------------------------------
 // Pantalla
 // ---------------------------------------------------------------------------
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><path d="M4 58 Q24 40 32 30 T60 8" fill="none" stroke="#f3dfb3" stroke-width="10" stroke-linecap="round"/>
-  <path d="M4 58 Q24 40 32 30 T60 8" fill="none" stroke="#0b2566" stroke-width="2" stroke-dasharray="3 5"/><circle cx="52" cy="12" r="7" fill="#ffba03" stroke="#0b2566" stroke-width="2"/>
-  <circle cx="20" cy="40" r="5" fill="#f2c9a0" stroke="#0b2566" stroke-width="2"/><rect x="15" y="45" width="10" height="9" rx="3" fill="#ef591c" stroke="#0b2566" stroke-width="2"/>
-  <circle cx="31" cy="34" r="5" fill="#d7a77c" stroke="#0b2566" stroke-width="2"/><path d="M25 50 L31 39 L37 50 Z" fill="#f3efe6" stroke="#0b2566" stroke-width="2"/></svg>`;
+export { emausArt as artSvg } from "./juegos-arte.js";
+import { emausArt as artSvg } from "./juegos-arte.js";
 
 export function view(q = "") {
   load();

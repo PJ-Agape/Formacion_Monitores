@@ -67,9 +67,8 @@ function paint() {
   root.scrollIntoView({ block: "start" });
 }
 
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><circle cx="32" cy="40" r="16" fill="#0b2566"/>
-  <rect x="17" y="6" width="30" height="20" rx="4" fill="#fff" stroke="#0b2566" stroke-width="3"/><path d="M24 16h16" stroke="#ef591c" stroke-width="4" stroke-linecap="round"/>
-  <circle cx="26" cy="40" r="2.5" fill="#ffba03"/><circle cx="38" cy="40" r="2.5" fill="#ffba03"/><path d="M26 47c4 3 8 3 12 0" stroke="#ffba03" stroke-width="3" fill="none" stroke-linecap="round"/></svg>`;
+export { frenteArt as artSvg } from "./juegos-arte.js";
+import { frenteArt as artSvg } from "./juegos-arte.js";
 
 function setupHTML() {
   const cats = [...Object.entries(TEMAS), ["mix", { l: "Mezcla" }]];

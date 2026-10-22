@@ -4,7 +4,7 @@
 
 import { illus } from "./ilustraciones.js";
 import { pjSvg } from "./personajes.js";
-import qrcode from "./qrcode.mjs";
+import qrcode from "./qr.js";
 
 export const C = { navy: "#0b2566", blue: "#1351a4", sun: "#ffba03", coral: "#ef591c", sky: "#8ad2fa", cream: "#fff6e5", white: "#ffffff", rose: "#fde0d2", butter: "#fff1c7", ice: "#e1f3fd" };
 const BASE = new URL("../", import.meta.url).href;

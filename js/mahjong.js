@@ -52,9 +52,8 @@ function deal(tiles, pairs) {
 }
 
 let g = null, tick = null;
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><rect x="8" y="22" width="22" height="28" rx="4" fill="#fff6e5" stroke="#0b2566" stroke-width="2.5"/><rect x="5" y="25" width="22" height="28" rx="4" fill="#fff" stroke="#0b2566" stroke-width="2.5"/>
-  <rect x="34" y="14" width="22" height="28" rx="4" fill="#fff6e5" stroke="#0b2566" stroke-width="2.5"/><rect x="31" y="17" width="22" height="28" rx="4" fill="#fff" stroke="#0b2566" stroke-width="2.5"/>
-  <circle cx="16" cy="39" r="6" fill="#ef591c"/><circle cx="42" cy="31" r="6" fill="#ef591c"/><path d="M22 18 q8 -10 16 -2" fill="none" stroke="#ffba03" stroke-width="2.5" stroke-linecap="round"/></svg>`;
+export { mjArt as artSvg } from "./juegos-arte.js";
+import { mjArt as artSvg } from "./juegos-arte.js";
 
 export function view() {
   ctx.onAfterRender(() => document.body.classList.add("solo-on"));

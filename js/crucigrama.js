@@ -15,10 +15,8 @@ try { cfg = { ...cfg, ...(JSON.parse(localStorage.getItem("agape_cruci") || "{}"
 if (!LEVELS[cfg.level]) cfg.level = "medio";
 let g = null, tick = null;
 
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><g stroke="#0b2566" stroke-width="2.2">
-  <rect x="8" y="22" width="12" height="12" fill="#fff"/><rect x="20" y="22" width="12" height="12" fill="#ffba03"/><rect x="32" y="22" width="12" height="12" fill="#fff"/><rect x="44" y="22" width="12" height="12" fill="#fff"/>
-  <rect x="20" y="10" width="12" height="12" fill="#fff"/><rect x="20" y="34" width="12" height="12" fill="#fff"/><rect x="20" y="46" width="12" height="12" fill="#fff"/><rect x="44" y="34" width="12" height="12" fill="#fff"/></g>
-  <g font-family="sans-serif" font-weight="800" font-size="9" fill="#0b2566" text-anchor="middle"><text x="26" y="31">A</text><text x="14" y="31">P</text><text x="38" y="31">Z</text><text x="26" y="43">M</text></g></svg>`;
+export { cwArt as artSvg } from "./juegos-arte.js";
+import { cwArt as artSvg } from "./juegos-arte.js";
 
 // ---------------------------------------------------------------------------
 // Armado de la grilla

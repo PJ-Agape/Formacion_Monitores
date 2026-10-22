@@ -157,9 +157,8 @@ function paint() {
   if (g && g.i < g.qs.length && !g.answered) run();
 }
 
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><circle cx="32" cy="32" r="24" fill="#0b2566"/>
-  <path d="M25 25a7 7 0 1 1 10 6.3c-2 1-3 2.3-3 4.7" stroke="#ffba03" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="32" cy="45" r="3.2" fill="#ffba03"/>
-  <circle cx="52" cy="14" r="5" fill="#ef591c"/><circle cx="12" cy="50" r="4" fill="#8ad2fa"/></svg>`;
+export { triviaArt as artSvg } from "./juegos-arte.js";
+import { triviaArt as artSvg } from "./juegos-arte.js";
 
 function setupHTML() {
   const cats = Object.entries(TEMAS).filter(([k]) => k !== "curso" || hasCurso());

@@ -5,43 +5,26 @@ import * as S from "./store.js";
 import * as cloud from "./cloud.js";
 import { esc, rich, plain, icon, toast, initials } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
-import qrcode from "./qrcode.mjs";
-import { stringToBytes as utf8Bytes } from "./qrcode-utf8.mjs";
 import * as wall from "./muro.js";
 import * as camino from "./encuentros.js";
 import * as chat from "./chat.js";
 import * as avisos from "./avisos.js";
 import * as agenda from "./agenda.js";
 import * as portada from "./portada.js";
-import * as familiasAdmin from "./familias-admin.js";
 import * as capilla from "./capilla.js";
 import * as cancionero from "./cancionero.js";
 import * as AV from "./avatares.js";
-import * as dinamicas from "./dinamicas.js";
 import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
 import * as momentos from "./momentos.js";
 import * as juegos from "./juegos.js";
-import * as frente from "./frente.js";
-import * as trivia from "./trivia.js";
-import * as cursoPrint from "./curso-print.js";
-import * as ultima from "./ultima.js";
-import * as memorice from "./memorice.js";
-import * as emaus from "./emaus.js";
-import * as mahjong from "./mahjong.js";
-import * as sopa from "./sopa.js";
-import * as crucigrama from "./crucigrama.js";
 import * as podcast from "./podcast.js";
 import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
-import * as inicioAdmin from "./inicio-admin.js";
-import * as credenciales from "./credenciales.js";
 import * as solicitud from "./solicitud.js";
 import * as ficha from "./ficha.js";
-import * as viva from "./unidad-viva.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
 import * as cuenta from "./cuenta.js";
-import * as difusion from "./difusion.js";
 import * as a11y from "./accesible.js";
 import * as grupo from "./grupo.js";
 import * as inicio from "./inicio.js";
@@ -51,10 +34,30 @@ import * as familiasAg from "./familias-ag.js";
 import * as famReg from "./familias-registro.js";
 import * as famPortal from "./familia-portal.js";
 import * as evalua from "./evaluacion.js";
-import * as gEq from "./gestion-equipo.js";
 import { illus } from "./ilustraciones.js";
 
-qrcode.stringToBytes = utf8Bytes;
+// Secciones que se descargan recién al abrirlas (juegos, imprimir, credenciales, difusión y lo de Gestión):
+// así la app abre más rápido, sobre todo con datos móviles. Cada una se prepara una sola vez.
+const lazy = (load, init) => { let p = null; return () => p || (p = load().then((m) => { init(m); return m; }).catch((e) => { p = null; throw e; })); };
+const mod = {
+  emaus: lazy(() => import("./emaus.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  memorice: lazy(() => import("./memorice.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  mahjong: lazy(() => import("./mahjong.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  sopa: lazy(() => import("./sopa.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  crucigrama: lazy(() => import("./crucigrama.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  frente: lazy(() => import("./frente.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  trivia: lazy(() => import("./trivia.js"), (m) => m.setup({ actions, onAfterRender, onLeave })),
+  ultima: lazy(() => import("./ultima.js"), (m) => m.setup({ actions, onAfterRender, onLeave, cloud })),
+  cursoPrint: lazy(() => import("./curso-print.js"), (m) => m.setup({ actions, onAfterRender, onLeave, S, render: () => render() })),
+  credenciales: lazy(() => import("./credenciales.js"), (m) => m.setup({ actions, onAfterRender })),
+  difusion: lazy(() => import("./difusion.js"), (m) => m.setup({ actions, onAfterRender })),
+  inicioAdmin: lazy(() => import("./inicio-admin.js"), (m) => m.setup({ actions, render: () => render(), onAfterRender, cloud })),
+  familiasAdmin: lazy(() => import("./familias-admin.js"), (m) => m.setup({ actions, render: () => render(), onAfterRender, cloud })),
+  dinamicas: lazy(() => import("./dinamicas.js"), (m) => m.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud })),
+  viva: lazy(() => import("./unidad-viva.js"), (m) => m.setup({ actions, render: () => render(), onLeave, S })),
+  gEq: lazy(() => import("./gestion-equipo.js"), (m) => m.setup({ actions })),
+};
+
 
 const $ = (s, r = document) => r.querySelector(s);
 const $$ = (s, r = document) => [...r.querySelectorAll(s)];
@@ -93,10 +96,10 @@ const routes = [
   [/^\/comunidad$/, () => { location.replace("presentaciones/guia-de-servicio.html"); return null; }, "comunidad"],
   [/^\/itinerario$/, viewItinerary, "itinerario"],
   [/^\/(?:unidad|encuentro)\/(\d+)\/([^/]+)$/, viewEncounter, "itinerario"],
-  [/^\/vivir\/(\d+)\/([^/?]+)(?:\?s=\d+)?$/, async (p, id) => (await viva.view(p, id)) ?? null, "itinerario"],
+  [/^\/vivir\/(\d+)\/([^/?]+)(?:\?s=\d+)?$/, async (p, id) => (await (await mod.viva()).view(p, id)) ?? null, "itinerario"],
   [/^\/cuaderno$/, viewNotebook, "itinerario"],
   [/^\/materiales$/, viewMaterials, "materiales"],
-  [/^\/imprimir\/curso(?:\/(\d+))?(?:\/(\d+))?$/, (ci, pi) => cursoPrint.view(ci || 0, pi ?? ""), "materiales"],
+  [/^\/imprimir\/curso(?:\/(\d+))?(?:\/(\d+))?$/, (ci, pi) => mod.cursoPrint().then((m) => m.view(ci || 0, pi ?? "")), "materiales"],
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
@@ -115,29 +118,29 @@ const routes = [
   [/^\/momentos$/, () => momentos.view(), "red"],
   [/^\/juegos$/, () => juegos.view(), "red"],
   [/^\/juegos\/impostor$/, () => juegos.impostor(), "red"],
-  [/^\/juegos\/frente$/, () => frente.view(), "red"],
-  [/^\/juegos\/trivia$/, () => trivia.view(), "red"],
-  [/^\/juegos\/ultima(?:\?(.*))?$/, (q) => ultima.view(q || ""), "red"],
-  [/^\/juegos\/memorice$/, () => memorice.view(), "red"],
-  [/^\/juegos\/emaus(?:\?(.*))?$/, (q) => emaus.view(q || ""), "red"],
-  [/^\/juegos\/mahjong$/, () => mahjong.view(), "red"],
-  [/^\/juegos\/sopa$/, () => sopa.view(), "red"],
-  [/^\/juegos\/crucigrama$/, () => crucigrama.view(), "red"],
+  [/^\/juegos\/frente$/, () => mod.frente().then((m) => m.view()), "red"],
+  [/^\/juegos\/trivia$/, () => mod.trivia().then((m) => m.view()), "red"],
+  [/^\/juegos\/ultima(?:\?(.*))?$/, (q) => mod.ultima().then((m) => m.view(q || "")), "red"],
+  [/^\/juegos\/memorice$/, () => mod.memorice().then((m) => m.view()), "red"],
+  [/^\/juegos\/emaus(?:\?(.*))?$/, (q) => mod.emaus().then((m) => m.view(q || "")), "red"],
+  [/^\/juegos\/mahjong$/, () => mod.mahjong().then((m) => m.view()), "red"],
+  [/^\/juegos\/sopa$/, () => mod.sopa().then((m) => m.view()), "red"],
+  [/^\/juegos\/crucigrama$/, () => mod.crucigrama().then((m) => m.view()), "red"],
   [/^\/podcast$/, () => podcast.view(), "red"],
-  [/^\/credenciales$/, () => credenciales.view(), "materiales"],
+  [/^\/credenciales$/, () => mod.credenciales().then((m) => m.view()), "materiales"],
   [/^\/buscar(?:\?q=(.*))?$/, (q) => inicio.viewBuscar(q || ""), "buscar"],
   [/^\/mi-camino$/, () => camJ.view(), "camino"],
   [/^\/ayuda(?:\?t=([a-z]+))?$/, (t) => ayuda.view(t), "ayuda"],
-  [/^\/difusion$/, () => difusion.view(), "difusion"],
+  [/^\/difusion$/, () => mod.difusion().then((m) => m.view()), "difusion"],
   [/^\/accesibilidad$/, () => a11y.viewPage(), "perfil"],
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
-  [/^\/dinamicas$/, () => dinamicas.viewList(), "materiales"],
+  [/^\/dinamicas$/, () => mod.dinamicas().then((m) => m.viewList()), "materiales"],
   [/^\/acompanar$/, () => acompanar.viewMain(), "acompanar"],
   [/^\/acompanar\/(asistencia|jovenes|honor)$/, (t) => acompanar.viewMain(t), "acompanar"],
   [/^\/acompanar\/joven\/([^/?]+)$/, (id) => acompanar.viewJoven(id), "acompanar"],
   [/^\/pasaporte$/, () => acompanar.viewMine(), "perfil"],
-  [/^\/dinamicas\/([^/?]+)$/, (id) => dinamicas.viewOne(id), "materiales"],
+  [/^\/dinamicas\/([^/?]+)$/, (id) => mod.dinamicas().then((m) => m.viewOne(id)), "materiales"],
   [/^\/cancionero\/misa\/([^/?]+)$/, (id) => cancionero.viewMisa(id), "oracion"],
   [/^\/cancionero\/([^/?]+)(?:\?misa=([^&]+))?$/, (id, m) => cancionero.viewSong(id, m), "oracion"],
   [/^\/constancia$/, viewCertificate, "itinerario"],
@@ -147,7 +150,14 @@ const routes = [
 ];
 
 let lastPath = null;
-export async function render() {
+// Una vista a la vez: si se pide otra mientras una sección se descarga, se dibuja apenas termine la actual.
+let rendering = null, renderAgain = false;
+export function render() {
+  if (rendering) { renderAgain = true; return rendering; }
+  rendering = renderNow().finally(() => { rendering = null; if (renderAgain) { renderAgain = false; render(); } });
+  return rendering;
+}
+async function renderNow() {
   if (!S.content()) return; // aún cargando: el arranque dibuja apenas termina
   S.setPreviewOpen(cloud.enabled && !!cloud.viewingAs());
   const path = decodeURIComponent(location.hash.replace(/^#/, "")) || "/";
@@ -937,7 +947,7 @@ function sendCompletion(course, prog) {
 // ---------------------------------------------------------------------------
 // CONSTANCIA
 // ---------------------------------------------------------------------------
-function viewCertificate() {
+async function viewCertificate() {
   const course = S.activeCourse();
   if (course.abierto) { location.replace("#/itinerario"); return null; } // las guías abiertas no tienen constancia
   const st = S.courseState(course);
@@ -951,6 +961,7 @@ function viewCertificate() {
   const p = S.getProfile();
   const date = new Date(st.p.completedDate || Date.now()).toLocaleDateString("es-CL", { day: "numeric", month: "long", year: "numeric" });
   const sessions = st.totalSessions;
+  const { default: qrcode } = await import("./qr.js");
   const qr = qrcode(0, "M");
   if (cloud.enabled) { qr.addData(cloud.verifyUrl(st.p.certCode)); cloud.registerCertificate(course, st.p); }
   else qr.addData(`PASTORAL JUVENIL ÁGAPE\nConstancia de Formación y Envío\nCurso: ${course.title}\nDirigente: ${p.name}\nComunidad: ${p.parish}\nCódigo: ${st.p.certCode}\nFecha: ${date}`);
@@ -1487,7 +1498,7 @@ async function viewVerify(code) {
 // GESTIÓN (carga diferida)
 // ---------------------------------------------------------------------------
 async function viewAdmin(sub = "") {
-  const m = await import("./admin.js");
+  const [m] = await Promise.all([import("./admin.js"), mod.inicioAdmin(), mod.familiasAdmin(), mod.gEq()]);
   return m.renderAdmin(sub || "", { actions, render, onAfterRender, cloud });
 }
 
@@ -1542,26 +1553,15 @@ S.setCourseRule((c) => {
   const st = cloud.state();
   return para.includes(st.role) || (para.includes("asesor") && !!(st.account && st.account.asesor === true));
 });
-inicioAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
-credenciales.setup({ actions, onAfterRender });
 solicitud.setup({ actions, render: () => render(), onAfterRender, cloud });
 ficha.setup({ actions, render: () => render(), onAfterRender, cloud });
-familiasAdmin.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
-dinamicas.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
-difusion.setup({ actions, onAfterRender });
-viva.setup({ actions, render: () => render(), onLeave, S });
 camJ.setup({ actions, render: () => render(), cloud, S, onAfterRender });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });
 desafio.setup({ actions, render: () => render(), cloud });
 momentos.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 juegos.setup({ actions, render: () => render(), onAfterRender, onLeave });
-frente.setup({ actions, onAfterRender, onLeave });
-trivia.setup({ actions, onAfterRender, onLeave });
-cursoPrint.setup({ actions, onAfterRender, onLeave, S, render: () => render() });
-ultima.setup({ actions, onAfterRender, onLeave, cloud });
-for (const m of [memorice, mahjong, sopa, crucigrama, emaus]) m.setup({ actions, onAfterRender, onLeave });
 podcast.setup({ actions, render: () => render(), onAfterRender, cloud });
 inicio.setup({ actions, render: () => render(), onAfterRender, camJ, agenda, wall });
 papa.registerActions(actions);
@@ -1569,7 +1569,6 @@ familiasAg.setup({ actions, onAfterRender });
 famReg.setup({ actions, onAfterRender });
 famPortal.setup({ actions, onAfterRender, onLeave });
 evalua.setup({ actions });
-gEq.setup({ actions });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
 
 async function boot() {

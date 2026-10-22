@@ -18,10 +18,8 @@ let cfg = { set: "pj", level: "medio" };
 try { cfg = { ...cfg, ...(JSON.parse(localStorage.getItem("agape_memorice") || "{}") || {}) }; } catch { /* */ }
 let g = null, tick = null;
 
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><rect x="6" y="10" width="24" height="32" rx="5" fill="#1351a4" stroke="#0b2566" stroke-width="2.5" transform="rotate(-10 18 26)"/>
-  <path d="M12 20 l8 12 M20 20 l-8 12" stroke="#ffba03" stroke-width="2.5" transform="rotate(-10 18 26)"/>
-  <rect x="32" y="20" width="24" height="32" rx="5" fill="#fff" stroke="#0b2566" stroke-width="2.5" transform="rotate(8 44 36)"/><circle cx="44" cy="35" r="7" fill="#ef591c" stroke="#0b2566" stroke-width="2" transform="rotate(8 44 36)"/>
-  <path d="M40 34 q4 5 8 0" fill="none" stroke="#fff" stroke-width="2" stroke-linecap="round"/></svg>`;
+export { memArt as artSvg } from "./juegos-arte.js";
+import { memArt as artSvg } from "./juegos-arte.js";
 
 export function view() {
   ctx.onAfterRender(() => document.body.classList.add("solo-on"));

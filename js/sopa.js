@@ -17,9 +17,8 @@ try { cfg = { ...cfg, ...(JSON.parse(localStorage.getItem("agape_sopa") || "{}")
 if (!SOPA[cfg.tema]) cfg.tema = "santos";
 let g = null, tick = null, drag = null;
 
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><rect x="7" y="7" width="50" height="50" rx="8" fill="#fff" stroke="#0b2566" stroke-width="2.5"/>
-  <rect x="12" y="25" width="40" height="13" rx="6.5" fill="#ffba03" opacity=".85" transform="rotate(-8 32 32)"/>
-  <g font-family="sans-serif" font-weight="800" font-size="10" fill="#0b2566" text-anchor="middle"><text x="18" y="20">F</text><text x="32" y="20">K</text><text x="46" y="20">P</text><text x="18" y="35">P</text><text x="32" y="34">A</text><text x="46" y="32">Z</text><text x="18" y="50">L</text><text x="32" y="50">O</text><text x="46" y="50">R</text></g></svg>`;
+export { sopaArt as artSvg } from "./juegos-arte.js";
+import { sopaArt as artSvg } from "./juegos-arte.js";
 
 export function view() {
   ctx.onAfterRender(() => document.body.classList.add("solo-on"));

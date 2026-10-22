@@ -111,9 +111,8 @@ function paint() {
   if (room && room.status === "lobby") drawQR();
 }
 const backLink = () => `<a class="imp-back" href="#/juegos">${icon("left")} Juegos</a>`;
-export const artSvg = () => `<svg viewBox="0 0 64 64" width="100%" height="100%"><rect x="10" y="12" width="26" height="38" rx="5" fill="#1351a4" stroke="#0b2566" stroke-width="2.5" transform="rotate(-14 23 31)"/>
-  <rect x="20" y="10" width="26" height="38" rx="5" fill="#ffba03" stroke="#0b2566" stroke-width="2.5"/><rect x="30" y="13" width="26" height="38" rx="5" fill="#ef591c" stroke="#0b2566" stroke-width="2.5" transform="rotate(14 43 32)"/>
-  <ellipse cx="43" cy="32" rx="7" ry="10" fill="#fff" transform="rotate(14 43 32)"/><text x="43" y="37" font-size="13" font-weight="800" text-anchor="middle" fill="#ef591c" font-family="sans-serif" transform="rotate(14 43 32)">1</text></svg>`;
+export { ultimaArt as artSvg } from "./juegos-arte.js";
+import { ultimaArt as artSvg } from "./juegos-arte.js";
 
 function homeHTML() {
   return `${backLink()}

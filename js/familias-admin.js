@@ -3,7 +3,7 @@
 
 import { esc, icon, toast } from "./util.js";
 import { DEF, merge } from "./familias-contenido.js";
-import qrcode from "./qrcode.mjs";
+import qrcode from "./qr.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 let data = null, loaded = false;

@@ -3,14 +3,14 @@
 // Todos ven la misma palabra secreta menos el impostor, que tiene que disimular.
 // No usa internet ni guarda nada en la nube: los nombres quedan solo en este teléfono.
 import { esc, icon } from "./util.js";
-import { artSvg as frenteSvg } from "./frente.js";
-import { artSvg as triviaSvg } from "./trivia.js";
-import { artSvg as ultimaSvg } from "./ultima.js";
-import { artSvg as memSvg } from "./memorice.js";
-import { artSvg as mjSvg } from "./mahjong.js";
-import { artSvg as spSvg } from "./sopa.js";
-import { artSvg as cwSvg } from "./crucigrama.js";
-import { artSvg as emSvg } from "./emaus.js";
+import { frenteArt as frenteSvg } from "./juegos-arte.js";
+import { triviaArt as triviaSvg } from "./juegos-arte.js";
+import { ultimaArt as ultimaSvg } from "./juegos-arte.js";
+import { memArt as memSvg } from "./juegos-arte.js";
+import { mjArt as mjSvg } from "./juegos-arte.js";
+import { sopaArt as spSvg } from "./juegos-arte.js";
+import { cwArt as cwSvg } from "./juegos-arte.js";
+import { emausArt as emSvg } from "./juegos-arte.js";
 
 let ctx = null; // { actions, render, onAfterRender, onLeave }
 export function setup(c) { ctx = c; registerActions(); }
