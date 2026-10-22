@@ -11,25 +11,28 @@ const $ = (s, r = document) => r.querySelector(s);
 const st = () => ctx.cloud.state();
 const canEdit = () => !!st().canSongs; // equipo + apostolado del cancionero
 
+// Etiquetas del cancionero (las que definió el equipo), en el orden de la misa.
 export const MOMENTOS = [
-  ["entrada", "Entrada"], ["perdon", "Perdón"], ["gloria", "Gloria"], ["salmo", "Salmo"], ["aleluya", "Aleluya"], ["aclamacion", "Aclamación"],
-  ["ofertorio", "Ofertorio"], ["santo", "Santo"], ["padrenuestro", "Padre Nuestro"], ["paz", "Paz"], ["cordero", "Cordero"], ["comunion", "Comunión"],
-  ["meditacion", "Meditación"], ["accion", "Acción de gracias"], ["maria", "María"], ["salida", "Salida y envío"], ["adoracion", "Adoración"],
-  ["espiritu", "Espíritu Santo"], ["navidad", "Navidad"], ["juvenil", "Juvenil y animación"],
+  ["entrada", "Entrada"], ["perdon", "Perdón"], ["gloria", "Gloria"], ["aleluya", "Aleluya"], ["aclamacion", "Aclamación"],
+  ["ofertorio", "Ofertorio"], ["santo", "Santo"], ["padrenuestro", "Padre Nuestro"], ["cordero", "Cordero"], ["comunion", "Comunión"],
+  ["meditacion", "Meditación"], ["accion", "Acción de gracias"], ["maria", "Marianos"], ["espiritu", "Espíritu Santo"], ["navidad", "Navidad"],
 ];
 const MLABEL = Object.fromEntries(MOMENTOS);
+const known = (l) => (l || []).filter((k) => k in MLABEL); // etiquetas antiguas que ya no se usan quedan fuera
+// Momentos de la misa para armar repertorios y la hoja de cantos (algunos no tienen etiqueta propia).
 const SLOTS = ["entrada", "perdon", "gloria", "salmo", "aleluya", "ofertorio", "santo", "padrenuestro", "paz", "cordero", "comunion", "comunion2", "accion", "maria", "salida"];
-const slotLabel = (k) => (k === "comunion2" ? "Comunión (2)" : MLABEL[k]);
+const SLOT_NAME = { salmo: "Salmo", paz: "Paz", salida: "Salida y envío", maria: "Canto a María", comunion2: "Comunión (2)" };
+const slotLabel = (k) => SLOT_NAME[k] || MLABEL[k] || k;
 // Qué etiquetas sirven para cada momento de la misa (la primera da el nombre del grupo en el selector).
-const SLOT_FIT = { aleluya: ["aleluya", "aclamacion"], comunion: ["comunion", "meditacion"], comunion2: ["comunion", "meditacion"], accion: ["accion", "meditacion"] };
+const SLOT_FIT = { aleluya: ["aleluya", "aclamacion"], comunion: ["comunion", "meditacion"], comunion2: ["comunion", "meditacion"], accion: ["accion", "meditacion"], salmo: [], paz: [], salida: [] };
 const fitsSlot = (s, slot) => (SLOT_FIT[slot] || [slot]).some((k) => (s.momentos || []).includes(k));
-const fitLabel = (slot) => MLABEL[(SLOT_FIT[slot] || [slot])[0]];
+const fitLabel = (slot) => MLABEL[(SLOT_FIT[slot] || [slot])[0]] || "";
 
 // ---------------------------------------------------------------------------
 // Canciones originales de la Pastoral Juvenil Ágape (libres para la comunidad)
 // ---------------------------------------------------------------------------
 const ORIGINALES = [
-  { id: "ag-himno", builtin: true, title: "Amor que transforma", author: "Himno Ágape · original de la pastoral", momentos: ["entrada", "juvenil", "salida"],
+  { id: "ag-himno", builtin: true, title: "Amor que transforma", author: "Himno Ágape · original de la pastoral", momentos: ["entrada"],
     body: `Estrofa 1:
 [G]Somos jóvenes de [D]Yungay
 [Em]caminando junto a [C]Ti,
@@ -184,7 +187,7 @@ function paintList() {
     box.innerHTML = list.length ? list.map((s) => `<a class="card link can-item" href="#/cancionero/${encodeURIComponent(s.id)}">
         <span class="can-key">${esc(chordName(firstChord(s.body), prefs.shift[s.id] || 0, prefs.nota) || "♪")}</span>
         <span class="can-main"><strong>${esc(s.title)}</strong><span class="muted small">${esc(s.author || "")}</span>
-          <span class="can-moms">${(s.momentos || []).map((m) => `<span class="chip">${esc(MLABEL[m] || m)}</span>`).join("")}${s.builtin ? `<span class="chip warn">Original Ágape</span>` : ""}</span></span>
+          <span class="can-moms">${known(s.momentos).map((m) => `<span class="chip">${esc(MLABEL[m])}</span>`).join("")}${s.builtin ? `<span class="chip warn">Original Ágape</span>` : ""}</span></span>
         ${icon("right")}</a>`).join("")
       : `<div class="card" style="text-align:center;padding:28px"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
          ${canEdit() ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNew">${icon("plus")} Agregar una canción</button>` : ""}</div>`;
@@ -242,7 +245,7 @@ function paintSong(id) {
   box.innerHTML = `
   <nav class="crumbs no-print"><a href="#/cancionero">Cancionero</a>${m ? `${icon("right")}<a href="#/cancionero/misa/${encodeURIComponent(m.id)}">${esc(m.name)}</a>` : ""}${icon("right")}<span>${esc(s.title)}</span></nav>
   <header class="can-head">
-    ${m && pos >= 0 ? `<span class="eyebrow">${esc(slotLabel(seq[pos].m))} · ${pos + 1} de ${seq.length}</span>` : `<span class="eyebrow">${(s.momentos || []).map((x) => esc(MLABEL[x] || x)).join(" · ")}</span>`}
+    ${m && pos >= 0 ? `<span class="eyebrow">${esc(slotLabel(seq[pos].m))} · ${pos + 1} de ${seq.length}</span>` : `<span class="eyebrow">${known(s.momentos).map((x) => esc(MLABEL[x])).join(" · ")}</span>`}
     <h1>${esc(s.title)}</h1>
     ${s.author ? `<p class="muted">${esc(s.author)}</p>` : ""}
   </header>
@@ -446,7 +449,7 @@ const draft = new Map(); // id → momentos sin guardar
 const sel = new Set();   // canciones marcadas
 let clsQ = "", clsF = "sin";
 const sameSet = (a, b) => a.length === b.length && a.every((x) => b.includes(x));
-const momsOf = (s) => draft.get(s.id) || s.momentos || [];
+const momsOf = (s) => draft.get(s.id) || known(s.momentos);
 const MORDER = Object.fromEntries(MOMENTOS.map(([k], i) => [k, i]));
 const sortM = (l) => [...new Set(l)].filter((k) => k in MORDER).sort((a, b) => MORDER[a] - MORDER[b]);
 const plain = (t) => String(t || "").toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "");
@@ -467,7 +470,7 @@ const HINTS = [
 function suggest(s) {
   const t = plain(s.title), l = plain(firstLine(s)), have = momsOf(s), out = [];
   for (const [k, re] of HINTS) {
-    if (have.includes(k) || out.includes(k)) continue;
+    if (!(k in MLABEL) || have.includes(k) || out.includes(k)) continue;
     // En la primera línea solo se buscan las partes fijas de la misa; lo demás, por el título.
     const byLine = ["santo", "cordero", "gloria", "perdon", "ofertorio", "comunion"].includes(k);
     if (re.test(t) || (byLine && re.test(l))) out.push(k);
@@ -486,7 +489,7 @@ function clsVisible() {
   });
 }
 const pending = () => editable().filter((s) => draft.has(s.id) && !sameSet(draft.get(s.id), s.momentos || []));
-function setMoms(s, list) { const v = sortM(list); if (sameSet(v, sortM(s.momentos || []))) draft.delete(s.id); else draft.set(s.id, v); }
+function setMoms(s, list) { const v = sortM(list); if (sameSet(v, s.momentos || [])) draft.delete(s.id); else draft.set(s.id, v); }
 
 function clsView() {
   return `
@@ -522,7 +525,7 @@ function paintCls() {
       <input type="checkbox" class="cls-pick" data-id="${esc(s.id)}" ${sel.has(s.id) ? "checked" : ""} aria-label="Marcar ${esc(s.title)}">
       <div class="cls-main"><a href="#/cancionero/${encodeURIComponent(s.id)}"><strong>${esc(s.title)}</strong></a><span class="xs muted">${esc(firstLine(s).slice(0, 70))}</span></div>
       <div class="cls-moms">
-        ${m.map((k) => `<button class="chip accent" data-action="clsTog" data-id="${esc(s.id)}" data-m="${k}" title="Quitar">${esc(MLABEL[k] || k)} ×</button>`).join("")}
+        ${m.map((k) => `<button class="chip accent" data-action="clsTog" data-id="${esc(s.id)}" data-m="${k}" title="Quitar">${esc(MLABEL[k])} ×</button>`).join("")}
         ${sg.map((k) => `<button class="chip cls-sug" data-action="clsTog" data-id="${esc(s.id)}" data-m="${k}" title="Sugerencia: tócala para agregarla">+ ${esc(MLABEL[k])}</button>`).join("")}
         <select class="cls-add" data-id="${esc(s.id)}" aria-label="Agregar momento a ${esc(s.title)}"><option value="">+ momento</option>${MOMENTOS.filter(([k]) => !m.includes(k)).map(([k, l]) => `<option value="${k}">${esc(l)}</option>`).join("")}</select>
       </div></div>`;
@@ -575,7 +578,7 @@ function pasteParse(text) {
     if (/^(cancionero|original|fuente|etiqueta)/i.test(fold_(label))) label = ""; // era la columna «Fuente» (la etiqueta quedó vacía)
     if (!title || !label || /^t[ií]tulo$/i.test(title)) return;
     const keys = [];
-    label.split(/[,;/]| y (?!gracias|env)/i).map((x) => fold_(x)).filter(Boolean).forEach((x) => { const k = ALIAS[x]; if (k) keys.push(k); else res.unknown.add(x); });
+    label.split(/[,;/]| y (?!gracias|env)/i).map((x) => fold_(x)).filter(Boolean).forEach((x) => { const k = ALIAS[x]; if (k && k in MLABEL) keys.push(k); else res.unknown.add(x); });
     if (!keys.length) return;
     const t = fold_(title);
     if (builtin.has(t)) { res.builtin.push(title); return; }
@@ -796,13 +799,13 @@ function exportSet(o) {
     return { title: r ? r.name : "Celebración", sub: r && r.date ? new Date(r.date + "T12:00").toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long", year: "numeric" }) : "", items, groups: null };
   }
   const order = Object.fromEntries(MOMENTOS.map(([k], i) => [k, i]));
-  const firstM = (s) => (s.momentos || []).slice().sort((a, b) => order[a] - order[b])[0] || "zz";
+  const firstM = (s) => known(s.momentos).sort((a, b) => order[a] - order[b])[0] || "zz";
   let list = all().filter((s) => !o.momento || (s.momentos || []).includes(o.momento));
   list.sort((a, b) => (order[o.momento || firstM(a)] ?? 99) - (order[o.momento || firstM(b)] ?? 99) || a.title.localeCompare(b.title, "es"));
   const items = list.map((song) => ({ m: o.momento || firstM(song), song }));
   items.forEach((x, i) => (x.n = i + 1));
   const groups = MOMENTOS.map(([k, l]) => ({ l, list: items.filter((x) => (x.song.momentos || []).includes(k)) })).filter((g) => g.list.length);
-  const loose = items.filter((x) => !(x.song.momentos || []).length);
+  const loose = items.filter((x) => !known(x.song.momentos).length);
   if (loose.length) groups.push({ l: "Otras", list: loose });
   return { title: o.momento ? `Cancionero Ágape · ${MLABEL[o.momento]}` : "Cancionero Ágape", sub: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", items, groups };
 }
