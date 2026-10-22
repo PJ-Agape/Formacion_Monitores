@@ -1,13 +1,6 @@
 {
  "fuente": "evangeliodeldia.org · El Libro del Pueblo de Dios",
  "days": {
-  "2026-10-20": {
-   "titulo": "Martes de la 29.ª semana del Tiempo Ordinario",
-   "cita": "Lc 12,35-38",
-   "frase": "Estén preparados, ceñidos y con las lámparas encendidas.",
-   "reflexion": "8VdFfwgbOY4",
-   "video": "3NcLPOZnFV4"
-  },
   "2026-10-21": {
    "titulo": "Miércoles de la 29.ª semana del Tiempo Ordinario",
    "cita": "Lc 12,39-48",
@@ -58,6 +51,11 @@
    "titulo": "Viernes de la 30.ª semana del Tiempo Ordinario",
    "cita": "Lc 14,1-6",
    "frase": "¿Está permitido curar en sábado?"
+  },
+  "2026-10-31": {
+   "titulo": "Sábado de la 30.ª semana del Tiempo Ordinario",
+   "cita": "Lc 14,1.7-11",
+   "frase": "El que se humilla será ensalzado."
   }
  }
 }
