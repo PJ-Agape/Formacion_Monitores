@@ -290,7 +290,7 @@ function buildBook(force) {
   const pages = [];
   const total = list.length;
   const nTxt = songs === null && st().ready ? "Cargando canciones…" : `${total} ${total === 1 ? "canción" : "canciones"}${filtering() ? " con este filtro" : ""}`;
-  pages.push({ k: "cover", html: coverHtml(nTxt, total) });
+  pages.push({ k: "cover", html: coverHtml({ n: nTxt, go: total > 0 }) });
   ixParts.forEach(([a, b], i) => {
     const body = total ? list.slice(a, b).map((s) => ixItem(s, off + first.get(s.id))).join("")
       : `<div class="cl-empty"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
@@ -318,7 +318,8 @@ function buildBook(force) {
 
 // Portada: tapa de tela azul noche con marco dorado, lomo cosido, cinta marcapáginas,
 // el logo como medallón, un pentagrama con notas y acordes, y la etiqueta de la edición.
-function coverHtml(nTxt, total) {
+const COVER_LINE = "Toda la música para la gloria de Dios";
+function coverHtml({ k = "Pastoral Juvenil Ágape · Yungay", t1 = "Cancionero", t2 = "Ágape", ed = "Versión 1", line = COVER_LINE, n = "", go = false } = {}) {
   const rays = [...Array(24)].map((_, i) => { const a = (Math.PI * 2 * i) / 24, r1 = 58, r2 = i % 2 ? 78 : 92;
     return `<path d="M${(100 + Math.cos(a) * r1).toFixed(1)} ${(100 + Math.sin(a) * r1).toFixed(1)} L${(100 + Math.cos(a) * r2).toFixed(1)} ${(100 + Math.sin(a) * r2).toFixed(1)}"/>`; }).join("");
   const staff = [0, 1, 2, 3, 4].map((k) => `<path d="M-10 ${44 + k * 7} C 70 ${20 + k * 7}, 150 ${70 + k * 7}, 230 ${40 + k * 7} S 360 ${30 + k * 7}, 420 ${52 + k * 7}"/>`).join("");
@@ -327,12 +328,12 @@ function coverHtml(nTxt, total) {
     <span class="cl-cov-spine" aria-hidden="true"></span>
     <span class="cl-cov-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
     <span class="cl-cov-ribbon" aria-hidden="true"></span>
-    <span class="cl-cov-k">Pastoral Juvenil Ágape · Yungay</span>
+    <span class="cl-cov-k">${esc(k)}</span>
     <div class="cl-cov-medal">
       <svg class="cl-cov-rays" viewBox="0 0 200 200" aria-hidden="true">${rays}</svg>
       <img src="icons/logo-320.webp" alt="" width="320" height="320">
     </div>
-    <h2><span>Cancionero</span><em>Ágape</em>
+    <h2><span>${esc(t1)}</span>${t2 ? `<em>${esc(t2)}</em>` : ""}
       <svg class="cl-cov-swash" viewBox="0 0 220 24" aria-hidden="true"><path d="M6 16 C 60 4, 120 4, 214 12"/><path d="M40 20 C 90 12, 140 12, 196 18"/></svg></h2>
     <svg class="cl-cov-staff" viewBox="0 0 400 110" aria-hidden="true">
       <g class="cl-st">${staff}</g>
@@ -340,10 +341,10 @@ function coverHtml(nTxt, total) {
       <g class="cl-chords"><text x="58" y="20">G</text><text x="140" y="34">D</text><text x="236" y="16">Em</text><text x="326" y="22">C</text></g>
     </svg>
     <div class="cl-cov-foot">
-      <span class="cl-cov-ed">Versión 1</span>
-      <p class="cl-cov-v">¡Sigamos construyendo nuestro cancionero!</p>
-      ${total ? `<button class="cl-cov-go" data-action="clGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
-      <p class="cl-cov-n">${nTxt}</p>
+      ${ed ? `<span class="cl-cov-ed">${esc(ed)}</span>` : ""}
+      <p class="cl-cov-v">${esc(line)}</p>
+      ${go ? `<button class="cl-cov-go" data-action="clGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
+      ${n ? `<p class="cl-cov-n">${esc(n)}</p>` : ""}
     </div>
   </div></div>`;
 }
@@ -1046,7 +1047,7 @@ function exportSet(o) {
   const groups = MOMENTOS.map(([k, l]) => ({ l, list: items.filter((x) => (x.song.momentos || []).includes(k)) })).filter((g) => g.list.length);
   const loose = items.filter((x) => !known(x.song.momentos).length);
   if (loose.length) groups.push({ l: "Otras", list: loose });
-  return { title: o.momento ? `Cancionero Ágape · ${MLABEL[o.momento]}` : "Cancionero Ágape", sub: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", items, groups };
+  return { title: o.momento ? `Cancionero Ágape · ${MLABEL[o.momento]}` : "Cancionero Ágape", mom: o.momento ? MLABEL[o.momento] : "", sub: "Pastoral Juvenil Ágape · Parroquia San Miguel de Yungay", items, groups };
 }
 const shiftOf = (o, s) => (o.tono ? prefs.shift[s.id] || 0 : 0);
 
@@ -1084,8 +1085,9 @@ function exportPDF(set, o) {
   const head = (x, i) => `<header class="cb-head"><span class="cb-n">${x.n || i + 1}</span><div><h2>${esc(x.song.title)}</h2>
       <span class="cb-meta">${[set.groups ? "" : slotLabel(x.m), x.song.author || "", o.chords ? "Tono " + chordName(firstChord(x.song.body), shiftOf(o, x.song), prefs.nota) : ""].filter(Boolean).map(esc).join(" · ")}</span></div></header>`;
   book.innerHTML = `
-    <section class="cb-cover"><img src="icons/logo-320.webp" alt="" width="160" height="160">
-      <h1>${esc(set.title)}</h1><p class="cb-sub">${esc(set.sub)}</p><p class="cb-date">Edición ${esc(today)}</p></section>
+    <section class="cb-cover">${set.groups
+      ? coverHtml({ ed: set.mom ? `Versión 1 · ${set.mom}` : "Versión 1", n: `Edición ${today} · ${set.items.length} ${set.items.length === 1 ? "canción" : "canciones"}` })
+      : coverHtml({ k: "Cancionero Ágape", t1: set.title, t2: "", ed: "", n: set.sub })}</section>
     ${set.groups ? `<section class="cb-index"><h2>Índice</h2>${set.groups.map((g) => `<div class="cb-ig"><h3>${esc(g.l)}</h3><ol>${g.list.map((x) => `<li><b>${x.n}</b> ${esc(x.song.title)}</li>`).join("")}</ol></div>`).join("")}</section>`
       : `<section class="cb-index"><h2>Orden de la celebración</h2><ol class="cb-order">${set.items.map((x, i) => `<li><b>${esc(slotLabel(x.m))}</b> ${esc(x.song.title)}</li>`).join("")}</ol></section>`}
     <section class="cb-songs">${set.items.map((x, i) => `<article class="cb-song">${head(x, i)}<div class="can-sheet cb-body">${songBody(x.song, shiftOf(o, x.song), o.chords)}</div></article>`).join("")}</section>`;

@@ -1748,11 +1748,22 @@ body.cap-quiet { overflow: hidden; }
   body.can-printing > *:not(#canBook) { display: none !important; }
   body.can-printing { background: #fff !important; }
   body.can-printing #canBook { display: block; color: var(--cn, #0b2566); }
-  .can-book .cb-cover { height: 240mm; display: flex; flex-direction: column; align-items: center; justify-content: center; text-align: center; break-after: page; }
-  .can-book .cb-cover img { width: 46mm; height: auto; border-radius: 50%; margin-bottom: 10mm; }
-  .can-book .cb-cover h1 { font-family: var(--font-display); font-weight: 800; font-size: 34pt; line-height: 1; letter-spacing: -0.02em; }
-  .can-book .cb-sub { font-size: 13pt; margin-top: 4mm; }
-  .can-book .cb-date { margin-top: 3mm; font-size: 11pt; color: #ef591c; font-weight: 700; }
+  @page cancionero-portada { size: letter; margin: 0; @bottom-center { content: none; } }
+  .can-book .cb-cover { page: cancionero-portada; position: relative; width: 215.9mm; height: 279.4mm; break-after: page; overflow: hidden;
+    -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  .can-book .cb-cover .cl-page { border: 0; border-radius: 0; box-shadow: none; }
+  .can-book .cb-cover .cl-cov { padding: 7cqh 18mm 7cqh 24mm; }
+  .can-book .cb-cover .cl-cov-k { font-size: 1.6cqh; }
+  .can-book .cb-cover .cl-cov-frame { inset: 8mm 8mm 8mm 16mm; }
+  .can-book .cb-cover .cl-cov-spine { width: 11mm; }
+  .can-book .cb-cover .cl-cov-ribbon { right: 26mm; width: 9mm; }
+  .can-book .cb-cover .cl-cov-medal { width: 25cqh; margin: 2.4cqh 0 1.6cqh; }
+  .can-book .cb-cover h2 span { font-size: 8cqh; } .can-book .cb-cover h2 em { font-size: 10.5cqh; }
+  .can-book .cb-cover .cl-cov-staff { width: 80%; margin: 2.4cqh auto 0; max-height: 13cqh; }
+  .can-book .cb-cover .cl-cov-v { font-size: 3.6cqh; max-width: 32ch; }
+  .can-book .cb-cover .cl-cov-ed { font-size: 2.2cqh; padding: .6cqh 2.4cqh; }
+  .can-book .cb-cover .cl-cov-n { display: block; font-size: 1.8cqh; opacity: .8; }
+  .can-book .cb-cover * { animation: none !important; }
   .can-book .cb-index { break-after: page; }
   .can-book .cb-index h2 { font-family: var(--font-display); font-size: 20pt; margin-bottom: 5mm; }
   .can-book .cb-index { column-count: 2; column-gap: 10mm; }
