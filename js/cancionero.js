@@ -12,13 +12,18 @@ const st = () => ctx.cloud.state();
 const canEdit = () => !!st().canSongs; // equipo + apostolado del cancionero
 
 export const MOMENTOS = [
-  ["entrada", "Entrada"], ["perdon", "Perdón"], ["gloria", "Gloria"], ["salmo", "Salmo"], ["aleluya", "Aleluya"],
-  ["ofertorio", "Ofertorio"], ["santo", "Santo"], ["paz", "Paz"], ["cordero", "Cordero"], ["comunion", "Comunión"],
-  ["accion", "Acción de gracias"], ["maria", "María"], ["salida", "Salida y envío"], ["adoracion", "Adoración"], ["juvenil", "Juvenil y animación"],
+  ["entrada", "Entrada"], ["perdon", "Perdón"], ["gloria", "Gloria"], ["salmo", "Salmo"], ["aleluya", "Aleluya"], ["aclamacion", "Aclamación"],
+  ["ofertorio", "Ofertorio"], ["santo", "Santo"], ["padrenuestro", "Padre Nuestro"], ["paz", "Paz"], ["cordero", "Cordero"], ["comunion", "Comunión"],
+  ["meditacion", "Meditación"], ["accion", "Acción de gracias"], ["maria", "María"], ["salida", "Salida y envío"], ["adoracion", "Adoración"],
+  ["espiritu", "Espíritu Santo"], ["navidad", "Navidad"], ["juvenil", "Juvenil y animación"],
 ];
 const MLABEL = Object.fromEntries(MOMENTOS);
-const SLOTS = ["entrada", "perdon", "gloria", "salmo", "aleluya", "ofertorio", "santo", "paz", "cordero", "comunion", "comunion2", "accion", "maria", "salida"];
+const SLOTS = ["entrada", "perdon", "gloria", "salmo", "aleluya", "ofertorio", "santo", "padrenuestro", "paz", "cordero", "comunion", "comunion2", "accion", "maria", "salida"];
 const slotLabel = (k) => (k === "comunion2" ? "Comunión (2)" : MLABEL[k]);
+// Qué etiquetas sirven para cada momento de la misa (la primera da el nombre del grupo en el selector).
+const SLOT_FIT = { aleluya: ["aleluya", "aclamacion"], comunion: ["comunion", "meditacion"], comunion2: ["comunion", "meditacion"], accion: ["accion", "meditacion"] };
+const fitsSlot = (s, slot) => (SLOT_FIT[slot] || [slot]).some((k) => (s.momentos || []).includes(k));
+const fitLabel = (slot) => MLABEL[(SLOT_FIT[slot] || [slot])[0]];
 
 // ---------------------------------------------------------------------------
 // Canciones originales de la Pastoral Juvenil Ágape (libres para la comunidad)
@@ -412,10 +417,10 @@ function misaEditor(r) {
   const pick = Object.fromEntries((v.slots || []).map((x) => [x.m, x.id]));
   const list = all();
   const opts = (slot) => {
-    const m = slot === "comunion2" ? "comunion" : slot;
-    const fit = list.filter((s) => (s.momentos || []).includes(m)), rest = list.filter((s) => !(s.momentos || []).includes(m));
+    const m = fitLabel(slot);
+    const fit = list.filter((s) => fitsSlot(s, slot)), rest = list.filter((s) => !fitsSlot(s, slot));
     const o = (s) => `<option value="${esc(s.id)}" ${pick[slot] === s.id ? "selected" : ""}>${esc(s.title)}</option>`;
-    return `<option value="">—</option>${fit.length ? `<optgroup label="Para ${esc(MLABEL[m])}">${fit.map(o).join("")}</optgroup>` : ""}<optgroup label="Otras">${rest.map(o).join("")}</optgroup>`;
+    return `<option value="">—</option>${fit.length ? `<optgroup label="Para ${esc(m)}">${fit.map(o).join("")}</optgroup>` : ""}<optgroup label="Otras">${rest.map(o).join("")}</optgroup>`;
   };
   d.innerHTML = `<form method="dialog" id="canMisaForm" data-id="${esc(r ? r.id : "")}">
     <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Cancionero</span><h2>${r ? "Editar celebración" : "Nueva celebración"}</h2></div>
@@ -456,7 +461,8 @@ const HINTS = [
   ["maria", /maria|virgen|madre de dios|madre mia|^ave\b|magnificat|senora/],
   ["salida", /^id\b|vayan|envia|enviado|misioner|anunciar|mision/],
   ["entrada", /^venimos|^vienen|reunid|casa del senor|vamos a la casa|alegres vamos|entrada/],
-  ["adoracion", /adora|santisimo|sagrario|^alab/],
+  ["adoracion", /adora|santisimo|sagrario/], ["aclamacion", /tu palabra|^alab/],
+  ["padrenuestro", /^padre nuestro/], ["espiritu", /espiritu/], ["navidad", /navidad|belen|ha nacido|nino dios|pesebre|noche de paz|tamborilero/],
 ];
 function suggest(s) {
   const t = plain(s.title), l = plain(firstLine(s)), have = momsOf(s), out = [];
@@ -500,6 +506,7 @@ function clsView() {
     <button class="btn btn-sm btn-soft" data-action="clsAdd">${icon("plus")} Agregar</button>
     <button class="btn btn-sm btn-ghost" data-action="clsDel">Quitar</button>
     <button class="btn btn-sm btn-ghost" data-action="clsSugAll" id="clsSugBtn">Aceptar sugerencias</button>
+    <button class="btn btn-sm btn-ghost" data-action="clsPaste">${icon("ul")} Pegar desde planilla</button>
     <span class="spacer"></span>
     <button class="btn btn-sm btn-primary" data-action="clsSave" id="clsSave" disabled>Guardar cambios</button>
   </div>
@@ -525,6 +532,75 @@ function paintCls() {
   const cn = $("#clsN"); if (cn) cn.textContent = sel.size ? `${sel.size} marcada${sel.size > 1 ? "s" : ""}` : "Marcar todas";
   const all_ = $("#clsAll"); if (all_) { all_.checked = vis.length > 0 && vis.every((id) => sel.has(id)); all_.indeterminate = !all_.checked && vis.some((id) => sel.has(id)); }
   const sb = $("#clsSugBtn"); if (sb) { const k = list.filter((s) => suggest(s).length).length; sb.textContent = k ? `Aceptar sugerencias (${k})` : "Aceptar sugerencias"; sb.disabled = !k; }
+}
+// Etiquetas pegadas desde una planilla (Excel o Sheets): una canción por línea, con el título y la etiqueta.
+const fold_ = (t) => plain(t).replace(/^\s*\d{1,3}\s*[.)-]\s*/, "").replace(/[^a-z0-9ñ ]+/g, " ").replace(/\s+/g, " ").trim();
+const ALIAS = {
+  entrada: "entrada", "canto de entrada": "entrada", perdon: "perdon", "acto penitencial": "perdon", piedad: "perdon", gloria: "gloria", salmo: "salmo",
+  aleluya: "aleluya", aclamacion: "aclamacion", "aclamacion al evangelio": "aclamacion", ofertorio: "ofertorio", ofrendas: "ofertorio", ofrenda: "ofertorio",
+  santo: "santo", "padre nuestro": "padrenuestro", padrenuestro: "padrenuestro", paz: "paz", cordero: "cordero", "cordero de dios": "cordero",
+  comunion: "comunion", meditacion: "meditacion", "accion de gracias": "accion", gracias: "accion", maria: "maria", marianos: "maria", mariano: "maria", mariana: "maria", marianas: "maria",
+  salida: "salida", envio: "salida", "salida y envio": "salida", adoracion: "adoracion", "espiritu santo": "espiritu", espiritu: "espiritu", navidad: "navidad", adviento: "navidad",
+  juvenil: "juvenil", animacion: "juvenil", "juvenil y animacion": "juvenil",
+};
+let pasteRes = null;
+function pasteDialog() {
+  pasteRes = null;
+  const d = dialog("canPasteDlg");
+  d.innerHTML = `<form method="dialog" id="clsPasteForm">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Clasificar</span><h2>Pegar etiquetas desde una planilla</h2></div>
+      <button type="button" class="icon-btn" data-action="canClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:12px">
+      <p class="small">Copia las filas de tu planilla y pégalas aquí. Cada fila necesita el <b>título</b> y, en la última columna, la <b>etiqueta</b> (puedes poner dos separadas por coma). Las filas sin etiqueta no se tocan.</p>
+      <textarea class="textarea can-ta" id="clsPasteText" rows="10" placeholder="N°&#9;Título&#9;Fuente&#9;Etiqueta&#10;4&#9;Abre tu jardín&#9;…&#9;Entrada"></textarea>
+      <label class="chip" style="align-self:flex-start"><input type="checkbox" id="clsPasteRepl" checked> Reemplazar las etiquetas que ya tenían</label>
+      <button type="button" class="btn btn-soft" data-action="clsPasteCheck">${icon("eye")} Revisar</button>
+      <div id="clsPastePrev"></div>
+    </div>
+    <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="canClose">Cancelar</button>
+      <button class="btn btn-primary" type="submit" id="clsPasteOk" disabled>Aplicar</button></div>
+  </form>`;
+  d.showModal();
+}
+function pasteParse(text) {
+  const byTitle = new Map(editable().map((s) => [fold_(s.title), s]));
+  const builtin = new Set(ORIGINALES.map((s) => fold_(s.title)));
+  const res = { ok: [], notFound: [], unknown: new Set(), builtin: [] };
+  String(text || "").replace(/\r/g, "").split("\n").forEach((line) => {
+    let cols = line.split("\t").map((c) => c.trim());
+    if (cols.length < 2) return;
+    if (/^\d{1,4}$/.test(cols[0])) cols = cols.slice(1);
+    const title = cols[0];
+    let label = cols.length > 1 ? cols[cols.length - 1] : "";
+    if (/^(cancionero|original|fuente|etiqueta)/i.test(fold_(label))) label = ""; // era la columna «Fuente» (la etiqueta quedó vacía)
+    if (!title || !label || /^t[ií]tulo$/i.test(title)) return;
+    const keys = [];
+    label.split(/[,;/]| y (?!gracias|env)/i).map((x) => fold_(x)).filter(Boolean).forEach((x) => { const k = ALIAS[x]; if (k) keys.push(k); else res.unknown.add(x); });
+    if (!keys.length) return;
+    const t = fold_(title);
+    if (builtin.has(t)) { res.builtin.push(title); return; }
+    const s = byTitle.get(t);
+    if (!s) { res.notFound.push(title); return; }
+    res.ok.push({ s, keys });
+  });
+  return res;
+}
+function pastePreview() {
+  const box = document.getElementById("clsPastePrev"); if (!box) return;
+  pasteRes = pasteParse(document.getElementById("clsPasteText")?.value || "");
+  const r = pasteRes, ok = document.getElementById("clsPasteOk");
+  box.innerHTML = `<div class="note small"><b>${r.ok.length} canci${r.ok.length === 1 ? "ón" : "ones"}</b> recibirán su etiqueta.${r.notFound.length ? `<br>No encontré ${r.notFound.length} en el cancionero: ${r.notFound.map(esc).join(", ")}.` : ""}${r.builtin.length ? `<br>Las originales de Ágape (${r.builtin.map(esc).join(", ")}) ya traen sus etiquetas y no se cambian aquí.` : ""}${r.unknown.size ? `<br>No reconozco estas etiquetas: ${[...r.unknown].map(esc).join(", ")}.` : ""}</div>`;
+  if (ok) ok.disabled = !r.ok.length;
+}
+function pasteApply() {
+  if (!pasteRes || !pasteRes.ok.length) return;
+  const repl = document.getElementById("clsPasteRepl")?.checked;
+  pasteRes.ok.forEach(({ s, keys }) => setMoms(s, repl ? keys : [...momsOf(s), ...keys]));
+  const n = pasteRes.ok.length;
+  document.getElementById("canPasteDlg")?.close();
+  clsF = "todas"; const f = $("#clsFilter"); if (f) f.value = "todas";
+  paintCls();
+  toast(`Listo: ${n} canciones etiquetadas. Revisa y toca «Guardar cambios».`);
 }
 async function clsSave() {
   const list = pending(); if (!list.length) return;
@@ -570,10 +646,10 @@ function paintHoja() {
   if (!hoja.loaded) hojaLoad();
   const list = all();
   const opts = (slot) => {
-    const m = slot === "comunion2" ? "comunion" : slot, cur_ = hoja.picks[slot] || "";
-    const fit = list.filter((s) => (s.momentos || []).includes(m)), rest = list.filter((s) => !(s.momentos || []).includes(m));
+    const m = fitLabel(slot), cur_ = hoja.picks[slot] || "";
+    const fit = list.filter((s) => fitsSlot(s, slot)), rest = list.filter((s) => !fitsSlot(s, slot));
     const o = (s) => `<option value="${esc(s.id)}" ${cur_ === s.id ? "selected" : ""}>${esc(s.title)}</option>`;
-    return `<option value="">—</option>${fit.length ? `<optgroup label="Para ${esc(MLABEL[m])}">${fit.map(o).join("")}</optgroup>` : ""}<optgroup label="${fit.length ? "Otras" : "Todas"}">${rest.map(o).join("")}</optgroup>`;
+    return `<option value="">—</option>${fit.length ? `<optgroup label="Para ${esc(m)}">${fit.map(o).join("")}</optgroup>` : ""}<optgroup label="${fit.length ? "Otras" : "Todas"}">${rest.map(o).join("")}</optgroup>`;
   };
   const r = hoja.misa && (misas || []).find((x) => x.id === hoja.misa);
   box.innerHTML = `
@@ -875,7 +951,7 @@ function registerActions() {
   A.canEdit = (el) => songEditor(byId(el.dataset.id));
   A.canNewMisa = () => misaEditor(null);
   A.canEditMisa = (el) => misaEditor((misas || []).find((x) => x.id === el.dataset.id));
-  A.canClose = () => { ["canDlg", "canMisaDlg", "canExpDlg", "canImpDlg"].forEach((k) => document.getElementById(k)?.close()); };
+  A.canClose = () => { ["canDlg", "canMisaDlg", "canExpDlg", "canImpDlg", "canPasteDlg"].forEach((k) => document.getElementById(k)?.close()); };
   A.canExport = (el) => exportDialog(el.dataset.misa || "");
   A.canDel = async (el) => {
     if (!confirm("¿Borrar esta canción del cancionero?")) return;
@@ -891,6 +967,8 @@ function registerActions() {
   A.clsDel = () => { const k = $("#clsMom")?.value; if (!sel.size) { toast("Primero marca algunas canciones", ""); return; } sel.forEach((id) => { const s = byId(id); if (s) setMoms(s, momsOf(s).filter((x) => x !== k)); }); paintCls(); };
   A.clsSugAll = () => { const l = clsVisible().filter((s) => suggest(s).length); if (!l.length) return; if (!confirm(`¿Agregar las sugerencias a ${l.length} canciones? Puedes revisarlas antes de guardar.`)) return; l.forEach((s) => setMoms(s, [...momsOf(s), ...suggest(s)])); paintCls(); };
   A.clsSave = () => clsSave();
+  A.clsPaste = () => pasteDialog();
+  A.clsPasteCheck = () => pastePreview();
   A.hcPrint = () => { hojaRead(); hojaBuild(); hojaPrint(); };
   A.hcSave = () => hojaSave();
   document.addEventListener("input", (e) => {
@@ -944,6 +1022,7 @@ function registerActions() {
       try { const id = await ctx.cloud.saveCancion(e.target.dataset.id || null, data); document.getElementById("canDlg")?.close(); toast("Canción guardada"); location.hash = "#/cancionero/" + encodeURIComponent(id); }
       catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); }
     }
+    if (e.target.id === "clsPasteForm") { e.preventDefault(); pasteApply(); return; }
     if (e.target.id === "canImpForm") {
       e.preventDefault();
       const f = e.target, ok = [...f.querySelectorAll("input[name=imok]:checked")].map((x) => imp[+x.value]).filter(Boolean);
