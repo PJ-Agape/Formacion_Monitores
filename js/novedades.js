@@ -18,6 +18,7 @@ export const TIPOS = [
   { k: "chat", e: "💭", t: "Mensajes nuevos en el chat", d: "Cuando hay mensajes en las salas donde estás.", on: false },
   { k: "formacion", e: "🎓", t: "Recordatorio de formación", d: "Cada lunes: «Recuerda avanzar en tu formación» (a los jóvenes, su encuentro de la semana).", on: false },
   { k: "rosario", e: "📿", t: "Misterios del día", d: "Cada mañana: qué misterios del Rosario corresponden hoy.", on: false },
+  { k: "saludo", e: "☀️", t: "Saludo del día listo (equipo)", d: "Cada mañana, a administradores y coordinación: el saludo de buenos días para enviar al grupo.", on: true },
   { k: "evangelio", e: "📖", t: "Evangelio del día", d: "Cada mañana: la cita y la frase del Evangelio de hoy.", on: false },
 ];
 let cfg = null;
@@ -42,7 +43,8 @@ function saveVistos(v) {
   const lim = Date.now() - 15 * DAY; for (const k in v) if (+k.split("|").pop() < lim) delete v[k];
   try { localStorage.setItem(vkey(), JSON.stringify(v)); } catch {}
 }
-const visibles = () => { const v = vistos(), now = Date.now(); return items.filter((x) => { const t = v[nid(x)]; return t === undefined || (t > 0 && now - t < DAY); }); };
+// Lo pendiente (solicitudes, jóvenes sin dirigente) se queda en la campana mientras siga pendiente.
+const visibles = () => { const v = vistos(), now = Date.now(); return items.filter((x) => { if (x.pend) return true; const t = v[nid(x)]; return t === undefined || (t > 0 && now - t < DAY); }); };
 function markVistos(list, t) { const v = vistos(); list.forEach((x) => { if (t === 0 || v[nid(x)] === undefined) v[nid(x)] = t; }); saveVistos(v); }
 const ago = (t) => {
   const m = Math.round((Date.now() - t) / 60000);
@@ -80,10 +82,17 @@ async function fetchAll() {
   // Solicitudes de cuenta por revisar (administradores)
   if (cloud.state().isAdmin) {
     const sols = await cloud.pendingSolicitudes();
-    if (sols.length) out.push({ ts: Math.max(...sols.map((x) => ms(x.createdAt) || 0)) || Date.now(), e: "🙋", href: "#/admin/dirigentes",
+    if (sols.length) out.push({ pend: true, ts: Math.max(...sols.map((x) => ms(x.createdAt) || 0)) || Date.now(), e: "🙋", href: "#/admin/dirigentes",
       t: sols.length === 1 ? "Una solicitud de cuenta por revisar" : `${sols.length} solicitudes de cuenta por revisar`, d: short(sols.map((x) => String(x.name || "").split(" ")[0]).join(", ")) });
   }
-  const now = Date.now();
+  const now = Date.now(), dia = now >= at(7) ? at(7) : at(7) - DAY; // lo diario se marca como nuevo cada mañana
+  // Para administradores y coordinación: jóvenes sin dirigente y el saludo del día
+  if (cloud.state().isAdmin || cloud.state().role === "coordinador") {
+    const sin = (await cloud.listJovenes().catch(() => [])).filter((j) => j.activo !== false && !j.guia);
+    if (sin.length) out.push({ pend: true, ts: dia, e: "🧭", href: "#/admin/asignar", t: sin.length === 1 ? "Un joven sin dirigente" : `${sin.length} jóvenes sin dirigente`,
+      d: short(sin.map((j) => String(j.nombre || "").split(" ")[0]).join(", ")) });
+    if (isOn("saludo") && now >= at(7)) out.push({ ts: at(7), e: "☀️", href: "#/admin/saludos", t: "El saludo de hoy está listo", d: "Buenos días con el Evangelio, para enviar al grupo por WhatsApp." });
+  }
   if (isOn("chat")) {
     await cloud.loadSalas().catch(() => []);
     const salas = cloud.allSalas().filter((x) => cloud.mySalas().includes(x.key)).slice(0, 8);
@@ -150,11 +159,13 @@ function openPanel() {
   const s = seen();
   let p = document.getElementById("bellPanel");
   if (!p) { p = document.createElement("div"); p.id = "bellPanel"; p.className = "bell-panel"; p.setAttribute("role", "dialog"); p.setAttribute("aria-label", "Novedades"); document.body.appendChild(p); }
-  const list = visibles().slice(0, 15);
+  const all = visibles(), pend = all.filter((x) => x.pend), list = all.filter((x) => !x.pend).slice(0, 15);
+  const item = (x) => `<a class="bell-i ${x.ts > s ? "new" : ""}" href="${esc(x.href)}">
+      <span class="bell-e" aria-hidden="true">${x.e}</span><span><b>${esc(x.t)}</b><small>${esc(x.full || x.d)}</small><em>${x.pend ? "<u>Atender</u>" : `${ago(x.ts)}${x.vela ? " · <u>Ir a rezar 🙏</u>" : " · <u>Ver</u>"}`}</em></span></a>`;
   p.innerHTML = `<div class="bell-head"><strong>Novedades</strong><span class="row" style="gap:6px">${list.length ? `<button type="button" class="bell-clear">Limpiar</button>` : ""}<button type="button" class="bell-x" aria-label="Cerrar">${icon("x")}</button></span></div>
-    ${list.length ? `<div class="bell-list">${list.map((x) => `<a class="bell-i ${x.ts > s ? "new" : ""}" href="${esc(x.href)}">
-      <span class="bell-e" aria-hidden="true">${x.e}</span><span><b>${esc(x.t)}</b><small>${esc(x.full || x.d)}</small><em>${ago(x.ts)}${x.vela ? " · <u>Ir a rezar 🙏</u>" : " · <u>Ver</u>"}</em></span></a>`).join("")}</div>`
-      : `<p class="bell-empty">${loading ? "Buscando novedades…" : "Estás al día ✨ Cuando alguien comparta una intención o publique algo, lo verás aquí."}</p>`}`;
+    ${pend.length ? `<p class="bell-sec">Por atender</p><div class="bell-list bell-pend">${pend.map(item).join("")}</div>${list.length ? `<p class="bell-sec">Novedades</p>` : ""}` : ""}
+    ${list.length ? `<div class="bell-list">${list.map(item).join("")}</div>`
+      : pend.length ? "" : `<p class="bell-empty">${loading ? "Buscando novedades…" : "Estás al día ✨ Cuando alguien comparta una intención o publique algo, lo verás aquí."}</p>`}`;
   p.querySelector(".bell-x").onclick = closePanel;
   const cl = p.querySelector(".bell-clear"); if (cl) cl.onclick = (e) => { e.stopPropagation(); markVistos(list, 0); markSeen(); paint(); openPanel(); };
   p.querySelectorAll(".bell-i").forEach((a) => a.addEventListener("click", closePanel));

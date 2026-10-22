@@ -2544,6 +2544,8 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .bell-head strong { font-family: var(--font-display); font-weight: 800; font-size: 1.2rem; }
 .bell-x { background: none; border: 0; color: var(--ink); cursor: pointer; padding: 4px; }
 .bell-list { padding: 6px; }
+.bell-sec { margin: 10px 14px 0; font-size: .68rem; font-weight: 800; letter-spacing: .08em; text-transform: uppercase; color: #ef591c; }
+.bell-pend .bell-i { background: #fff6e5; border-radius: 12px; margin-bottom: 4px; }
 .bell-i { display: flex; gap: 10px; padding: 10px; border-radius: 14px; text-decoration: none; color: var(--ink); }
 .bell-i:hover { background: var(--surface-2); }
 .bell-i.new { background: color-mix(in srgb, #ffba03 18%, var(--surface)); }
