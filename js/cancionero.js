@@ -161,7 +161,6 @@ export function viewList() {
     ${staff && tab === "canciones" ? `<button class="btn btn-sm btn-soft" data-action="canImport">${icon("ul")} Importar canciones</button>` : ""}
     ${staff && tab !== "clasificar" ? `<button class="btn btn-sm btn-gold" data-action="${tab === "misas" ? "canNewMisa" : "canNew"}">${icon("plus")} ${tab === "misas" ? "Nueva celebración" : "Nueva canción"}</button>` : ""}
   </nav>
-  <p class="can-ver xs muted">Esta es la versión 1. ¡Sigamos construyendo nuestro cancionero!</p>
   ${gate()}
   ${tab === "canciones" ? `
   <div class="can-tools">
@@ -171,23 +170,22 @@ export function viewList() {
       ${MOMENTOS.map(([k, l]) => `<button class="chip ${momento === k ? "accent" : ""}" data-action="canMom" data-m="${k}">${esc(l)}</button>`).join("")}
     </div>
   </div>
-  <div id="canList" class="can-list"></div>` : tab === "clasificar" && staff ? clsView() : `<div id="canMisas" class="can-misas"></div>`}`;
+  <div class="cl-bar" role="toolbar" aria-label="Opciones del libro">
+    <button class="btn btn-sm btn-ghost" data-action="clIndex">${icon("grid")} Índice</button>
+    <span class="cl-nav"><button class="icon-btn" data-action="clTurn" data-d="-1" aria-label="Página anterior">${icon("left")}</button>
+      <span class="cl-pg" id="clPg" aria-live="polite"></span>
+      <button class="icon-btn" data-action="clTurn" data-d="1" aria-label="Página siguiente">${icon("right")}</button></span>
+    <span class="spacer"></span>
+    <button class="btn btn-sm btn-ghost" data-action="canNota">${prefs.nota === "us" ? "Do Re Mi" : "C D E"}</button>
+    <button class="btn btn-sm ${prefs.chords ? "btn-soft" : "btn-ghost"}" data-action="canChords" aria-pressed="${prefs.chords}">Acordes</button>
+    <span class="can-grp"><button class="icon-btn" data-action="canSize" data-d="-1" aria-label="Letra más chica">A−</button><button class="icon-btn" data-action="canSize" data-d="1" aria-label="Letra más grande">A+</button></span>
+  </div>
+  <div class="cl-wrap"><div class="cl-stage" id="canLibro" style="--can-size:${prefs.size}" aria-roledescription="libro"></div></div>
+  <p class="xs muted cl-help">Desliza la página o toca sus bordes para avanzar. En el computador, usa las flechas del teclado.</p>` : tab === "clasificar" && staff ? clsView() : `<div id="canMisas" class="can-misas"></div>`}`;
 }
 function paintList() {
   paintCls();
-  const box = $("#canList");
-  if (box) {
-    const q = query.trim().toLowerCase();
-    const list = all().filter((s) => (!momento || (s.momentos || []).includes(momento))
-      && (!q || (s.title + " " + (s.author || "") + " " + (s.body || "").replace(/\[[^\]]*\]/g, "")).toLowerCase().includes(q)));
-    box.innerHTML = list.length ? list.map((s) => `<a class="card link can-item" href="#/cancionero/${encodeURIComponent(s.id)}">
-        <span class="can-key">${esc(chordName(firstChord(s.body), prefs.shift[s.id] || 0, prefs.nota) || "♪")}</span>
-        <span class="can-main"><strong>${esc(s.title)}</strong><span class="muted small">${esc(s.author || "")}</span>
-          <span class="can-moms">${known(s.momentos).map((m) => `<span class="chip">${esc(MLABEL[m])}</span>`).join("")}${s.builtin ? `<span class="chip warn">Original Ágape</span>` : ""}</span></span>
-        ${icon("right")}</a>`).join("")
-      : `<div class="card" style="text-align:center;padding:28px"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
-         ${canEdit() ? `<button class="btn btn-primary btn-sm" style="margin-top:10px" data-action="canNew">${icon("plus")} Agregar una canción</button>` : ""}</div>`;
-  }
+  if ($("#canLibro")) buildBook();
   const mb = $("#canMisas");
   if (mb) {
     if (!st().ready) { mb.innerHTML = ""; return; }
@@ -201,6 +199,224 @@ function paintList() {
 }
 
 // ---------------------------------------------------------------------------
+// El cancionero como libro  (#/cancionero, pestaña Canciones)
+// Portada, índice con el número de página de cada canción y una canción por
+// página (las largas siguen en la página siguiente). Se pasa de página con
+// una animación de volteo, deslizando, tocando los bordes o con el teclado.
+// ---------------------------------------------------------------------------
+const LK = "agape_libro";
+const book = { pages: [], sig: "", at: 0, ix: 1, busy: false, filter: null, justDragged: false };
+const anchorOf = (pg) => pg ? (pg.id ? { id: pg.id, part: pg.part } : { k: pg.k }) : null;
+let anchor = null;
+try { anchor = JSON.parse(localStorage.getItem(LK) || "null"); } catch {}
+const saveAnchor = () => { anchor = anchorOf(book.pages[book.at]); try { localStorage.setItem(LK, JSON.stringify(anchor)); } catch {} };
+const reduceMotion = () => matchMedia("(prefers-reduced-motion: reduce)").matches;
+
+function filtered() {
+  const q = query.trim().toLowerCase();
+  return all().filter((s) => (!momento || (s.momentos || []).includes(momento))
+    && (!q || (s.title + " " + (s.author || "") + " " + (s.body || "").replace(/\[[^\]]*\]/g, "")).toLowerCase().includes(q)));
+}
+const filtering = () => !!(query.trim() || momento);
+
+function pageHtml({ cls = "", head = "", body = "", foot = "" }) {
+  return `<div class="cl-page ${cls}"><div class="cl-in">${head}<div class="cl-body">${body}</div></div>${foot ? `<div class="cl-foot">${foot}</div>` : ""}</div>`;
+}
+const footHtml = (left, n, right = "") => `<span class="cl-f-l">${left}</span><span class="cl-f-n">${n}</span><span class="cl-f-r">${right}</span>`;
+const songHead = (s) => `<header class="cl-head">${known(s.momentos).length ? `<span class="eyebrow">${known(s.momentos).map((x) => esc(MLABEL[x])).join(" · ")}</span>` : ""}
+  <h2>${esc(s.title)}</h2>${s.author ? `<p class="muted small">${esc(s.author)}</p>` : ""}</header>`;
+const contHead = (s) => `<p class="cl-cont">${esc(s.title)} <span>(continuación)</span></p>`;
+
+// Reparte una lista de elementos ya dibujados en `body` según el alto disponible.
+// availFirst: alto en la primera página; availNext: en las siguientes.
+function split(kids, availFirst, availNext, soft) {
+  const out = []; let start = 0, avail = availFirst, i = 0;
+  if (!kids.length) return [[0, 0]];
+  let base = kids[0].offsetTop;
+  while (i < kids.length) {
+    const bottom = kids[i].offsetTop + kids[i].offsetHeight - base;
+    if (bottom > avail && i > start) {
+      let cut = i;
+      while (cut - 1 > start && soft(kids[cut - 1])) cut--; // no dejar un título de estrofa colgando al pie
+      out.push([start, cut]);
+      while (cut < kids.length - 1 && kids[cut].classList.contains("can-gap")) cut++; // ni un espacio arriba
+      start = i = cut; base = kids[cut].offsetTop; avail = availNext;
+      continue;
+    }
+    i++;
+  }
+  out.push([start, kids.length]);
+  return out;
+}
+
+function buildBook(force) {
+  const stage = $("#canLibro"); if (!stage || book.busy) return;
+  const list = filtered();
+  const sig = [stage.clientWidth, stage.clientHeight, prefs.nota, prefs.chords, prefs.size, query, momento, songs === null ? "…" : "",
+    list.map((s) => `${s.id}:${(s.body || "").length}:${s.title}:${(s.momentos || []).join(",")}:${prefs.shift[s.id] || 0}`).join("|")].join("/");
+  if (!force && sig === book.sig && book.pages.length) { showPage(book.at); return; }
+  const filterChanged = book.filter != null && book.filter !== `${query}\u0000${momento}`;
+  book.sig = sig; book.filter = `${query}\u0000${momento}`;
+
+  const m = document.createElement("div"); m.className = "cl-leaf cl-measure"; stage.appendChild(m);
+  const meas = (html) => { m.innerHTML = html; return m.querySelector(".cl-body"); };
+  const soft = (el) => el.classList.contains("can-sec") || el.classList.contains("can-gap");
+
+  // 1) Canciones
+  const songPages = [], first = new Map();
+  let availNext = null;
+  for (const s of list) {
+    const lines = songLines(s, prefs.shift[s.id] || 0);
+    if (availNext == null) availNext = meas(pageHtml({ cls: "cl-song", head: contHead(s), foot: footHtml("x", 0) })).clientHeight;
+    const body = meas(pageHtml({ cls: "cl-song", head: songHead(s), body: lines.join(""), foot: footHtml("x", 0) }));
+    const parts = split([...body.children], body.clientHeight, availNext, soft);
+    first.set(s.id, songPages.length);
+    parts.forEach(([a, b], part) => songPages.push({ id: s.id, part, of: parts.length, html: lines.slice(a, b).join("") }));
+  }
+
+  // 2) Índice (los números se completan después; caben igual con 3 dígitos)
+  const ixItem = (s, n) => `<button class="cl-ix" data-action="clGo" data-p="${n}"><span class="cl-ix-t">${esc(s.title)}${s.builtin ? ` <small>Original Ágape</small>` : ""}</span><span class="cl-ix-d" aria-hidden="true"></span><span class="cl-ix-n">${n}</span></button>`;
+  const ixHead = (cont) => `<header class="cl-head"><span class="eyebrow">${filtering() ? "Canciones encontradas" : "Cancionero Ágape"}</span><h2>Índice${cont ? " <span class=\"cl-cont-s\">(continuación)</span>" : ""}</h2></header>`;
+  let ixParts = [[0, 0]];
+  if (list.length) {
+    const a2 = meas(pageHtml({ cls: "cl-index", head: ixHead(true), foot: footHtml("x", 0) })).clientHeight;
+    const b1 = meas(pageHtml({ cls: "cl-index", head: ixHead(false), body: list.map((s) => ixItem(s, 888)).join(""), foot: footHtml("x", 0) }));
+    ixParts = split([...b1.children], b1.clientHeight, a2, () => false);
+  }
+  m.remove();
+
+  // 3) Armar el libro: portada, índice, canciones
+  const ixN = ixParts.length, off = 1 + ixN;
+  const pages = [];
+  const total = list.length;
+  pages.push({ k: "cover", html: `<div class="cl-page cl-cover"><div class="cl-cov">
+      <img src="icons/logo-320.webp" alt="" width="120" height="120">
+      <span class="cl-cov-k">Pastoral Juvenil Ágape</span>
+      <h2>Cancionero <em>Ágape</em></h2>
+      <p class="cl-cov-v">Esta es la versión 1. ¡Sigamos construyendo nuestro cancionero!</p>
+      <p class="cl-cov-n">${songs === null && st().ready ? "Cargando canciones…" : `${total} ${total === 1 ? "canción" : "canciones"}${filtering() ? " con este filtro" : ""}`}</p>
+      ${total ? `<button class="btn btn-gold btn-sm" data-action="clGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
+    </div></div>` });
+  ixParts.forEach(([a, b], i) => {
+    const body = total ? list.slice(a, b).map((s) => ixItem(s, off + first.get(s.id))).join("")
+      : `<div class="cl-empty"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
+         ${canEdit() ? `<button class="btn btn-primary btn-sm" data-action="canNew">${icon("plus")} Agregar una canción</button>` : ""}</div>`;
+    pages.push({ k: "ix" + i, html: pageHtml({ cls: "cl-index", head: ixHead(i > 0), body, foot: footHtml("", 1 + i) }) });
+  });
+  songPages.forEach((p, i) => {
+    const s = byId(p.id), n = off + i;
+    const open = `<a href="#/cancionero/${encodeURIComponent(s.id)}" title="Cambiar tono, proyectar o imprimir">Abrir ${icon("right")}</a>`;
+    pages.push({ id: p.id, part: p.part, html: pageHtml({ cls: "cl-song", head: p.part ? contHead(s) : songHead(s), body: p.html,
+      foot: footHtml(`<button class="cl-f-ix" data-action="clIndex">Índice</button>`, n, open) }) });
+  });
+  book.pages = pages; book.ix = 1;
+
+  // 4) Volver a donde estaba la lectura
+  let at = 0;
+  if (filterChanged && filtering()) at = total ? 1 : 0;
+  else if (anchor) {
+    const j = pages.findIndex((p) => anchor.id ? p.id === anchor.id && p.part === Math.min(anchor.part || 0, pages.filter((q) => q.id === anchor.id).length - 1) : p.k === anchor.k);
+    if (j >= 0) at = j;
+  }
+  book.at = Math.min(at, pages.length - 1);
+  showPage(book.at);
+}
+
+function leaf(i, extra = "") {
+  return `<div class="cl-leaf ${extra}" data-i="${i}">${book.pages[i]?.html || ""}${extra.includes("cl-turn") ? `<div class="cl-back" aria-hidden="true"></div>` : `<div class="cl-shade" aria-hidden="true"></div>`}</div>`;
+}
+function showPage(i) {
+  const stage = $("#canLibro"); if (!stage) return;
+  book.at = Math.max(0, Math.min(i, book.pages.length - 1));
+  stage.innerHTML = leaf(book.at);
+  const pg = $("#clPg");
+  if (pg) pg.textContent = book.at === 0 ? "Portada" : `${book.at} de ${book.pages.length - 1}`;
+  document.querySelectorAll("[data-action=clTurn]").forEach((b) => { b.disabled = +b.dataset.d < 0 ? book.at === 0 : book.at >= book.pages.length - 1; });
+  saveAnchor();
+}
+
+// Prepara el escenario para pasar de `from` a `to`: abajo queda la página que se
+// descubre y encima la hoja que gira sobre el lomo (borde izquierdo).
+function stageTurn(from, to) {
+  const stage = $("#canLibro");
+  const fwd = to > from;
+  stage.innerHTML = leaf(fwd ? to : from) + leaf(fwd ? from : to, "cl-turn");
+  const under = stage.querySelector(".cl-leaf:not(.cl-turn)"), turning = stage.querySelector(".cl-turn");
+  return { fwd, under, turning, shade: under.querySelector(".cl-shade") };
+}
+const ANG = (fwd, p) => fwd ? -180 * p : -180 * (1 - p); // p: 0 → 1 avance del giro
+function setTurn(t, p) {
+  t.turning.style.transform = `rotateY(${ANG(t.fwd, p)}deg)`;
+  t.shade.style.opacity = String(0.55 * (1 - p));
+  t.turning.style.setProperty("--lit", String(Math.sin(Math.PI * p)));
+}
+function finishTurn(t, from, to, p0, done) {
+  const dur = reduceMotion() ? 0 : Math.max(120, 620 * (done ? 1 - p0 : p0));
+  const end = done ? 1 : 0;
+  if (!dur) { book.busy = false; showPage(done ? to : from); return; }
+  const start = performance.now();
+  const ease = (x) => 1 - Math.pow(1 - x, 3);
+  const step = (now) => {
+    const k = Math.min(1, (now - start) / dur);
+    setTurn(t, p0 + (end - p0) * ease(k));
+    if (k < 1) requestAnimationFrame(step);
+    else { book.busy = false; showPage(done ? to : from); }
+  };
+  requestAnimationFrame(step);
+}
+function goPage(to) {
+  to = Math.max(0, Math.min(to, book.pages.length - 1));
+  const from = book.at;
+  if (to === from || book.busy || !$("#canLibro")) return;
+  if (reduceMotion()) { showPage(to); return; }
+  book.busy = true;
+  const t = stageTurn(from, to);
+  setTurn(t, 0);
+  finishTurn(t, from, to, 0, true);
+}
+const turnPage = (d) => goPage(book.at + d);
+
+// Deslizar con el dedo (o el mouse): la hoja sigue al dedo, como en un lector de libros.
+let drag = null;
+document.addEventListener("pointerdown", (e) => {
+  const stage = e.target.closest?.("#canLibro");
+  if (!stage || book.busy || e.button > 0) return;
+  drag = { x: e.clientX, y: e.clientY, w: stage.clientWidth, left: stage.getBoundingClientRect().left, t: null, id: e.pointerId, stage, moved: false, t0: performance.now(), onCtl: !!e.target.closest("a,button,input") };
+});
+document.addEventListener("pointermove", (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const dx = e.clientX - drag.x, dy = e.clientY - drag.y;
+  if (!drag.t) {
+    if (Math.abs(dx) < 12 || Math.abs(dx) < Math.abs(dy) * 1.2) { if (Math.abs(dy) > 12) drag = null; return; }
+    const to = book.at + (dx < 0 ? 1 : -1);
+    if (to < 0 || to >= book.pages.length || reduceMotion()) { drag = null; return; }
+    drag.to = to; drag.from = book.at; drag.moved = true; book.busy = true;
+    drag.t = stageTurn(drag.from, to);
+    try { drag.stage.setPointerCapture(e.pointerId); } catch {}
+  }
+  const p = Math.max(0, Math.min(1, drag.t.fwd ? -dx / drag.w : dx / drag.w));
+  drag.p = p; setTurn(drag.t, p);
+});
+const endDrag = (e) => {
+  if (!drag || e.pointerId !== drag.id) return;
+  const d = drag; drag = null;
+  if (d.t) {
+    book.justDragged = true; setTimeout(() => { book.justDragged = false; }, 0);
+    const fast = performance.now() - d.t0 < 260 && d.p > 0.08;
+    finishTurn(d.t, d.from, d.to, d.p || 0, e.type !== "pointercancel" && (d.p > 0.3 || fast));
+    return;
+  }
+  // Un toque en los bordes de la página pasa de hoja
+  if (e.type === "pointerup" && !d.onCtl) {
+    const fx = (e.clientX - d.left) / d.w;
+    if (fx > 0.72) turnPage(1); else if (fx < 0.28) turnPage(-1);
+  }
+};
+document.addEventListener("pointerup", endDrag);
+document.addEventListener("pointercancel", endDrag);
+document.addEventListener("click", (e) => { if (e.target.closest?.("#canLibro") && book.justDragged) { e.preventDefault(); e.stopPropagation(); } }, true);
+
+// ---------------------------------------------------------------------------
 // Una canción  (#/cancionero/:id)
 // ---------------------------------------------------------------------------
 let cur = null, fromMisa = null;
@@ -209,7 +425,8 @@ export function viewSong(id, misaId) {
   ctx.onAfterRender(() => { repaint = () => paintSong(id); watchAll(); paintSong(id); });
   return `<div id="canSong"><p class="muted" style="padding:30px;text-align:center">Cargando…</p></div>`;
 }
-function songBody(s, shift, chords = prefs.chords) {
+function songBody(s, shift, chords = prefs.chords) { return songLines(s, shift, chords).join(""); }
+function songLines(s, shift, chords = prefs.chords) {
   const lines = String(s.body || "").split("\n");
   return lines.map((ln) => {
     const t = ln.trim();
@@ -222,7 +439,7 @@ function songBody(s, shift, chords = prefs.chords) {
       html += `<span class="can-seg"><b class="can-ch">${esc(chordName(parts[i], shift, prefs.nota))}</b><span>${esc(parts[i + 1] || "") || "&nbsp;"}</span></span>`;
     }
     return `<div class="can-line has-ch">${html}</div>`;
-  }).join("");
+  });
 }
 function paintSong(id) {
   const box = $("#canSong"); if (!box) return;
@@ -926,9 +1143,12 @@ function registerActions() {
   A.canTab = (el) => { tab = el.dataset.t; ctx.render(); };
   A.canMom = (el) => { momento = el.dataset.m; document.querySelectorAll("[data-action=canMom]").forEach((b) => b.classList.toggle("accent", b.dataset.m === momento)); paintList(); };
   A.canShift = (el) => { if (!cur) return; prefs.shift[cur.id] = ((prefs.shift[cur.id] || 0) + +el.dataset.d + 18) % 12 - 6 || 0; savePrefs(); paintSong(cur.id); };
-  A.canNota = () => { prefs.nota = prefs.nota === "us" ? "lat" : "us"; savePrefs(); cur && paintSong(cur.id); };
-  A.canChords = () => { prefs.chords = !prefs.chords; savePrefs(); cur && paintSong(cur.id); };
-  A.canSize = (el) => { prefs.size = Math.min(1.8, Math.max(.8, Math.round((prefs.size + +el.dataset.d * .1) * 10) / 10)); savePrefs(); const s = $(".can-sheet"); if (s) s.style.setProperty("--can-size", prefs.size); };
+  A.canNota = (el) => { prefs.nota = prefs.nota === "us" ? "lat" : "us"; savePrefs(); if ($("#canLibro")) { el.textContent = prefs.nota === "us" ? "Do Re Mi" : "C D E"; buildBook(); } else if (cur) paintSong(cur.id); };
+  A.canChords = (el) => { prefs.chords = !prefs.chords; savePrefs(); if ($("#canLibro")) { el.classList.toggle("btn-soft", prefs.chords); el.classList.toggle("btn-ghost", !prefs.chords); el.setAttribute("aria-pressed", prefs.chords); buildBook(); } else if (cur) paintSong(cur.id); };
+  A.canSize = (el) => { prefs.size = Math.min(1.8, Math.max(.8, Math.round((prefs.size + +el.dataset.d * .1) * 10) / 10)); savePrefs(); const s = $(".can-sheet") || $("#canLibro"); if (s) s.style.setProperty("--can-size", prefs.size); if ($("#canLibro")) buildBook(); };
+  A.clTurn = (el) => turnPage(+el.dataset.d);
+  A.clGo = (el) => goPage(+el.dataset.p);
+  A.clIndex = () => goPage(book.ix);
   A.canProject = (el) => {
     if (el.dataset.scope === "misa") {
       const r = (misas || []).find((x) => x.id === el.dataset.id); if (!r) return;
@@ -983,9 +1203,17 @@ function registerActions() {
     else if (t.classList.contains("cls-add") && t.value) { const s = byId(t.dataset.id); if (s) setMoms(s, [...momsOf(s), t.value]); paintCls(); }
     else if (t.closest && t.closest("#hcForm")) { hojaRead(); hojaBuild(); }
   });
-  window.addEventListener("resize", () => { if ($("#hcStage")) hojaScale(); });
+  window.addEventListener("resize", () => { if ($("#hcStage")) hojaScale(); if ($("#canLibro")) { clearTimeout(clRz); clRz = setTimeout(() => buildBook(), 200); } });
+  let clRz = 0;
+  document.fonts?.ready.then(() => { if ($("#canLibro")) buildBook(true); });
   document.addEventListener("keydown", (e) => {
-    if (!document.getElementById("canProj")) return;
+    if (!document.getElementById("canProj")) {
+      if (!$("#canLibro") || e.altKey || e.ctrlKey || e.metaKey || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "") || document.querySelector("dialog[open]")) return;
+      if (["ArrowRight", "PageDown"].includes(e.key)) { e.preventDefault(); turnPage(1); }
+      else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); turnPage(-1); }
+      else if (e.key === "Home") { e.preventDefault(); goPage(book.ix); }
+      return;
+    }
     if (["ArrowRight", "PageDown", " ", "Enter"].includes(e.key)) { e.preventDefault(); A.canNext(); }
     else if (["ArrowLeft", "PageUp"].includes(e.key)) { e.preventDefault(); A.canPrev(); }
     else if (e.key === "Escape") closeProj();
