@@ -285,6 +285,35 @@ function coursesView(d) {
           <a class="btn btn-sm btn-soft" href="#/admin/itinerarios/${i}">Editar</a>
         </div></div>`;
     }).join("")}
+  </div>
+  ${reqCardHTML(d)}`;
+}
+// ---------- Formación requerida por rol ----------
+// Qué cursos debe tener aprobados cada rol. Los de «Dirigente» se exigen para acompañar jóvenes
+// (Gestión → Asignar jóvenes), también a coordinadores y administradores que acompañan.
+const REQ_ROLES = [["dirigente", "Dirigente", "Para acompañar jóvenes: solo aparecen en «Asignar jóvenes» quienes los tienen aprobados."],
+  ["coordinador", "Coordinador", ""], ["asesor", "Asesor", ""], ["admin", "Administrador", ""]];
+const reqContent = () => S.getDraft() || S.publishedContent() || { courses: [] };
+const reqs = () => reqContent().requisitos || {};
+const reqCourses = (role) => (reqs()[role] || []).map((id) => (reqContent().courses || []).find((c) => c.id === id)).filter(Boolean);
+const meetsReq = (u, role) => reqCourses(role).every((c) => rowFor(u, c).complete);
+function reqCardHTML(d) {
+  const courses = d.courses.filter((c) => !c.abierto);
+  const R = d.requisitos || {};
+  return `<div class="card req-card" style="margin-top:18px"><h3>Formación requerida por rol</h3>
+    <p class="muted small" style="margin-top:4px">Marca qué cursos debe tener aprobados cada rol. Los de <b>Dirigente</b> se piden para acompañar jóvenes: en «Asignar jóvenes» solo aparecen quienes los tienen, también coordinadores y administradores. En cada ficha se ve qué le falta a cada persona. Recuerda publicar los cambios.</p>
+    <div class="stack" style="--gap:12px;margin-top:12px">${REQ_ROLES.map(([k, l, help]) => `<div class="req-row"><b>${esc(l)}</b>${help ? `<span class="xs muted">${esc(help)}</span>` : ""}
+      <div class="row-wrap" style="gap:6px;margin-top:6px">${courses.map((c) => `<label class="chip ${(R[k] || []).includes(c.id) ? "accent" : ""}" style="cursor:pointer;padding:6px 10px">
+        <input type="checkbox" data-action="aReq" data-r="${k}" data-id="${esc(c.id)}" ${(R[k] || []).includes(c.id) ? "checked" : ""}> ${esc(c.title)}</label>`).join("")}
+        ${(R[k] || []).length ? "" : `<span class="xs muted">Sin requisito</span>`}</div></div>`).join("")}</div>
+  </div>`;
+}
+function reqFichaHTML(u) {
+  const roles = [u.role || "dirigente", ...(guideRoles(u) ? ["dirigente"] : []), ...(u.asesor ? ["asesor"] : [])].filter((r, i, a) => a.indexOf(r) === i && reqCourses(r).length);
+  if (!roles.length) return "";
+  return `<div class="card"><h3>Formación requerida</h3>
+    ${roles.map((r) => `<p class="small" style="margin-top:8px"><b>${r === "dirigente" && (u.role || "dirigente") !== "dirigente" ? "Para acompañar jóvenes" : esc((REQ_ROLES.find((x) => x[0] === r) || [r, r])[1])}:</b></p>
+      <div class="row-wrap" style="gap:6px;margin-top:4px">${reqCourses(r).map((c) => rowFor(u, c).complete ? `<span class="chip ok">${icon("check")} ${esc(c.title)}</span>` : `<span class="chip warn">Falta: ${esc(c.title)}</span>`).join("")}</div>`).join("")}
   </div>`;
 }
 function iconBtn(ic, action, attrs, label, disabled = false, cls = "") {
@@ -680,24 +709,30 @@ function peopleCards(list, course, t) {
 
 // ---------- Asignar jóvenes a dirigentes ----------
 let asg = null; // borrador { [jovenId]: { guia, guia2 } }
-// Pueden acompañar jóvenes los dirigentes, coordinadores y administradores con cuenta activa (sin exigir un curso).
+// Pueden acompañar jóvenes los dirigentes, coordinadores y administradores con cuenta activa que tengan
+// aprobados los cursos requeridos para «Dirigente» (Gestión → Cursos → Formación requerida por rol).
+const guideRoles = (u) => u.active !== false && ["dirigente", "coordinador", "admin"].includes(u.role || "dirigente");
 function eligibleGuides() {
-  return (people?.users || []).filter((u) => u.active !== false && ["dirigente", "coordinador", "admin"].includes(u.role || "dirigente"))
+  return (people?.users || []).filter((u) => guideRoles(u) && meetsReq(u, "dirigente"))
     .sort((a, b) => String(a.name).localeCompare(String(b.name), "es"));
 }
 async function asignarView() {
   try { await loadPeople(); await loadJovenes(); } catch (e) { return `<div class="note warn">No se pudieron cargar los datos (${esc(e.code || e.message)}).</div>`; }
   const guides = eligibleGuides();
+  const faltan = (people?.users || []).filter((u) => guideRoles(u) && !meetsReq(u, "dirigente"));
+  const reqD = reqCourses("dirigente");
   const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
   if (!asg) asg = Object.fromEntries(js.map((j) => [j.id, { guia: j.guia || "", guia2: j.guia2 || "" }]));
   const cur = (j) => asg[j.id] || { guia: "", guia2: "" };
   const count = {}; js.forEach((j) => { const a = cur(j); [a.guia, a.guia2].filter(Boolean).forEach((g) => (count[g] = (count[g] || 0) + 1)); });
   const changed = js.filter((j) => (j.guia || "") !== cur(j).guia || (j.guia2 || "") !== cur(j).guia2).length;
-  const sel = (j, k) => `<select class="select" data-asg="${esc(j.id)}" data-k="${k}"><option value="">${k === "guia" ? "— Sin asignar —" : "— Sin apoyo —"}</option>${guides.map((g) => `<option value="${esc(g.uid)}" ${cur(j)[k] === g.uid ? "selected" : ""}>${esc(g.name || g.email)}</option>`).join("")}</select>`;
+  const sel = (j, k) => { const v = cur(j)[k], extra = v && !guides.some((g) => g.uid === v) ? (people?.users || []).find((u) => u.uid === v) : null;
+    return `<select class="select" data-asg="${esc(j.id)}" data-k="${k}"><option value="">${k === "guia" ? "— Sin asignar —" : "— Sin apoyo —"}</option>${guides.map((g) => `<option value="${esc(g.uid)}" ${v === g.uid ? "selected" : ""}>${esc(g.name || g.email)}</option>`).join("")}${extra ? `<option value="${esc(extra.uid)}" selected>${esc(extra.name || extra.email)} (le falta formación)</option>` : ""}</select>`; };
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Asignar <em>jóvenes</em></h1>
-    <p>Cada joven puede tener un dirigente a cargo y, si hace falta, un segundo de apoyo. Aparecen todos los dirigentes, coordinadores y administradores con cuenta activa.</p></header>
-  ${!guides.length ? `<div class="note warn">Todavía no hay dirigentes con cuenta activa para asignar.</div>` : `
+    <p>Cada joven puede tener un dirigente a cargo y, si hace falta, un segundo de apoyo. ${reqD.length ? `Aparecen los dirigentes, coordinadores y administradores que tienen aprobado ${reqD.map((c) => `«${esc(c.title)}»`).join(" y ")}.` : "Aparecen todos los dirigentes, coordinadores y administradores con cuenta activa."} <a href="#/admin/itinerarios">Cambiar la formación requerida</a>.</p></header>
+  ${faltan.length && reqD.length ? `<div class="note" style="margin-bottom:12px">Les falta la formación requerida: ${faltan.map((u) => esc((u.name || u.email).split(" ").slice(0, 2).join(" "))).join(", ")}.</div>` : ""}
+  ${!guides.length ? `<div class="note warn">Todavía no hay dirigentes disponibles para asignar${reqD.length ? " (con la formación requerida aprobada)" : ""}.</div>` : `
   <div class="card asg-load"><b>Carga de cada dirigente</b><div class="can-chips" style="margin-top:8px">${guides.map((g) => `<span class="chip ${count[g.uid] ? "accent" : ""}">${esc((g.name || g.email).split(" ")[0])} · ${count[g.uid] || 0}</span>`).join("")}</div></div>
   <div class="row-wrap" style="gap:8px">
     <button class="btn btn-gold" data-action="aAsgSuggest">✨ Sugerir reparto</button>
@@ -758,6 +793,7 @@ async function personView(uid) {
     <div class="row-wrap" style="margin-top:12px"><a class="btn btn-sm btn-primary" href="#/ficha/${encodeURIComponent(jv.id)}">${icon("lock")} Abrir la ficha privada</a>
       <a class="btn btn-sm btn-ghost" href="#/acompanar/joven/${encodeURIComponent(jv.id)}">Ver su pasaporte</a></div></div>`
     : YOUTH.includes(u.role) ? `<div class="card"><h3>Ficha privada</h3><p class="muted small" style="margin-top:4px">Para tener su ficha privada, agrégalo a la lista de jóvenes en <a href="#/acompanar/jovenes">Acompañar</a> y vincula su cuenta.</p></div>` : ""; })()}
+  ${reqFichaHTML(u)}
   ${YOUTH.includes(u.role) || u.consent ? `<div class="card"><h3>Consentimiento de la familia</h3>
     <p class="muted small" style="margin-top:4px">El papel firmado se guarda en la carpeta de consentimientos de la pastoral; aquí queda registrado qué autorizó la familia. Si cambia algo (por ejemplo, ya no autoriza fotos), edítalo aquí.</p>
     <div class="row-wrap" style="margin-top:10px">${consentChip(u)}</div>
@@ -1308,6 +1344,15 @@ Te recomendamos partir por «Bienvenido a agAPPe», en Formación: es un recorri
   A.aEditCourse = (el) => {
     const ci = +el.dataset.ci, c = S.ensureDraft().courses[ci];
     openEditor({ title: "Datos del curso", spec: "course", obj: { ...c, para: { ...(c.para || {}) } }, onSave: (o) => commit((d) => { Object.assign(d.courses[ci], { title: o.title, theme: o.theme, description: o.description, para: cleanPara(o.para) }); if (!d.courses[ci].para) delete d.courses[ci].para; }) });
+  };
+  A.aReq = (el) => {
+    const r = el.dataset.r, id = el.dataset.id;
+    commit((d) => {
+      d.requisitos = d.requisitos || {};
+      const list = new Set(d.requisitos[r] || []);
+      if (list.has(id)) list.delete(id); else list.add(id);
+      d.requisitos[r] = [...list];
+    }, { msg: "Formación requerida actualizada. Publica los cambios para que quede firme." });
   };
   A.aHideCourse = (el) => {
     const d0 = S.getDraft() || S.publishedContent(), c = d0.courses[+el.dataset.i]; if (!c) return;
