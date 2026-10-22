@@ -99,7 +99,7 @@ export const normTitle = (t) => fold(String(t || "").replace(/^\s*\d{1,3}\s*[.)-
 export function firstLyric(body) {
   for (const raw of String(body || "").split("\n")) {
     const l = raw.replace(/\[[^\]]*\]/g, "").trim();
-    if (!l || /:$/.test(l) || isChordLine(l)) continue;
+    if (!l || /:$/.test(l) || isChordLine(l) || /^\(|cejillo|capo|^tono\b/i.test(l)) continue; // indicaciones, no letra
     const f = fold(l);
     if (f.length >= 12) return f.split(" ").slice(0, 5).join(" ");
   }
