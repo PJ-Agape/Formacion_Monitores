@@ -289,14 +289,8 @@ function buildBook(force) {
   const ixN = ixParts.length, off = 1 + ixN;
   const pages = [];
   const total = list.length;
-  pages.push({ k: "cover", html: `<div class="cl-page cl-cover"><div class="cl-cov">
-      <img src="icons/logo-320.webp" alt="" width="120" height="120">
-      <span class="cl-cov-k">Pastoral Juvenil Ágape</span>
-      <h2>Cancionero <em>Ágape</em></h2>
-      <p class="cl-cov-v">Esta es la versión 1. ¡Sigamos construyendo nuestro cancionero!</p>
-      <p class="cl-cov-n">${songs === null && st().ready ? "Cargando canciones…" : `${total} ${total === 1 ? "canción" : "canciones"}${filtering() ? " con este filtro" : ""}`}</p>
-      ${total ? `<button class="btn btn-gold btn-sm" data-action="clGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
-    </div></div>` });
+  const nTxt = songs === null && st().ready ? "Cargando canciones…" : `${total} ${total === 1 ? "canción" : "canciones"}${filtering() ? " con este filtro" : ""}`;
+  pages.push({ k: "cover", html: coverHtml(nTxt, total) });
   ixParts.forEach(([a, b], i) => {
     const body = total ? list.slice(a, b).map((s) => ixItem(s, off + first.get(s.id))).join("")
       : `<div class="cl-empty"><p class="muted">${songs === null && st().ready ? "Cargando canciones…" : "No hay canciones con ese filtro."}</p>
@@ -320,6 +314,38 @@ function buildBook(force) {
   }
   book.at = Math.min(at, pages.length - 1);
   showPage(book.at);
+}
+
+// Portada: tapa de tela azul noche con marco dorado, lomo cosido, cinta marcapáginas,
+// el logo como medallón, un pentagrama con notas y acordes, y la etiqueta de la edición.
+function coverHtml(nTxt, total) {
+  const rays = [...Array(24)].map((_, i) => { const a = (Math.PI * 2 * i) / 24, r1 = 58, r2 = i % 2 ? 78 : 92;
+    return `<path d="M${(100 + Math.cos(a) * r1).toFixed(1)} ${(100 + Math.sin(a) * r1).toFixed(1)} L${(100 + Math.cos(a) * r2).toFixed(1)} ${(100 + Math.sin(a) * r2).toFixed(1)}"/>`; }).join("");
+  const staff = [0, 1, 2, 3, 4].map((k) => `<path d="M-10 ${44 + k * 7} C 70 ${20 + k * 7}, 150 ${70 + k * 7}, 230 ${40 + k * 7} S 360 ${30 + k * 7}, 420 ${52 + k * 7}"/>`).join("");
+  const note = (x, y, flag) => `<g class="cl-note"><ellipse cx="${x}" cy="${y}" rx="6.2" ry="4.6" transform="rotate(-22 ${x} ${y})"/><path d="M${x + 5.6} ${y - 1.5} V${y - 30}${flag ? ` q2 9 12 13` : ""}" fill="none"/></g>`;
+  return `<div class="cl-page cl-cover"><div class="cl-cov">
+    <span class="cl-cov-spine" aria-hidden="true"></span>
+    <span class="cl-cov-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="cl-cov-ribbon" aria-hidden="true"></span>
+    <span class="cl-cov-k">Pastoral Juvenil Ágape · Yungay</span>
+    <div class="cl-cov-medal">
+      <svg class="cl-cov-rays" viewBox="0 0 200 200" aria-hidden="true">${rays}</svg>
+      <img src="icons/logo-320.webp" alt="" width="320" height="320">
+    </div>
+    <h2><span>Cancionero</span><em>Ágape</em>
+      <svg class="cl-cov-swash" viewBox="0 0 220 24" aria-hidden="true"><path d="M6 16 C 60 4, 120 4, 214 12"/><path d="M40 20 C 90 12, 140 12, 196 18"/></svg></h2>
+    <svg class="cl-cov-staff" viewBox="0 0 400 110" aria-hidden="true">
+      <g class="cl-st">${staff}</g>
+      ${note(70, 57, true)}${note(108, 66, false)}${note(150, 76, true)}${note(250, 52, false)}${note(292, 44, true)}${note(336, 56, false)}
+      <g class="cl-chords"><text x="58" y="20">G</text><text x="140" y="34">D</text><text x="236" y="16">Em</text><text x="326" y="22">C</text></g>
+    </svg>
+    <div class="cl-cov-foot">
+      <span class="cl-cov-ed">Versión 1</span>
+      <p class="cl-cov-v">¡Sigamos construyendo nuestro cancionero!</p>
+      ${total ? `<button class="cl-cov-go" data-action="clGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
+      <p class="cl-cov-n">${nTxt}</p>
+    </div>
+  </div></div>`;
 }
 
 function leaf(i, extra = "") {
