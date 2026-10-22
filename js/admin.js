@@ -721,8 +721,26 @@ let asgSel = "", asgMode = "guia", asgFilter = "", famSyncT = null;
 const ASG_COL = ["#1351a4", "#ef591c", "#0f7a52", "#c98a00", "#8a3fb0", "#0b6fb3", "#b4233c", "#3d6b2a"];
 const ini = (n) => String(n || "?").trim().split(/\s+/).slice(0, 2).map((w) => w.charAt(0).toUpperCase()).join("");
 const first = (n) => String(n || "").split(" ")[0];
+// Las cuentas de jóvenes y aspirantes entran solas a la lista de Acompañar (vinculadas a su cuenta),
+// y si cambió su rol, su etapa se pone al día. Así todos aparecen para asignar.
+async function syncJovenesCuentas() {
+  const users = (people?.users || []).filter((u) => u.active !== false && YOUTH.includes(u.role));
+  let n = 0;
+  for (const u of users) {
+    const j = (jovenesAll || []).find((x) => x.uid === u.uid);
+    try {
+      if (!j) { await api.cloud.saveJoven(null, { nombre: u.name || u.email, etapa: u.role, cumple: "", publico: false, activo: true, uid: u.uid,
+        fechas: [], sellos: {}, auto: {}, desde: new Date().toISOString().slice(0, 10), lema: "", portada: 0, avatar: "" }); n++; }
+      else if (j.etapa !== u.role) { await api.cloud.patchJoven(j.id, { nombre: j.nombre, etapa: u.role }); n++; }
+    } catch (e) { console.warn(e); }
+  }
+  if (n) await loadJovenes(true);
+  return n;
+}
 async function asignarView() {
-  try { await loadPeople(); await loadJovenes(); } catch (e) { return `<div class="note warn">No se pudieron cargar los datos (${esc(e.code || e.message)}).</div>`; }
+  let nuevos = 0;
+  try { await loadPeople(); await loadJovenes(); nuevos = await syncJovenesCuentas(); } catch (e) { return `<div class="note warn">No se pudieron cargar los datos (${esc(e.code || e.message)}).</div>`; }
+  if (nuevos) setTimeout(() => toast(`${nuevos} cuenta${nuevos === 1 ? "" : "s"} de jóvenes quedaron al día en la lista`, "ok"), 300);
   asg = null;
   const guides = eligibleGuides();
   const faltan = (people?.users || []).filter((u) => guideRoles(u) && !meetsReq(u, "dirigente"));
@@ -1286,7 +1304,14 @@ Te recomendamos partir por «Bienvenido a agAPPe», en Formación: es un recorri
     if (!u || !r) return;
     if (!confirm(`¿Cambiar el rol de ${u.name || u.email} a ${r.label}?\n\n${r.desc}`)) { sel.value = u.role || "dirigente"; return; }
     // Al cambiar de rol se vuelven a usar las salas por defecto del nuevo rol.
-    try { await api.cloud.updateUser(u.uid, { role, salas: api.cloud.defaultSalas(role) }); await loadPeople(true); api.render(); toast("Rol actualizado"); }
+    try {
+      await api.cloud.updateUser(u.uid, { role, salas: api.cloud.defaultSalas(role) });
+      // Su ficha de la lista de jóvenes sigue el rol: joven o aspirante → esa etapa; equipo → «equipo» (ya no se asigna).
+      const j = (await loadJovenes(true)).find((x) => x.uid === u.uid);
+      const et = YOUTH.includes(role) ? role : "equipo";
+      if (j && j.etapa !== et) await api.cloud.patchJoven(j.id, { nombre: j.nombre, etapa: et }).catch(() => {});
+      await loadPeople(true); api.render(); toast("Rol actualizado");
+    }
     catch (err) { sel.value = u.role || "dirigente"; toast("No se pudo cambiar: " + (err.code || err.message), ""); }
   });
   A.aUserSala = async (el) => {
