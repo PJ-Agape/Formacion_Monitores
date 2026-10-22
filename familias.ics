@@ -73,13 +73,14 @@ CATEGORIES:Actividad
 END:VEVENT
 BEGIN:VEVENT
 UID:NNOTAX1BuHUKV8aH031i@pj-agape
-DTSTAMP:20261020T220623Z
+DTSTAMP:20261022T181549Z
 DTSTART;VALUE=DATE:20261024
 DTEND;VALUE=DATE:20261025
 SUMMARY:Misa bendición de las familias
 LOCATION:Templo Parroquial
-DESCRIPTION:Pastoral Juvenil Ágape · pj-agape.github.io/Formacion_Monitor
- es/familias/
+DESCRIPTION:Recuerda traer una foto de tu familia\, se impartirá una bendi
+ ción especial en esta misa.\n\nPastoral Juvenil Ágape · pj-agape.github
+ .io/Formacion_Monitores/familias/
 CATEGORIES:Liturgia
 TRANSP:TRANSPARENT
 END:VEVENT
