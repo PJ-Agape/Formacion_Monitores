@@ -4,7 +4,7 @@
 // aparecen solos a partir del programa del año.
 
 import * as fondo from "./fondo-cuenta.js";
-import { esc, icon, toast } from "./util.js";
+import { esc, icon, toast, fetchJSON } from "./util.js";
 import { illus, SCENE_KEYS, sceneLabel } from "./ilustraciones.js";
 import { REPEATS, isRepeat, occurrences, describe as repeatText, rrule } from "./repeat.js";
 // Texto de cada opción según la fecha elegida: «Cada mes, el 3er sábado».
@@ -88,7 +88,7 @@ let events = null, camino = [], showCamino = true, month = null, selDay = null, 
 async function loadCamino() {
   if (camino.length) return;
   try {
-    const d = await fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json());
+    const d = await fetchJSON("data/encuentros.json");
     camino = d.encuentros.map((e) => {
       const m = String(e.fecha).match(/(\d+) de (\w+) de (\d{4})/);
       if (!m) return null;

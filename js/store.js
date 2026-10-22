@@ -34,15 +34,24 @@ const del = (k) => { try { localStorage.removeItem(k); } catch {} };
 // ---------------- Contenido ----------------
 let published = null;
 
+// El archivo del sitio se empieza a pedir apenas abre la app, en paralelo con la conexión a la nube.
+let fileP = null;
+const fetchFile = () => fetch(CONFIG.contentUrl, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null);
+export function prefetchContent() { fileP = fetchFile(); }
+// Si este teléfono ya tiene una copia guardada, la app la muestra de inmediato y lo nuevo llega por detrás.
+export function quickStart() { const c = read(K.cache); if (!okContent(c)) return false; published = c; return true; }
+export const current = () => published;
 export async function loadContent(fromCloud) {
   // Hay tres fuentes: lo publicado desde Gestión (nube), data/contenido.json (el sitio) y la última copia
   // que este dispositivo ya vio. Gana la más nueva: si la nube tarda o responde con una copia vieja,
   // el teléfono no vuelve a una versión anterior (antes caía al archivo del sitio y «perdía» lo publicado).
   const [c, f] = await Promise.all([
     fromCloud ? fromCloud().catch(() => null) : null,
-    fetch(CONFIG.contentUrl, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null)).catch(() => null),
+    fileP || fetchFile(),
   ]);
-  published = newest([c, f, read(K.cache)]);
+  fileP = null;
+  const n = newest([c, f, read(K.cache)]);
+  if (n && (!published || isNewer(n, published))) published = n; // si no hay nada más nuevo, se mantiene lo que ya se muestra
   if (!published) throw new Error("Sin contenido");
   write(K.cache, published);
   return published;

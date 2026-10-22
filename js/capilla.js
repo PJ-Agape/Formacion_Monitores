@@ -2,7 +2,7 @@
 // Rincones: entrada (oración según la hora y tiempo litúrgico), «Un rato con Jesús» (oración personal),
 // velas de la comunidad, la Palabra, María (misterios del día) y oraciones.
 
-import { esc, rich, icon, toast } from "./util.js";
+import { esc, rich, icon, toast, fetchJSON } from "./util.js";
 import { ORACIONES } from "./devocionario.js";
 import * as papa from "./papa.js";
 import { illus } from "./ilustraciones.js";
@@ -382,7 +382,7 @@ const gospelFresh_ = () => Date.now() - gospelAt < 15 * 60 * 1000;
 async function loadGospel() {
   gospelAt = Date.now();
   try {
-    const g = await fetch("data/evangelio.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null));
+    const g = await fetchJSON("data/evangelio.json", 60 * 1000).catch(() => null);
     if (g && g.days) { gospel = g; try { localStorage.setItem("agape_evangelio", JSON.stringify(g)); } catch {} }
   } catch {}
 }

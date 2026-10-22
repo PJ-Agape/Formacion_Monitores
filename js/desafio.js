@@ -1,7 +1,7 @@
 // Desafío de la semana (tarjeta en Inicio). Sale de la revista del Camino Ágape de esa
 // semana o, si el equipo lo define, de Gestión. Cada uno marca «¡Lo cumplí!».
 
-import { esc, icon, toast } from "./util.js";
+import { esc, icon, toast, fetchJSON } from "./util.js";
 import { svg as avatarSvg } from "./avatares.js";
 
 let ctx = null; // { actions, render, cloud }
@@ -16,7 +16,7 @@ const weekOf = () => { const m = monday(), s = new Date(m); s.setDate(s.getDate(
 
 let camino = null;
 async function caminoWeek() {
-  try { camino = camino || (await fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json())); } catch { return null; }
+  try { camino = camino || (await fetchJSON("data/encuentros.json")); } catch { return null; }
   const t = new Date(); t.setHours(12, 0, 0, 0);
   let best = null;
   for (const e of camino.encuentros || []) {

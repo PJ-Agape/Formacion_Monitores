@@ -1573,8 +1573,13 @@ capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, 
 
 async function boot() {
   try {
+    S.prefetchContent();
     if (cloud.enabled) await cloud.init();
-    await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
+    if (S.quickStart()) {
+      // Con copia guardada: se dibuja ya y el contenido publicado (nube y sitio) se revisa por detrás.
+      const before = S.current();
+      S.loadContent(cloud.enabled ? cloud.fetchContent : null).then(() => { if (S.current() !== before && !/^#\/admin/.test(location.hash)) render(); }).catch(() => {});
+    } else await S.loadContent(cloud.enabled ? cloud.fetchContent : null);
     // Si la nube no respondió a tiempo (o entregó la copia guardada), se vuelve a pedir el contenido
     // publicado: al abrir, a los pocos segundos y cada vez que se vuelve a la app (como mucho cada 2 min).
     if (cloud.enabled) {

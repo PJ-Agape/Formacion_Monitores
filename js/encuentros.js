@@ -4,7 +4,7 @@
 // aspirante), cada una con su color. Se leen en la app (un encuentro a la vez)
 // y se imprimen o guardan como PDF: la revista completa o solo un encuentro.
 
-import { esc, icon } from "./util.js";
+import { esc, icon, fetchJSON } from "./util.js";
 import { illus, illusFor } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, cloud }
@@ -46,7 +46,7 @@ async function load(year) {
   const ed = year && EDICIONES.find((e) => e.year === +year && !e.actual);
   const key = ed ? String(ed.year) : "actual";
   if (year && !ed) return null;
-  if (!cache[key]) cache[key] = fetch(ed ? `data/archivo/encuentros-${ed.year}.json` : "data/encuentros.json", { cache: "no-cache" }).then((r) => r.json());
+  if (!cache[key]) cache[key] = (ed ? fetch(`data/archivo/encuentros-${ed.year}.json`, { cache: "no-cache" }).then((r) => r.json()) : fetchJSON("data/encuentros.json"));
   return cache[key];
 }
 

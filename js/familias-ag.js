@@ -6,7 +6,7 @@
 // De los jóvenes solo se guarda el nombre corto (nombre + inicial del apellido).
 
 import * as cloud from "./cloud.js";
-import { esc, icon, toast } from "./util.js";
+import { esc, icon, toast, fetchJSON } from "./util.js";
 import * as reg from "./familias-registro.js";
 import { famIcon } from "./familia-portal.js";
 
@@ -26,7 +26,7 @@ let CAL = null;
 export const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 export const fechaDe = (s) => { const m = String(s).match(/(\d+) de (\w+) de (\d{4})/); return m ? new Date(+m[3], MESES.indexOf(m[2]), +m[1]) : null; };
 export async function loadCal() {
-  if (!CAL) CAL = fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json()).catch(() => { CAL = null; return null; });
+  if (!CAL) CAL = fetchJSON("data/encuentros.json").catch(() => { CAL = null; return null; });
   return CAL;
 }
 function encuentroActual(d) {

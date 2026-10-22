@@ -5,7 +5,7 @@
 // al marcar «Ya viví este encuentro» se abren la frase, las preguntas y el desafío.
 
 import * as evalua from "./evaluacion.js";
-import { esc, icon, toast } from "./util.js";
+import { esc, icon, toast, fetchJSON } from "./util.js";
 import { illus } from "./ilustraciones.js";
 import * as a11y from "./accesible.js";
 
@@ -40,7 +40,7 @@ const longD = (d) => d.toLocaleDateString("es-CL", { weekday: "long", day: "nume
 let DATA = null;
 async function load() {
   if (DATA) return DATA;
-  try { DATA = await fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json()); } catch { DATA = null; }
+  try { DATA = await fetchJSON("data/encuentros.json"); } catch { DATA = null; }
   return DATA;
 }
 

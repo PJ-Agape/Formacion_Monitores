@@ -2,7 +2,7 @@
 // Parte de las preguntas sale del contenido vivo de la app (los encuentros del Camino y
 // las evaluaciones del curso), así que la trivia crece cuando crece el contenido.
 // Se juega en el teléfono; el mejor puntaje queda solo en este dispositivo.
-import { esc, icon } from "./util.js";
+import { esc, icon, fetchJSON } from "./util.js";
 import * as S from "./store.js";
 
 let ctx = null; // { actions, onAfterRender, onLeave }
@@ -86,7 +86,7 @@ const N = 10, SECS = 20;
 // ---------------------------------------------------------------------------
 let caminoCache = null;
 async function caminoDyn() {
-  try { caminoCache = caminoCache || (await fetch("data/encuentros.json", { cache: "no-cache" }).then((r) => r.json())); } catch { return []; }
+  try { caminoCache = caminoCache || (await fetchJSON("data/encuentros.json")); } catch { return []; }
   const enc = (caminoCache.encuentros || []).filter((e) => e.tema && e.lema && e.evangelio?.ref);
   const out = [];
   for (const e of enc) {

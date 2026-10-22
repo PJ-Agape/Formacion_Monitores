@@ -37,6 +37,17 @@ export function download(filename, text, type = "application/json") {
   setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
+// JSON del sitio (encuentros, Evangelio…): una sola descarga aunque varias secciones lo pidan al mismo
+// tiempo; se vuelve a pedir pasados unos minutos. Cada sección recibe su propia copia.
+const jsonCache = new Map();
+export function fetchJSON(url, ttl = 5 * 60 * 1000) {
+  const hit = jsonCache.get(url);
+  if (!hit || Date.now() - hit.t > ttl) {
+    const p = fetch(url, { cache: "no-cache" }).then((r) => (r.ok ? r.json() : Promise.reject(new Error("HTTP " + r.status))));
+    jsonCache.set(url, { t: Date.now(), p }); p.catch(() => jsonCache.delete(url));
+  }
+  return jsonCache.get(url).p.then((d) => (typeof structuredClone === "function" ? structuredClone(d) : JSON.parse(JSON.stringify(d))));
+}
 export function toast(msg, kind = "ok", ms = 2800) {
   // Si hay un diálogo abierto, el aviso se muestra dentro de él (capa superior).
   const dlg = document.querySelector("dialog[open]");
