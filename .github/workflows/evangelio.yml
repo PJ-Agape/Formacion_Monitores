@@ -2,7 +2,7 @@
 name: Evangelio del día
 on:
   schedule:
-    - cron: "23 */2 * * *" # cada 2 horas: el video del día aparece apenas el canal lo publica
+    - cron: "23 * * * *" # cada hora: el video del día aparece apenas el canal lo publica
   workflow_dispatch:
     inputs:
       dias:

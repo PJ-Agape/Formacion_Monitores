@@ -377,9 +377,10 @@ export function view(opt = {}) {
 let gospel = null;
 try { gospel = JSON.parse(localStorage.getItem("agape_evangelio") || "null"); } catch {}
 const todayKey = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
-let gospelFresh = false; // ya se pidió en esta visita (la frase puede corregirse durante el día)
+let gospelAt = 0; // cuándo se pidió por última vez (el video del día puede llegar durante la mañana)
+const gospelFresh_ = () => Date.now() - gospelAt < 15 * 60 * 1000;
 async function loadGospel() {
-  gospelFresh = true;
+  gospelAt = Date.now();
   try {
     const g = await fetch("data/evangelio.json", { cache: "no-cache" }).then((r) => (r.ok ? r.json() : null));
     if (g && g.days) { gospel = g; try { localStorage.setItem("agape_evangelio", JSON.stringify(g)); } catch {} }
@@ -400,7 +401,7 @@ const pick = () => aplicarPropio(todayKey(), (gospel && gospel.days && gospel.da
 // Para Inicio: la cita y la frase del Evangelio de hoy (o null)
 export async function todayGospel() {
   await loadPropio();
-  if (gospelFresh && pick() && (pick().propio || (gospel && gospel.days && gospel.days[todayKey()]))) return pick();
+  if (gospelFresh_() && pick() && (pick().propio || (gospel && gospel.days && gospel.days[todayKey()]))) return pick();
   await loadGospel(); return pick();
 }
 // ---------------------------------------------------------------------------
