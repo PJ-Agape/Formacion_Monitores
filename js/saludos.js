@@ -132,7 +132,7 @@ export async function adminView() {
   setTimeout(() => document.querySelector(".sal-day.on")?.scrollIntoView({ block: "nearest", inline: "center" }), 50);
   const bienv = await bienvHTML();
   return `<header class="page-head"><span class="eyebrow">Gestión</span><h1>Saludos para <em>WhatsApp</em></h1>
-    <p>Buenos días con el Evangelio y buenas noches con las Vísperas, del ${esc(d.dias[0].fecha.toLowerCase())} al ${esc(d.dias[d.dias.length - 1].fecha.toLowerCase())}. Desde el celular, «Enviar a WhatsApp» abre el menú para compartir: eliges WhatsApp y el grupo, y la imagen va con su texto.</p></header>
+    <p>Buenos días con el Evangelio y buenas noches con las Vísperas, del ${esc(d.dias[0].fecha.toLowerCase())} al ${esc(d.dias[d.dias.length - 1].fecha.toLowerCase())}. Desde el celular, «Enviar a WhatsApp» abre el menú para compartir: eliges WhatsApp y el grupo, y la imagen va con su texto. En el computador son dos pasos: el botón copia la imagen, la pegas en el chat (Ctrl+V) y luego copia el texto para pegarlo junto a ella; sale un solo mensaje.</p></header>
   ${bienv}
   <div class="sal-days" role="list">${d.dias.map((y) => `<button role="listitem" class="sal-day ${y.iso === sel ? "on" : ""} ${y.iso === t ? "today" : ""} ${y.iso < t ? "past" : ""}" data-action="salPick" data-iso="${y.iso}" title="${esc(y.titulo)}"><small>${esc(y.fecha.split(" ")[0].slice(0, 3))}</small><b>${+y.iso.slice(8)}</b><small>${["ene", "feb", "mar", "abr", "may", "jun", "jul", "ago", "sep", "oct", "nov", "dic"][+y.iso.slice(5, 7) - 1]}</small></button>`).join("")}</div>
   <section class="card sal-card"><div class="sal-top"><h2>${sel === t ? "Hoy · " : ""}${esc(x.fecha)}</h2><span class="muted small">${esc(x.titulo)}</span></div>
@@ -142,6 +142,31 @@ export async function adminView() {
 
 function pick(iso, k) { const x = data && data.dias.find((y) => y.iso === iso); return x ? { x, text: k === "fuera" ? fuera(x) : k === "noche" ? x.noche : x.dia } : null; }
 
+// En el computador el menú para compartir no lleva imagen y texto juntos a WhatsApp. Por eso el botón
+// funciona en dos pasos: primero copia la imagen (se pega con Ctrl+V en el chat y WhatsApp abre la vista
+// previa con un espacio para escribir) y después copia el texto, que se pega en ese espacio: sale un solo mensaje.
+const esPC = () => !/Android|iPhone|iPad|iPod/i.test(navigator.userAgent) && !(navigator.maxTouchPoints > 1 && /Mac/.test(navigator.platform || ""));
+const toPng = async (blob) => {
+  if (blob.type === "image/png") return blob;
+  const bmp = await createImageBitmap(blob), c = document.createElement("canvas"); c.width = bmp.width; c.height = bmp.height; c.getContext("2d").drawImage(bmp, 0, 0);
+  return new Promise((ok) => c.toBlob(ok, "image/png"));
+};
+async function pcShare(el, getBlob, text) {
+  const label = el.dataset.label || (el.dataset.label = el.innerHTML);
+  const reset = () => { clearTimeout(el._t); el.dataset.step = ""; el.innerHTML = label; };
+  if (el.dataset.step !== "2") {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ "image/png": getBlob().then(toPng) })]);
+      el.dataset.step = "2"; el.innerHTML = `${icon("copy")} Paso 2: copiar el texto`;
+      clearTimeout(el._t); el._t = setTimeout(reset, 120000);
+      toast("Imagen copiada. En el chat de WhatsApp pega con Ctrl+V: se abre la imagen con un espacio para escribir. Después vuelve y toca «Paso 2».", "ok", 7000);
+    } catch { try { await navigator.clipboard.writeText(text); } catch {} toast("Este navegador no deja copiar imágenes. Guarda la imagen y pega el texto (ya está copiado).", "", 6000); }
+    return;
+  }
+  try { await navigator.clipboard.writeText(text); toast("Texto copiado. Pégalo con Ctrl+V en el espacio para escribir, junto a la imagen, y envía.", "ok", 6000); }
+  catch { toast("No se pudo copiar el texto. Usa «Copiar texto».", ""); }
+  reset();
+}
 async function shareImg(blob, name, text) {
   try { await navigator.clipboard.writeText(text); } catch {}
   try {
@@ -171,7 +196,7 @@ function wireBienv() {
 export function registerActions(actions, render) {
   wireBienv();
   const fname = () => `agAPPe-bienvenida${bv.nombre.trim() ? "-" + bv.nombre.trim().toLowerCase().replace(/[^a-z0-9áéíóúñ]+/gi, "-") : ""}.png`;
-  actions.bvShare = async () => shareImg(await bvBlob(), fname(), bienvText());
+  actions.bvShare = async (el) => (esPC() ? pcShare(el, bvBlob, bienvText()) : shareImg(await bvBlob(), fname(), bienvText()));
   actions.bvCopy = async () => { try { await navigator.clipboard.writeText(bienvText()); toast("Texto copiado 📋", "ok"); } catch { toast("No se pudo copiar", ""); } };
   actions.bvSave = async () => { const b = await bvBlob(), a = document.createElement("a"); a.href = URL.createObjectURL(b); a.download = fname(); document.body.appendChild(a); a.click(); a.remove(); setTimeout(() => URL.revokeObjectURL(a.href), 4000); };
   actions.bvStore = async () => {
@@ -187,6 +212,7 @@ export function registerActions(actions, render) {
   };
   actions.salShare = async (el) => {
     const p = pick(el.dataset.iso, el.dataset.k); if (!p) return;
+    if (esPC()) return pcShare(el, () => fetch(img(el.dataset.k === "fuera" ? "dia" : el.dataset.k, p.x.iso)).then((r) => r.blob()), p.text);
     try { await navigator.clipboard.writeText(p.text); } catch {}
     try {
       const blob = await fetch(img(el.dataset.k === "fuera" ? "dia" : el.dataset.k, p.x.iso)).then((r) => r.blob());
