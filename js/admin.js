@@ -680,13 +680,14 @@ function peopleCards(list, course, t) {
 
 // ---------- Asignar jóvenes a dirigentes ----------
 let asg = null; // borrador { [jovenId]: { guia, guia2 } }
-function eligibleGuides(course) {
-  return (people?.users || []).filter((u) => u.active !== false && ["dirigente", "coordinador", "admin"].includes(u.role || "dirigente") && rowFor(u, course).complete)
+// Pueden acompañar jóvenes los dirigentes, coordinadores y administradores con cuenta activa (sin exigir un curso).
+function eligibleGuides() {
+  return (people?.users || []).filter((u) => u.active !== false && ["dirigente", "coordinador", "admin"].includes(u.role || "dirigente"))
     .sort((a, b) => String(a.name).localeCompare(String(b.name), "es"));
 }
 async function asignarView() {
   try { await loadPeople(); await loadJovenes(); } catch (e) { return `<div class="note warn">No se pudieron cargar los datos (${esc(e.code || e.message)}).</div>`; }
-  const course = S.content().courses[0], guides = eligibleGuides(course);
+  const guides = eligibleGuides();
   const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
   if (!asg) asg = Object.fromEntries(js.map((j) => [j.id, { guia: j.guia || "", guia2: j.guia2 || "" }]));
   const cur = (j) => asg[j.id] || { guia: "", guia2: "" };
@@ -695,8 +696,8 @@ async function asignarView() {
   const sel = (j, k) => `<select class="select" data-asg="${esc(j.id)}" data-k="${k}"><option value="">${k === "guia" ? "— Sin asignar —" : "— Sin apoyo —"}</option>${guides.map((g) => `<option value="${esc(g.uid)}" ${cur(j)[k] === g.uid ? "selected" : ""}>${esc(g.name || g.email)}</option>`).join("")}</select>`;
   return `
   <header class="page-head"><span class="eyebrow">Gestión</span><h1>Asignar <em>jóvenes</em></h1>
-    <p>Cada joven puede tener un dirigente a cargo y, si hace falta, un segundo de apoyo. Solo aparecen los dirigentes con el curso «${esc(course.title)}» aprobado.</p></header>
-  ${!guides.length ? `<div class="note warn">Todavía nadie tiene el curso aprobado, así que no hay dirigentes disponibles para asignar.</div>` : `
+    <p>Cada joven puede tener un dirigente a cargo y, si hace falta, un segundo de apoyo. Aparecen todos los dirigentes, coordinadores y administradores con cuenta activa.</p></header>
+  ${!guides.length ? `<div class="note warn">Todavía no hay dirigentes con cuenta activa para asignar.</div>` : `
   <div class="card asg-load"><b>Carga de cada dirigente</b><div class="can-chips" style="margin-top:8px">${guides.map((g) => `<span class="chip ${count[g.uid] ? "accent" : ""}">${esc((g.name || g.email).split(" ")[0])} · ${count[g.uid] || 0}</span>`).join("")}</div></div>
   <div class="row-wrap" style="gap:8px">
     <button class="btn btn-gold" data-action="aAsgSuggest">✨ Sugerir reparto</button>
@@ -712,7 +713,7 @@ async function asignarView() {
   <p class="xs muted">La lista de jóvenes es la de Acompañar (con o sin cuenta). Cada dirigente ve a «sus» jóvenes en Acompañar.</p>`;
 }
 function suggestAsg() {
-  const course = S.content().courses[0], guides = eligibleGuides(course).map((g) => g.uid);
+  const guides = eligibleGuides().map((g) => g.uid);
   if (!guides.length) return 0;
   const js = (jovenesAll || []).filter((j) => j.activo !== false && ["ingreso", "madurez", "aspirante"].includes(j.etapa));
   const total = {}, byStage = {};
