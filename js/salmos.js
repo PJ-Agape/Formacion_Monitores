@@ -556,6 +556,8 @@ const SUPER = /^(Del maestro|Salmo\.|Salmo de|De David|Canción|Oración|Poema|H
 const LETRA = /^(Alef|Bet|Guímel|Dálet|He|Vau|Zain|Jet|Tet|Yod|Kaf|Lámed|Mem|Nun|Sámek|Ayin|Pe|Sade|Qof|Resh|Sin|Tau)\.?$/;
 const lineasHTML = (txt) => String(txt || "").split("\n").map((l) => l.trim()).map((l, i) => !l ? `<div class="sl-gap"></div>`
   : (i === 0 && SUPER.test(l) && l.length < 170) || LETRA.test(l) ? `<p class="sl-sub">${esc(l)}</p>` : `<p class="sl-v">${esc(l)}</p>`);
+// Notas al margen dentro del librito y del PDF (una caja por nota, al final de cada salmo)
+const notasHTML = (n, cls) => notasDe(n).map(([k, t]) => `<div class="${cls} sal-nota-${k}"><span>${esc(TIPOS[k])}</span><p>${esc(t)}</p></div>`);
 const salHead = (n) => `<header class="cl-head sl-head"><div><span class="eyebrow">Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h2>${esc(byN(n).t)}</h2></div>${ilusDe(n, "sl-ilus")}</header>`;
 const salCont = (n) => `<p class="cl-cont">${esc(byN(n).t)} <span>(continuación)</span></p>`;
 function salCover(n) {
@@ -611,7 +613,7 @@ function buildLibro(force) {
   const sp = [], first = new Map();
   let availNext = null;
   for (const n of nums) {
-    const lines = lineasHTML(textoDe(n));
+    const lines = [...lineasHTML(textoDe(n)), ...notasHTML(n, "sl-nota")];
     if (availNext == null) availNext = meas(pageOf({ cls: "sl-page", head: salCont(n), foot: footOf("x", 0) })).clientHeight;
     const body = meas(pageOf({ cls: "sl-page", head: salHead(n), body: lines.join(""), foot: footOf("x", 0) }));
     const parts = splitByHeight([...body.children], body.clientHeight, availNext, soft);
@@ -646,7 +648,7 @@ function libroPdf() {
   if (!el) { el = document.createElement("div"); el.id = "salBook"; document.body.appendChild(el); }
   el.innerHTML = `<section class="sb-cover">${salCover(nums.length)}</section>
     <section class="sb-index"><h2>Índice</h2><ol>${nums.map((n) => `<li><b>${n}</b> ${esc(byN(n).t)}</li>`).join("")}</ol></section>
-    <section class="sb-salmos">${nums.map((n) => `<article class="sb-s"><header>${ilusDe(n, "sb-ilus")}<span>Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h3>${esc(byN(n).t)}</h3></header>${lineasHTML(textoDe(n)).join("")}</article>`).join("")}</section>
+    <section class="sb-salmos">${nums.map((n) => `<article class="sb-s">${((l) => `<div class="sb-top"><header>${ilusDe(n, "sb-ilus")}<span>Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h3>${esc(byN(n).t)}</h3></header>${l.slice(0, 2).join("")}</div>${l.slice(2).join("")}`)(lineasHTML(textoDe(n)))}${notasHTML(n, "sb-nota").join("")}</article>`).join("")}</section>
     ${fuente() ? `<p class="sb-fuente">${esc(fuente())}</p>` : ""}`;
   el.querySelector(".cl-cov-go")?.remove();
   document.body.classList.add("sal-printing");

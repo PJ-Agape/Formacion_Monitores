@@ -4230,6 +4230,7 @@ a.cap-guide-btn { text-decoration: none; }
   #salBook .sb-s h3 { font-family: var(--font-display); font-weight: 800; font-size: 14pt; line-height: 1.1; }
   #salBook .sl-v { break-inside: avoid; margin: 0 0 1.4mm; }
   #salBook .sl-sub { break-after: avoid; }
+  #salBook .sb-top { break-inside: avoid; }
   #salBook .sb-fuente { margin-top: 8mm; font-size: 8pt; color: #555; }
 }
 .sal-ilus { width: min(260px, 70%); margin: 0 auto -4px; color: var(--cn, #0b2566); --il-bg: #fff6e5; }
@@ -4254,4 +4255,10 @@ a.cap-guide-btn { text-decoration: none; }
   .sal-cuerpo { grid-template-columns: minmax(0, 1fr) 290px; align-items: start; gap: 22px; }
   .sal-margen { position: sticky; top: 84px; }
   .sal-nota:nth-child(even) { transform: rotate(.6deg); } .sal-nota:nth-child(odd) { transform: rotate(-.5deg); }
+}
+.sl-nota { margin: .5em 0 .7em; padding: .55em .8em .6em; border-radius: 4px 12px 12px 4px; border-left: 5px solid var(--nc); background: color-mix(in srgb, var(--nc) 16%, transparent); font-size: .86em; line-height: 1.45; }
+.sl-nota span { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.25em; line-height: 1; color: var(--nt); margin-bottom: .25em; }
+@media print {
+  #salBook .sb-nota { break-inside: avoid; margin: 1.6mm 0 2.4mm; padding: 1.6mm 2.4mm; border-left: 1.4mm solid var(--nc); background: color-mix(in srgb, var(--nc) 14%, #fff); font-size: 8.6pt; line-height: 1.35; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #salBook .sb-nota span { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 11pt; line-height: 1; color: var(--nt); margin-bottom: .6mm; }
 }
