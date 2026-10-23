@@ -5,6 +5,7 @@
 
 import { esc, icon, toast } from "./util.js";
 import { createBook, splitByHeight } from "./libro.js";
+import { illus } from "./ilustraciones.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -325,14 +326,37 @@ export function viewList() {
     box.innerHTML = n < 150 ? `<p class="sal-todos-q no-print"><button class="sal-link" data-action="salLibro">Cargar el libro de los Salmos</button> <span class="xs muted">· solo administradores</span></p>` : "";
   }));
   return `
-  <section class="sal-hola">
-    <span class="sal-hand">Oremos con los salmos</span>
-    <h1>¿Cómo llegas hoy?</h1>
-    <p>Jesús rezaba con los salmos. En ellos hay palabras para todo lo que uno siente. Elige cómo estás y te regalamos uno para rezar.</p>
+  <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<span>Orar con los Salmos</span></nav>
+  <section class="cap-hero sal-hero">
+    <div class="cap-arch">
+      ${lira("sal-lira")}
+      <span class="cap-hand">Él escucha todo</span>
+      <h1 class="cap-title">Orar con los <em>Salmos</em></h1>
+      <p class="cap-sub">Son las oraciones que Jesús aprendió de niño y rezó toda su vida. En ellos hay palabras para todo lo que llevas dentro.</p>
+    </div>
+    <div class="cap-moment sal-llegas">
+      <span class="eyebrow">Para comenzar</span>
+      <span class="cap-hand sm">¿Cómo llegas hoy?</span>
+      <p class="sal-llegas-p">Elige lo que sientes y te regalamos un salmo para rezar.</p>
+      <div class="sal-siento">${SIENTO.map(([k, l]) => `<a class="sal-feel" href="#/salmos/${pick(k).n}?e=${k}">${esc(l)}</a>`).join("")}</div>
+    </div>
   </section>
-  <div class="sal-siento">${SIENTO.map(([k, l]) => `<a class="sal-feel" href="#/salmos/${pick(k).n}?e=${k}">${esc(l)}</a>`).join("")}</div>
-  <p class="sal-todos-q"><a class="sal-link" href="#/salmos/libro">Hojear el librito de los Salmos</a></p>
-  <div id="salCargar"></div>`;
+  <section class="cap-guide sal-guide">
+    <div class="cap-guide-art">${illus("biblia", "cap-guide-il")}</div>
+    <div class="cap-guide-txt">
+      <span class="cap-hand">para leer con calma</span>
+      <h2>El librito de los <em>Salmos</em></h2>
+      <p>Los 150 salmos, uno por página, para hojear despacio como un libro de oración.</p>
+      <div class="cap-guide-btns"><a class="cap-guide-btn" href="#/salmos/libro">${icon("book")} Abrir el librito</a></div>
+    </div>
+  </section>
+  <div id="salCargar"></div>
+  <p class="cap-foot">«Todo lo que respira alabe al Señor»<span>Sal 150,6</span></p>`;
+}
+// Una lira con un brillo suave, como el rosetón de la Capilla
+function lira(cls) {
+  const strings = [0, 1, 2, 3, 4, 5].map((k) => `<path d="M${85 + k * 6} 34 V88"/>`).join("");
+  return `<svg class="${cls}" viewBox="40 4 120 98" aria-hidden="true"><g class="sl-harp-f"><path d="M80 92 C 58 82, 54 52, 70 34 C 76 26, 72 16, 64 12"/><path d="M120 92 C 142 82, 146 52, 130 34 C 124 26, 128 16, 136 12"/><path d="M68 32 Q 100 26 132 32"/><path d="M76 92 H124"/></g><g class="sl-harp-s">${strings}</g></svg>`;
 }
 const cuidadoHTML = () => `<p class="sal-cuidado">Dios escucha todo lo que le cuentes. Y si esto pesa mucho o lleva días, cuéntaselo también a alguien de confianza: tu familia, tu dirigente o un sacerdote. No tienes que cargarlo solo.</p>`;
 
@@ -356,29 +380,29 @@ function paintOne() {
   const admin = !!s_.isAdmin, equipo = !!s_.ready && !s_.isJoven;
   const otro = curE ? pick(curE, s.n) : null;
   box.innerHTML = `
+  <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<a href="#/salmos">Orar con los Salmos</a>${icon("right")}<span>Salmo ${s.n}</span></nav>
   <article class="sal-orar">
-    <a class="sal-back no-print" href="#/salmos">${icon("arrowL")} ¿Cómo llegas hoy?</a>
-    <header class="sal-tit"><span class="sal-hand">${curE ? esc(PARA[curE][0].toUpperCase() + PARA[curE].slice(1)) : "Oremos con los salmos"}</span>
-      <h1>${esc(s.t)}</h1><span class="sal-n">Salmo ${s.n}</span></header>
-
-    ${s.intro ? `<p class="sal-intro">${esc(s.intro)}</p>` : ""}
+    <header class="cap-arch sal-arch">
+      ${lira("sal-lira sm")}
+      <span class="cap-hand">${curE ? esc(PARA[curE]) : "un rato con Dios"}</span>
+      <h1 class="cap-title sal-t">${esc(s.t)}</h1>
+      <span class="sal-n">Salmo ${s.n}${altOf(s.n) ? ` (${altOf(s.n)})` : ""}</span>
+      ${s.intro ? `<p class="cap-sub sal-intro">${esc(s.intro)}</p>` : ""}
+    </header>
     ${CUIDADO.includes(curE) ? cuidadoHTML() : ""}
 
-    <section class="sal-paso"><span class="sal-pn">1</span><div><h2>Haz silencio</h2><p>Respira hondo, haz la señal de la cruz y dile a Jesús: «Aquí estoy».</p></div></section>
-
-    <section class="sal-paso"><span class="sal-pn">2</span><div><h2>Léelo despacio</h2>
-      ${txt ? `<div class="sal-texto">${textoHTML(txt)}${fuente() ? `<p class="sal-fuente">${esc(fuente())}</p>` : ""}</div>`
-        : `<p>Léelo sin apuro, mejor en voz baja. <a href="${linkOf(s.n)}" target="_blank" rel="noopener">Ábrelo aquí</a> y después vuelve.</p>`}</div></section>
-
-    <section class="sal-paso"><span class="sal-pn">3</span><div><h2>Quédate con una frase</h2>${s.v ? `<p>La que más te tocó. Si no sabes cuál, quédate con esta:</p>
-      <blockquote class="sal-verso">«${esc(s.v)}»<cite>${esc(s.ref)}</cite></blockquote>` : `<p>Vuelve a leer y quédate con la frase que más te tocó. Repítela despacio, varias veces.</p>`}</div></section>
-
-    <section class="sal-paso"><span class="sal-pn">4</span><div><h2>Cuéntale a Dios</h2><p class="sal-preg">${esc(s.p)}</p><p class="small muted">Háblale como a un amigo. No hacen falta palabras bonitas.</p></div></section>
-
-    <section class="sal-paso"><span class="sal-pn">5</span><div><h2>Llévatela</h2><p>Repite tu frase durante el día. ${s.v && (navigator.share || navigator.clipboard) ? `<button class="sal-link" data-action="salShare">Guardarla en el teléfono</button>` : ""}</p></div></section>
-
-    <p class="sal-amen">Amén.</p>
-    <div class="sal-fin no-print">${otro ? `<a class="btn btn-soft" href="#/salmos/${otro.n}?e=${curE}">Rezar con otro salmo</a>` : `<a class="btn btn-soft" href="#/salmos">Rezar con otro salmo</a>`}</div>
+    <div class="sal-hoja">
+      <section class="sal-paso"><span class="sal-pn">1</span><div><h2>Haz silencio</h2><p>Respira hondo, haz la señal de la cruz y dile a Jesús: «Aquí estoy».</p></div></section>
+      <section class="sal-paso"><span class="sal-pn">2</span><div><h2>Léelo despacio</h2>
+        ${txt ? `<div class="sal-texto">${lineasHTML(txt).join("")}${fuente() ? `<p class="sal-fuente">${esc(fuente())}</p>` : ""}</div>`
+          : `<p>Léelo sin apuro, mejor en voz baja. <a href="${linkOf(s.n)}" target="_blank" rel="noopener">Ábrelo aquí</a> y después vuelve.</p>`}</div></section>
+      <section class="sal-paso"><span class="sal-pn">3</span><div><h2>Quédate con una frase</h2>${s.v ? `<p>La que más te tocó. Si no sabes cuál, quédate con esta:</p>
+        <blockquote class="sal-verso">«${esc(s.v)}»<cite>${esc(s.ref)}</cite></blockquote>` : `<p>Vuelve a leer y quédate con la frase que más te tocó. Repítela despacio, varias veces.</p>`}</div></section>
+      <section class="sal-paso"><span class="sal-pn">4</span><div><h2>Cuéntale a Dios</h2><p class="sal-preg">${esc(s.p)}</p><p class="small sal-suave">Háblale como a un amigo. No hacen falta palabras bonitas.</p></div></section>
+      <section class="sal-paso"><span class="sal-pn">5</span><div><h2>Llévatela</h2><p>Repite tu frase durante el día. ${s.v && (navigator.share || navigator.clipboard) ? `<button class="sal-link" data-action="salShare">Guardarla en el teléfono</button>` : ""}</p></div></section>
+      <p class="sal-amen">Amén.</p>
+    </div>
+    <div class="sal-fin no-print">${otro ? `<a class="cap-guide-btn alt" href="#/salmos/${otro.n}?e=${curE}">Rezar con otro salmo</a>` : `<a class="cap-guide-btn alt" href="#/salmos">Volver a los salmos</a>`}</div>
     ${equipo ? `<p class="sal-equipo no-print"><button class="sal-link" data-action="salOrar">Proyectarlo en un encuentro</button></p>` : ""}
   </article>
   ${admin ? `<details class="card sal-admin no-print"><summary><b>Texto completo del salmo</b> <span class="muted small">Solo administradores</span></summary>
@@ -553,7 +577,7 @@ const footOf = (l, n, r = "") => `<span class="cl-f-l">${l}</span><span class="c
 export function viewLibro() {
   ctx.onAfterRender(() => { loadTextos().then(() => buildLibro()); });
   return `
-  <a class="sal-back no-print" href="#/salmos">${icon("arrowL")} Orar con los Salmos</a>
+  <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<a href="#/salmos">Orar con los Salmos</a>${icon("right")}<span>Librito</span></nav>
   <div class="cl-bar" role="toolbar" aria-label="Opciones del libro">
     <button class="btn btn-sm btn-ghost" data-action="salLIndex">${icon("grid")} Índice</button>
     <span class="cl-nav"><button class="icon-btn sl-turn" data-action="salLTurn" data-d="-1" aria-label="Página anterior">${icon("left")}</button>
