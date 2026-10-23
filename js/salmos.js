@@ -416,7 +416,8 @@ function paintOne() {
     <p class="xs muted">Pega aquí el texto autorizado del salmo. Deja una línea en blanco entre estrofas. Si lo dejas vacío, se muestra el enlace para leerlo en línea.</p>
     <textarea class="textarea" id="salTxt" rows="12">${esc(txt)}</textarea>
     <div class="field"><label>Fuente y derechos (para todos los salmos)</label><input class="input" id="salFuente" maxlength="300" value="${esc(fuente())}" placeholder="Texto bíblico: La Biblia, Libro del Pueblo de Dios. © … Usado con autorización."></div>
-    <button class="btn btn-primary btn-sm" data-action="salSaveTxt">Guardar</button></details>` : ""}`;
+    <button class="btn btn-primary btn-sm" data-action="salSaveTxt">Guardar</button>
+    <p class="xs muted" style="margin-top:10px">¿Quieres reemplazar los 150 de una vez? <button type="button" class="sal-link" data-action="salLibro">Cargar el libro completo</button></p></details>` : ""}`;
 }
 
 // ---------------------------------------------------------------------------
