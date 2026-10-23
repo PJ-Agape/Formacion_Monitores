@@ -137,6 +137,7 @@ const routes = [
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/salmos$/, () => salmos.viewList(), "oracion"],
+  [/^\/salmos\/libro$/, () => salmos.viewLibro(), "oracion"],
   [/^\/salmos\/(\d{1,3})(?:\?e=([a-z]+))?$/, (n, e) => salmos.viewOne(n, e), "oracion"],
   [/^\/dinamicas$/, () => mod.dinamicas().then((m) => m.viewList()), "materiales"],
   [/^\/acompanar$/, () => acompanar.viewMain(), "acompanar"],

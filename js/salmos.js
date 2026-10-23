@@ -4,6 +4,7 @@
 // editorial lo autorice (content/salmos); mientras tanto, «Leer el salmo» abre una Biblia católica en línea.
 
 import { esc, icon, toast } from "./util.js";
+import { createBook, splitByHeight } from "./libro.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -326,7 +327,7 @@ export function viewList() {
     <p>Jesús rezaba con los salmos. En ellos hay palabras para todo lo que uno siente. Elige cómo estás y te regalamos uno para rezar.</p>
   </section>
   <div class="sal-siento">${SIENTO.map(([k, l]) => `<a class="sal-feel" href="#/salmos/${pick(k).n}?e=${k}">${esc(l)}</a>`).join("")}</div>
-  <p class="sal-todos-q"><button class="sal-link" data-action="salTodos">${verTodos ? "Ocultar la lista" : "O elige tú un salmo"}</button></p>
+  <p class="sal-todos-q"><button class="sal-link" data-action="salTodos">${verTodos ? "Ocultar la lista" : "O elige tú un salmo"}</button> · <a class="sal-link" href="#/salmos/libro">Hojear el librito</a></p>
   ${verTodos ? `<ul class="sal-todos">${Array.from({ length: 150 }, (_, i) => byN(i + 1)).map((x) => `<li><a href="#/salmos/${x.n}"><b>${x.n}</b> ${esc(x.t)}</a></li>`).join("")}</ul>` : ""}
   ${ctx.cloud.enabled && st().isAdmin ? `<p class="sal-todos-q no-print"><button class="sal-link" data-action="salLibro">Cargar el libro de los Salmos</button> <span class="xs muted">· solo administradores</span></p>` : ""}`;
 }
@@ -501,9 +502,137 @@ function closeOrar() {
   try { if (document.fullscreenElement) document.exitFullscreen(); } catch {}
 }
 
+// ---------------------------------------------------------------------------
+// El librito de los Salmos  (#/salmos/libro): se hojea como el cancionero y se imprime en PDF
+// ---------------------------------------------------------------------------
+// Numeración de la liturgia (griega) a partir de la de la Biblia (hebrea).
+export function altOf(n) {
+  if (n <= 8 || n >= 148) return "";
+  if (n === 9 || n === 10) return "9";
+  if (n <= 113) return String(n - 1);
+  if (n === 114 || n === 115) return "113";
+  if (n === 116) return "114-115";
+  if (n <= 146) return String(n - 1);
+  return "146-147";
+}
+const LS = "agape_salmos_libro";
+let lsize = 1; try { lsize = +localStorage.getItem(LS + "_t") || 1; } catch {}
+let libroBook = null;
+const SUPER = /^(Del maestro|Salmo\.|Salmo de|De David|Canción|Oración|Poema|Himno|De Asaf|De los hijos|Plegaria|Cántico|De Salomón|De Moisés)/;
+const LETRA = /^(Alef|Bet|Guímel|Dálet|He|Vau|Zain|Jet|Tet|Yod|Kaf|Lámed|Mem|Nun|Sámek|Ayin|Pe|Sade|Qof|Resh|Sin|Tau)\.?$/;
+const lineasHTML = (txt) => String(txt || "").split("\n").map((l) => l.trim()).map((l, i) => !l ? `<div class="sl-gap"></div>`
+  : (i === 0 && SUPER.test(l) && l.length < 170) || LETRA.test(l) ? `<p class="sl-sub">${esc(l)}</p>` : `<p class="sl-v">${esc(l)}</p>`);
+const salHead = (n) => `<header class="cl-head"><span class="eyebrow">Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h2>${esc(byN(n).t)}</h2></header>`;
+const salCont = (n) => `<p class="cl-cont">${esc(byN(n).t)} <span>(continuación)</span></p>`;
+function salCover(n) {
+  const rays = [...Array(24)].map((_, i) => { const a = (Math.PI * 2 * i) / 24, r1 = 58, r2 = i % 2 ? 78 : 92;
+    return `<path d="M${(100 + Math.cos(a) * r1).toFixed(1)} ${(100 + Math.sin(a) * r1).toFixed(1)} L${(100 + Math.cos(a) * r2).toFixed(1)} ${(100 + Math.sin(a) * r2).toFixed(1)}"/>`; }).join("");
+  // Una lira, el instrumento con que se cantaban los salmos
+  const strings = [0, 1, 2, 3, 4, 5].map((k) => `<path d="M${85 + k * 6} 34 V88"/>`).join("");
+  return `<div class="cl-page cl-cover"><div class="cl-cov">
+    <span class="cl-cov-spine" aria-hidden="true"></span>
+    <span class="cl-cov-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+    <span class="cl-cov-ribbon" aria-hidden="true"></span>
+    <span class="cl-cov-k">Pastoral Juvenil Ágape · Yungay</span>
+    <div class="cl-cov-medal"><svg class="cl-cov-rays" viewBox="0 0 200 200" aria-hidden="true">${rays}</svg><img src="icons/logo-320.webp" alt="" width="320" height="320"></div>
+    <h2><span>Libro de los</span><em>Salmos</em>
+      <svg class="cl-cov-swash" viewBox="0 0 220 24" aria-hidden="true"><path d="M6 16 C 60 4, 120 4, 214 12"/><path d="M40 20 C 90 12, 140 12, 196 18"/></svg></h2>
+    <svg class="sl-harp" viewBox="0 0 200 110" aria-hidden="true"><g class="sl-harp-f"><path d="M80 92 C 58 82, 54 52, 70 34 C 76 26, 72 16, 64 12"/><path d="M120 92 C 142 82, 146 52, 130 34 C 124 26, 128 16, 136 12"/><path d="M68 32 Q 100 26 132 32"/><path d="M76 92 H124"/></g><g class="sl-harp-s">${strings}</g></svg>
+    <div class="cl-cov-foot">
+      <p class="cl-cov-v">Oremos con los salmos</p>
+      ${n ? `<button class="cl-cov-go" data-action="salLGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
+      <p class="cl-cov-n">${n ? `${n} salmos` : "Aún no hay salmos cargados"}</p>
+    </div></div></div>`;
+}
+const pageOf = ({ cls = "", head = "", body = "", foot = "" }) => `<div class="cl-page ${cls}"><div class="cl-in">${head}<div class="cl-body">${body}</div></div>${foot ? `<div class="cl-foot">${foot}</div>` : ""}</div>`;
+const footOf = (l, n, r = "") => `<span class="cl-f-l">${l}</span><span class="cl-f-n">${n}</span><span class="cl-f-r">${r}</span>`;
+
+export function viewLibro() {
+  ctx.onAfterRender(() => { loadTextos().then(() => buildLibro()); });
+  return `
+  <a class="sal-back no-print" href="#/salmos">${icon("arrowL")} Orar con los Salmos</a>
+  <div class="cl-bar" role="toolbar" aria-label="Opciones del libro">
+    <button class="btn btn-sm btn-ghost" data-action="salLIndex">${icon("grid")} Índice</button>
+    <span class="cl-nav"><button class="icon-btn sl-turn" data-action="salLTurn" data-d="-1" aria-label="Página anterior">${icon("left")}</button>
+      <span class="cl-pg" id="salLPg" aria-live="polite"></span>
+      <button class="icon-btn sl-turn" data-action="salLTurn" data-d="1" aria-label="Página siguiente">${icon("right")}</button></span>
+    <span class="spacer"></span>
+    <span class="can-grp"><button class="icon-btn" data-action="salLSize" data-d="-1" aria-label="Letra más chica">A−</button><button class="icon-btn" data-action="salLSize" data-d="1" aria-label="Letra más grande">A+</button></span>
+    <button class="btn btn-sm btn-ghost" data-action="salLPdf">${icon("print")} PDF</button>
+  </div>
+  <div class="cl-wrap"><div class="cl-stage" id="salLibroSt" style="--sl-size:${lsize}" aria-roledescription="libro"></div></div>
+  <p class="xs muted cl-help">Desliza la página o toca sus bordes para avanzar. En el computador, usa las flechas del teclado.</p>`;
+}
+let lsig = "";
+function buildLibro(force) {
+  const stage = document.getElementById("salLibroSt"); if (!stage) return;
+  if (!libroBook) libroBook = createBook({ stage: "salLibroSt", label: "salLPg", key: LS, buttons: ".sl-turn" });
+  if (libroBook.busy) return;
+  const nums = Array.from({ length: 150 }, (_, i) => i + 1).filter((n) => textoDe(n));
+  const sig = [stage.clientWidth, stage.clientHeight, lsize, nums.length, nums.map((n) => textoDe(n).length).join(",")].join("/");
+  if (!force && sig === lsig && libroBook.pages.length) { libroBook.show(libroBook.at); return; }
+  lsig = sig;
+  const m = document.createElement("div"); m.className = "cl-leaf cl-measure"; stage.appendChild(m);
+  const meas = (html) => { m.innerHTML = html; return m.querySelector(".cl-body"); };
+  const soft = (el) => el.classList.contains("sl-sub") || el.classList.contains("sl-gap");
+  // Salmos
+  const sp = [], first = new Map();
+  let availNext = null;
+  for (const n of nums) {
+    const lines = lineasHTML(textoDe(n));
+    if (availNext == null) availNext = meas(pageOf({ cls: "sl-page", head: salCont(n), foot: footOf("x", 0) })).clientHeight;
+    const body = meas(pageOf({ cls: "sl-page", head: salHead(n), body: lines.join(""), foot: footOf("x", 0) }));
+    const parts = splitByHeight([...body.children], body.clientHeight, availNext, soft);
+    first.set(n, sp.length);
+    parts.forEach(([a, b], part) => sp.push({ n, part, html: lines.slice(a, b).join("") }));
+  }
+  // Índice
+  const ixItem = (n, p) => `<button class="cl-ix" data-action="salLGo" data-p="${p}"><span class="cl-ix-t"><b class="sl-ixn">${n}</b> ${esc(byN(n).t)}</span><span class="cl-ix-d" aria-hidden="true"></span><span class="cl-ix-n">${p}</span></button>`;
+  const ixHead = (cont) => `<header class="cl-head"><span class="eyebrow">Libro de los Salmos</span><h2>Índice${cont ? ` <span class="cl-cont-s">(continuación)</span>` : ""}</h2></header>`;
+  let ixParts = [[0, 0]];
+  if (nums.length) {
+    const a2 = meas(pageOf({ cls: "cl-index", head: ixHead(true), foot: footOf("x", 0) })).clientHeight;
+    const b1 = meas(pageOf({ cls: "cl-index", head: ixHead(false), body: nums.map((n) => ixItem(n, 888)).join(""), foot: footOf("x", 0) }));
+    ixParts = splitByHeight([...b1.children], b1.clientHeight, a2);
+  }
+  m.remove();
+  const off = 1 + ixParts.length, pages = [{ k: "cover", html: salCover(nums.length) }];
+  ixParts.forEach(([a, b], i) => {
+    const body = nums.length ? nums.slice(a, b).map((n) => ixItem(n, off + first.get(n))).join("")
+      : `<div class="cl-empty"><p class="muted">Cuando el equipo cargue el texto de los salmos, aparecerán aquí.</p><a class="btn btn-primary btn-sm" href="#/salmos">Volver</a></div>`;
+    pages.push({ k: "ix" + i, html: pageOf({ cls: "cl-index", head: ixHead(i > 0), body, foot: footOf("", 1 + i) }) });
+  });
+  sp.forEach((p, i) => pages.push({ k: `s${p.n}-${p.part}`, html: pageOf({ cls: "sl-page", head: p.part ? salCont(p.n) : salHead(p.n), body: p.html,
+    foot: footOf(`<button class="cl-f-ix" data-action="salLIndex">Índice</button>`, off + i, `<a href="#/salmos/${p.n}">Rezarlo ${icon("right")}</a>`) }) }));
+  libroBook.setPages(pages);
+}
+// PDF: portada, índice y los salmos a dos columnas, en hoja carta.
+function libroPdf() {
+  const nums = Array.from({ length: 150 }, (_, i) => i + 1).filter((n) => textoDe(n));
+  if (!nums.length) { toast("Aún no hay salmos cargados", ""); return; }
+  let el = document.getElementById("salBook");
+  if (!el) { el = document.createElement("div"); el.id = "salBook"; document.body.appendChild(el); }
+  el.innerHTML = `<section class="sb-cover">${salCover(nums.length)}</section>
+    <section class="sb-index"><h2>Índice</h2><ol>${nums.map((n) => `<li><b>${n}</b> ${esc(byN(n).t)}</li>`).join("")}</ol></section>
+    <section class="sb-salmos">${nums.map((n) => `<article class="sb-s"><header><span>Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h3>${esc(byN(n).t)}</h3></header>${lineasHTML(textoDe(n)).join("")}</article>`).join("")}</section>
+    ${fuente() ? `<p class="sb-fuente">${esc(fuente())}</p>` : ""}`;
+  el.querySelector(".cl-cov-go")?.remove();
+  document.body.classList.add("sal-printing");
+  const done = () => { document.body.classList.remove("sal-printing"); window.removeEventListener("afterprint", done); };
+  window.addEventListener("afterprint", done);
+  setTimeout(() => window.print(), 300);
+}
+
 function registerActions() {
   const A = ctx.actions;
   A.salTodos = () => { verTodos = !verTodos; ctx.render(); };
+  A.salLTurn = (el) => libroBook && libroBook.turn(+el.dataset.d);
+  A.salLGo = (el) => libroBook && libroBook.go(+el.dataset.p);
+  A.salLIndex = () => libroBook && libroBook.go(1);
+  A.salLSize = (el) => { lsize = Math.min(1.6, Math.max(.8, Math.round((lsize + +el.dataset.d * .1) * 10) / 10)); try { localStorage.setItem(LS + "_t", lsize); } catch {}
+    const st_ = document.getElementById("salLibroSt"); if (st_) st_.style.setProperty("--sl-size", lsize); buildLibro(true); };
+  A.salLPdf = () => libroPdf();
+  let rz = 0; window.addEventListener("resize", () => { if (document.getElementById("salLibroSt")) { clearTimeout(rz); rz = setTimeout(() => buildLibro(), 200); } });
   A.salLibro = () => { loadTextos().then(libroDialog); };
   A.salLibroCheck = () => libroPreview();
   A.salLibroClose = () => document.getElementById("salLibroDlg")?.close();
