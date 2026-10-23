@@ -123,7 +123,9 @@ export const SALMOS = [
     intro: "El último salmo es una gran fiesta: trompetas, guitarras, tambores y danza. Todo el libro termina en alabanza. Cantar y tocar también es orar.",
     p: "¿Cómo puedo alabar a Dios hoy con lo que sé hacer?" },
 ];
-const byN = (n) => SALMOS.find((s) => s.n === +n);
+// Los que no tienen ficha propia igual se pueden rezar (del 1 al 150), con una pregunta general.
+const byN = (n) => SALMOS.find((s) => s.n === +n) || (+n >= 1 && +n <= 150 ? { n: +n, t: `Salmo ${+n}`, e: [], intro: "", v: "", ref: "",
+  p: "¿Qué palabra de este salmo me habla hoy? ¿Qué le quiero responder a Dios?", generico: true } : null);
 // Biblia católica en línea (Biblia de Navarra, sitio de EWTN): mientras no tengamos el texto autorizado.
 const linkOf = (n) => `https://www.ewtn.com/es/biblia/63-salmo/${n}`;
 
@@ -172,7 +174,10 @@ export function viewList() {
   </section>
   <div class="sal-siento">${SIENTO.map(([k, l]) => `<a class="sal-feel" href="#/salmos/${pick(k).n}?e=${k}">${esc(l)}</a>`).join("")}</div>
   <p class="sal-todos-q"><button class="sal-link" data-action="salTodos">${verTodos ? "Ocultar la lista" : "O elige tú un salmo"}</button></p>
-  ${verTodos ? `<ul class="sal-todos">${SALMOS.map((x) => `<li><a href="#/salmos/${x.n}"><b>${x.n}</b> ${esc(x.t)}</a></li>`).join("")}</ul>` : ""}`;
+  ${verTodos ? `<ul class="sal-todos">${SALMOS.map((x) => `<li><a href="#/salmos/${x.n}"><b>${x.n}</b> ${esc(x.t)}</a></li>`).join("")}</ul>
+    <p class="sal-todos-q small">Todos los salmos</p>
+    <div class="sal-nums">${Array.from({ length: 150 }, (_, i) => `<a href="#/salmos/${i + 1}">${i + 1}</a>`).join("")}</div>` : ""}
+  ${ctx.cloud.enabled && st().isAdmin ? `<p class="sal-todos-q no-print"><button class="sal-link" data-action="salLibro">Cargar el libro de los Salmos</button> <span class="xs muted">· solo administradores</span></p>` : ""}`;
 }
 const cuidadoHTML = () => `<p class="sal-cuidado">Dios escucha todo lo que le cuentes. Y si esto pesa mucho o lleva días, cuéntaselo también a alguien de confianza: tu familia, tu dirigente o un sacerdote. No tienes que cargarlo solo.</p>`;
 
@@ -199,9 +204,9 @@ function paintOne() {
   <article class="sal-orar">
     <a class="sal-back no-print" href="#/salmos">${icon("arrowL")} ¿Cómo llegas hoy?</a>
     <header class="sal-tit"><span class="sal-hand">${curE ? esc(PARA[curE][0].toUpperCase() + PARA[curE].slice(1)) : "Oremos con los salmos"}</span>
-      <h1>${esc(s.t)}</h1><span class="sal-n">Salmo ${s.n}</span></header>
+      <h1>${esc(s.t)}</h1>${s.generico ? "" : `<span class="sal-n">Salmo ${s.n}</span>`}</header>
 
-    <p class="sal-intro">${esc(s.intro)}</p>
+    ${s.intro ? `<p class="sal-intro">${esc(s.intro)}</p>` : ""}
     ${CUIDADO.includes(curE) ? cuidadoHTML() : ""}
 
     <section class="sal-paso"><span class="sal-pn">1</span><div><h2>Haz silencio</h2><p>Respira hondo, haz la señal de la cruz y dile a Jesús: «Aquí estoy».</p></div></section>
@@ -210,12 +215,12 @@ function paintOne() {
       ${txt ? `<div class="sal-texto">${textoHTML(txt)}${fuente() ? `<p class="sal-fuente">${esc(fuente())}</p>` : ""}</div>`
         : `<p>Léelo sin apuro, mejor en voz baja. <a href="${linkOf(s.n)}" target="_blank" rel="noopener">Ábrelo aquí</a> y después vuelve.</p>`}</div></section>
 
-    <section class="sal-paso"><span class="sal-pn">3</span><div><h2>Quédate con una frase</h2><p>La que más te tocó. Si no sabes cuál, quédate con esta:</p>
-      <blockquote class="sal-verso">«${esc(s.v)}»<cite>${esc(s.ref)}</cite></blockquote></div></section>
+    <section class="sal-paso"><span class="sal-pn">3</span><div><h2>Quédate con una frase</h2>${s.v ? `<p>La que más te tocó. Si no sabes cuál, quédate con esta:</p>
+      <blockquote class="sal-verso">«${esc(s.v)}»<cite>${esc(s.ref)}</cite></blockquote>` : `<p>Vuelve a leer y quédate con la frase que más te tocó. Repítela despacio, varias veces.</p>`}</div></section>
 
     <section class="sal-paso"><span class="sal-pn">4</span><div><h2>Cuéntale a Dios</h2><p class="sal-preg">${esc(s.p)}</p><p class="small muted">Háblale como a un amigo. No hacen falta palabras bonitas.</p></div></section>
 
-    <section class="sal-paso"><span class="sal-pn">5</span><div><h2>Llévatela</h2><p>Repite tu frase durante el día. ${navigator.share || navigator.clipboard ? `<button class="sal-link" data-action="salShare">Guardarla en el teléfono</button>` : ""}</p></div></section>
+    <section class="sal-paso"><span class="sal-pn">5</span><div><h2>Llévatela</h2><p>Repite tu frase durante el día. ${s.v && (navigator.share || navigator.clipboard) ? `<button class="sal-link" data-action="salShare">Guardarla en el teléfono</button>` : ""}</p></div></section>
 
     <p class="sal-amen">Amén.</p>
     <div class="sal-fin no-print">${otro ? `<a class="btn btn-soft" href="#/salmos/${otro.n}?e=${curE}">Rezar con otro salmo</a>` : `<a class="btn btn-soft" href="#/salmos">Rezar con otro salmo</a>`}</div>
@@ -226,6 +231,75 @@ function paintOne() {
     <textarea class="textarea" id="salTxt" rows="12">${esc(txt)}</textarea>
     <div class="field"><label>Fuente y derechos (para todos los salmos)</label><input class="input" id="salFuente" maxlength="300" value="${esc(fuente())}" placeholder="Texto bíblico: La Biblia, Libro del Pueblo de Dios. © … Usado con autorización."></div>
     <button class="btn btn-primary btn-sm" data-action="salSaveTxt">Guardar</button></details>` : ""}`;
+}
+
+// ---------------------------------------------------------------------------
+// Cargar el libro completo desde una copia digital autorizada (se copia y se pega todo de una vez)
+// ---------------------------------------------------------------------------
+// Separa el texto en salmos. Busca encabezados «Salmo 23» (o «SALMO 23», «Sal 23»); si no hay,
+// usa números solos en una línea, siempre que vayan en orden (1, 2, 3…).
+export function parseLibro(text, sinNumeros = true) {
+  const lines = String(text || "").replace(/\r/g, "").replace(/\u00a0/g, " ").split("\n");
+  const HEAD = /^\s*(?:salmo|sal\.?)\s+(\d{1,3})\b/i;
+  let heads = [];
+  lines.forEach((l, i) => { const m = HEAD.exec(l); if (m && +m[1] >= 1 && +m[1] <= 150) heads.push({ i, n: +m[1] }); });
+  if (heads.length < 3) {
+    heads = []; let last = 0;
+    lines.forEach((l, i) => { const m = /^\s*(\d{1,3})\s*$/.exec(l); if (m && +m[1] === last + 1) { heads.push({ i, n: +m[1] }); last = +m[1]; } });
+  }
+  // Si un número aparece dos veces (índice al comienzo, por ejemplo), vale el último.
+  const out = {};
+  heads.forEach((h, k) => {
+    const end = k + 1 < heads.length ? heads[k + 1].i : lines.length;
+    let body = lines.slice(h.i + 1, end).map((l) => l.trim());
+    if (sinNumeros) body = body.filter((l) => !/^\d{1,3}$/.test(l)).map((l) => l.replace(/^\d{1,3}\s*(?=\D)/, "").replace(/(\s)\d{1,3}\s+(?=[^\d\s])/g, "$1").replace(/\s{2,}/g, " ").trim());
+    const t = body.join("\n").replace(/\n{3,}/g, "\n\n").trim();
+    if (t) out[h.n] = t;
+  });
+  return out;
+}
+let libro = null;
+function libroDialog() {
+  let d = document.getElementById("salLibroDlg");
+  if (!d) { d = document.createElement("dialog"); d.id = "salLibroDlg"; d.className = "sheet p-sheet"; document.body.appendChild(d); }
+  libro = null;
+  d.innerHTML = `<form method="dialog" id="salLibroForm">
+    <div class="sheet-head"><div style="flex:1"><span class="eyebrow">Oremos con los salmos</span><h2>Cargar el libro de los Salmos</h2></div>
+      <button type="button" class="icon-btn" data-action="salLibroClose" aria-label="Cerrar">${icon("x")}</button></div>
+    <div class="sheet-body stack" style="--gap:12px">
+      <p class="small">Abre la Biblia digital autorizada, selecciona <b>todo el libro de los Salmos</b> (desde «Salmo 1» hasta el final del 150), cópialo y pégalo aquí. También sirve un archivo de texto (.txt).</p>
+      <textarea class="textarea" id="salLibroTxt" rows="10" placeholder="Salmo 1&#10;¡Feliz el hombre que…&#10;…&#10;Salmo 2&#10;…"></textarea>
+      <input type="file" id="salLibroFile" accept=".txt,text/plain" class="input">
+      <label class="chip" style="align-self:flex-start"><input type="checkbox" id="salLibroNum" checked> Quitar los números de versículo</label>
+      <div class="field"><label>Fuente y derechos (aparece al pie de cada salmo)</label><input class="input" id="salLibroFuente" maxlength="300" value="${esc(fuente())}" placeholder="Texto bíblico: La Biblia, Libro del Pueblo de Dios. © … Usado con autorización."></div>
+      <button type="button" class="btn btn-soft" data-action="salLibroCheck">${icon("eye")} Revisar</button>
+      <div id="salLibroPrev"></div>
+    </div>
+    <div class="sheet-foot"><span class="spacer"></span><button type="button" class="btn btn-ghost" data-action="salLibroClose">Cancelar</button>
+      <button class="btn btn-primary" type="submit" id="salLibroOk" disabled>Guardar los salmos</button></div>
+  </form>`;
+  d.showModal();
+}
+function libroPreview() {
+  const box = $("#salLibroPrev"); if (!box) return;
+  libro = parseLibro($("#salLibroTxt")?.value || "", !!$("#salLibroNum")?.checked);
+  const ns = Object.keys(libro).map(Number), falta = [];
+  for (let i = 1; i <= 150; i++) if (!libro[i]) falta.push(i);
+  const ok = $("#salLibroOk"); if (ok) ok.disabled = !ns.length;
+  if (!ns.length) { box.innerHTML = `<p class="note small">No encontré salmos. Revisa que cada uno empiece con una línea «Salmo 1», «Salmo 2»…</p>`; return; }
+  const ver = libro[23] ? 23 : ns[0];
+  box.innerHTML = `<p class="small"><b>Encontré ${ns.length} salmo${ns.length > 1 ? "s" : ""}.</b>${falta.length && falta.length < 150 ? ` Faltan: ${falta.length > 20 ? falta.slice(0, 20).join(", ") + ` y ${falta.length - 20} más` : falta.join(", ")}.` : ""} Revisa cómo quedó uno:</p>
+    <select class="select" id="salLibroVer">${ns.map((n) => `<option value="${n}" ${n === ver ? "selected" : ""}>Salmo ${n}</option>`).join("")}</select>
+    <pre class="can-imp-body" id="salLibroMuestra">${esc(libro[ver])}</pre>`;
+}
+async function libroSave() {
+  if (!libro || !Object.keys(libro).length) return;
+  const btn = $("#salLibroOk"); if (btn) { btn.disabled = true; btn.textContent = "Guardando…"; }
+  await loadTextos(true);
+  const data = { fuente: String($("#salLibroFuente")?.value || "").trim(), textos: { ...textos.textos, ...libro } };
+  if (JSON.stringify(data).length > 950000) { toast("El texto es demasiado largo. Pega solo el libro de los Salmos.", ""); if (btn) { btn.disabled = false; btn.textContent = "Guardar los salmos"; } return; }
+  try { await ctx.cloud.saveSalmos(data); textos = data; document.getElementById("salLibroDlg")?.close(); toast(`${Object.keys(libro).length} salmos guardados`, "ok"); }
+  catch (err) { console.warn(err); toast("No se pudo guardar. Revisa tu conexión.", ""); if (btn) { btn.disabled = false; btn.textContent = "Guardar los salmos"; } }
 }
 
 // ---------------------------------------------------------------------------
@@ -243,9 +317,9 @@ function orarSlides(s) {
     for (const l of lines) { if (!l) { flush(); continue; } chunk.push(l); if (chunk.length >= 6) flush(); }
     flush();
   }
-  out.push({ k: "paso", n: 3, t: PASOS[2][0], d: PASOS[2][1], verso: `«${s.v}» (${s.ref})` });
+  out.push({ k: "paso", n: 3, t: PASOS[2][0], d: PASOS[2][1], verso: s.v ? `«${s.v}» (${s.ref})` : "" });
   out.push({ k: "paso", n: 4, t: PASOS[3][0], d: s.p });
-  out.push({ k: "paso", n: 5, t: PASOS[4][0], d: PASOS[4][1], verso: `«${s.v}»` });
+  out.push({ k: "paso", n: 5, t: PASOS[4][0], d: PASOS[4][1], verso: s.v ? `«${s.v}»` : "" });
   return out;
 }
 function orar() {
@@ -279,6 +353,15 @@ function closeOrar() {
 function registerActions() {
   const A = ctx.actions;
   A.salTodos = () => { verTodos = !verTodos; ctx.render(); };
+  A.salLibro = () => { loadTextos().then(libroDialog); };
+  A.salLibroCheck = () => libroPreview();
+  A.salLibroClose = () => document.getElementById("salLibroDlg")?.close();
+  document.addEventListener("submit", (e) => { if (e.target.id === "salLibroForm") { e.preventDefault(); libroSave(); } });
+  document.addEventListener("change", async (e) => {
+    if (e.target.id === "salLibroVer" && libro) { const m = $("#salLibroMuestra"); if (m) m.textContent = libro[e.target.value] || ""; }
+    if (e.target.id === "salLibroFile" && e.target.files[0]) { const ta = $("#salLibroTxt"); if (ta) { ta.value = await e.target.files[0].text(); libroPreview(); } }
+    if (e.target.id === "salLibroNum" && libro) libroPreview();
+  });
   A.salOrar = () => orar();
   A.salPrev = () => { if (ov) { ov.i = Math.max(0, ov.i - 1); paintOrar(); } };
   A.salNext = () => { if (ov) { ov.i = Math.min(ov.slides.length - 1, ov.i + 1); paintOrar(); } };

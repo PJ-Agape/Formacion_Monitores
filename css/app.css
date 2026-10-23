@@ -4192,3 +4192,6 @@ body.solo-on .help-fab { display: none; }
 .sal-proj-v { font-family: var(--font-hand); font-weight: 700; color: #ffba03; font-size: clamp(1.6rem, 4.4vw, 3rem); line-height: 1.15; max-width: 900px; }
 .sal-proj-txt { font-size: clamp(1.3rem, 3.6vw, 2.6rem); }
 @media print { .sal-verso { background: none; color: var(--cn, #0b2566); border: 2px solid var(--cn, #0b2566); } .sal-verso cite { color: #ef591c; } }
+.sal-nums { display: grid; grid-template-columns: repeat(auto-fill, minmax(44px, 1fr)); gap: 6px; max-width: 620px; margin: 0 auto; }
+.sal-nums a { display: grid; place-items: center; height: 40px; border-radius: 12px; border: 1.5px solid rgba(11,37,102,.25); background: #fff; color: inherit; text-decoration: none; font-weight: 700; font-size: .9rem; }
+.sal-nums a:hover { border-color: var(--cn, #0b2566); background: #fff3c4; }
