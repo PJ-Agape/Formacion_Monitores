@@ -312,7 +312,7 @@ export function view(opt = {}) {
       <p class="cap-prayer">${esc(m.text).replace(/\n/g, "<br>")}</p>
       <div class="cap-moment-btns">
         <a class="btn cap-oremus" href="#/oremus">${icon("book")} Oremus <small>nuestras oraciones y las de siempre</small></a>
-        <a class="btn cap-oremus" href="#/salmos">${icon("book")} Orar con los Salmos <small>un salmo para cada momento</small></a>
+        <a class="btn cap-oremus" href="#/salmos">${icon("book")} Orar con los Salmos</a>
         <a class="btn cap-oremus" href="#/cancionero"><span aria-hidden="true">♪</span> Cancionero <small>cantar es rezar dos veces</small></a>
       </div>
     </article>
