@@ -10,6 +10,7 @@ import * as famReg from "./familias-registro.js";
 import * as grupo from "./grupo.js";
 import * as novedades from "./novedades.js";
 import * as saludos from "./saludos.js";
+import * as conocer from "./conocer.js";
 import * as papa from "./papa.js";
 import * as familiasAg from "./familias-ag.js";
 import * as S from "./store.js";
@@ -27,6 +28,9 @@ let cloudOn = false;
 const THEMES = [["amanecer", "Amanecer · luz y calidez"], ["cenaculo", "Cenáculo · oración"], ["esperanza", "Esperanza · vida"]];
 
 // ---------------------------------------------------------------------------
+// «Quiero conocer Ágape»: la lista de interesados; el QR se pinta después de dibujar.
+async function conocerView() { const h = await conocer.adminView(); conocer.afterAdmin(); return h; }
+
 // Pantallas que viven en la app y se muestran también dentro de Gestión (mismo contenido, con el menú al lado)
 const EMBED = {
   agenda: () => agenda.viewAgenda(),
@@ -51,7 +55,7 @@ export async function renderAdmin(sub, _api) {
         <p class="muted" style="margin-top:8px">Si necesitas acceso, pídelo al equipo coordinador.</p>
         <a class="btn btn-primary" style="margin-top:16px" href="#/">Volver al inicio</a></div>`;
       const pg = sub.split("/").filter(Boolean)[0] || "hoy";
-      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), inicio: () => inicioAdmin.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), asignar: () => asignarView(),
+      const COORD = { hoy: () => hoy.html(), portada: () => portada.adminView(), inicio: () => inicioAdmin.adminView(), familias: () => familiasAdmin.adminView(), saludos: () => saludos.adminView(), conocer: () => conocerView(), asignar: () => asignarView(),
         grupos: () => gEq.familiasHTML(), moderacion: () => gEq.moderacionHTML(), ...EMBED };
       const GUIA = { hoy: COORD.hoy, acompanar: EMBED.acompanar };
       const ok = st.isStaff ? COORD[pg] : GUIA[pg];
@@ -73,6 +77,7 @@ export async function renderAdmin(sub, _api) {
     case "portada": body = portada.adminView(); break;
     case "inicio": body = cloudOn ? inicioAdmin.adminView() : summaryView(draft); break;
     case "saludos": body = await saludos.adminView(); break;
+    case "conocer": body = cloudOn ? await conocerView() : summaryView(draft); break;
     case "familias": body = cloudOn ? familiasAdmin.adminView() : summaryView(draft); break;
     case "grupos": body = cloudOn ? gEq.familiasHTML() : summaryView(draft); break;
     case "moderacion": body = cloudOn ? gEq.moderacionHTML() : summaryView(draft); break;
@@ -102,6 +107,7 @@ function navGroups() {
     ["", [["hoy", "#/admin", "Hoy", "sparkle", cloudOn]]],
     ["Personas", [
       ["dirigentes", "#/admin/dirigentes", "Cuentas e invitaciones", "users", cloudOn && A],
+      ["conocer", "#/admin/conocer", "Quiero conocer Ágape", "send", cloudOn && C],
       ["asignar", "#/admin/asignar", "Asignar jóvenes", "check", cloudOn && C],
       ["grupos", "#/admin/grupos", "Las 10 familias", "users", cloudOn && C],
       ["consentimientos", "#/admin/consentimientos", "Consentimientos", "lock", cloudOn && A],
@@ -1114,6 +1120,7 @@ function bindActions() {
   if (bound) return; bound = true;
   const A = api.actions;
   saludos.registerActions(A, () => api.render());
+  conocer.registerAdmin(A, () => api.render());
   cursosCom.setup(api);
   evAdmin.registerActions(A, () => api.render());
 

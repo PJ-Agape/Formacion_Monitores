@@ -22,6 +22,7 @@ import * as juegos from "./juegos.js";
 import * as podcast from "./podcast.js";
 import { cfg as inicioCfg, REDES, BRAND_ICO } from "./inicio-config.js";
 import * as solicitud from "./solicitud.js";
+import * as conocer from "./conocer.js";
 import * as ficha from "./ficha.js";
 import * as camJ from "./mi-camino.js";
 import * as ayuda from "./ayuda.js";
@@ -108,6 +109,7 @@ const routes = [
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
   [/^\/solicitar$/, () => solicitud.view(), "perfil"],
+  [/^\/conocer(?:\?(.*))?$/, (q) => conocer.view(q || ""), "perfil"],
   [/^\/ficha\/([^/?]+)$/, (id) => ficha.view(decodeURIComponent(id)), "acompanar"],
   [/^\/(?:recorrido|tutorial|guia)(?:\?.*)?$/, () => { location.replace("#/formacion"); return null; }, "formacion"],
   [/^\/nuestras-familias$/, () => familiasAg.view(), "familiasag"],
@@ -1576,6 +1578,7 @@ S.setCourseRule((c) => {
   return para.includes(st.role) || (para.includes("asesor") && !!(st.account && st.account.asesor === true));
 });
 solicitud.setup({ actions, render: () => render(), onAfterRender, cloud });
+conocer.setup({ actions, render: () => render(), onAfterRender, cloud });
 ficha.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 salmos.setup({ actions, render: () => render(), onAfterRender, cloud });

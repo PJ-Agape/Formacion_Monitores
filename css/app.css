@@ -4262,3 +4262,29 @@ a.cap-guide-btn { text-decoration: none; }
   #salBook .sb-nota { break-inside: avoid; margin: 1.6mm 0 2.4mm; padding: 1.6mm 2.4mm; border-left: 1.4mm solid var(--nc); background: color-mix(in srgb, var(--nc) 14%, #fff); font-size: 8.6pt; line-height: 1.35; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   #salBook .sb-nota span { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 11pt; line-height: 1; color: var(--nt); margin-bottom: .6mm; }
 }
+
+/* «Quiero conocer Ágape» (#/conocer) y su página en Gestión */
+.cono-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 14px; margin-top: 18px; }
+.cono-it h3 { font-size: 1.05rem; }
+.cono-it p { color: var(--ink-2); margin-top: 6px; font-size: .94rem; }
+.cono-it .tile-ico { margin-bottom: 10px; }
+.cono-try { margin: 16px 0 4px; gap: 8px; align-items: center; }
+.cono-card { max-width: 620px; margin: 18px auto 0; }
+.cono-quien { border: 0; padding: 0; margin: 0; display: grid; gap: 6px; }
+.cono-quien .seg { flex-wrap: wrap; }
+.cono-adulto { border: 2px dashed var(--line-2); border-radius: var(--r); padding: 12px 14px 14px; display: grid; gap: 10px; margin: 0; }
+.cono-adulto legend { font-weight: 800; font-size: .85rem; padding: 0 6px; display: inline-flex; gap: 6px; align-items: center; }
+.cono-check { display: flex; gap: 10px; align-items: flex-start; font-size: .88rem; color: var(--ink-2); cursor: pointer; }
+.cono-check input { width: 20px; height: 20px; margin-top: 1px; flex: none; accent-color: var(--cn, #0b2566); }
+.cono-hp { position: absolute; left: -9999px; width: 1px; height: 1px; overflow: hidden; }
+.cono-stats { display: grid; grid-template-columns: repeat(auto-fit, minmax(140px, 1fr)); gap: 10px; }
+.cono-stats .card { display: grid; gap: 2px; padding: 14px 16px; }
+.cono-stats b { font-family: var(--font-display); font-size: 1.8rem; line-height: 1; }
+.cono-stats span { font-size: .8rem; color: var(--ink-3); }
+.cono-row .tools { flex-wrap: wrap; gap: 6px; }
+.cono-row .select { width: auto; padding-top: 6px; padding-bottom: 6px; font-size: .85rem; }
+.cono-msg { font-style: italic; color: var(--ink-2); }
+.cono-links { display: flex; flex-wrap: wrap; gap: 18px; align-items: flex-start; }
+.cono-qr { display: grid; gap: 8px; justify-items: center; }
+.cono-qr #conoQr { width: 150px; height: 150px; background: #fff; padding: 8px; border-radius: 12px; border: 2px solid var(--line-2); }
+.cono-qr #conoQr svg { width: 100%; height: 100%; display: block; }

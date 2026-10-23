@@ -22,7 +22,7 @@ export function homeCard() {
       <span class="hub-cb-hand">nos encantaría conocerte</span>
       <h2 id="solHT">¿Quieres formar parte o ya participas de la PJ Ágape?</h2>
       <p class="hub-cb-meta">Solicita tu cuenta con un formulario corto: tus datos, tu correo de Google y tu parroquia o capilla.</p>
-      <div class="hub-cb-btns"><a class="btn btn-gold" href="#/solicitar">Solicitar mi cuenta ${icon("arrowR")}</a></div>
+      <div class="hub-cb-btns"><a class="btn btn-gold" href="#/solicitar">Solicitar mi cuenta ${icon("arrowR")}</a><a class="btn btn-ghost" href="#/conocer">Solo quiero conocer Ágape</a></div>
     </div>
     <div class="hub-cb-art" aria-hidden="true"><i class="hub-cb-sun"></i>${illus("acogida", "hub-cb-il")}</div>
   </section>`;

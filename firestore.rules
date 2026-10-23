@@ -474,6 +474,32 @@ service cloud.firestore {
       allow update: if isMember() && request.resource.data.keys().hasOnly(['n'])
         && request.resource.data.n == resource.data.n + 1;
     }
+    // «Quiero conocer Ágape» (#/conocer): cualquiera, sin cuenta, deja un contacto para que lo inviten.
+    // Nadie de afuera puede leer la lista: solo el equipo. Los menores de 18 dejan el contacto de un adulto.
+    match /interesados/{id} {
+      allow create: if request.resource.data.keys().hasOnly(['quien', 'nombre', 'hijo', 'edad', 'telefono', 'adultoNombre', 'adultoTel', 'adultoSabe', 'origen', 'campana', 'mensaje', 'consiente', 'estado', 'createdAt'])
+        && request.resource.data.quien in ['joven', 'familia']
+        && validText(request.resource.data.nombre, 80)
+        && request.resource.data.get('hijo', '') is string && request.resource.data.get('hijo', '').size() <= 80
+        && request.resource.data.edad is int && request.resource.data.edad >= 10 && request.resource.data.edad <= 35
+        && request.resource.data.telefono is string && request.resource.data.telefono.size() <= 20
+        && request.resource.data.get('adultoNombre', '') is string && request.resource.data.get('adultoNombre', '').size() <= 80
+        && request.resource.data.get('adultoTel', '') is string && request.resource.data.get('adultoTel', '').size() <= 20
+        && (request.resource.data.quien == 'familia' || request.resource.data.edad >= 18
+            ? request.resource.data.telefono.size() >= 8
+            : (request.resource.data.get('adultoSabe', false) == true && request.resource.data.get('adultoNombre', '').size() > 0 && request.resource.data.get('adultoTel', '').size() >= 8))
+        && request.resource.data.origen in ['amigo', 'parroquia', 'colegio', 'catequesis', 'instagram', 'tiktok', 'facebook', 'whatsapp', 'afiche', 'otro']
+        && request.resource.data.campana is string && request.resource.data.campana.size() <= 30
+        && request.resource.data.mensaje is string && request.resource.data.mensaje.size() <= 300
+        && request.resource.data.consiente == true
+        && request.resource.data.estado == 'nuevo'
+        && request.resource.data.createdAt == request.time;
+      allow read: if isStaff();
+      allow update: if isStaff() && changed().hasOnly(['estado', 'atendidoPor', 'atendidoEn'])
+        && request.resource.data.estado in ['nuevo', 'contactado', 'vino', 'no'];
+      allow delete: if isAdmin();
+    }
+
     match /stats/{day} {
       allow read: if isStaff();
       allow create: if day.matches('^[0-9]{4}-[0-9]{2}-[0-9]{2}$')

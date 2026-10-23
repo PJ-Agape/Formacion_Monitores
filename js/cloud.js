@@ -435,6 +435,18 @@ export async function pendingSolicitudes() {
   try { return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "solicitudes")), 6000)); } catch { return []; }
 }
 export const deleteSolicitud = (uid) => fb.deleteDoc(fb.doc(db, "solicitudes", uid));
+// «Quiero conocer Ágape» (#/conocer): cualquiera, sin cuenta, deja un contacto para que el equipo lo invite.
+// Solo el equipo (administradores y coordinadores) lee la lista; nadie más la ve.
+export async function saveInteresado(d) {
+  if (!enabled || !db) throw new Error("sin conexión a la nube");
+  await withTimeout(fb.addDoc(fb.collection(db, "interesados"), { ...d, estado: "nuevo", createdAt: fb.serverTimestamp() }), 10000);
+}
+export async function listInteresados() {
+  if (!enabled || !db || !state().isStaff) return [];
+  return snapRows(await withTimeout(fb.getDocs(fb.collection(db, "interesados")), 8000));
+}
+export const updateInteresado = (id, data) => fb.updateDoc(fb.doc(db, "interesados", id), { ...data, atendidoPor: account.email, atendidoEn: fb.serverTimestamp() });
+export const deleteInteresado = (id) => fb.deleteDoc(fb.doc(db, "interesados", id));
 // Vuelve a mirar si ya hay invitación (después de que el equipo aprobó la solicitud).
 export async function recheck() { if (user) { await handleUser(user); emit(); } }
 export const deleteInvite = (email) => fb.deleteDoc(fb.doc(db, "invites", lower(email)));
