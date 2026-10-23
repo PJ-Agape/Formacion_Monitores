@@ -6,6 +6,7 @@
 import { esc, icon, toast } from "./util.js";
 import { createBook, splitByHeight } from "./libro.js";
 import { illus } from "./ilustraciones.js";
+import { TIPOS, notasDe } from "./salmos-notas.js";
 
 let ctx = null; // { actions, render, onAfterRender, cloud }
 export function setup(c) { ctx = c; registerActions(); }
@@ -394,6 +395,7 @@ function paintOne() {
     </header>
     ${CUIDADO.includes(curE) ? cuidadoHTML() : ""}
 
+    <div class="sal-cuerpo">
     <div class="sal-hoja">
       <section class="sal-paso"><span class="sal-pn">1</span><div><h2>Haz silencio</h2><p>Respira hondo, haz la señal de la cruz y dile a Jesús: «Aquí estoy».</p></div></section>
       <section class="sal-paso"><span class="sal-pn">2</span><div><h2>Léelo despacio</h2>
@@ -404,6 +406,8 @@ function paintOne() {
       <section class="sal-paso"><span class="sal-pn">4</span><div><h2>Cuéntale a Dios</h2><p class="sal-preg">${esc(s.p)}</p><p class="small sal-suave">Háblale como a un amigo. No hacen falta palabras bonitas.</p></div></section>
       <section class="sal-paso"><span class="sal-pn">5</span><div><h2>Llévatela</h2><p>Repite tu frase durante el día. ${s.v && (navigator.share || navigator.clipboard) ? `<button class="sal-link" data-action="salShare">Guardarla en el teléfono</button>` : ""}</p></div></section>
       <p class="sal-amen">Amén.</p>
+    </div>
+    <aside class="sal-margen" aria-label="Notas al margen">${notasDe(s.n).map(([k, t]) => `<div class="sal-nota sal-nota-${k}"><span>${esc(TIPOS[k])}</span><p>${esc(t)}</p></div>`).join("")}</aside>
     </div>
     <div class="sal-fin no-print">${otro ? `<a class="cap-guide-btn alt" href="#/salmos/${otro.n}?e=${curE}">Rezar con otro salmo</a>` : `<a class="cap-guide-btn alt" href="#/salmos">Volver a los salmos</a>`}</div>
     ${equipo ? `<p class="sal-equipo no-print"><button class="sal-link" data-action="salOrar">Proyectarlo en un encuentro</button></p>` : ""}

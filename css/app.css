@@ -4238,3 +4238,20 @@ a.cap-guide-btn { text-decoration: none; }
 .sl-head > div { flex: 1; min-width: 0; }
 .sl-ilus { flex: 0 0 auto; width: 92px; height: auto; color: var(--cn, #0b2566); --il-bg: #fff6e5; }
 @media print { #salBook .sb-ilus { float: right; width: 26mm; height: auto; margin: 0 0 1mm 2mm; color: #0b2566; --il-bg: #fff; } #salBook .sb-s header { overflow: hidden; } }
+/* Notas al margen de los salmos */
+.sal-cuerpo { display: grid; gap: 16px; }
+.sal-margen { display: grid; gap: 12px; align-content: start; }
+.sal-nota { position: relative; padding: 14px 16px 14px 18px; border-radius: 6px 18px 18px 6px; border: 2px solid var(--cn, #0b2566); background: #fff; box-shadow: 3px 3px 0 var(--cn, #0b2566); }
+.sal-nota::before { content: ""; position: absolute; left: -2px; top: -2px; bottom: -2px; width: 8px; border-radius: 6px 0 0 6px; background: var(--nc); border: 2px solid var(--cn, #0b2566); border-right: 0; }
+.sal-nota span { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.35rem; line-height: 1; color: var(--nt); margin-bottom: 6px; }
+.sal-nota p { font-size: .93rem; line-height: 1.5; }
+.sal-nota-sabias { --nc: #8ad2fa; --nt: var(--cb, #1351a4); background: #f2f9fe; }
+.sal-nota-orar { --nc: #ffba03; --nt: #c96a00; background: #fffaf0; }
+.sal-nota-conoce { --nc: #ef591c; --nt: #c9460f; background: #fff5f0; }
+@media (min-width: 1000px) {
+  .sal-orar { max-width: 1060px; }
+  .sal-orar > .sal-arch, .sal-orar > .sal-cuidado { width: 100%; max-width: 720px; margin-left: auto; margin-right: auto; }
+  .sal-cuerpo { grid-template-columns: minmax(0, 1fr) 290px; align-items: start; gap: 22px; }
+  .sal-margen { position: sticky; top: 84px; }
+  .sal-nota:nth-child(even) { transform: rotate(.6deg); } .sal-nota:nth-child(odd) { transform: rotate(-.5deg); }
+}
