@@ -48,7 +48,7 @@ export function view(q = "") {
     <article class="card cono-it"><span class="tile-ico">${icon("users")}</span><h3>En el salón parroquial</h3>
       <p>Nos reunimos en comunidad, rezamos y la pasamos muy bien.</p></article>
     <article class="card cono-it"><span class="tile-ico">${icon("chat")}</span><h3>Una comunidad de amigos</h3>
-      <p>Grupos pequeños, que llamamos familias, acompañados por dirigentes que se preparan para cuidarte y escucharte.</p></article>
+      <p>Un lugar para hacer amigos, conversar de la vida y sentirte parte de algo.</p></article>
     <article class="card cono-it"><span class="tile-ico">${icon("phone")}</span><h3>La fe en tu bolsillo</h3>
       <p>En agAPPe tienes el Evangelio de cada día, la Capilla, juegos y la agenda del grupo. Puedes probarla ahora mismo.</p></article>
   </section>
