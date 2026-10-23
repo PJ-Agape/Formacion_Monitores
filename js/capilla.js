@@ -796,7 +796,7 @@ function vozStop() { vozTok++; clearTimeout(vozTimer); try { speechSynthesis.can
 function decir(text, done) {
   const tok = vozTok, v = vozVoice(), u = new SpeechSynthesisUtterance(text.replace(/([,;:.!?»])\s*\n+\s*/g, "$1 ").replace(/\s*\n+\s*/g, ". ").trim());
   u.lang = v ? v.lang : "es-CL"; if (v) u.voice = v; u.rate = 0.9;
-  u.onend = () => { if (tok === vozTok && done) done(); };
+  u.onend = () => { if (remote) remote.audio.play().catch(() => {}); if (tok === vozTok && done) done(); };
   speechSynthesis.speak(u);
 }
 function guiar(s, title) {
@@ -841,6 +841,9 @@ function remoteOn() {
   const audio = new Audio(silentWav()); audio.loop = true; audio.volume = 0.01;
   remote = { audio };
   audio.play().catch(() => {});
+  // Si otra cosa toma el audio (la voz que guía, una notificación), Android pausa este audio y deja
+  // de enviar los toques del control. Se retoma solo.
+  audio.addEventListener("pause", () => { setTimeout(() => { if (remote && remote.audio === audio) audio.play().catch(() => {}); }, 400); });
   const ms = navigator.mediaSession;
   if (ms) {
     try { ms.metadata = new MediaMetadata({ title: "Santo Rosario", artist: "Capilla Ágape", album: "Pastoral Juvenil Ágape" }); } catch {}
