@@ -707,7 +707,11 @@ function openRosary(set) {
       <span class="ros-prog" id="rosProg"></span>
       <button class="btn btn-gold" data-action="rosNext" id="rosNextBtn">Siguiente ${icon("right")}</button>
     </div>
-    <button class="ros-remote" data-action="rosRemote" aria-pressed="false">Usar un control remoto o audífonos</button>
+    <div class="ros-opts" role="group" aria-label="Cómo rezar">
+      ${"speechSynthesis" in window ? `<button class="ros-opt" data-action="rosVoz" aria-pressed="${voz.on}">Voz que guía</button>
+      <button class="ros-opt" data-action="rosAuto" aria-pressed="${voz.auto}" ${voz.on ? "" : "disabled"}>Avanzar solo</button>` : ""}
+      <button class="ros-opt" data-action="rosRemote" aria-pressed="false">Control remoto</button>
+    </div>
   </div>`;
   document.body.appendChild(el);
   document.body.classList.add("cap-quiet");
@@ -721,7 +725,7 @@ function openRosary(set) {
   el.querySelector("#rosNextBtn").focus();
 }
 function closeRosary() {
-  remoteOff();
+  remoteOff(); vozStop();
   document.getElementById("rosOverlay")?.remove();
   if (!document.getElementById("capOverlay")) document.body.classList.remove("cap-quiet");
   ros = null;
@@ -750,7 +754,7 @@ function rosPaint() {
   el.querySelector(".ros-center").innerHTML = `<div class="ros-c-in ${nextK ? "has-next" : ""} ${s.k === "mys" ? "is-mys" : ""} ${s.k === "fin" ? "is-fin" : ""}">
       ${eyebrow ? `<span class="ros-eb">${esc(eyebrow)}</span>` : ""}${mystLine}
       <strong class="ros-t">${esc(title)}</strong>${count}${extra}
-      ${text ? `<p class="ros-txt">${esc(s.k === "fin" ? text : text.replace(/\n\n/g, "¶").replace(/\n/g, " ").replace(/¶/g, "\n\n")).replace(/\n/g, "<br>")}</p>` : ""}
+      ${text ? txtHTML(s.k, text) : ""}
       ${nextK ? `<button class="ros-next-pr" data-action="rosNext">${esc(PR[nextK][0])} ${icon("right")}</button>` : ""}
       ${s.k === "fin" ? papa.finHTML() : ""}
     </div>`;
@@ -761,6 +765,52 @@ function rosPaint() {
   const nb = el.querySelector("#rosNextBtn");
   nb.innerHTML = s.k === "fin" ? `Volver a empezar ${icon("undo")}` : `${nextK ? esc(PR[nextK][0]) : "Siguiente"} ${icon("right")}`;
   rosSave();
+  if (voz.on) guiar(s, title);
+}
+const flat = (t) => t.replace(/\n\n/g, "¶").replace(/\n/g, " ").replace(/¶/g, "\n\n");
+// Con la voz que guía, se marca la parte que responde quien reza.
+const RESP = { pn: "Danos hoy", am: "Santa María", gl: "Como era" };
+function partes(k, text) { const i = RESP[k] ? text.indexOf(RESP[k]) : -1; return i > 0 ? [text.slice(0, i), text.slice(i)] : [text, ""]; }
+function txtHTML(k, text) {
+  if (k === "fin") return `<p class="ros-txt">${esc(text).replace(/\n/g, "<br>")}</p>`;
+  const [g, r] = partes(k, text);
+  if (!voz.on || !r) return `<p class="ros-txt">${esc(flat(text)).replace(/\n/g, "<br>")}</p>`;
+  return `<p class="ros-txt">${esc(flat(g)).replace(/\n/g, "<br>")}</p><p class="ros-txt ros-tu"><span>Tú respondes</span>${esc(flat(r)).replace(/\n/g, "<br>")}</p>`;
+}
+
+// ---------------------------------------------------------------------------
+// Voz que guía: el teléfono dirige el Rosario como en la capilla. Dice la primera parte de
+// cada oración y deja el espacio para que quien reza responda. Con «Avanzar solo» pasa a la
+// cuenta siguiente después de la respuesta; si no, espera un toque (o el control remoto).
+// ---------------------------------------------------------------------------
+const VK = "agape_rosario_voz";
+let voz = { on: false, auto: true };
+try { voz = { ...voz, ...JSON.parse(localStorage.getItem(VK) || "{}") }; } catch {}
+let vozTok = 0, vozTimer = 0;
+const vozSave = () => { try { localStorage.setItem(VK, JSON.stringify(voz)); } catch {} };
+function vozVoice() {
+  const v = speechSynthesis.getVoices();
+  return v.find((x) => /^es[-_]CL/i.test(x.lang)) || v.find((x) => /^es[-_](419|MX|AR|CO|US)/i.test(x.lang)) || v.find((x) => /^es/i.test(x.lang)) || null;
+}
+function vozStop() { vozTok++; clearTimeout(vozTimer); try { speechSynthesis.cancel(); } catch {} }
+function decir(text, done) {
+  const tok = vozTok, v = vozVoice(), u = new SpeechSynthesisUtterance(text.replace(/([,;:.!?»])\s*\n+\s*/g, "$1 ").replace(/\s*\n+\s*/g, ". ").trim());
+  u.lang = v ? v.lang : "es-CL"; if (v) u.voice = v; u.rate = 0.9;
+  u.onend = () => { if (tok === vozTok && done) done(); };
+  speechSynthesis.speak(u);
+}
+function guiar(s, title) {
+  vozStop();
+  if (!("speechSynthesis" in window)) return;
+  const tok = vozTok, next = (ms) => { if (voz.auto && s.k !== "fin") vozTimer = setTimeout(() => { if (tok === vozTok) rosMove(1); }, ms); };
+  if (s.k === "mys") {
+    const my = MYST[ros.set];
+    decir(`${ORD[s.d]} misterio ${ADJ[ros.set]}. ${my.items[s.d]}.`, () => next(6000)); // un momento de silencio para contemplar
+    return;
+  }
+  const [g, r] = partes(s.k, PR[s.k][1]);
+  const words = r ? r.split(/\s+/).length : 0;
+  decir((s.k === "fin" ? title + ". " : "") + g, () => next(r ? Math.round(words * 480 + 1200) : 1500));
 }
 function rosMove(n) {
   if (!ros) return;
@@ -822,9 +872,14 @@ window.addEventListener("keydown", (e) => {
 
 function registerActions() {
   const A = ctx.actions;
+  const vozBtns = () => { document.querySelectorAll("[data-action=rosVoz]").forEach((b) => b.setAttribute("aria-pressed", String(voz.on)));
+    document.querySelectorAll("[data-action=rosAuto]").forEach((b) => { b.setAttribute("aria-pressed", String(voz.auto)); b.disabled = !voz.on; }); };
+  A.rosVoz = () => { voz.on = !voz.on; vozSave(); vozBtns(); if (!voz.on) vozStop(); rosPaint();
+    if (voz.on) toast(voz.auto ? "La voz guía y avanza sola. Responde tú la segunda parte." : "La voz guía; tú avanzas con un toque o con el control."); };
+  A.rosAuto = () => { voz.auto = !voz.auto; vozSave(); vozBtns(); rosPaint(); };
   A.rosRemote = (el) => {
-    if (remote) { remoteOff(); el.setAttribute("aria-pressed", "false"); el.textContent = "Usar un control remoto o audífonos"; return; }
-    remoteOn(); el.setAttribute("aria-pressed", "true"); el.textContent = "Control remoto activado · tocar para apagar";
+    if (remote) { remoteOff(); el.setAttribute("aria-pressed", "false"); return; }
+    remoteOn(); el.setAttribute("aria-pressed", "true");
     toast("Listo: cada toque del control pasa a la cuenta siguiente");
   };
   A.evPlay = (el) => {
