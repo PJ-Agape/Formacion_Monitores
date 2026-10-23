@@ -353,10 +353,13 @@ export function viewList() {
   <div id="salCargar"></div>
   <p class="cap-foot">«Todo lo que respira alabe al Señor»<span>Sal 150,6</span></p>`;
 }
+// Una ilustración para cada salmo, según lo que cuenta (escenas de ilustraciones.js).
+const ILUS = {1: "sal_arbol", 2: "rey", 3: "sal_escudo", 4: "sal_noche", 5: "sal_alba", 6: "sal_llanto", 7: "sal_escudo", 8: "sal_cielo", 9: "sal_gracias", 10: "pregunta", 11: "sal_monte", 12: "biblia", 13: "sal_llanto", 14: "pregunta", 15: "sal_templo", 16: "camino", 17: "sal_alas", 18: "sal_escudo", 19: "sal_alba", 20: "oracion", 21: "rey", 22: "sal_cruz", 23: "pastor", 24: "sal_templo", 25: "camino", 26: "sal_templo", 27: "luz", 28: "sal_monte", 29: "tormenta", 30: "sal_alba", 31: "sal_cruz", 32: "corazonlimpio", 33: "sal_lira", 34: "sal_gracias", 35: "sal_escudo", 36: "sal_alas", 37: "semilla", 38: "sal_llanto", 39: "oracion", 40: "sal_lira", 41: "servir", 42: "sal_agua", 43: "luz", 44: "pregunta", 45: "rey", 46: "sal_ciudad", 47: "comunidad", 48: "sal_ciudad", 49: "tesoro", 50: "biblia", 51: "corazonlimpio", 52: "sal_arbol", 53: "pregunta", 54: "sal_escudo", 55: "descanso", 56: "sal_llanto", 57: "sal_alas", 58: "pregunta", 59: "sal_escudo", 60: "sal_escudo", 61: "sal_monte", 62: "descanso", 63: "sal_agua", 64: "sal_escudo", 65: "sal_lluvia", 66: "sal_mar", 67: "comunidad", 68: "familia", 69: "tormenta", 70: "oracion", 71: "sal_nino", 72: "rey", 73: "corazon", 74: "sal_templo", 75: "pregunta", 76: "sal_escudo", 77: "sal_noche", 78: "biblia", 79: "sal_ciudad", 80: "vid", 81: "sal_lira", 82: "servir", 83: "oracion", 84: "sal_templo", 85: "sal_lluvia", 86: "camino", 87: "sal_ciudad", 88: "sal_noche", 89: "rey", 90: "futuro", 91: "sal_alas", 92: "sal_arbol", 93: "rey", 94: "pregunta", 95: "pastor", 96: "sal_lira", 97: "sal_cielo", 98: "sal_lira", 99: "sal_templo", 100: "comunidad", 101: "corazon", 102: "sal_llanto", 103: "sal_gracias", 104: "sal_creacion", 105: "sal_mar", 106: "sal_mar", 107: "tormenta", 108: "sal_alba", 109: "sal_escudo", 110: "rey", 111: "biblia", 112: "servir", 113: "familia", 114: "sal_mar", 115: "pregunta", 116: "eucaristia", 117: "comunidad", 118: "sal_templo", 119: "biblia", 120: "oracion", 121: "sal_monte", 122: "sal_ciudad", 123: "oracion", 124: "tormenta", 125: "sal_monte", 126: "semilla", 127: "familia", 128: "familia", 129: "sal_escudo", 130: "sal_noche", 131: "sal_nino", 132: "sal_templo", 133: "comunidad", 134: "sal_noche", 135: "sal_templo", 136: "sal_mar", 137: "sal_sauce", 138: "sal_gracias", 139: "corazon", 140: "sal_escudo", 141: "oracion", 142: "sal_llanto", 143: "camino", 144: "sal_escudo", 145: "sal_gracias", 146: "servir", 147: "sal_lluvia", 148: "sal_creacion", 149: "sal_lira", 150: "sal_lira"};
+export const ilusDe = (n, cls = "") => illus(ILUS[n] || "oracion", cls);
+const LIRA = `<g class="sl-harp-f"><path d="M86 92 C 70 84, 66 56, 78 36 C 82 28, 76 18, 66 14"/><path d="M114 92 C 130 84, 134 56, 122 36 C 118 28, 124 18, 134 14"/><path d="M72 34 L128 34"/><path d="M82 92 H118"/></g><g class="sl-harp-s">${[0, 1, 2, 3, 4].map((k) => `<path d="M${90 + k * 5} 34 V92"/>`).join("")}</g>`;
 // Una lira con un brillo suave, como el rosetón de la Capilla
 function lira(cls) {
-  const strings = [0, 1, 2, 3, 4, 5].map((k) => `<path d="M${85 + k * 6} 34 V88"/>`).join("");
-  return `<svg class="${cls}" viewBox="40 4 120 98" aria-hidden="true"><g class="sl-harp-f"><path d="M80 92 C 58 82, 54 52, 70 34 C 76 26, 72 16, 64 12"/><path d="M120 92 C 142 82, 146 52, 130 34 C 124 26, 128 16, 136 12"/><path d="M68 32 Q 100 26 132 32"/><path d="M76 92 H124"/></g><g class="sl-harp-s">${strings}</g></svg>`;
+  return `<svg class="${cls}" viewBox="40 4 120 98" aria-hidden="true">${LIRA}</svg>`;
 }
 const cuidadoHTML = () => `<p class="sal-cuidado">Dios escucha todo lo que le cuentes. Y si esto pesa mucho o lleva días, cuéntaselo también a alguien de confianza: tu familia, tu dirigente o un sacerdote. No tienes que cargarlo solo.</p>`;
 
@@ -383,7 +386,7 @@ function paintOne() {
   <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<a href="#/salmos">Orar con los Salmos</a>${icon("right")}<span>Salmo ${s.n}</span></nav>
   <article class="sal-orar">
     <header class="cap-arch sal-arch">
-      ${lira("sal-lira sm")}
+      <div class="sal-ilus">${ilusDe(s.n)}</div>
       <span class="cap-hand">${curE ? esc(PARA[curE]) : "un rato con Dios"}</span>
       <h1 class="cap-title sal-t">${esc(s.t)}</h1>
       <span class="sal-n">Salmo ${s.n}${altOf(s.n) ? ` (${altOf(s.n)})` : ""}</span>
@@ -549,13 +552,11 @@ const SUPER = /^(Del maestro|Salmo\.|Salmo de|De David|Canción|Oración|Poema|H
 const LETRA = /^(Alef|Bet|Guímel|Dálet|He|Vau|Zain|Jet|Tet|Yod|Kaf|Lámed|Mem|Nun|Sámek|Ayin|Pe|Sade|Qof|Resh|Sin|Tau)\.?$/;
 const lineasHTML = (txt) => String(txt || "").split("\n").map((l) => l.trim()).map((l, i) => !l ? `<div class="sl-gap"></div>`
   : (i === 0 && SUPER.test(l) && l.length < 170) || LETRA.test(l) ? `<p class="sl-sub">${esc(l)}</p>` : `<p class="sl-v">${esc(l)}</p>`);
-const salHead = (n) => `<header class="cl-head"><span class="eyebrow">Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h2>${esc(byN(n).t)}</h2></header>`;
+const salHead = (n) => `<header class="cl-head sl-head"><div><span class="eyebrow">Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h2>${esc(byN(n).t)}</h2></div>${ilusDe(n, "sl-ilus")}</header>`;
 const salCont = (n) => `<p class="cl-cont">${esc(byN(n).t)} <span>(continuación)</span></p>`;
 function salCover(n) {
   const rays = [...Array(24)].map((_, i) => { const a = (Math.PI * 2 * i) / 24, r1 = 58, r2 = i % 2 ? 78 : 92;
     return `<path d="M${(100 + Math.cos(a) * r1).toFixed(1)} ${(100 + Math.sin(a) * r1).toFixed(1)} L${(100 + Math.cos(a) * r2).toFixed(1)} ${(100 + Math.sin(a) * r2).toFixed(1)}"/>`; }).join("");
-  // Una lira, el instrumento con que se cantaban los salmos
-  const strings = [0, 1, 2, 3, 4, 5].map((k) => `<path d="M${85 + k * 6} 34 V88"/>`).join("");
   return `<div class="cl-page cl-cover"><div class="cl-cov">
     <span class="cl-cov-spine" aria-hidden="true"></span>
     <span class="cl-cov-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
@@ -564,7 +565,7 @@ function salCover(n) {
     <div class="cl-cov-medal"><svg class="cl-cov-rays" viewBox="0 0 200 200" aria-hidden="true">${rays}</svg><img src="icons/logo-320.webp" alt="" width="320" height="320"></div>
     <h2><span>Libro de los</span><em>Salmos</em>
       <svg class="cl-cov-swash" viewBox="0 0 220 24" aria-hidden="true"><path d="M6 16 C 60 4, 120 4, 214 12"/><path d="M40 20 C 90 12, 140 12, 196 18"/></svg></h2>
-    <svg class="sl-harp" viewBox="0 0 200 110" aria-hidden="true"><g class="sl-harp-f"><path d="M80 92 C 58 82, 54 52, 70 34 C 76 26, 72 16, 64 12"/><path d="M120 92 C 142 82, 146 52, 130 34 C 124 26, 128 16, 136 12"/><path d="M68 32 Q 100 26 132 32"/><path d="M76 92 H124"/></g><g class="sl-harp-s">${strings}</g></svg>
+    <svg class="sl-harp" viewBox="0 4 200 98" aria-hidden="true">${LIRA}</svg>
     <div class="cl-cov-foot">
       <p class="cl-cov-v">Oremos con los salmos</p>
       ${n ? `<button class="cl-cov-go" data-action="salLGo" data-p="1">Abrir el índice ${icon("arrowR")}</button>` : ""}
@@ -641,7 +642,7 @@ function libroPdf() {
   if (!el) { el = document.createElement("div"); el.id = "salBook"; document.body.appendChild(el); }
   el.innerHTML = `<section class="sb-cover">${salCover(nums.length)}</section>
     <section class="sb-index"><h2>Índice</h2><ol>${nums.map((n) => `<li><b>${n}</b> ${esc(byN(n).t)}</li>`).join("")}</ol></section>
-    <section class="sb-salmos">${nums.map((n) => `<article class="sb-s"><header><span>Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h3>${esc(byN(n).t)}</h3></header>${lineasHTML(textoDe(n)).join("")}</article>`).join("")}</section>
+    <section class="sb-salmos">${nums.map((n) => `<article class="sb-s"><header>${ilusDe(n, "sb-ilus")}<span>Salmo ${n}${altOf(n) ? ` (${altOf(n)})` : ""}</span><h3>${esc(byN(n).t)}</h3></header>${lineasHTML(textoDe(n)).join("")}</article>`).join("")}</section>
     ${fuente() ? `<p class="sb-fuente">${esc(fuente())}</p>` : ""}`;
   el.querySelector(".cl-cov-go")?.remove();
   document.body.classList.add("sal-printing");

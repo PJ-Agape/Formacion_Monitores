@@ -4232,3 +4232,9 @@ a.cap-guide-btn { text-decoration: none; }
   #salBook .sl-sub { break-after: avoid; }
   #salBook .sb-fuente { margin-top: 8mm; font-size: 8pt; color: #555; }
 }
+.sal-ilus { width: min(260px, 70%); margin: 0 auto -4px; color: var(--cn, #0b2566); --il-bg: #fff6e5; }
+.sal-ilus .z-illus { width: 100%; height: auto; display: block; }
+.sl-head { display: flex; align-items: center; gap: 10px; }
+.sl-head > div { flex: 1; min-width: 0; }
+.sl-ilus { flex: 0 0 auto; width: 92px; height: auto; color: var(--cn, #0b2566); --il-bg: #fff6e5; }
+@media print { #salBook .sb-ilus { float: right; width: 26mm; height: auto; margin: 0 0 1mm 2mm; color: #0b2566; --il-bg: #fff; } #salBook .sb-s header { overflow: hidden; } }

@@ -278,6 +278,54 @@ const BY_N = {
   27: "ninos", 28: "tesoro", 29: "servir", 30: "bartimeo", 31: "amar", 32: "moneda", 33: "futuro", 34: "rey",
 };
 export const SCENE_KEYS = Object.keys(SCENES);
+// ---------------------------------------------------------------------------
+// Escenas para los Salmos (con los mismos trazos)
+// ---------------------------------------------------------------------------
+const tree = (x, y, h = 44, fill = "#9bbf8a") => P(`M${x} ${y} L${x} ${y - h}`, 'stroke-width="5"') + C(x, y - h - 18, 24, `fill="${fill}" stroke="currentColor"`) + C(x - 20, y - h - 4, 15, `fill="${fill}" stroke="currentColor"`) + C(x + 20, y - h - 4, 15, `fill="${fill}" stroke="currentColor"`);
+const stream = (y = 156) => P(`M0 ${y} q30 -8 60 0 t60 0 t60 0 t60 0 L240 182 L0 182 Z`, 'fill="#8ad2fa" stroke="currentColor"') + P(`M30 ${y + 12} q10 -4 20 0 M120 ${y + 14} q10 -4 20 0 M190 ${y + 10} q10 -4 20 0`, 'stroke-width="2"');
+const moon = (x, y, r = 16) => P(`M${x} ${y - r} A${r} ${r} 0 1 0 ${x} ${y + r} A${(r * .62).toFixed(1)} ${r} 0 1 1 ${x} ${y - r} Z`, POP);
+const stars = (pts) => pts.map(([x, y, r]) => sparkle(x, y, r || 4)).join("");
+const wingsOver = (x, y) => P(`M${x - 4} ${y} q-46 -6 -70 -58 q30 2 46 20 q-12 -20 -4 -40 q26 18 28 78 Z`, 'fill="var(--il-bg,#fff)"') + P(`M${x + 4} ${y} q46 -6 70 -58 q-30 2 -46 20 q12 -20 4 -40 q-26 18 -28 78 Z`, 'fill="var(--il-bg,#fff)"')
+  + P(`M${x - 40} ${y - 34} q-8 -6 -14 -16 M${x + 40} ${y - 34} q8 -6 14 -16`, 'stroke-width="2"');
+const shield = (x, y) => P(`M${x} ${y - 56} L${x + 28} ${y - 46} q0 38 -28 56 q-28 -18 -28 -56 Z`, POP) + P(`M${x} ${y - 46} L${x} ${y - 10} M${x - 14} ${y - 32} L${x + 14} ${y - 32}`, 'stroke-width="3"');
+const lyre = (x, y, s = 1) => { const q = (v) => +(v * s).toFixed(1);
+  const arm = (d) => P(`M${x + d * q(14)} ${y} C${x + d * q(30)} ${y - q(12)} ${x + d * q(32)} ${y - q(40)} ${x + d * q(22)} ${y - q(58)} C${x + d * q(18)} ${y - q(66)} ${x + d * q(24)} ${y - q(76)} ${x + d * q(34)} ${y - q(78)}`, 'stroke-width="3.4"');
+  return arm(-1) + arm(1) + P(`M${x - q(26)} ${y - q(60)} L${x + q(26)} ${y - q(60)} M${x - q(18)} ${y} L${x + q(18)} ${y}`, 'stroke-width="3.4"')
+    + [-10, -5, 0, 5, 10].map((d) => P(`M${x + q(d)} ${y - q(60)} L${x + q(d)} ${y}`, 'stroke-width="1.6"')).join(""); };
+const note = (x, y) => P(`M${x} ${y} l0 -20 l10 -4`, 'stroke-width="2.4"') + P(`M${x - 6} ${y + 1} a5 4 -20 1 0 10 -2 a5 4 -20 1 0 -10 2 Z`, FILL);
+const temple = (x, y) => P(`M${x - 50} ${y} L${x - 50} ${y - 6} L${x + 50} ${y - 6} L${x + 50} ${y} Z M${x - 44} ${y - 6} L${x - 44} ${y - 52} L${x + 44} ${y - 52} L${x + 44} ${y - 6}`, 'fill="var(--il-bg,#fff)"')
+  + P(`M${x - 52} ${y - 52} L${x} ${y - 82} L${x + 52} ${y - 52} Z`, POP) + [-30, -10, 10, 30].map((d) => P(`M${x + d} ${y - 8} L${x + d} ${y - 50}`, 'stroke-width="2.2"')).join("")
+  + P(`M${x - 8} ${y - 6} L${x - 8} ${y - 30} q8 -8 16 0 L${x + 8} ${y - 6}`, 'fill="#fff6e5" stroke="currentColor"');
+const city = (x, y) => P(`M${x - 70} ${y} L${x - 70} ${y - 46} l8 0 l0 6 l8 0 l0 -6 l8 0 l0 6 l8 0 l0 -6 l8 0 L${x - 30} ${y - 70} l10 0 l0 6 l8 0 l0 -6 l10 0 L${x + 2} ${y - 46} l8 0 l0 6 l8 0 l0 -6 l8 0 l0 6 l8 0 l0 -6 l8 0 L${x + 42} ${y - 64} l10 0 l0 6 l8 0 l0 -6 l10 0 L${x + 70} ${y} Z`, 'fill="var(--il-bg,#fff)"')
+  + P(`M${x - 10} ${y} L${x - 10} ${y - 22} q10 -12 20 0 L${x + 10} ${y}`, POP) + P(`M${x - 22} ${y - 56} l0 -8 M${x + 52} ${y - 52} l0 -8`, 'stroke-width="2"');
+const rain = (x, y, w = 90) => [0, 1, 2, 3, 4, 5].map((i) => drop(x - w / 2 + i * (w / 5), y + (i % 2) * 10)).join("");
+const sea = () => P("M0 120 q16 -10 30 0 q16 10 30 0 q12 -8 20 0 L80 182 L0 182 Z", 'fill="#8ad2fa" stroke="currentColor"') + P("M240 120 q-16 -10 -30 0 q-16 10 -30 0 q-12 -8 -20 0 L160 182 L240 182 Z", 'fill="#8ad2fa" stroke="currentColor"')
+  + P("M84 176 C 100 150, 140 150, 156 120", 'stroke-dasharray="3 9" stroke-width="3"');
+const hills = () => P("M0 168 Q50 128 100 150 T200 140 T240 150 L240 182 L0 182 Z", 'fill="var(--il-bg,#fff)"');
+Object.assign(SCENES, {
+  sal_arbol: () => stream(150) + tree(160, 150) + fig(70, 150, { arms: "up", face: "smile", s: .85 }) + sun(40, 36, 10),
+  sal_noche: () => moon(186, 44, 18) + stars([[40, 40], [80, 24, 5], [130, 50], [214, 96, 3]]) + fig(110, 168, { arms: "pray", legs: "kneel", face: "calm" }) + candle(170, 168) + ground(),
+  sal_alba: () => P("M60 150 a60 60 0 0 1 120 0 Z", POP) + [0, 30, 60, 90, 120, 150, 180].map((a) => { const t = (a + 180) * Math.PI / 180; return P(`M${(120 + Math.cos(t) * 72).toFixed(1)} ${(150 + Math.sin(t) * 72).toFixed(1)} L${(120 + Math.cos(t) * 90).toFixed(1)} ${(150 + Math.sin(t) * 90).toFixed(1)}`, 'stroke-width="2.6"'); }).join("")
+    + hills() + fig(70, 168, { arms: "up", face: "smile", s: .8 }),
+  sal_llanto: () => cloud(88, 52) + cloud(150, 40) + rain(118, 74, 80) + fig(120, 168, { arms: "hold", legs: "sit", face: "worry" }) + ground(),
+  sal_cielo: () => mountains() + moon(196, 40, 14) + stars([[30, 30], [62, 54, 5], [96, 22], [150, 36, 5], [120, 58, 3], [40, 80, 3]]) + fig(120, 172, { arms: "out", face: "wow", s: .75 }),
+  sal_alas: () => wingsOver(120, 150) + fig(120, 168, { arms: "pray", face: "calm", s: .85 }) + ground(),
+  sal_escudo: () => shield(160, 156) + fig(90, 168, { arms: "hug", face: "calm" }) + sparkle(200, 60) + sparkle(50, 56, 5) + ground(),
+  sal_monte: () => mountains() + fig(70, 168, { arms: "up", legs: "walk", s: .7 }) + sun(196, 36, 11),
+  sal_templo: () => temple(150, 168) + fig(60, 168, { arms: "out", legs: "walk", s: .8 }) + sparkle(150, 30, 5) + ground(),
+  sal_lira: () => lyre(160, 150, 1.05) + note(70, 60) + note(100, 44) + note(206, 70) + fig(76, 168, { arms: "up", face: "smile", s: .8 }) + ground(),
+  sal_agua: () => stream(150) + tree(196, 150, 40) + fig(96, 150, { arms: "give", legs: "kneel", face: "calm", s: .85 }) + drop(130, 140) + drop(140, 132) + sparkle(60, 50),
+  sal_ciudad: () => city(130, 168) + sun(40, 40, 10) + fig(40, 168, { arms: "wave", s: .7 }) + ground(),
+  sal_mar: () => sea() + fig(112, 158, { arms: "up", legs: "walk", s: .62 }) + fig(140, 136, { arms: "out", legs: "walk", s: .5 }) + cloud(190, 40) + flame(60, 60, .7),
+  sal_sauce: () => stream(156) + P("M180 156 L180 92", 'stroke-width="5"') + P("M180 94 q-40 10 -50 56 M180 94 q-20 16 -24 60 M180 94 q20 16 24 60 M180 94 q40 10 50 56", 'stroke="#5e9a5a" stroke-width="2.6"') + lyre(150, 128, .38)
+    + fig(80, 156, { arms: "hold", legs: "sit", face: "worry", s: .85 }),
+  sal_nino: () => fig(104, 168, { arms: "hug", face: "calm" }) + fig(128, 140, { arms: "hug", s: .45, flip: -1, face: "calm" }) + heart(166, 70, 10) + sparkle(60, 60, 5) + ground(),
+  sal_lluvia: () => cloud(110, 50) + cloud(170, 44) + rain(140, 70, 90) + [50, 80, 200, 220].map((x, i) => P(`M${x} 168 l0 ${-14 - (i % 2) * 8}`) + P(`M${x} ${160 - (i % 2) * 8} q-8 -6 -9 -12 q8 0 9 9 M${x} ${160 - (i % 2) * 8} q8 -6 9 -12 q-8 0 -9 9`, 'fill="#9bbf8a" stroke="currentColor"')).join("")
+    + fig(120, 168, { arms: "up", face: "smile", s: .75 }) + ground(),
+  sal_gracias: () => fig(120, 168, { arms: "up", face: "smile" }) + heart(70, 70, 12) + heart(176, 56, 9) + sparkle(120, 28, 6) + sparkle(200, 100, 5) + sparkle(40, 110, 5) + ground(),
+  sal_cruz: () => crossHill(130, 168) + fig(60, 168, { arms: "pray", legs: "kneel", face: "calm", s: .85 }) + sun(206, 40, 9),
+  sal_creacion: () => hills() + sun(190, 40, 14) + tree(60, 150, 34) + P("M120 70 q8 -8 16 0 q8 -8 16 0 M150 92 q6 -6 12 0 q6 -6 12 0", 'stroke-width="2.4"') + sheep(140, 160) + fig(100, 168, { arms: "out", face: "wow", s: .7 }),
+});
 const NAMES = { jesus: "Jesús", emaus: "Jesús en Emaús", dejadlos: "Jesús y los niños", buenpastor: "Buen Pastor", sagradocorazon: "Sagrado Corazón", corazonlimpio: "Corazón limpio", eucaristia: "Eucaristía", espiritu: "Espíritu Santo", maria: "María", oracion: "Oración", acogida: "Acogida", levantate: "Levántate", eleccion: "Elección", uncion: "Unción", ninos: "Niños", rey: "Cristo Rey", virgen: "Virgen María", jose: "San José", sagradafamilia: "Sagrada Familia", apostoles: "Los apóstoles", sanmiguel: "San Miguel Arcángel", sansebastian: "San Sebastián", juanpablo: "San Juan Pablo II", teresacalcuta: "Santa Teresa de Calcuta", carloacutis: "San Carlo Acutis", teresaandes: "Santa Teresa de los Andes", albertohurtado: "San Alberto Hurtado", lauravicuna: "Beata Laura Vicuña", santoschile: "Santos de Chile", anunciacion: "La Anunciación", virgencarmen: "Virgen del Carmen", fraiandresito: "Venerable Fray Andresito", ceferino: "Beato Ceferino Namuncurá", donbosco: "San Juan Bosco", domingosavio: "Santo Domingo Savio", franciscoasis: "San Francisco de Asís", rosalima: "Santa Rosa de Lima", frassati: "San Pier Giorgio Frassati", teresita: "Santa Teresita", guadalupe: "Virgen de Guadalupe" };
 export const sceneLabel = (k) => NAMES[k] || k.charAt(0).toUpperCase() + k.slice(1);
 export function illus(key, cls = "") {
