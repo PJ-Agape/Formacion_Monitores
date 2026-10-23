@@ -707,6 +707,7 @@ function openRosary(set) {
       <span class="ros-prog" id="rosProg"></span>
       <button class="btn btn-gold" data-action="rosNext" id="rosNextBtn">Siguiente ${icon("right")}</button>
     </div>
+    <button class="ros-remote" data-action="rosRemote" aria-pressed="false">Usar un control remoto o audífonos</button>
   </div>`;
   document.body.appendChild(el);
   document.body.classList.add("cap-quiet");
@@ -720,6 +721,7 @@ function openRosary(set) {
   el.querySelector("#rosNextBtn").focus();
 }
 function closeRosary() {
+  remoteOff();
   document.getElementById("rosOverlay")?.remove();
   if (!document.getElementById("capOverlay")) document.body.classList.remove("cap-quiet");
   ros = null;
@@ -762,13 +764,69 @@ function rosPaint() {
 }
 function rosMove(n) {
   if (!ros) return;
+  if (remote && navigator.vibrate) { const nx = ros.steps[Math.max(0, Math.min(ros.steps.length - 1, ros.i + n))]; try { navigator.vibrate(nx && (nx.k === "mys" || nx.k === "fin") ? [70, 90, 70] : 35); } catch {} }
   if (n > 0 && ros.steps[ros.i].k === "fin") ros.i = 0;
   else ros.i = Math.max(0, Math.min(ros.steps.length - 1, ros.i + n));
   rosPaint();
 }
 
+// ---------------------------------------------------------------------------
+// Rezar el Rosario con un control remoto: el disparador Bluetooth de un palo de selfie, un
+// control de presentaciones o los botones de unos audífonos. Los disparadores en modo Android
+// envían «Enter»; los de presentaciones, flechas o «Av Pág»; los audífonos, «siguiente» o
+// «play/pausa» (eso necesita un audio activo: se reproduce silencio). Con cada cuenta, el
+// teléfono vibra suave; al empezar un misterio, vibra dos veces. Así se puede rezar sin mirar.
+// ---------------------------------------------------------------------------
+let remote = null, lastKey = 0;
+function silentWav() {
+  const sr = 8000, n = sr * 2, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const w = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
+  w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVE"); w(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
+  v.setUint32(24, sr, true); v.setUint32(28, sr, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, "data"); v.setUint32(40, n, true);
+  for (let i = 0; i < n; i++) v.setUint8(44 + i, 128);
+  return URL.createObjectURL(new Blob([buf], { type: "audio/wav" }));
+}
+function remoteOn() {
+  const audio = new Audio(silentWav()); audio.loop = true; audio.volume = 0.01;
+  remote = { audio };
+  audio.play().catch(() => {});
+  const ms = navigator.mediaSession;
+  if (ms) {
+    try { ms.metadata = new MediaMetadata({ title: "Santo Rosario", artist: "Capilla Ágape", album: "Pastoral Juvenil Ágape" }); } catch {}
+    const next = () => { rosMove(1); audio.play().catch(() => {}); }, prev = () => { rosMove(-1); audio.play().catch(() => {}); };
+    [["nexttrack", next], ["play", next], ["pause", next], ["previoustrack", prev], ["seekforward", next], ["seekbackward", prev]].forEach(([a, f]) => { try { ms.setActionHandler(a, f); } catch {} });
+  }
+  try { navigator.vibrate && navigator.vibrate(40); } catch {}
+}
+function remoteOff() {
+  if (!remote) return;
+  try { remote.audio.pause(); URL.revokeObjectURL(remote.audio.src); } catch {}
+  const ms = navigator.mediaSession;
+  if (ms) ["nexttrack", "play", "pause", "previoustrack", "seekforward", "seekbackward"].forEach((a) => { try { ms.setActionHandler(a, null); } catch {} });
+  remote = null;
+}
+// Teclas que envían los controles (con una pausa corta, porque algunos mandan dos señales por toque)
+const NEXT_KEYS = ["Enter", "NumpadEnter", "ArrowRight", "ArrowDown", "PageDown", "MediaTrackNext", "AudioVolumeUp", "VolumeUp", "MediaPlayPause", " "];
+const PREV_KEYS = ["ArrowLeft", "ArrowUp", "PageUp", "MediaTrackPrevious", "AudioVolumeDown", "VolumeDown"];
+window.addEventListener("keydown", (e) => {
+  const ov = document.getElementById("rosOverlay"); if (!ov) return;
+  const t = e.target;
+  // Enter o espacio sobre otro botón del rosario (cerrar, elegir misterios) hacen lo suyo.
+  if ((e.key === "Enter" || e.key === " ") && t && t.closest && t.closest("button") && !t.closest("#rosNextBtn, .ros-next-pr")) return;
+  const d = NEXT_KEYS.includes(e.key) ? 1 : PREV_KEYS.includes(e.key) ? -1 : 0;
+  if (!d) return;
+  e.preventDefault(); e.stopPropagation();
+  const now = Date.now(); if (now - lastKey < 300) return; lastKey = now;
+  rosMove(d);
+}, true);
+
 function registerActions() {
   const A = ctx.actions;
+  A.rosRemote = (el) => {
+    if (remote) { remoteOff(); el.setAttribute("aria-pressed", "false"); el.textContent = "Usar un control remoto o audífonos"; return; }
+    remoteOn(); el.setAttribute("aria-pressed", "true"); el.textContent = "Control remoto activado · tocar para apagar";
+    toast("Listo: cada toque del control pasa a la cuenta siguiente");
+  };
   A.evPlay = (el) => {
     const id = el.dataset.id; if (!/^[\w-]{6,20}$/.test(id)) return;
     const w = document.createElement("div"); w.className = "ev-video";
@@ -802,8 +860,6 @@ function registerActions() {
   document.addEventListener("keydown", (e) => {
     if (!document.getElementById("rosOverlay")) return;
     if (e.key === "Escape") { e.preventDefault(); closeRosary(); }
-    else if (e.key === "ArrowRight" || (e.key === " " && e.target === document.body)) { e.preventDefault(); rosMove(1); }
-    else if (e.key === "ArrowLeft") { e.preventDefault(); rosMove(-1); }
   });
   A.capAltar = (el) => { if (el.closest && el.closest(".cap-altar-body")) return; setAltar(!altarOpen); };
   document.addEventListener("keydown", (e) => { if ((e.key === "Enter" || e.key === " ") && e.target.classList && e.target.classList.contains("cap-altar-top")) { e.preventDefault(); setAltar(!altarOpen); } });

@@ -4292,3 +4292,5 @@ a.cap-guide-btn { text-decoration: none; }
 .cono-invite-txt { flex: 1; min-width: 220px; }
 .cono-invite h2 { font-size: 1.15rem; }
 .cono-invite p { margin-top: 4px; }
+.ros-remote { display: block; margin: 10px auto 0; background: none; border: 0; color: #fff6e5; opacity: .7; font: inherit; font-size: .82rem; font-weight: 700; text-decoration: underline; text-underline-offset: 3px; cursor: pointer; }
+.ros-remote[aria-pressed="true"] { opacity: 1; color: #ffba03; text-decoration: none; }
