@@ -766,6 +766,7 @@ function rosPaint() {
   nb.innerHTML = s.k === "fin" ? `Volver a empezar ${icon("undo")}` : `${nextK ? esc(PR[nextK][0]) : "Siguiente"} ${icon("right")}`;
   rosSave();
   if (voz.on) guiar(s, title);
+  if (remote) { remoteMeta(); keepAlive(); }
 }
 const flat = (t) => t.replace(/\n\n/g, "¶").replace(/\n/g, " ").replace(/¶/g, "\n\n");
 // Con la voz que guía, se marca la parte que responde quien reza.
@@ -847,13 +848,36 @@ function remoteOn() {
   const ms = navigator.mediaSession;
   if (ms) {
     try { ms.metadata = new MediaMetadata({ title: "Santo Rosario", artist: "Capilla Ágape", album: "Pastoral Juvenil Ágape" }); } catch {}
-    const next = () => { rosMove(1); audio.play().catch(() => {}); }, prev = () => { rosMove(-1); audio.play().catch(() => {}); };
+    const next = () => { rosMove(1); keepAlive(); }, prev = () => { rosMove(-1); keepAlive(); };
     [["nexttrack", next], ["play", next], ["pause", next], ["previoustrack", prev], ["seekforward", next], ["seekbackward", prev]].forEach(([a, f]) => { try { ms.setActionHandler(a, f); } catch {} });
   }
+  // Vigía: cada 3 segundos revisa que el audio siga sonando y que Android siga viendo el reproductor.
+  remote.watch = setInterval(keepAlive, 3000);
+  remoteMeta();
   try { navigator.vibrate && navigator.vibrate(40); } catch {}
+}
+function keepAlive() {
+  if (!remote) return;
+  const a = remote.audio;
+  if (a.paused) a.play().then(() => remoteState(true)).catch(() => remoteState(false)); else remoteState(true);
+  try { navigator.mediaSession.playbackState = "playing"; } catch {}
+}
+// En la notificación se ve dónde va el Rosario (y así Android mantiene vivo el reproductor).
+function remoteMeta() {
+  if (!remote || !ros || !navigator.mediaSession) return;
+  const s = ros.steps[ros.i], my = MYST[ros.set];
+  const where = s.d != null ? `${ORD[s.d]} misterio · ${my.items[s.d]}` : s.k === "sa" || s.k === "fin" ? "Para terminar" : "Para comenzar";
+  const what = s.k === "am" ? `Ave María ${s.i} de ${s.of}` : s.k === "mys" ? "Misterio" : PR[s.k][0];
+  try { navigator.mediaSession.metadata = new MediaMetadata({ title: what, artist: where, album: "Santo Rosario · Capilla Ágape" }); } catch {}
+}
+function remoteState(ok) {
+  const b = document.querySelector("[data-action=rosRemote]"); if (!b) return;
+  b.classList.toggle("ros-opt-warn", !ok);
+  b.textContent = ok ? "Control remoto" : "Control en pausa · tocar";
 }
 function remoteOff() {
   if (!remote) return;
+  clearInterval(remote.watch);
   try { remote.audio.pause(); URL.revokeObjectURL(remote.audio.src); } catch {}
   const ms = navigator.mediaSession;
   if (ms) ["nexttrack", "play", "pause", "previoustrack", "seekforward", "seekbackward"].forEach((a) => { try { ms.setActionHandler(a, null); } catch {} });
@@ -882,7 +906,8 @@ function registerActions() {
     if (voz.on) toast(voz.auto ? "La voz guía y avanza sola. Responde tú la segunda parte." : "La voz guía; tú avanzas con un toque o con el control."); };
   A.rosAuto = () => { voz.auto = !voz.auto; vozSave(); vozBtns(); rosPaint(); };
   A.rosRemote = (el) => {
-    if (remote) { remoteOff(); el.setAttribute("aria-pressed", "false"); return; }
+    if (remote && el.classList.contains("ros-opt-warn")) { remote.audio.play().then(() => remoteState(true)).catch(() => {}); return; }
+    if (remote) { remoteOff(); el.setAttribute("aria-pressed", "false"); el.textContent = "Control remoto"; return; }
     remoteOn(); el.setAttribute("aria-pressed", "true");
     toast("Listo: cada toque del control pasa a la cuenta siguiente");
   };

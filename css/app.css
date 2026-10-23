@@ -4298,3 +4298,4 @@ a.cap-guide-btn { text-decoration: none; }
 .ros-opt:disabled { opacity: .35; cursor: default; }
 .ros-tu { margin-top: 6px; color: #ffba03; }
 .ros-tu span { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.15rem; line-height: 1; margin-bottom: 2px; opacity: .9; }
+.ros-opt.ros-opt-warn { background: #ef591c; border-color: #ef591c; color: #fff6e5; }
