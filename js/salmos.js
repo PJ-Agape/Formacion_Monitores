@@ -317,7 +317,6 @@ const PARA = { alegre: "para cuando estás feliz", gracias: "para dar gracias", 
   solo: "para cuando te sientes solo", cansado: "para cuando estás cansado", perdon: "para cuando algo te pesa", buscar: "para cuando no sabes qué hacer",
   creacion: "para cuando algo te asombra", comunidad: "para rezar por otros" };
 const pick = (e, skip) => { const l = SALMOS.filter((s) => s.e.includes(e) && s.n !== skip); return l[Math.floor(Math.random() * l.length)] || SALMOS[0]; };
-let verTodos = false;
 export function viewList() {
   ctx.onAfterRender(() => loadTextos());
   return `
@@ -327,8 +326,7 @@ export function viewList() {
     <p>Jesús rezaba con los salmos. En ellos hay palabras para todo lo que uno siente. Elige cómo estás y te regalamos uno para rezar.</p>
   </section>
   <div class="sal-siento">${SIENTO.map(([k, l]) => `<a class="sal-feel" href="#/salmos/${pick(k).n}?e=${k}">${esc(l)}</a>`).join("")}</div>
-  <p class="sal-todos-q"><button class="sal-link" data-action="salTodos">${verTodos ? "Ocultar la lista" : "O elige tú un salmo"}</button> · <a class="sal-link" href="#/salmos/libro">Hojear el librito</a></p>
-  ${verTodos ? `<ul class="sal-todos">${Array.from({ length: 150 }, (_, i) => byN(i + 1)).map((x) => `<li><a href="#/salmos/${x.n}"><b>${x.n}</b> ${esc(x.t)}</a></li>`).join("")}</ul>` : ""}
+  <p class="sal-todos-q"><a class="sal-link" href="#/salmos/libro">Hojear el librito de los Salmos</a></p>
   ${ctx.cloud.enabled && st().isAdmin ? `<p class="sal-todos-q no-print"><button class="sal-link" data-action="salLibro">Cargar el libro de los Salmos</button> <span class="xs muted">· solo administradores</span></p>` : ""}`;
 }
 const cuidadoHTML = () => `<p class="sal-cuidado">Dios escucha todo lo que le cuentes. Y si esto pesa mucho o lleva días, cuéntaselo también a alguien de confianza: tu familia, tu dirigente o un sacerdote. No tienes que cargarlo solo.</p>`;
@@ -625,7 +623,6 @@ function libroPdf() {
 
 function registerActions() {
   const A = ctx.actions;
-  A.salTodos = () => { verTodos = !verTodos; ctx.render(); };
   A.salLTurn = (el) => libroBook && libroBook.turn(+el.dataset.d);
   A.salLGo = (el) => libroBook && libroBook.go(+el.dataset.p);
   A.salLIndex = () => libroBook && libroBook.go(1);
