@@ -8,6 +8,7 @@ import { illus } from "./ilustraciones.js";
 import { ORACIONES } from "./devocionario.js";
 import { BANCO } from "./dinamicas-banco.js";
 import { songList } from "./cancionero.js";
+import { SALMOS } from "./salmos.js";
 import { helpFor, perfil } from "./ayuda.js";
 import { todayGospel } from "./capilla.js";
 import { cfg as inicioCfg, adopt as adoptInicio } from "./inicio-config.js";
@@ -72,6 +73,7 @@ const ITEMS = [
   { b: "espiritu", e: "🙏", t: "Oremus", d: "Nuestras oraciones y las de siempre: Padre nuestro, Ave María, Credo y más.", href: "#/oremus", kw: "oraciones devocionario rezar oremus", ok: () => true },
   { b: "espiritu", e: "🌹", t: "Rezar el Rosario", d: "Paso a paso, cuenta a cuenta, con María.", href: "#/oracion/rosario", kw: "maria virgen rosario misterios", ok: () => true },
   { b: "espiritu", e: "🕯️", t: "Nuestras intenciones", d: "Comparte tu intención y reza por las de otros.", href: "#/oracion/velas", kw: "vela intencion rezar por", ok: () => true },
+  { b: "espiritu", e: "📖", t: "Oremos con los salmos", d: "Un salmo para cada momento y cómo rezarlo.", href: "#/salmos", kw: "salmos salmo orar rezar biblia lectio pastor miedo triste gracias perdon", ok: () => true },
   { b: "espiritu", e: "🎶", t: "Cancionero", d: "Canciones con acordes para la misa.", href: "#/cancionero", kw: "cancionero canciones acordes misa cantos guitarra", ok: () => true },
   { b: "espiritu", e: "📻", t: "Radios católicas", d: "Radio María, El Sembrador y Regina Coeli.", href: "#/oracion/radio", kw: "radio maria sembrador regina coeli escuchar", ok: () => true },
   { b: "espiritu", e: "🕯️", t: "Un rato con Jesús", d: "Oración personal en casa o ante el Santísimo.", href: "#/oracion/silencio", kw: "silencio oracion personal mental teresa guiada adoracion santisimo", ok: () => true },
@@ -284,6 +286,7 @@ function index() {
     (c.phases || []).forEach((p, pi) => (p.sessions || []).forEach((s) => add("Unidades del curso", "🎓", `${s.id} ${s.title}`, p.title, `#/unidad/${pi}/${encodeURIComponent(s.id)}`, s.summary || "")));
   }
   ORACIONES.forEach((o) => add("Oraciones", "🙏", o.t, o.note || "Oremus", `#/oremus/${encodeURIComponent(o.t)}`));
+  SALMOS.forEach((s) => add("Salmos", "📖", `Salmo ${s.n} · ${s.t}`, `«${s.v}»`, `#/salmos/${s.n}`, s.intro));
   try { songList().forEach((s) => add("Canciones", "🎶", s.title, s.author || "Cancionero", `#/cancionero/${encodeURIComponent(s.id)}`, (s.momentos || []).join(" "))); } catch {}
   if (w.equipo) BANCO.forEach((d) => add("Dinámicas", "🎲", d.title, d.objetivo, `#/dinamicas/${encodeURIComponent(d.id)}`, (d.tags || []).join(" ")));
   helpFor(perfil()).forEach((h) => add("Ayuda", "❓", h.q, h.a[0] || "", `#/ayuda?t=${h.t}`));

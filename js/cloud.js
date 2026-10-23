@@ -648,6 +648,9 @@ export function revistaVisible() {
   return modo === "equipo" && !!s.ready && !s.isJoven && s.role !== "aspirante";
 }
 export async function saveRevistaConfig(data) { await setContent("revista", data); revCfg = data; revAt = Date.now(); try { localStorage.setItem("agape_revista", JSON.stringify(data)); } catch {} }
+// Oremos con los salmos: textos completos autorizados (content/salmos, lo carga un administrador).
+export const getSalmos = () => getContent("salmos");
+export const saveSalmos = (data) => setContent("salmos", data);
 // Campanita: qué tipos de novedades están activos (content/novedades, lo cambia un administrador)
 let novCfg = null;
 export async function novConfig(force) { if (!novCfg || force) novCfg = (await getContent("novedades")) || {}; return novCfg; }
