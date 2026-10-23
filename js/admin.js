@@ -45,6 +45,10 @@ export async function renderAdmin(sub, _api) {
   if (cloudOn) {
     const st = api.cloud.state();
     if (!st.ready) return cloudGate(st);
+    const pg0f = sub.split("/").filter(Boolean)[0] || "";
+    if (["grupos", "registro"].includes(pg0f) && !api.cloud.familiasVisible())
+      return shell(pg0f, `<header class="page-head"><span class="eyebrow">Gestión</span><h1>Nuestras familias</h1></header>
+        <div class="note">Está oculta junto con Nuestra Revista mientras el equipo define cómo organizarse. Un administrador la muestra en Gestión → Resumen.</div>`);
     // Gestión se ajusta al rol: coordinación ve casi todo; los dirigentes, su tablero «Hoy» y su familia.
     if (!st.isAdmin) {
       const pg0 = sub.split("/").filter(Boolean)[0] || "";
@@ -103,19 +107,20 @@ let famIdCache = null;
 function navGroups() {
   const st = cloudOn ? api.cloud.state() : { isAdmin: true, isStaff: true, isGuide: true };
   const A = st.isAdmin, C = st.isStaff, fam = famIdCache;
+  const FV = !cloudOn || api.cloud.familiasVisible(); // Nuestras familias: oculta junto con la revista
   const g = [
     ["", [["hoy", "#/admin", "Hoy", "sparkle", cloudOn]]],
     ["Personas", [
       ["dirigentes", "#/admin/dirigentes", "Cuentas e invitaciones", "users", cloudOn && A],
       ["conocer", "#/admin/conocer", "Quiero conocer Ágape", "send", cloudOn && C],
       ["asignar", "#/admin/asignar", "Asignar jóvenes", "check", cloudOn && C],
-      ["grupos", "#/admin/grupos", "Las 10 familias", "users", cloudOn && C],
+      ["grupos", "#/admin/grupos", "Las 10 familias", "users", cloudOn && C && FV],
       ["consentimientos", "#/admin/consentimientos", "Consentimientos", "lock", cloudOn && A],
-      ["", fam ? `#/nuestras-familias/${fam}` : "#/nuestras-familias", "Mi familia", "users", cloudOn && !C, true],
+      ["", fam ? `#/nuestras-familias/${fam}` : "#/nuestras-familias", "Mi familia", "users", cloudOn && !C && FV, true],
     ]],
     ["Seguimiento", [
-      ["registro", "#/admin/registro", "Asistencia y planillas", "grid", cloudOn && C],
-      ["", fam ? `#/nuestras-familias/${fam}/registro` : "#/nuestras-familias", "Registro de mi familia", "grid", cloudOn && !C, true],
+      ["registro", "#/admin/registro", "Asistencia y planillas", "grid", cloudOn && C && FV],
+      ["", fam ? `#/nuestras-familias/${fam}/registro` : "#/nuestras-familias", "Registro de mi familia", "grid", cloudOn && !C && FV, true],
       ["acompanar", "#/admin/acompanar", "Acompañar y pasaportes", "check", cloudOn],
       ["honor", "#/admin/honor", "Cuadro de honor", "award", cloudOn && C],
       ["resumen", "#/admin/resumen", "Ajustes, estadísticas e intención del Papa", "grid", A],
@@ -218,8 +223,8 @@ async function revistaCard() {
   const c = await api.cloud.revistaConfig(true).catch(() => ({ modo: "admin" }));
   const admin = api.cloud.state().isAdmin, modo = c.modo || "admin";
   const O = [["admin", "Oculta", "Solo los administradores la ven, para prepararla."], ["equipo", "Para el equipo", "La ven los dirigentes y el equipo. Los jóvenes todavía no."], ["todos", "Para todos", "Se abre Mi Camino para los jóvenes, el desafío de la semana y los encuentros en la agenda."]];
-  return `<section class="card" id="revAdmin"><h3>Nuestra Revista: quién la ve</h3>
-    <p class="muted small" style="margin-top:4px">Mientras está oculta no aparece en Mi Camino, Materiales, la agenda, el desafío de la semana, la trivia ni la página para familias.</p>
+  return `<section class="card" id="revAdmin"><h3>Nuestra Revista y Nuestras familias: quién las ve</h3>
+    <p class="muted small" style="margin-top:4px">Mientras están ocultas, la revista no aparece en Mi Camino, Materiales, la agenda, el desafío de la semana, la trivia ni la página para familias, y Nuestras familias (los grupos pequeños, su registro y su asistencia) no aparece en Comunidad ni en Gestión.</p>
     <div class="nov-tipos">${O.map(([k, t, dd]) => `<label class="nov-tipo"><input type="radio" name="revModo" value="${k}" ${modo === k ? "checked" : ""} ${admin ? "" : "disabled"}>
       <span><b>${esc(t)}</b><small>${esc(dd)}</small></span></label>`).join("")}</div>
     ${admin ? `<button class="btn btn-primary btn-sm" data-action="aRevSave" style="margin-top:10px">Guardar</button>` : `<p class="xs muted" style="margin-top:8px">Solo un administrador puede cambiar esto.</p>`}

@@ -188,6 +188,8 @@ async function renderNow() {
   if (cloud.enabled && cloud.state().isJoven && ((section === "itinerario" && !cursoAbierto && path !== "/cuaderno") || section === "comunidad" || recursos)) fn = viewSoloEquipo;
   // Nuestra Revista (y Mi Camino, que sale de ella) quedan ocultas mientras el equipo la prepara.
   if (/^\/(encuentros|mi-camino|archivo)(\/|$)/.test(path) && !cloud.revistaVisible()) fn = viewRevistaPronto;
+  // Nuestras familias: aún es una idea; queda oculta junto con la revista.
+  if (/^\/nuestras-familias(\/|$)/.test(path) && !cloud.familiasVisible()) fn = viewFamiliasPronto;
   // Cursos en revisión: si todos están ocultos, el curso no se abre (salvo para administradores).
   if (section === "itinerario" && !/^\/(constancia|cuaderno)$/.test(path) && !S.hasVisibleCourse() && !(cloud.enabled && !cloud.state().ready)) fn = viewEnRevision;
   if (cloud.enabled && ((section === "itinerario" && !cursoAbierto) || section === "muro" || recursos) && !cloud.state().ready && fn !== viewRevistaPronto) fn = () => viewLogin(recursos ? "recursos" : section === "muro" ? "muro" : "curso");
@@ -1332,6 +1334,13 @@ function viewEnRevision() {
     <h1 class="display" style="font-size:1.6rem;margin-top:10px">La formación está en revisión</h1>
     <p class="muted" style="margin-top:8px">El equipo está preparando la nueva versión del curso. Tu avance queda guardado.</p>
     <a class="btn btn-primary" style="margin-top:16px" href="#/formacion">Volver a Formación</a></div>`;
+}
+function viewFamiliasPronto() {
+  return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">
+    ${illus("amigos", "")}
+    <h1 class="display" style="font-size:1.6rem;margin-top:10px">Esto todavía no está disponible</h1>
+    <p class="muted" style="margin-top:8px">Te esperamos en la comunidad, el muro y la capilla.</p>
+    <div class="row-wrap" style="justify-content:center;margin-top:16px"><a class="btn btn-primary" href="#/red">Ir a Comunidad</a><a class="btn btn-ghost" href="#/oracion">Ir a la Capilla</a></div></div>`;
 }
 function viewRevistaPronto() {
   return `<div class="card" style="max-width:520px;margin:6vh auto 0;text-align:center;padding:32px">

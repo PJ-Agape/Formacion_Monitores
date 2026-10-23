@@ -659,6 +659,8 @@ export function revistaVisible() {
   if (s.isAdmin || modo === "todos") return true;
   return modo === "equipo" && !!s.ready && !s.isJoven && s.role !== "aspirante";
 }
+// Nuestras familias (los grupos pequeños) es todavía una idea: se muestra junto con la revista, con el mismo interruptor.
+export const familiasVisible = () => revistaVisible();
 export async function saveRevistaConfig(data) { await setContent("revista", data); revCfg = data; revAt = Date.now(); try { localStorage.setItem("agape_revista", JSON.stringify(data)); } catch {} }
 // Oremos con los salmos: textos completos autorizados (content/salmos, lo carga un administrador).
 export const getSalmos = () => getContent("salmos");

@@ -31,6 +31,7 @@ function who() {
     cuenta: !cloud.enabled || !!s.ready,
     camino: (joven || asp) && (!cloud.enabled || cloud.revistaVisible()), // Mi Camino (encuentros por etapa)
     revista: !cloud.enabled || cloud.revistaVisible(),       // Nuestra Revista (puede estar oculta mientras se prepara)
+    familias: !cloud.enabled || cloud.familiasVisible(),     // Nuestras familias (oculta junto con la revista)
   };
 }
 
@@ -61,9 +62,9 @@ const ITEMS = [
   { b: "red", e: "🎲", t: "Juegos", d: "El Impostor, ¡En la frente!, Trivia Ágape y más.", href: "#/juegos", kw: "juegos jugar trivia preguntas impostor mimica mimicas frente adivinar charadas dinamica plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "💬", t: "Chat", d: "Salas para conversar en grupo.", href: "#/chat", kw: "chat salas mensajes conversar zumbido plaza", ok: () => true, hub: false }, // en La Plaza Ágape
   { b: "red", e: "📅", t: "Agenda", d: "Encuentros, misas y actividades.", href: "#/agenda", kw: "agenda calendario actividades fechas misa retiro", ok: () => true, hub: false }, // franja propia en Comunidad
-  { b: "red", e: "👨‍👩‍👧‍👦", t: "Nuestras familias", d: "Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.", href: "#/nuestras-familias", kw: "grupos familias comunidades equipos nombre", ok: (w) => w.cuenta && cloud.enabled,
+  { b: "red", e: "👨‍👩‍👧‍👦", t: "Nuestras familias", d: "Los grupos pequeños de la pastoral: su nombre, su dirigente y quiénes la forman.", href: "#/nuestras-familias", kw: "grupos familias comunidades equipos nombre", ok: (w) => w.familias && w.cuenta && cloud.enabled,
     hub: false, // tarjeta propia en Comunidad
-    links: [["👨‍👩‍👧‍👦 Ver las familias", "#/nuestras-familias"], ["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
+    links: [["👨‍👩‍👧‍👦 Ver las familias", "#/nuestras-familias", (w) => w.familias], ["🛂 Mi pasaporte", "#/pasaporte", (w) => w.cuenta], ["🤝 Asistencia", "#/acompanar", (w) => w.guia]] },
   { b: "red", e: "🛂", t: "Mi pasaporte", d: "Tus encuentros, tu racha y tus sellos.", href: "#/pasaporte", kw: "pasaporte sellos racha asistencia", ok: (w) => w.cuenta && cloud.enabled, hub: false },
   { b: "red", e: "🤝", t: "Asistencia", d: "Pasar lista y acompañar a los jóvenes.", href: "#/acompanar", kw: "acompanar lista asistencia jovenes guia sellos", ok: (w) => w.guia && cloud.enabled, hub: false },
   // El equipo encuentra la difusión y la guía de servicio en Materiales; los jóvenes (sin Materiales) siguen viendo la difusión aquí.
@@ -234,7 +235,9 @@ function plazaHTML() {
 // Nuestras familias: tarjeta grande como La Plaza, con sus accesos (familias, pasaporte y asistencia).
 function familiasHTML(w) {
   if (!(w.cuenta && cloud.enabled)) return "";
-  const c = inicioCfg().familias, d = c.doors;
+  // Mientras Nuestras familias está oculta, la tarjeta queda solo con el pasaporte y la asistencia, sin hablar de familias.
+  const c0 = inicioCfg().familias, d = c0.doors;
+  const c = w.familias ? c0 : { hand: "tu camino en Ágape", title: "Tus *encuentros*", text: "Tu pasaporte con tus sellos y, para los guías, la asistencia." };
   return `<section class="plaza fam-plaza" aria-labelledby="famPT">
     <div class="plaza-head">
       ${c.hand ? `<span class="plaza-hand">${esc(c.hand)}</span>` : ""}
@@ -242,7 +245,7 @@ function familiasHTML(w) {
       ${c.text ? `<p>${esc(c.text)}</p>` : ""}
     </div>
     <div class="plaza-doors">
-      ${pdoor(d.familias, "#/nuestras-familias", "is-fam", icon("users"))}
+      ${w.familias ? pdoor(d.familias, "#/nuestras-familias", "is-fam", icon("users")) : ""}
       ${pdoor(d.pasaporte, "#/pasaporte", "is-pas", icon("award"))}
       ${w.guia ? pdoor(d.asistencia, "#/acompanar", "is-asi", icon("check")) : ""}
     </div>

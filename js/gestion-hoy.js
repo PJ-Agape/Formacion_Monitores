@@ -21,7 +21,7 @@ const ORD = { urgente: 0, revisar: 1, info: 2 };
 
 export function html() {
   setTimeout(paint, 0);
-  const s = st(), quien = s.isAdmin ? "administración" : s.isStaff ? "coordinación" : "tu familia";
+  const s = st(), quien = s.isAdmin ? "administración" : s.isStaff ? "coordinación" : cloud.familiasVisible() ? "tu familia" : "dirigentes";
   const hoy = new Date().toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
   return `<header class="page-head"><span class="eyebrow">Gestión · ${esc(quien)}</span><h1>Hoy, <em>${esc(hoy)}</em></h1>
     <p>Lo que pide atención ahora. Cada pendiente tiene su botón para resolverlo.</p></header>
@@ -112,5 +112,7 @@ async function pendientes() {
     if (c.length) out.push(item("info", "🎂", `Cumpleaños esta semana`, c.map((x) => `${esc(x.n)} (${+x.md.slice(3)}/${+x.md.slice(0, 2)})`).join(", "), "#/chat/general", "Saludar"));
   }
   if (!s.isStaff && !misFams.length) out.push(item("info", "👨‍👩‍👧‍👦", "Aún no tienes una familia asignada", "El equipo te asigna en Nuestras familias.", "#/nuestras-familias", "Ver familias"));
+  // Nuestras familias oculta (junto con la revista): fuera los pendientes de familias.
+  if (!cloud.familiasVisible()) return out.filter((x) => !String(x.href || "").includes("nuestras-familias") && !/familia/i.test(x.t));
   return out;
 }
