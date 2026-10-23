@@ -43,8 +43,8 @@ export function view(q = "") {
     ${illus("amigos", "head-illus")}</header>`;
   return `${head}
   <section class="cono-grid" aria-label="Qué hacemos">
-    <article class="card cono-it"><span class="tile-ico">${icon("users")}</span><h3>Encuentros los domingos</h3>
-      <p>Nos juntamos en la parroquia: dinámicas, conversación y un rato de oración. Cada uno avanza en su etapa, según su edad.</p></article>
+    <article class="card cono-it"><span class="tile-ico">${icon("users")}</span><h3>En el salón parroquial</h3>
+      <p>Nos reunimos en comunidad, rezamos y la pasamos muy bien.</p></article>
     <article class="card cono-it"><span class="tile-ico">${icon("chat")}</span><h3>Una comunidad de amigos</h3>
       <p>Grupos pequeños, que llamamos familias, acompañados por dirigentes que se preparan para cuidarte y escucharte.</p></article>
     <article class="card cono-it"><span class="tile-ico">${icon("phone")}</span><h3>La fe en tu bolsillo</h3>
@@ -178,7 +178,7 @@ function waText(r) {
   const de = yo ? `Soy ${yo}, de` : "Le escribimos de";
   if (r.adultoNombre) return `Hola, ${pri(r.adultoNombre)}. ${de} la Pastoral Juvenil Ágape de la Parroquia San Miguel de Yungay. ${pri(r.nombre)} nos dejó su contacto porque quiere conocer el grupo. Nos encantaría contarle quiénes somos y cómo cuidamos a los jóvenes en los encuentros. ¿Tiene un momento para conversar?`;
   if (r.quien === "familia") return `Hola, ${pri(r.nombre)}. ${de} la Pastoral Juvenil Ágape de la Parroquia San Miguel de Yungay. Gracias por escribirnos${r.hijo ? " por " + pri(r.hijo) : ""}. Nos encantaría contarle cómo son los encuentros. ¿Tiene un momento para conversar?`;
-  return `Hola, ${pri(r.nombre)}. ${yo ? `Soy ${yo}, de` : "Te escribimos de"} la Pastoral Juvenil Ágape de Yungay. Gracias por dejarnos tu contacto. Nos juntamos los domingos en la parroquia y nos encantaría que vinieras. ¿Te cuento cuándo es el próximo encuentro?`;
+  return `Hola, ${pri(r.nombre)}. ${yo ? `Soy ${yo}, de` : "Te escribimos de"} la Pastoral Juvenil Ágape de Yungay. Gracias por dejarnos tu contacto. Nos reunimos en comunidad en el salón parroquial, rezamos y la pasamos muy bien. Nos encantaría que vinieras. ¿Te cuento cuándo es el próximo encuentro?`;
 }
 const waLink = (r) => { const n = waNum(r.adultoTel || r.telefono); return n ? `https://wa.me/${n}?text=${encodeURIComponent(waText(r))}` : ""; };
 
