@@ -828,8 +828,9 @@ function rosMove(n) {
 // teléfono vibra suave; al empezar un misterio, vibra dos veces. Así se puede rezar sin mirar.
 // ---------------------------------------------------------------------------
 let remote = null, lastKey = 0;
+// Chrome en Android solo muestra los controles multimedia (y recibe «siguiente») con audios de 5 s o más.
 function silentWav() {
-  const sr = 8000, n = sr * 2, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
+  const sr = 8000, n = sr * 20, buf = new ArrayBuffer(44 + n), v = new DataView(buf);
   const w = (o, t) => [...t].forEach((c, i) => v.setUint8(o + i, c.charCodeAt(0)));
   w(0, "RIFF"); v.setUint32(4, 36 + n, true); w(8, "WAVE"); w(12, "fmt "); v.setUint32(16, 16, true); v.setUint16(20, 1, true); v.setUint16(22, 1, true);
   v.setUint32(24, sr, true); v.setUint32(28, sr, true); v.setUint16(32, 1, true); v.setUint16(34, 8, true); w(36, "data"); v.setUint32(40, n, true);
