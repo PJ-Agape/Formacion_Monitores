@@ -36,6 +36,8 @@ let campana = "", enviado = null; // enviado: { nombre } recién enviado en esta
 // Página pública
 // ---------------------------------------------------------------------------
 export function view(q = "") {
+  // Con la sesión iniciada no se muestra la página: en su lugar, la invitación para compartirla.
+  if (ctx.cloud.enabled && ctx.cloud.state().ready) return inviteView();
   campana = campanaDe(q) || campana;
   const head = `<header class="page-head has-illus"><span class="eyebrow">Pastoral Juvenil Ágape · Yungay</span>
     <h1>Quiero <em>conocer</em> Ágape</h1>
@@ -156,8 +158,26 @@ function registerActions() {
   });
 }
 
-// Tarjeta corta para Inicio (visitantes sin cuenta): «Solo quiero conocer».
-export const homeLink = () => `<a class="btn btn-ghost" href="#/conocer">Solo quiero conocer Ágape</a>`;
+// ---------------------------------------------------------------------------
+// «Invitar» (Comunidad): quien ya tiene cuenta no ve la página, solo comparte el enlace por WhatsApp.
+// El enlace lleva ?o=amigo, así queda marcado «Me invitó un amigo o amiga».
+// ---------------------------------------------------------------------------
+const INVITE_TXT = () => `¡Hola! Te invito a conocer Ágape, la Pastoral Juvenil de la Parroquia San Miguel de Yungay. Nos reunimos en comunidad, rezamos y la pasamos muy bien. Mira de qué se trata y déjanos tu contacto: ${linkFor("amigo")}`;
+const inviteHref = () => `https://wa.me/?text=${encodeURIComponent(INVITE_TXT())}`;
+export function inviteCard() {
+  if (!ctx.cloud.enabled || !ctx.cloud.state().ready) return "";
+  return `<section class="card cono-invite" aria-labelledby="conoInvT">
+    <div class="cono-invite-txt"><h2 id="conoInvT">Invita a alguien a Ágape</h2>
+      <p class="muted small">¿Tienes un amigo o amiga que podría venir? Mándale la invitación por WhatsApp: le llega una página para conocernos y dejar su contacto.</p></div>
+    <a class="btn btn-primary" href="${esc(inviteHref())}" target="_blank" rel="noopener">${icon("send")} Invitar</a>
+  </section>`;
+}
+function inviteView() {
+  return `<header class="page-head"><span class="eyebrow">Comunidad</span><h1>Invita a <em>alguien</em></h1>
+    <p>Esta página es para quienes todavía no son parte de Ágape. Tú ya estás dentro: compártela con quien quieras invitar.</p></header>
+  ${inviteCard()}
+  <p class="xs muted" style="margin-top:12px">Si eres del equipo y quieres verla como la ve un visitante, usa «Ver como… visitante».</p>`;
+}
 
 // ---------------------------------------------------------------------------
 // Gestión → «Quiero conocer Ágape»

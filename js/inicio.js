@@ -1,6 +1,7 @@
 // Inicio ordenado en tres bloques (Formación · Comunidad · Espiritualidad), sus páginas
 // de bloque (#/formacion y #/red) y el buscador de toda la app (#/buscar).
 
+import * as conocer from "./conocer.js";
 import * as S from "./store.js";
 import * as cloud from "./cloud.js";
 import { esc, icon } from "./util.js";
@@ -261,6 +262,7 @@ export function viewRed() {
   const b = BLOCKS.red;
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   ${plazaHTML()}
+  ${conocer.inviteCard()}
   ${familiasHTML(who())}
   ${agendaStripHTML()}
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
