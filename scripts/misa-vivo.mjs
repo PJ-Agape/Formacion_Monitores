@@ -11,7 +11,6 @@ const falla = (msg) => { console.warn(msg); const o = { ...prev, handle: HANDLE,
 const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : {};
 const tz = (d) => new Date(d.toLocaleString("en-US", { timeZone: "America/Santiago" }));
 const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
 const dec = (s) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&lt;/g, "<").replace(/&gt;/g, ">");
 
 // El ID del canal se saca una vez de su página y se guarda.
@@ -35,19 +34,19 @@ if (rss.ok) {
   }
   if (!items.length) falla(`Sin videos: ${via}, página ${h.length} bytes`);
 }
-const days = { ...(prev.days || {}) };
+// La Misa del día se titula «Santa Misa de Hoy | Viernes, XXIX Semana… (23-10-2026) | …».
+// Se usa la fecha del título; si no trae, la de publicación (hora de Chile).
+const nuevos = {};
 for (const { id, title, pub } of items) {
   console.log("·", pub, title);
-  if (!id || !/\bmisa\b/i.test(title) || /rosario/i.test(title)) continue;
-  // La fecha: la del título («23 de octubre de 2026») o, si no trae, la de publicación (hora de Chile).
-  const s = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("setiembre", "septiembre");
-  const m = s.match(/\b(\d{1,2})\s+de\s+([a-z]+)(?:\s+(?:de|del)\s+(\d{4}))?/);
-  // Sin fecha de publicación (página de transmisiones), solo vale la fecha del título o el primero = hoy.
-  if (!pub && !m && Object.values(days).some((x) => x.id === id)) continue;
+  if (!id || !/misa de hoy/i.test(title) || /homil[ií]a|rosario/i.test(title)) continue;
+  const f = title.match(/\b(\d{1,2})[-./](\d{1,2})[-./](\d{4})\b/);
   const p = tz(pub ? new Date(pub) : new Date());
-  const iso = m && MESES.includes(m[2]) ? `${m[3] || p.getFullYear()}-${String(MESES.indexOf(m[2]) + 1).padStart(2, "0")}-${String(+m[1]).padStart(2, "0")}` : isoOf(p);
-  if (!days[iso]) days[iso] = { id, title }; // el RSS viene del más nuevo al más antiguo
+  const iso = f ? `${f[3]}-${f[2].padStart(2, "0")}-${f[1].padStart(2, "0")}` : isoOf(p);
+  if (!nuevos[iso]) nuevos[iso] = { id, title }; // el más nuevo primero
 }
+const viejos = Object.fromEntries(Object.entries(prev.days || {}).filter(([, x]) => /misa de hoy/i.test(x.title || "")));
+const days = Object.fromEntries(Object.entries({ ...viejos, ...nuevos }).sort(([a], [b]) => b.localeCompare(a)));
 // Solo los últimos 10 días.
 const desde = isoOf(new Date(tz(new Date()).getTime() - 10 * 864e5));
 for (const k of Object.keys(days)) if (k < desde) delete days[k];

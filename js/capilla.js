@@ -8,14 +8,25 @@ import * as papa from "./papa.js";
 import { illus } from "./ilustraciones.js";
 import { avatar } from "./avatares.js";
 
-// Misa en vivo: un enlace a YouTube que el administrador puede cambiar (content/misaVivo).
-const MISA_VIVO = "https://www.youtube.com/watch?v=7AoFYFwOG_s";
-let misaVivo = MISA_VIVO, misaVivoOk = false;
+// Misa en vivo: la de hoy del canal de Magnificat TV (data/misa-vivo.json, la busca cada hora la
+// acción del Evangelio). Si hoy no hay, el enlace que dejó el administrador (content/misaVivo) o la
+// página de transmisiones del canal.
+const MISA_VIVO = "https://www.youtube.com/@magnificat.tv-fm/streams";
+let misaVivo = MISA_VIVO, misaAdmin = "", misaHoy = null, misaVivoAt = 0;
+const hoyISO = () => { const d = new Date(); return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`; };
 async function loadMisaVivo() {
-  if (misaVivoOk || !ctx.cloud.enabled) return;
-  const c = await ctx.cloud.getMisaVivo().catch(() => null);
-  misaVivoOk = true;
-  if (c && c.url) { misaVivo = c.url; const a = document.getElementById("capMisaVivo"); if (a) a.href = misaVivo; }
+  if (Date.now() - misaVivoAt > 10 * 60 * 1000) {
+    misaVivoAt = Date.now();
+    const [auto, c] = await Promise.all([
+      fetchJSON("data/misa-vivo.json", 10 * 60 * 1000).catch(() => null),
+      ctx.cloud.enabled ? ctx.cloud.getMisaVivo().catch(() => null) : null,
+    ]);
+    misaHoy = (auto && auto.days && auto.days[hoyISO()]) || null;
+    misaAdmin = (c && c.url) || "";
+  }
+  misaVivo = misaHoy ? `https://www.youtube.com/watch?v=${misaHoy.id}` : misaAdmin || MISA_VIVO;
+  const a = document.getElementById("capMisaVivo");
+  if (a) { a.href = misaVivo; const sm = a.querySelector("small"); if (sm) sm.textContent = misaHoy ? "la de hoy, en YouTube" : "en YouTube"; if (misaHoy) a.title = misaHoy.title; }
 }
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -964,11 +975,11 @@ window.addEventListener("keydown", (e) => {
 function registerActions() {
   const A = ctx.actions;
   A.capMisaVivo = async () => {
-    const u = prompt("Enlace de YouTube para la Misa en vivo (puede ser un video o la página «En vivo» de un canal):", misaVivo);
+    const u = prompt("Enlace de respaldo para la Misa en vivo (se usa los días en que no aparece la Misa del canal de Magnificat TV):", misaAdmin || MISA_VIVO);
     if (u === null) return;
     const url = u.trim() || MISA_VIVO;
     if (!/^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//i.test(url)) { toast("Tiene que ser un enlace de YouTube", ""); return; }
-    try { await ctx.cloud.saveMisaVivo({ url }); misaVivo = url; const a = document.getElementById("capMisaVivo"); if (a) a.href = url; toast("Enlace guardado"); }
+    try { await ctx.cloud.saveMisaVivo({ url }); misaVivoAt = 0; loadMisaVivo(); toast(misaHoy ? "Guardado. Hoy se muestra la Misa del día del canal; tu enlace se usa cuando no la encuentre" : "Enlace guardado"); }
     catch { toast("No se pudo guardar", ""); }
   };
   const vozBtns = () => { document.querySelectorAll("[data-action=rosVoz]").forEach((b) => b.setAttribute("aria-pressed", String(voz.on)));
