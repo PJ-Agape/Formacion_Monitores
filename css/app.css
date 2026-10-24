@@ -4299,3 +4299,12 @@ a.cap-guide-btn { text-decoration: none; }
 .ros-tu { margin-top: 6px; color: #ffba03; }
 .ros-tu span { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.15rem; line-height: 1; margin-bottom: 2px; opacity: .9; }
 .ros-opt.ros-opt-warn { background: #ef591c; border-color: #ef591c; color: #fff6e5; }
+/* Rosas del Rosario */
+.ros-rosa { position: absolute; z-index: 3; width: 30px; height: 39px; margin: -20px 0 0 -15px; pointer-events: none; opacity: 0; animation: rosaSube 2.9s cubic-bezier(.25,.7,.35,1) forwards; filter: drop-shadow(0 2px 4px rgba(0,0,0,.35)); }
+.ros-rosa svg { width: 100%; height: 100%; display: block; }
+@keyframes rosaSube {
+  0% { opacity: 0; transform: translate(0, 0) scale(calc(var(--s) * .4)) rotate(0); }
+  15% { opacity: 1; transform: translate(calc(var(--dx) * .15), -24px) scale(var(--s)) rotate(calc(var(--rot) * .3)); }
+  55% { opacity: 1; transform: translate(calc(var(--dx) * .7), -120px) scale(var(--s)) rotate(calc(var(--rot) * -.4)); }
+  100% { opacity: 0; transform: translate(var(--dx), -230px) scale(calc(var(--s) * .9)) rotate(var(--rot)); }
+}

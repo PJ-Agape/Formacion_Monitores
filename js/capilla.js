@@ -816,9 +816,35 @@ function guiar(s, title) {
 function rosMove(n) {
   if (!ros) return;
   if (remote && navigator.vibrate) { const nx = ros.steps[Math.max(0, Math.min(ros.steps.length - 1, ros.i + n))]; try { navigator.vibrate(nx && (nx.k === "mys" || nx.k === "fin") ? [70, 90, 70] : 35); } catch {} }
-  if (n > 0 && ros.steps[ros.i].k === "fin") ros.i = 0;
+  const cur = ros.steps[ros.i];
+  if (n > 0 && cur.k === "am") rosas(cur.i === cur.of && cur.of === 10 ? 10 : 1); // una rosa por Ave María; al cerrar la decena, una corona
+  if (n > 0 && cur.k === "fin") ros.i = 0;
   else ros.i = Math.max(0, Math.min(ros.steps.length - 1, ros.i + n));
   rosPaint();
+}
+// Rosas que suben desde la cuenta rezada: «rosario» viene de «corona de rosas» ofrecida a María.
+const ROSA = `<svg viewBox="0 0 40 52" aria-hidden="true"><path d="M20 30 C 20 40, 18 46, 16 51" fill="none" stroke="#3f8f4a" stroke-width="2.4" stroke-linecap="round"/>
+  <path d="M18 42 q-9 -2 -11 -9 q8 0 11 7 Z" fill="#5fae5a" stroke="#2d6b36" stroke-width="1.2"/>
+  <path d="M20 31 C 9 31, 6 21, 9 14 C 12 18, 15 18, 20 13 C 25 18, 28 18, 31 14 C 34 21, 31 31, 20 31 Z" fill="#e0405a" stroke="#8f1f33" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M20 13 C 15 8, 12 12, 13 17 C 16 15, 18 15, 20 18 C 22 15, 24 15, 27 17 C 28 12, 25 8, 20 13 Z" fill="#f2637a" stroke="#8f1f33" stroke-width="1.4" stroke-linejoin="round"/>
+  <path d="M15 22 q5 4 10 0 M17 18 q3 2 6 0" fill="none" stroke="#8f1f33" stroke-width="1.2" stroke-linecap="round"/></svg>`;
+function rosas(cuantas) {
+  if (!ros || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+  const stage = ros.el.querySelector(".ros-stage"), bead = ros.el.querySelector(".rb.now");
+  if (!stage) return;
+  const sr = stage.getBoundingClientRect(), br = bead ? bead.getBoundingClientRect() : { left: sr.left + sr.width / 2, top: sr.top + sr.height / 2, width: 0, height: 0 };
+  for (let k = 0; k < cuantas; k++) {
+    const r = document.createElement("span");
+    r.className = "ros-rosa"; r.innerHTML = ROSA;
+    const x = br.left - sr.left + br.width / 2, y = br.top - sr.top + br.height / 2;
+    r.style.left = x + "px"; r.style.top = y + "px";
+    r.style.setProperty("--dx", `${Math.round((Math.random() - .5) * (cuantas > 1 ? 220 : 90))}px`);
+    r.style.setProperty("--rot", `${Math.round((Math.random() - .5) * 70)}deg`);
+    r.style.setProperty("--s", (0.75 + Math.random() * 0.5).toFixed(2));
+    r.style.animationDelay = `${k * 110}ms`;
+    stage.appendChild(r);
+    setTimeout(() => r.remove(), 3200 + k * 110);
+  }
 }
 
 // ---------------------------------------------------------------------------
