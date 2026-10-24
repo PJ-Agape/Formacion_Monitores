@@ -60,73 +60,103 @@ function textoLectura(t, salmo) {
     return salmo && /^R\.?\s*[\/.]?\s*/.test(l.trim()) ? `<b class="ms-r">${x}</b>` : x;
   }).filter(Boolean).join("<br>")}</p>`).join("");
 }
+let mtab = "pasos", mstep = 0;
+const momentos = (d) => PARTES.filter((p) => !(p.lectura === "segunda" && d && !d.segunda));
+// Las respuestas del pueblo (entre «») se destacan.
+const conResp = (t) => esc(t).replace(/«([^»]+)»/g, '<b class="ms-q">«$1»</b>');
 function paint() {
   const box = $("#misaBox"); if (!box) return;
   const d = diaData(dia), g = (gospel?.days || {})[dia], s = season(dateOf(dia));
   const all = dias(), i = all.indexOf(dia), prev = all[i - 1], next = all[i + 1];
   const titulo = d?.titulo || g?.titulo || "Liturgia del día";
   const hoy = dia === isoOf(new Date());
+  const corto = (x) => esc(cap1(dateOf(x).toLocaleDateString("es-CL", { weekday: "short", day: "numeric" })));
   box.innerHTML = `
-  <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<span>La Misa de ${hoy ? "hoy" : "cada día"}</span></nav>
-  <section class="cap-hero ms-hero" style="--season:${s.hex}">
-    <div class="cap-arch">
-      ${caliz("ms-caliz")}
-      <span class="cap-hand">${hoy ? "la Misa de hoy" : esc(cap1(largo(dia)))}</span>
-      <h1 class="cap-title ms-title">${esc(titulo)}</h1>
-      <div class="cap-chips"><span class="cap-season"><i></i>${esc(s.name)} · color ${esc(s.color)}</span><span class="cap-date">${esc(largo(dia))}</span></div>
-      <div class="ms-dias no-print">
-        ${prev ? `<a class="ms-dia" href="#/misa/${prev}">${icon("left")} ${esc(cap1(dateOf(prev).toLocaleDateString("es-CL", { weekday: "short", day: "numeric" })))}</a>` : "<span></span>"}
-        ${hoy ? "" : `<a class="ms-dia" href="#/misa">Hoy</a>`}
-        ${next ? `<a class="ms-dia" href="#/misa/${next}">${esc(cap1(dateOf(next).toLocaleDateString("es-CL", { weekday: "short", day: "numeric" })))} ${icon("right")}</a>` : "<span></span>"}
-      </div>
+  <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<span>La Misa</span></nav>
+  <header class="cap-arch ms-arch" style="--season:${s.hex}">
+    ${caliz("ms-caliz")}
+    <span class="cap-hand">${hoy ? "la Misa de hoy" : esc(cap1(largo(dia)))}</span>
+    <h1 class="cap-title ms-title">${esc(titulo)}</h1>
+    <div class="cap-chips"><span class="cap-season"><i></i>${esc(s.name)} · color ${esc(s.color)}</span><span class="cap-date">${esc(largo(dia))}</span></div>
+    <div class="ms-dias no-print">
+      ${prev ? `<a class="ms-dia" href="#/misa/${prev}">${icon("left")} ${corto(prev)}</a>` : "<span></span>"}
+      ${hoy ? "" : `<a class="ms-dia" href="#/misa">Hoy</a>`}
+      ${next ? `<a class="ms-dia" href="#/misa/${next}">${corto(next)} ${icon("right")}</a>` : "<span></span>"}
     </div>
-    <div class="cap-moment ms-libro">
-      <span class="eyebrow">Para llevar a la Misa</span>
-      <span class="cap-hand sm">el librito</span>
-      <p>Las lecturas de este día y la Misa paso a paso, para hojear en el teléfono o imprimir y entregar en una Misa juvenil.</p>
-      <div class="cap-moment-btns">
-        <a class="btn cap-oremus" href="#/misa/libro/${dia}">${icon("book")} Hojear el librito</a>
-        <button class="btn cap-oremus" data-action="msPdf">${icon("print")} Imprimir</button>
-      </div>
-    </div>
-  </section>
-
-  <section class="cap-room" id="ms-lecturas">
-    <div class="cap-room-head"><h2>Las lecturas <em>de ${hoy ? "hoy" : "este día"}</em></h2></div>
-    ${d?.santo ? `<p class="ms-santo"><b>Santo del día:</b> ${esc(d.santo)}</p>` : ""}
-    ${d ? `<div class="ms-lects">${LECT.filter(([k]) => d[k]).map(([k, l], n) => `<details class="ms-lect" ${n === 0 && !d.primera ? "open" : ""}${k === "evangelio" ? " open" : ""}>
-        <summary><span class="ms-lk">${l}</span><b>${esc(d[k].cita || "")}</b>${icon("down")}</summary>
-        <div class="ms-ltxt">${textoLectura(d[k].texto, k === "salmo")}
-          <p class="ms-resp">${k === "evangelio" ? "Palabra del Señor. <b>Gloria a ti, Señor Jesús.</b>" : k === "salmo" ? "" : "Palabra de Dios. <b>Te alabamos, Señor.</b>"}</p></div></details>`).join("")}</div>
-      <p class="xs muted ms-fuente">${esc(data.fuente || "")}</p>`
-      : g ? `<div class="card ms-falta"><p>Evangelio: <b>${esc(g.cita)}</b>. ${g.frase ? `«${esc(g.frase)}»` : ""}</p><p class="small muted">Las lecturas completas de este día aún no están disponibles en la app.</p>
-          <a class="btn btn-sm btn-ghost" href="https://evangeliodeldia.org/SP/gospel/${dia}" target="_blank" rel="noopener">Leer las lecturas en evangeliodeldia.org</a></div>`
-      : `<div class="card ms-falta"><p class="muted">Aún no tenemos la liturgia de este día.</p></div>`}
-  </section>
-
-  <section class="cap-room" id="ms-pasos">
-    <div class="cap-room-head"><h2>La Misa <em>paso a paso</em></h2></div>
-    <p class="cap-lead">Qué está pasando en cada momento, dónde está Cristo presente, qué hace el sacerdote y qué hacemos nosotros. Toca cada parte para abrirla.</p>
-    <div class="ms-cristo card"><b>Cristo está presente en la Misa de cuatro maneras:</b> en la comunidad reunida, en el sacerdote que actúa en su nombre, en su Palabra y, sobre todo, en el pan y el vino consagrados, que son su Cuerpo y su Sangre (Concilio Vaticano II, Sacrosanctum Concilium 7).</div>
-    ${GRUPOS.map((gr, gi) => `<div class="ms-grupo"><h3><span>${gi + 1}</span>${esc(gr.t)}</h3><p class="ms-gd">${esc(gr.d)}</p>
-      <div class="ms-partes">${PARTES.filter((p) => p.g === gr.k).map((p) => parteHTML(p, d)).join("")}</div></div>`).join("")}
-  </section>
+  </header>
+  <div class="ms-tabs" role="tablist" aria-label="La Misa">
+    <button role="tab" aria-selected="${mtab === "pasos"}" data-action="msTab" data-t="pasos"><b>1</b> <span>La Misa paso a paso</span></button>
+    <button role="tab" aria-selected="${mtab === "lecturas"}" data-action="msTab" data-t="lecturas"><b>2</b> <span>Las lecturas de ${hoy ? "hoy" : "este día"}</span></button>
+    <button role="tab" aria-selected="${mtab === "libro"}" data-action="msTab" data-t="libro"><b>3</b> <span>El librito</span></button>
+  </div>
+  <div id="msPanel">${mtab === "lecturas" ? lecturasHTML(d, g, hoy) : mtab === "libro" ? libroHTML() : pasosHTML(d)}</div>
   <p class="cap-foot">«Hagan esto en memoria mía»<span>Lc 22,19</span></p>`;
 }
-function parteHTML(p, d) {
-  if (p.lectura === "segunda" && d && !d.segunda) return "";
+function lecturasHTML(d, g, hoy) {
+  if (!d) return g ? `<div class="card ms-falta"><p>Evangelio: <b>${esc(g.cita)}</b>. ${g.frase ? `«${esc(g.frase)}»` : ""}</p><p class="small muted">Las lecturas completas de este día aún no están disponibles en la app.</p>
+      <a class="btn btn-sm btn-ghost" href="https://evangeliodeldia.org/SP/gospel/${dia}" target="_blank" rel="noopener">Leer las lecturas en evangeliodeldia.org</a></div>`
+    : `<div class="card ms-falta"><p class="muted">Aún no tenemos la liturgia de este día.</p></div>`;
+  const ls = LECT.filter(([k]) => d[k]);
+  return `<p class="ms-intro">Son las lecturas que se proclaman ${hoy ? "hoy" : "este día"} en todas las Misas del mundo. Léelas antes de ir: así llegas sabiendo lo que Dios te quiere decir.</p>
+    ${d.santo ? santoHTML(d.santo) : ""}
+    <ol class="ms-indice">${ls.map(([k, l], n) => `<li><a href="#ms-l-${k}" data-action="msIr" data-id="ms-l-${k}"><b>${n + 1}</b>${l}<small>${esc(d[k].cita || "")}</small></a></li>`).join("")}</ol>
+    ${ls.map(([k, l], n) => `<article class="ms-lec ms-lec-${k}" id="ms-l-${k}">
+      <header><span class="ms-ln">${n + 1}</span><div><span class="ms-lk">${l}</span><h3>${esc(d[k].cita || "")}</h3></div></header>
+      <div class="ms-ltxt">${textoLectura(d[k].texto, k === "salmo")}</div>
+      ${k === "salmo" ? "" : `<p class="ms-resp">${k === "evangelio" ? "Palabra del Señor. <b>— Gloria a ti, Señor Jesús.</b>" : "Palabra de Dios. <b>— Te alabamos, Señor.</b>"}</p>`}
+    </article>`).join("")}
+    <p class="xs muted ms-fuente">${esc(data.fuente || "")}</p>`;
+}
+// La fuente trae todos los santos del día seguidos: se muestra el principal y se cuentan los demás.
+function santos(t) { return String(t || "").split(/\s*·\s*|\s+(?=(?:San|Santa|Santo|Santos|Santas|Beato|Beata|Beatos|Beatas|Venerable|Nuestra Señora)\s)/).map((x) => x.trim()).filter(Boolean); }
+function santoHTML(t) { const l = santos(t); return `<p class="ms-santo"><span>Santo del día</span>${esc(l[0] || "")}${l.length > 1 ? ` <small>· y ${l.length - 1} santo${l.length > 2 ? "s" : ""} más</small>` : ""}</p>`; }
+function libroHTML() {
+  return `<div class="ms-libro-tab">
+    <div class="card ms-lb"><span class="cap-hand sm">para el teléfono</span><h3>Hojear el librito</h3><p>La portada, las lecturas de este día y la Misa paso a paso, página por página.</p>
+      <a class="btn btn-primary" href="#/misa/libro/${dia}">${icon("book")} Abrir el librito</a></div>
+    <div class="card ms-lb"><span class="cap-hand sm">para una Misa juvenil</span><h3>Imprimir</h3><p>En hoja carta, a dos columnas, con los cantos sugeridos. Se puede entregar a cada joven al llegar.</p>
+      <button class="btn btn-gold" data-action="msPdf">${icon("print")} Imprimir o guardar PDF</button></div>
+  </div>`;
+}
+function pasosHTML(d) {
+  const ms = momentos(d);
+  mstep = Math.max(0, Math.min(mstep, ms.length - 1));
+  const p = ms[mstep], gi = GRUPOS.findIndex((g) => g.k === p.g), gr = GRUPOS[gi];
+  const inG = ms.filter((x) => x.g === p.g), posG = inG.indexOf(p) + 1;
   const cs = p.canto ? cantos(p.canto, dia) : [];
-  const lec = p.lectura && d && d[p.lectura] ? `<a class="ms-cita" href="#ms-lecturas">${esc(d[p.lectura].cita)}</a>` : "";
-  return `<details class="ms-parte${p.cristo ? " is-cristo" : ""}">
-    <summary><span class="ms-pt">${esc(p.t)}</span>${lec}<span class="ms-post">${esc(p.postura || "")}</span>${icon("down")}</summary>
-    <div class="ms-pin">
-      <p>${esc(p.que)}</p>
-      ${p.cristo ? `<p class="ms-cr"><span>Cristo presente</span>${esc(p.cristo)}</p>` : ""}
-      <p><b>El sacerdote:</b> ${esc(p.sacerdote)}</p>
-      <p><b>Nosotros:</b> ${esc(p.nosotros)}</p>
-      ${p.nota ? `<p class="ms-nota">${esc(p.nota)}</p>` : ""}
-      ${cs.length ? `<p class="ms-cantos"><b>Cantos sugeridos:</b> ${cs.map((s) => `<a href="#/cancionero/${encodeURIComponent(s.id)}">${esc(s.title)}</a>`).join(" · ")}</p>` : ""}
-    </div></details>`;
+  const lec = p.lectura && d && d[p.lectura];
+  const prev = ms[mstep - 1], next = ms[mstep + 1];
+  return `
+  <div class="ms-mapa" role="list" aria-label="Las cinco partes de la Misa">
+    ${GRUPOS.map((g, n) => `<button role="listitem" class="ms-m ${n === gi ? "on" : n < gi ? "ok" : ""}" data-action="msParte" data-g="${g.k}"><b>${n + 1}</b><span>${esc(g.t)}</span></button>`).join("")}
+  </div>
+  <div class="ms-prog" aria-hidden="true"><i style="width:${Math.round(((mstep + 1) / ms.length) * 100)}%"></i></div>
+  <article class="ms-card${p.cristo ? " is-cristo" : ""}" aria-live="polite">
+    <header class="ms-ch">
+      <span class="ms-parte-n">Parte ${gi + 1} · ${esc(gr.t)} · ${posG} de ${inG.length}</span>
+      <h2>${esc(p.t)}</h2>
+      <span class="ms-post">${esc(p.postura || "")}</span>
+    </header>
+    ${posG === 1 ? `<p class="ms-gd">${esc(gr.d)}</p>` : ""}
+    <section class="ms-que"><h3>¿Qué está pasando?</h3><p>${esc(p.que)}</p></section>
+    ${p.cristo ? `<section class="ms-cr"><h3>Cristo presente</h3><p>${esc(p.cristo)}</p></section>` : ""}
+    <div class="ms-dos">
+      <section class="ms-quien"><h3>El sacerdote</h3><p>${conResp(p.sacerdote)}</p></section>
+      <section class="ms-quien ms-nos"><h3>Nosotros</h3><p>${conResp(p.nosotros)}</p></section>
+    </div>
+    ${p.nota ? `<p class="ms-nota">${esc(p.nota)}</p>` : ""}
+    ${lec ? `<p class="ms-lecbtn"><button class="btn btn-sm btn-soft" data-action="msLeer" data-k="${p.lectura}">${icon("book")} Leer la lectura de hoy: ${esc(lec.cita)}</button></p>` : ""}
+    ${cs.length ? `<div class="ms-cantos"><h3>Cantos sugeridos</h3><div>${cs.map((x) => `<a class="chip" href="#/cancionero/${encodeURIComponent(x.id)}">${esc(x.title)}</a>`).join("")}</div></div>` : ""}
+  </article>
+  <div class="ms-nav">
+    <button class="btn btn-ghost" data-action="msPaso" data-d="-1" ${prev ? "" : "disabled"}>${icon("left")} <span class="ms-nx">${prev ? esc(prev.t) : "Anterior"}</span><span class="ms-nc">Anterior</span></button>
+    <span class="ms-cnt">${mstep + 1} / ${ms.length}</span>
+    <button class="btn btn-gold" data-action="msPaso" data-d="1" ${next ? "" : "disabled"}><span class="ms-nx">${next ? esc(next.t) : "Fin"}</span><span class="ms-nc">${next ? "Siguiente" : "Fin"}</span> ${icon("right")}</button>
+  </div>
+  <details class="ms-todo"><summary>Ver todos los momentos de la Misa</summary>
+    ${GRUPOS.map((g, n) => `<div class="ms-tg"><h4><b>${n + 1}</b>${esc(g.t)}</h4><ol>${ms.filter((x) => x.g === g.k).map((x) => `<li><button data-action="msIrPaso" data-i="${ms.indexOf(x)}" class="${x === p ? "on" : ""}">${esc(x.t)}${x.cristo ? ' <span class="ms-dot" title="Cristo presente"></span>' : ""}</button></li>`).join("")}</ol></div>`).join("")}
+    <p class="ms-cristo"><b>Cristo está presente en la Misa de cuatro maneras:</b> en la comunidad reunida, en el sacerdote, en su Palabra y, sobre todo, en el pan y el vino consagrados (Concilio Vaticano II, Sacrosanctum Concilium 7). Los momentos con punto dorado lo destacan.</p>
+  </details>`;
 }
 // Un cáliz con la Hostia, en línea, como la lira de los Salmos.
 function caliz(cls) {
@@ -178,7 +208,7 @@ function portada(n) {
 // Bloques del librito: las lecturas y cada parte de la Misa, en orden.
 function bloques() {
   const d = diaData(dia), out = [];
-  out.push({ html: `<h3 class="ml-h" data-sec="Las lecturas">Las lecturas</h3>${d?.santo ? `<p class="ml-santo">${esc(d.santo)}</p>` : ""}` });
+  out.push({ html: `<h3 class="ml-h" data-sec="Las lecturas">Las lecturas</h3>${d?.santo ? `<p class="ml-santo">Santo del día: ${esc(santos(d.santo)[0] || "")}</p>` : ""}` });
   if (d) LECT.filter(([k]) => d[k]).forEach(([k, l]) => {
     out.push({ html: `<p class="ml-k">${l}</p><p class="ml-t">${esc(d[k].cita || "")}</p>` });
     String(d[k].texto || "").split(/\n\s*\n/).forEach((b) => out.push({ html: `<p class="ml-p">${b.split("\n").map((x) => esc(x.trim())).filter(Boolean).join("<br>")}</p>` }));
@@ -233,6 +263,17 @@ function pdf() {
 function registerActions() {
   const A = ctx.actions;
   A.msPdf = () => pdf();
+  A.msTab = (el) => { mtab = el.dataset.t; paint(); };
+  A.msPaso = (el) => { mstep += +el.dataset.d; paint(); $(".ms-mapa")?.scrollIntoView({ block: "start", behavior: "smooth" }); };
+  A.msIrPaso = (el) => { mstep = +el.dataset.i; paint(); $(".ms-mapa")?.scrollIntoView({ block: "start", behavior: "smooth" }); };
+  A.msParte = (el) => { const ms = momentos(diaData(dia)); mstep = Math.max(0, ms.findIndex((x) => x.g === el.dataset.g)); paint(); };
+  A.msLeer = (el) => { mtab = "lecturas"; paint(); setTimeout(() => document.getElementById("ms-l-" + el.dataset.k)?.scrollIntoView({ block: "start", behavior: "smooth" }), 50); };
+  A.msIr = (el, e) => { e && e.preventDefault && e.preventDefault(); document.getElementById(el.dataset.id)?.scrollIntoView({ block: "start", behavior: "smooth" }); };
+  document.addEventListener("keydown", (e) => {
+    if (mtab !== "pasos" || !$(".ms-card") || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) return;
+    if (e.key === "ArrowRight") { const b = $("[data-action=msPaso][data-d='1']"); if (b && !b.disabled) b.click(); }
+    else if (e.key === "ArrowLeft") { const b = $("[data-action=msPaso][data-d='-1']"); if (b && !b.disabled) b.click(); }
+  });
   A.msLTurn = (el) => book && book.turn(+el.dataset.d);
   A.msLGo = (el) => book && book.go(+el.dataset.p);
   let rz = 0; window.addEventListener("resize", () => { if (document.getElementById("msLibroSt")) { clearTimeout(rz); rz = setTimeout(buildLibro, 200); } });

@@ -4391,3 +4391,83 @@ a.cap-guide-btn { text-decoration: none; }
   #misaBook .ml-cr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
   #misaBook .sb-fuente { margin-top: 6mm; font-size: 8pt; color: #555; }
 }
+/* La Misa: más ordenada y didáctica */
+.ms-arch { max-width: 760px; margin: 6px auto 0; padding-bottom: 20px; }
+.ms-tabs { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; max-width: 760px; margin: 18px auto 16px; }
+.ms-tabs button { display: flex; align-items: center; justify-content: center; gap: 8px; padding: 10px 8px; border-radius: 16px; border: 2px solid var(--cn, #0b2566); background: #fff; color: var(--cn, #0b2566); font: inherit; font-weight: 800; font-size: .92rem; line-height: 1.15; cursor: pointer; box-shadow: 3px 3px 0 var(--cn, #0b2566); text-align: left; }
+.ms-tabs button b { flex: 0 0 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #fff6e5; border: 2px solid var(--cn, #0b2566); font-size: .8rem; }
+.ms-tabs button[aria-selected="true"] { background: var(--cn, #0b2566); color: #fff6e5; box-shadow: 3px 3px 0 #ffba03; }
+.ms-tabs button[aria-selected="true"] b { background: #ffba03; color: var(--cn, #0b2566); }
+#msPanel { max-width: 760px; margin: 0 auto; }
+.ms-intro { margin-bottom: 12px; line-height: 1.55; }
+.ms-santo { padding: 12px 14px; border-radius: 14px; background: #fff3c4; margin-bottom: 14px; }
+.ms-santo span { display: block; font-family: var(--font-hand); font-weight: 700; color: #c96a00; font-size: 1.25rem; line-height: 1; margin-bottom: 4px; }
+.ms-indice { list-style: none; padding: 0; margin: 0 0 18px; display: grid; gap: 6px; }
+.ms-indice a { display: flex; align-items: center; gap: 10px; padding: 8px 12px; border-radius: 12px; background: #fff; border: 1.5px solid rgba(11,37,102,.2); color: inherit; text-decoration: none; font-weight: 800; }
+.ms-indice b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: #ffba03; font-size: .8rem; }
+.ms-indice small { margin-left: auto; font-weight: 600; opacity: .7; text-align: right; }
+.ms-lec { background: #fff; border: 2px solid var(--cn, #0b2566); border-radius: 22px; box-shadow: 4px 4px 0 var(--cn, #0b2566); padding: 18px 20px; margin-bottom: 16px; scroll-margin-top: 84px; }
+.ms-lec-evangelio { box-shadow: 4px 4px 0 #ffba03; border-color: #ffba03; }
+.ms-lec header { display: flex; gap: 12px; align-items: center; padding-bottom: 10px; margin-bottom: 10px; border-bottom: 2px dashed rgba(11,37,102,.18); }
+.ms-ln { flex: 0 0 34px; height: 34px; border-radius: 50%; display: grid; place-items: center; background: var(--cn, #0b2566); color: #ffba03; font-weight: 800; }
+.ms-lec h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; line-height: 1.2; }
+.ms-lec .ms-lk { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.35rem; color: #ef591c; line-height: 1; }
+.ms-lec .ms-ltxt { border: 0; padding: 0; font-size: 1.05rem; line-height: 1.7; }
+.ms-lec-salmo .ms-ltxt { font-style: italic; }
+.ms-resp { margin-top: 12px; padding: 8px 12px; border-radius: 12px; background: #fff6e5; font-size: .95rem; }
+.ms-mapa { display: grid; grid-template-columns: repeat(5, 1fr); gap: 6px; margin-bottom: 8px; scroll-margin-top: 80px; }
+.ms-m { display: flex; flex-direction: column; align-items: center; gap: 4px; padding: 8px 4px; border-radius: 14px; border: 2px solid rgba(11,37,102,.2); background: #fff; color: var(--cn, #0b2566); font: inherit; font-size: .74rem; font-weight: 800; line-height: 1.1; text-align: center; cursor: pointer; }
+.ms-m b { width: 26px; height: 26px; border-radius: 50%; display: grid; place-items: center; background: #fff6e5; border: 2px solid var(--cn, #0b2566); font-size: .85rem; }
+.ms-m.ok b { background: #8ad2fa; }
+.ms-m.on { border-color: var(--cn, #0b2566); background: var(--cn, #0b2566); color: #fff6e5; }
+.ms-m.on b { background: #ffba03; color: var(--cn, #0b2566); }
+.ms-prog { height: 6px; border-radius: 999px; background: rgba(11,37,102,.12); overflow: hidden; margin-bottom: 14px; }
+.ms-prog i { display: block; height: 100%; background: #ffba03; border-radius: 999px; transition: width .3s; }
+.ms-card { background: #fff; border: 2px solid var(--cn, #0b2566); border-radius: 26px; box-shadow: 6px 6px 0 var(--cn, #0b2566); padding: 22px 22px 18px; display: grid; gap: 14px; animation: rosFade .35s ease; }
+.ms-card.is-cristo { box-shadow: 6px 6px 0 #ffba03; }
+.ms-ch { display: grid; gap: 4px; }
+.ms-parte-n { font-size: .78rem; font-weight: 800; letter-spacing: .06em; text-transform: uppercase; color: var(--cb, #1351a4); }
+.ms-ch h2 { font-family: var(--font-display); font-weight: 800; font-stretch: 85%; letter-spacing: -0.02em; font-size: clamp(1.8rem, 6vw, 2.5rem); line-height: 1; }
+.ms-ch .ms-post { justify-self: start; margin: 0; font-size: .8rem; padding: 3px 12px; }
+.ms-card .ms-gd { margin: 0; padding: 10px 12px; border-radius: 12px; background: #e1f3fd; font-size: .95rem; }
+.ms-card h3 { font-family: var(--font-hand); font-weight: 700; font-size: 1.4rem; line-height: 1; color: #ef591c; margin-bottom: 4px; }
+.ms-que p { font-size: 1.08rem; line-height: 1.6; }
+.ms-card .ms-cr { padding: 12px 14px; border-radius: 14px; background: #fff3c4; border-left: 5px solid #ffba03; }
+.ms-card .ms-cr h3 { color: #c96a00; }
+.ms-dos { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.ms-quien { padding: 12px 14px; border-radius: 14px; border: 2px solid rgba(11,37,102,.15); line-height: 1.55; }
+.ms-quien h3 { color: var(--cb, #1351a4); }
+.ms-nos { background: #fff6e5; border-color: #ffba03; }
+.ms-q { color: var(--cn, #0b2566); background: rgba(255,186,3,.25); border-radius: 4px; padding: 0 2px; }
+.ms-cantos .chip { margin: 2px 4px 2px 0; text-decoration: none; }
+.ms-lecbtn { margin: 0; }
+.ms-nav { display: flex; align-items: center; gap: 10px; margin: 16px 0 6px; }
+.ms-nav .btn { flex: 1; min-width: 0; justify-content: center; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ms-nav .btn[disabled] { opacity: .35; }
+.ms-cnt { font-weight: 800; font-size: .85rem; opacity: .7; font-variant-numeric: tabular-nums; }
+.ms-todo { margin-top: 14px; background: #fff; border: 2px solid rgba(11,37,102,.2); border-radius: 18px; padding: 12px 16px; }
+.ms-todo summary { cursor: pointer; font-weight: 800; }
+.ms-tg { margin-top: 12px; }
+.ms-tg h4 { display: flex; align-items: center; gap: 8px; font-weight: 800; }
+.ms-tg h4 b { width: 24px; height: 24px; border-radius: 50%; display: grid; place-items: center; background: var(--cn, #0b2566); color: #ffba03; font-size: .8rem; }
+.ms-tg ol { list-style: none; padding: 0 0 0 32px; margin: 4px 0 0; display: grid; gap: 2px; }
+.ms-tg button { background: none; border: 0; padding: 3px 0; font: inherit; color: inherit; cursor: pointer; text-align: left; }
+.ms-tg button.on { font-weight: 800; color: #ef591c; }
+.ms-dot { display: inline-block; width: 9px; height: 9px; border-radius: 50%; background: #ffba03; vertical-align: 1px; }
+.ms-todo .ms-cristo { margin: 14px 0 2px; padding: 10px 12px; border-radius: 12px; background: #fff3c4; font-size: .93rem; }
+.ms-libro-tab { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.ms-lb { padding: 18px; display: grid; gap: 8px; justify-items: start; align-content: start; }
+.ms-lb h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.4rem; }
+@media (max-width: 640px) {
+  .ms-tabs { grid-template-columns: repeat(3, 1fr); gap: 6px; }
+  .ms-tabs button { flex-direction: column; text-align: center; gap: 4px; padding: 8px 4px; font-size: .74rem; border-radius: 14px; }
+  .ms-mapa { grid-template-columns: repeat(5, minmax(0, 1fr)); }
+  .ms-m span { font-size: .62rem; }
+  .ms-dos, .ms-libro-tab { grid-template-columns: 1fr; }
+  .ms-card { padding: 18px 16px 16px; }
+  .ms-nav .btn { font-size: .85rem; padding-inline: 10px; }
+}
+.ms-nc { display: none; }
+@media (max-width: 640px) { .ms-nx { display: none; } .ms-nc { display: inline; } }
+.ms-tabs button b { flex: none; width: 26px; }
+.ms-santo small { opacity: .7; }
