@@ -1,16 +1,16 @@
 {
  "handle": "@magnificat.tv-fm",
  "channelId": "UCLc_sOTchYgGsTCMuXs3Duw",
- "via": "rss",
+ "via": "streams (rss 404)",
  "vistos": [
+  "El Papa pide reciprocidad a los musulmanes | Comentario Semanal | P. Santiago Martín FM | Magnificat",
   "2. María de Nazaret: Aviva en mí el amor y la humildad divina; Dios se hace humano | Santiago Martín",
   "Santa Misa de Hoy | Viernes, XXIX Semana del Tiempo Ordinario (23-10-2026) |Pbro. Santiago Martín FM",
   "\"El Tiempo Pasa Veloz. No lo Desperdicies\" | Homilía, Viernes XXIX Semana del T.O | P. Santiago M",
   "¿Milagro en el Vaticano? La curación del Papa y la apertura a la misa tradicional | Santiago Martín",
   "Homilía│ Memoria de San Juan Pablo II 22.10.2026│ Pbro. Javier Martín FM│ www.magnificat.tv│",
   "La Santa Misa de Hoy | Memoria de San Juan Pablo II (22-10-2026) | P. Javier Martín, FM",
-  "\"No Tengas Miedo, Cristo ha Vencido al Mundo\" | Homilía, San Juan Pablo II, Papa | P. Santiago M",
-  "La salud de León XIV, la polémica de Amoris laetitia y la caída del apoyo católico a Trump. Noticias"
+  "\"No Tengas Miedo, Cristo ha Vencido al Mundo\" | Homilía, San Juan Pablo II, Papa | P. Santiago M"
  ],
  "fuente": "Magnificat TV (YouTube)",
  "days": {
@@ -19,8 +19,8 @@
    "title": "Santa Misa de Hoy | Viernes, XXIX Semana del Tiempo Ordinario (23-10-2026) |Pbro. Santiago Martín FM"
   },
   "2026-10-22": {
-   "id": "XadudjoJRFA",
-   "title": "¿Milagro en el Vaticano? La curación del Papa y la apertura a la misa tradicional | Santiago Martín"
+   "id": "xWDBfd47khc",
+   "title": "La Santa Misa de Hoy | Memoria de San Juan Pablo II (22-10-2026) | P. Javier Martín, FM"
   },
   "2026-10-21": {
    "id": "FGFIjOEircc",
@@ -29,8 +29,34 @@
   "2026-10-20": {
    "id": "lvJMXjnAxzk",
    "title": "La Santa Misa de Hoy | Martes, XXIX Semana del Tiempo Ordinario (20-10-2026) | P. Javier Martín, FM"
+  },
+  "2026-10-19": {
+   "id": "bawOsU4gWSA",
+   "title": "La Santa Misa de Hoy | Lunes, XXIX Semana del Tiempo Ordinario (19-10-2026) | P. Javier Martín, FM"
+  },
+  "2026-10-18": {
+   "id": "05tf_z-_ioY",
+   "title": "La Santa Misa de Hoy | Domingo XXIX del Tiempo Ordinario (18-10-2026) | Pbro. Javier Martín, FM"
+  },
+  "2026-10-17": {
+   "id": "j73xD2sTTkE",
+   "title": "Santa Misa de Hoy | Memoria de San Ignacio de Antioquía (17-10-2026) | Pbro. Santiago Martín, FM"
+  },
+  "2026-10-16": {
+   "id": "bG_Mx2ywQHE",
+   "title": "Santa Misa de Hoy | Viernes XXVIII Semana del Tiempo Ordinario (16-10-2026) Pbro. Santiago Martín FM"
+  },
+  "2026-10-15": {
+   "id": "WLqzb4a78So",
+   "title": "La Santa Misa de Hoy | Memoria de Santa Teresa de Jesús (15-10-2026) | P. Javier Martín, FM"
+  },
+  "2026-10-14": {
+   "id": "DShKBjqZjNw",
+   "title": "Santa Misa de Hoy | Miércoles XXVIII Semana del Tiempo Ord. (14-10-2026) | Pbro. Santiago Martín, FM"
+  },
+  "2026-10-13": {
+   "id": "QiYWO5P8Qok",
+   "title": "La Santa Misa de Hoy | Martes, XXVIII Semana del Tiempo Ordinario (13-10-2026)| P. Javier Martín, FM"
   }
- },
- "error": "Sin videos: streams (rss 404), página 2789155 bytes",
- "revisado": "2026-10-24T02"
+ }
 }
