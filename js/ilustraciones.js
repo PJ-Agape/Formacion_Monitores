@@ -288,9 +288,15 @@ const SCENES = {
     + P("M150 168 L150 132 L188 132 L200 146 L216 148 L216 168 Z", 'fill="#9bbf8a" stroke="currentColor"') + P("M190 136 L198 146 L190 146 Z", 'fill="var(--il-bg,#fff)"') + C(162, 168, 7, 'fill="var(--il-bg,#fff)"') + C(204, 168, 7, 'fill="var(--il-bg,#fff)"') + heart(168, 118, 6) + ground(),
   lauravicuna: () => person(110, 170, { arms: "hold", robe: NAVY, len: 22, hair: "#3b2a20", long: true, collar: "#fff", pants: "var(--il-bg,#fff)" }) + lily(140, 150, 50) + sparkle(70, 60) + sparkle(180, 70, 5) + ground(),
   santoschile: () => mountains() + person(80, 172, { arms: "pray", robe: "#9b7a5a", veil: NAVY, collar: "#fff", face: "calm", s0: .82 }) + person(162, 172, { arms: "wave", robe: NAVY, hair: "#3b2a20", collar: "#fff", s0: .82, flip: -1 }),
-  virgencarmen: () => P("M196 168 L196 66", 'stroke-width="3"') + P("M196 68 h40 v13 h-40 Z", 'fill="var(--il-bg,#fff)"') + P("M196 81 h40 v13 h-40 Z", 'fill="#e05a4f" stroke="currentColor"') + P("M196 68 h14 v13 h-14 Z", 'fill="#3d6fc4" stroke="currentColor"') + C(203, 74.5, 2.2, 'fill="#fff" stroke="none"')
-    + person(104, 170, { arms: "hold", robe: "#8a5a3c", veil: "var(--il-bg,#fff)", stars: true, face: "calm" }) + person(126, 134, { arms: "open", robe: "var(--il-bg,#fff)", hair: CAFE, s0: .42 })
-    + P("M92 70 L95 58 L101 65 L104 54 L107 65 L113 58 L116 70 Z", POP) + P("M70 120 h12 v14 h-12 Z M70 120 q6 -10 12 0", 'fill="#8a5a3c" stroke="currentColor" stroke-width="2"') + ground(10, 180),
+  // Virgen del Carmen: hábito café, manto blanco y escapulario, corona, el Niño en brazos y la bandera de Chile.
+  virgencarmen: () => P("M58 168 L58 92 A62 62 0 0 1 182 92 L182 168 Z", 'fill="#cfe6f5" stroke="none"')
+    + P("M196 168 L196 92", 'stroke-width="3"') + P("M196 94 h30 v10 h-30 Z", 'fill="#fbf4e6" stroke="none"') + P("M196 104 h30 v10 h-30 Z", 'fill="#d63a33" stroke="none"')
+    + P("M196 94 h11 v10 h-11 Z", 'fill="#2f5fb3" stroke="none"') + C(201.5, 99, 1.8, 'fill="#fff" stroke="none"')
+    + person(116, 170, { arms: "hold", robe: "#7a4b2e", cape: "#fbf4e6", veil: "#fbf4e6", band: "#c9a24a", stars: true, face: "calm" })
+    + P("M100 70 L102 55 L109 63 L116 50 L123 63 L130 55 L132 70 Z", POP)
+    + person(136, 140, { arms: "open", robe: "#f2e3b8", hair: CAFE, s0: .45, halo: true })
+    + P("M92 128 q4 10 8 14 M100 128 q-2 10 2 16", 'stroke="#5a3d2b" stroke-width="1.6"') + P("M95 142 h10 v12 h-10 Z", 'fill="#6b4024" stroke="none"') + C(100, 148, 2, 'fill="#c9a24a" stroke="none"')
+    + ground(10, 230),
   fraiandresito: () => person(96, 170, { arms: "hold", robe: "#8a6a4a", hair: CANA, beard: CANA, belt: "#f3e6c8", halo: false })
     + P("M108 126 q14 -2 22 6 l-4 22 q-12 6 -22 -2 Z", 'fill="#d7c49e" stroke="currentColor"') + P("M112 126 q4 -10 14 -4", 'stroke-width="2"') + fig(166, 168, { arms: "out", s: .55, flip: -1 }) + heart(150, 76, 8) + ground(),
   ceferino: () => P("M190 168 L190 74", 'stroke-width="4"') + P("M172 76 q18 -16 36 0 M168 94 q22 -14 44 0 M164 112 q26 -14 52 0 M160 130 q30 -14 60 0", 'stroke="#5e9a5a" stroke-width="3.2"')
