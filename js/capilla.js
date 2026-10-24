@@ -332,7 +332,7 @@ export function view(opt = {}) {
   </section>
 
   <section class="cap-rosbanner" id="cap-maria" aria-labelledby="capRosT">
-    <div class="cap-rosbanner-art">${illus("virgen", "cap-rosbanner-il")}</div>
+    <div class="cap-rosbanner-art">${virgenLinea("cap-rosbanner-il")}</div>
     <div class="cap-rosbanner-txt">
       <span class="cap-hand">con María, cuenta a cuenta</span>
       <h2 id="capRosT">Reza el <em>Rosario</em></h2>
@@ -684,6 +684,29 @@ function rosLoad(set) {
   try { const s = JSON.parse(localStorage.getItem(ROS_KEY) || "null"); if (s && s.set === set && s.day === todayKey()) return +s.i || 0; } catch {}
   return 0;
 }
+// María con el Niño, en línea fina (dibujo propio de la app). Las aureolas usan --halo.
+function virgenLinea(cls = "") {
+  return `<svg class="virgen-linea ${cls}" viewBox="0 0 300 340" fill="none" stroke="currentColor" stroke-width="4.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+  <g transform="rotate(6 130 330)">
+    <path class="vl-halo" d="M70 128 C 62 64, 108 22, 160 26 C 206 30, 232 70, 226 118" stroke-width="3.6"/>
+    <path d="M142 44 C 106 46, 86 76, 82 116 C 78 160, 66 204, 44 246 C 28 276, 18 306, 12 338" stroke-width="5.2"/>
+    <path d="M142 44 C 182 42, 206 70, 208 108 C 210 132, 204 152, 196 168" stroke-width="5.2"/>
+    <path d="M118 74 C 100 98, 96 132, 100 164 C 104 200, 98 244, 82 296 C 78 312, 74 326, 72 338"/>
+    <path d="M118 74 C 138 60, 168 62, 182 80 C 190 92, 192 108, 190 124"/>
+    <path d="M90 214 C 78 250, 62 290, 52 334" stroke-width="3"/>
+    <path d="M126 96 C 120 122, 126 148, 142 162 C 152 170, 164 168, 172 158 C 180 146, 184 124, 180 104"/>
+    <path d="M138 166 C 138 176, 134 184, 126 190 M126 190 C 140 198, 158 198, 172 192 M190 124 C 192 150, 184 172, 172 192 M126 190 C 124 230, 130 270, 140 300"/>
+  </g>
+  <path class="vl-halo" d="M184 214 C 182 184, 204 164, 230 166 C 258 168, 274 192, 270 218 C 268 232, 260 244, 250 250" stroke-width="3.6"/>
+  <path d="M204 220 C 200 200, 214 188, 230 190 C 246 192, 254 206, 250 222 C 246 236, 236 244, 224 242 C 212 240, 206 232, 204 220 Z"/>
+  <path d="M206 207 q2 -9 10 -8 q3 -7 11 -5 q7 -3 12 3 q7 3 7 10 M251 214 q5 3 2 8" stroke-width="3.2"/>
+  <path d="M212 241 C 200 256, 192 278, 194 300 M240 243 C 256 260, 262 284, 256 304 M212 252 C 200 236, 190 214, 182 196"/>
+  <path d="M182 196 q-6 -7 -10 -1 q-2 6 5 7" stroke-width="3.4"/>
+  <path d="M238 262 C 234 276, 224 284, 212 286" stroke-width="3.6"/>
+  <path d="M136 302 C 160 296, 186 298, 204 306 C 222 314, 244 314, 256 304" stroke-width="4.6"/>
+  <path d="M256 304 C 266 300, 270 290, 266 282 M248 312 C 258 312, 266 306, 268 298 M150 338 C 156 320, 170 310, 190 308" stroke-width="3.4"/>
+</svg>`;
+}
 function openRosary(set) {
   set = MYST[set] ? set : MYST_BY_DAY[new Date().getDay()];
   closeRosary();
@@ -699,6 +722,7 @@ function openRosary(set) {
     <div class="ros-sets" role="tablist" aria-label="Misterios">${Object.keys(MYST).map((k) =>
       `<button role="tab" data-action="rosSet" data-set="${k}" aria-selected="${k === set}">${esc(MYST[k].name.replace("Misterios ", ""))}${k === today ? " · hoy" : ""}</button>`).join("")}</div>
     <div class="ros-stage">
+      <div class="ros-maria" aria-hidden="true">${virgenLinea()}</div>
       ${rosarySVG()}
       <div class="ros-center" data-action="rosNext" aria-live="polite"></div>
     </div>
@@ -759,11 +783,12 @@ function rosPaint() {
       ${s.k === "fin" ? papa.finHTML() : ""}
     </div>`;
   el.querySelector(".ros-center").scrollTop = 0;
+  el.querySelector(".ros-maria")?.classList.toggle("is-fin", s.k === "fin");
   const decade = s.d != null ? `Decena ${s.d + 1} de 5` : s.k === "fin" ? "Terminado" : s.k === "sa" ? "Salve" : "Inicio";
   el.querySelector("#rosProg").textContent = decade;
   el.querySelector("[data-action=rosPrev]").disabled = i === 0;
   const nb = el.querySelector("#rosNextBtn");
-  nb.innerHTML = s.k === "fin" ? `Volver a empezar ${icon("undo")}` : `${nextK ? esc(PR[nextK][0]) : "Siguiente"} ${icon("right")}`;
+  nb.innerHTML = s.k === "fin" ? `Otra vez ${icon("undo")}` : `${nextK ? esc(PR[nextK][0]) : "Siguiente"} ${icon("right")}`;
   rosSave();
   if (voz.on) guiar(s, title);
   if (remote) { remoteMeta(); keepAlive(); }

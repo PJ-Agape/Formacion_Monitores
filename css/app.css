@@ -4308,3 +4308,9 @@ a.cap-guide-btn { text-decoration: none; }
   55% { opacity: 1; transform: translate(calc(var(--dx) * .7), -120px) scale(var(--s)) rotate(calc(var(--rot) * -.4)); }
   100% { opacity: 0; transform: translate(var(--dx), -230px) scale(calc(var(--s) * .9)) rotate(var(--rot)); }
 }
+/* María en línea fina */
+.virgen-linea { display: block; width: 100%; height: auto; overflow: visible; }
+.virgen-linea .vl-halo { stroke: var(--halo, currentColor); }
+.cap-rosbanner-art .virgen-linea { color: #fff6e5; --halo: #ffba03; max-width: 210px; margin: 0 auto; filter: drop-shadow(0 0 16px rgba(255,186,3,.25)); }
+.ros-maria { position: absolute; left: calc(78 / 360 * 100%); top: calc(44 / 524 * 100%); width: calc(204 / 360 * 100%); color: #fff6e5; --halo: #ffba03; opacity: .1; pointer-events: none; transition: opacity 1.2s ease, transform 1.2s ease; }
+.ros-maria.is-fin { opacity: .3; }
