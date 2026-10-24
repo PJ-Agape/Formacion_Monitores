@@ -7,18 +7,22 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 const OUT = process.argv[2] || "data/misa.json";
 const DAYS = +process.env.DIAS_MISA || 8;
 const API = "https://feed.evangelizo.org/v2/reader.php";
+const V = 2; // si cambia el formato, se vuelven a pedir los días guardados
+const pausa = (ms) => new Promise((r) => setTimeout(r, ms));
 const get = async (params) => {
+  await pausa(250); // sin apuro: la fuente es un servicio gratuito
   const r = await fetch(`${API}?${new URLSearchParams({ lang: "SP", ...params })}`, { headers: { "User-Agent": "PastoralAgape/1.0" } });
   if (!r.ok) throw new Error(`${r.status} ${params.type} ${params.content || ""}`);
   return (await r.text()).trim();
 };
 // Texto limpio conservando los saltos de línea (los versos del salmo, los párrafos).
-const clean = (html) => String(html || "").replace(/\r/g, "").replace(/<br\s*\/?>/gi, "\n").replace(/<\/p>/gi, "\n\n").replace(/<[^>]+>/g, "")
+const clean = (html) => String(html || "").replace(/\r?\n/g, " ").replace(/<br\s*\/?>/gi, "\n").replace(/<\/p>/gi, "\n\n").replace(/<[^>]+>/g, "")
   .replace(/&nbsp;/g, " ").replace(/&quot;/g, '"').replace(/&amp;/g, "&").replace(/&#(\d+);/g, (_, n) => String.fromCharCode(+n))
   .replace(/[ \t]+/g, " ").replace(/ *\n */g, "\n").replace(/\n{3,}/g, "\n\n").trim();
-const sinCopy = (t) => t.replace(/\n?\s*Copyright[\s\S]*$/i, "").replace(/\n?\s*Para recibir[\s\S]*$/i, "").trim();
+const sinCopy = (t) => t.replace(/\n?\s*Copyright[\s\S]*$/i, "").replace(/\n?\s*Para recibir[\s\S]*$/i, "").replace(/\n?\s*Extra[ií]do de la Biblia[^\n]*$/i, "").trim();
 
-const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : { days: {} };
+let prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : { days: {} };
+if (prev.v !== V) prev = { days: {} };
 const days = {};
 const today = new Date(new Date().toLocaleString("en-US", { timeZone: "America/Santiago" }));
 const PARTES = [["FR", "primera"], ["PS", "salmo"], ["SR", "segunda"], ["GSP", "evangelio"]];
@@ -33,10 +37,11 @@ for (let i = -1; i < DAYS; i++) {
     for (const [c, k] of PARTES) {
       let texto = "";
       try { texto = sinCopy(clean(await get({ date, type: "reading", content: c }))); } catch {}
-      if (!texto) continue;
-      const cita = clean(await get({ date, type: "reading_st", content: c }).catch(() => "")).replace(/[.\s]+$/, "");
-      const titulo = clean(await get({ date, type: "reading_lt", content: c }).catch(() => ""));
-      dia[k] = { cita, titulo, texto: texto.slice(0, 9000) };
+      if (!texto || texto.length < 120) continue; // los días de semana no hay segunda lectura
+      // El título largo trae el libro y la cita («Carta de San Pablo a los Efesios 4,1-6.»); si no viene, la cita corta.
+      const titulo = clean(await get({ date, type: "reading_lt", content: c }).catch(() => "")).replace(/[.\s]+$/, "");
+      const cita = titulo || clean(await get({ date, type: "reading_st", content: c }).catch(() => "")).replace(/[.\s]+$/, "");
+      dia[k] = { cita, texto: texto.slice(0, 9000) };
     }
     if (dia.evangelio) days[iso] = dia;
   } catch (e) {
@@ -44,6 +49,6 @@ for (let i = -1; i < DAYS; i++) {
     if (prev.days && prev.days[iso]) days[iso] = prev.days[iso];
   }
 }
-const out = { fuente: "Textos litúrgicos: © Evangelizo.org (evangeliodeldia.org)", days };
+const out = { v: V, fuente: "Textos bíblicos: La Biblia, Libro del Pueblo de Dios · Servicio de Evangelizo.org (evangeliodeldia.org)", days };
 if (JSON.stringify(out.days) !== JSON.stringify(prev.days)) { writeFileSync(OUT, JSON.stringify(out, null, 1) + "\n"); console.log("misa.json:", Object.keys(days).length, "días"); }
 else console.log("misa.json sin cambios");

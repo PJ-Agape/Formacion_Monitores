@@ -96,7 +96,7 @@ function paint() {
     ${d?.santo ? `<p class="ms-santo"><b>Santo del día:</b> ${esc(d.santo)}</p>` : ""}
     ${d ? `<div class="ms-lects">${LECT.filter(([k]) => d[k]).map(([k, l], n) => `<details class="ms-lect" ${n === 0 && !d.primera ? "open" : ""}${k === "evangelio" ? " open" : ""}>
         <summary><span class="ms-lk">${l}</span><b>${esc(d[k].cita || "")}</b>${icon("down")}</summary>
-        <div class="ms-ltxt">${d[k].titulo ? `<p class="ms-lt">${esc(d[k].titulo)}</p>` : ""}${textoLectura(d[k].texto, k === "salmo")}
+        <div class="ms-ltxt">${textoLectura(d[k].texto, k === "salmo")}
           <p class="ms-resp">${k === "evangelio" ? "Palabra del Señor. <b>Gloria a ti, Señor Jesús.</b>" : k === "salmo" ? "" : "Palabra de Dios. <b>Te alabamos, Señor.</b>"}</p></div></details>`).join("")}</div>
       <p class="xs muted ms-fuente">${esc(data.fuente || "")}</p>`
       : g ? `<div class="card ms-falta"><p>Evangelio: <b>${esc(g.cita)}</b>. ${g.frase ? `«${esc(g.frase)}»` : ""}</p><p class="small muted">Las lecturas completas de este día aún no están disponibles en la app.</p>
@@ -180,7 +180,7 @@ function bloques() {
   const d = diaData(dia), out = [];
   out.push({ html: `<h3 class="ml-h" data-sec="Las lecturas">Las lecturas</h3>${d?.santo ? `<p class="ml-santo">${esc(d.santo)}</p>` : ""}` });
   if (d) LECT.filter(([k]) => d[k]).forEach(([k, l]) => {
-    out.push({ html: `<p class="ml-k">${l} · ${esc(d[k].cita || "")}</p>${d[k].titulo ? `<p class="ml-t">${esc(d[k].titulo)}</p>` : ""}` });
+    out.push({ html: `<p class="ml-k">${l}</p><p class="ml-t">${esc(d[k].cita || "")}</p>` });
     String(d[k].texto || "").split(/\n\s*\n/).forEach((b) => out.push({ html: `<p class="ml-p">${b.split("\n").map((x) => esc(x.trim())).filter(Boolean).join("<br>")}</p>` }));
   });
   else out.push({ html: `<p class="ml-p">Las lecturas de este día aún no están disponibles en la app.</p>` });
