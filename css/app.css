@@ -4361,3 +4361,9 @@ html.papel {
 }
 @media (prefers-color-scheme: dark) { html.papel { --pp-bd: rgba(255, 246, 229, .10); } }
 @media (max-width: 400px) { .bottom-nav a { font-size: .66rem !important; letter-spacing: -.01em; } .bottom-nav .ico-wrap { width: 46px !important; } }
+/* La Misa de hoy va primero en la Capilla, sobre el Evangelio (dentro del arco claro) */
+.cap-arch .cap-misa { margin: 18px auto 14px; max-width: 520px; }
+.cap-arch .cap-misa .cap-hand { color: var(--accent-2, #ef591c); font-size: 1.5rem; }
+.cap-arch .cap-misa .cap-ev-note { color: var(--cn, #0b2566); opacity: .85; }
+.cap-arch .cap-misa .cap-ev-note a { color: #c96a00; }
+.cap-arch .cap-misa .ev-video { box-shadow: var(--pp-sh-l, 4px 4px 0 #ffba03); border: 0; }

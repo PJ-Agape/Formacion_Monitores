@@ -351,6 +351,7 @@ export function view(opt = {}) {
         <span class="cap-season"><i></i>${esc(s.name)} · color ${esc(s.color)}</span>
         <span class="cap-date">${esc(now.toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" }))}</span>
       </div>
+      <div class="cap-misa" id="capMisa">${misaHTML()}</div>
       <div class="cap-gospel" id="capGospel">${gospelHTML(s)}</div>
     </div>
     <article class="cap-moment">
@@ -363,7 +364,6 @@ export function view(opt = {}) {
         <a class="btn cap-oremus" href="#/cancionero"><span aria-hidden="true">♪</span> Cancionero <small>cantar es rezar dos veces</small></a>
         ${ctx.cloud.enabled && st().isAdmin ? `<button class="btn btn-sm btn-ghost cap-mv-edit" data-action="capMisaVivo">${icon("edit")} Cambiar el enlace de la Misa en vivo</button>` : ""}
       </div>
-      <div class="cap-misa" id="capMisa">${misaHTML()}</div>
     </article>
   </section>
 
