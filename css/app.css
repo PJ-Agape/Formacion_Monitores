@@ -4471,3 +4471,87 @@ a.cap-guide-btn { text-decoration: none; }
 @media (max-width: 640px) { .ms-nx { display: none; } .ms-nc { display: inline; } }
 .ms-tabs button b { flex: none; width: 26px; }
 .ms-santo small { opacity: .7; }
+
+/* La Misa para seguir en orden (v313) */
+.ms-santo-h { margin: 10px auto 0; font-size: .92rem; font-weight: 700; opacity: .85; }
+.ms-bar { position: sticky; top: calc(var(--header-h, 64px) + 6px); z-index: 5; display: flex; align-items: center; gap: 6px; max-width: 760px; margin: 16px auto 10px; padding: 6px; border-radius: 999px; background: rgba(255,246,229,.94); backdrop-filter: blur(6px); border: 2px solid var(--cn, #0b2566); box-shadow: 3px 3px 0 var(--cn, #0b2566); }
+.ms-seguir { display: inline-flex; align-items: center; gap: 6px; padding: 8px 14px; border-radius: 999px; border: 2px solid var(--cn, #0b2566); background: #fff; color: var(--cn, #0b2566); font: inherit; font-weight: 800; cursor: pointer; }
+.ms-seguir svg { width: 16px; height: 16px; }
+.ms-seguir.on { background: var(--cn, #0b2566); color: #ffba03; }
+.ms-letra { display: inline-flex; border: 2px solid var(--cn, #0b2566); border-radius: 999px; overflow: hidden; margin-left: auto; }
+.ms-letra button { border: 0; background: #fff; color: var(--cn, #0b2566); font: inherit; font-weight: 800; width: 36px; height: 34px; cursor: pointer; }
+.ms-letra button:first-child { font-size: .8rem; border-right: 2px solid var(--cn, #0b2566); }
+.ms-letra button:last-child { font-size: 1.15rem; }
+.ms-bb { display: inline-flex; align-items: center; gap: 5px; padding: 7px 10px; border-radius: 999px; border: 2px solid var(--cn, #0b2566); background: #fff; color: var(--cn, #0b2566); font: inherit; font-weight: 800; font-size: .85rem; text-decoration: none; cursor: pointer; }
+.ms-bb svg { width: 16px; height: 16px; }
+@media (max-width: 520px) { .ms-bb span { display: none; } .ms-bb { padding: 7px; } .ms-seguir { font-size: .86rem; padding: 7px 10px; white-space: nowrap; } .ms-letra button { width: 32px; } }
+.ms-partes-nav { display: flex; gap: 6px; overflow-x: auto; max-width: 760px; margin: 0 auto 8px; padding: 2px 2px 6px; scrollbar-width: none; }
+.ms-partes-nav a { flex: none; display: inline-flex; align-items: center; gap: 6px; padding: 6px 12px 6px 6px; border-radius: 999px; background: #fff; border: 1.5px solid rgba(11,37,102,.25); color: var(--cn, #0b2566); font-weight: 800; font-size: .85rem; text-decoration: none; }
+.ms-partes-nav b { width: 22px; height: 22px; border-radius: 50%; display: grid; place-items: center; background: #ffba03; font-size: .75rem; }
+.ms-leyenda { display: flex; flex-wrap: wrap; gap: 6px 16px; max-width: 760px; margin: 4px auto 6px; font-size: .82rem; opacity: .85; }
+.ms-leyenda span { display: inline-flex; align-items: center; gap: 6px; }
+.ms-rub-i { font-style: italic; color: #b23a0e; }
+.ms-flujo { max-width: 760px; margin: 0 auto; font-size: calc(1rem * var(--ms-fs, 1)); }
+.ms-gh { display: flex; gap: 12px; align-items: flex-start; margin: 30px 0 10px; scroll-margin-top: 140px; font-family: var(--font-display); font-weight: 800; font-size: 1.4em; line-height: 1.1; color: var(--cn, #0b2566); }
+.ms-gh > b { flex: 0 0 36px; height: 36px; border-radius: 50%; display: grid; place-items: center; background: var(--cn, #0b2566); color: #ffba03; font-size: .7em; }
+.ms-gh small { display: block; font-family: var(--font-body, inherit); font-weight: 600; font-size: .55em; opacity: .7; margin-top: 4px; line-height: 1.35; }
+.ms-mo { position: relative; background: #fff; border: 2px solid rgba(11,37,102,.18); border-radius: 20px; padding: 14px 18px 12px; margin-bottom: 12px; scroll-margin-top: 140px; transition: border-color .2s, box-shadow .2s, opacity .2s; }
+.ms-mo.is-cristo { border-left: 6px solid #ffba03; }
+body.ms-siguiendo .ms-mo { opacity: .55; cursor: pointer; }
+body.ms-siguiendo .ms-mo.on { opacity: 1; border-color: var(--cn, #0b2566); box-shadow: 4px 4px 0 #ffba03; cursor: auto; }
+.ms-mh { display: flex; align-items: center; gap: 10px; flex-wrap: wrap; margin-bottom: 6px; }
+.ms-mh h3 { font-family: var(--font-display); font-weight: 800; font-size: 1.18em; line-height: 1.15; color: var(--cn, #0b2566); }
+.ms-mo .ms-post { margin-left: auto; }
+.ms-info { margin: 0 0 10px; }
+.ms-info summary { cursor: pointer; display: inline-block; font-size: .82em; font-weight: 800; color: var(--cb, #1351a4); padding: 2px 10px; border-radius: 999px; background: #e1f3fd; list-style: none; }
+.ms-info summary::-webkit-details-marker { display: none; }
+.ms-info[open] summary { margin-bottom: 8px; }
+.ms-info p { font-size: .92em; line-height: 1.5; margin: 0 0 6px; }
+.ms-lines { display: grid; gap: 7px; }
+.ms-l { display: grid; grid-template-columns: 52px 1fr; gap: 8px; line-height: 1.55; margin: 0; }
+.ms-who { font-style: normal; font-size: .72rem; font-weight: 800; letter-spacing: .02em; text-transform: uppercase; color: #8a93a8; padding-top: .25em; }
+.ms-leyenda .ms-who { padding: 0; }
+.ms-p .ms-who, .ms-t .ms-who, .ms-wp { color: #c96a00; }
+.ms-p b { color: var(--cn, #0b2566); font-weight: 800; }
+.ms-t > div { padding: 10px 14px; border-radius: 14px; background: #fff6e5; border-left: 4px solid #ffba03; font-weight: 700; color: var(--cn, #0b2566); line-height: 1.6; }
+.ms-t p + p { margin-top: 8px; }
+.ms-in { display: inline-block; font-weight: 500; font-style: italic; color: #b23a0e; font-size: .9em; }
+.ms-rub { margin: 2px 0 2px 60px; font-style: italic; color: #b23a0e; font-size: .92em; line-height: 1.45; }
+@media (max-width: 520px) { .ms-l { display: block; } .ms-l .ms-who { display: inline; margin-right: 6px; } .ms-t .ms-who { display: block; margin-bottom: 4px; } .ms-rub { margin-left: 0; } .ms-mo { padding: 12px 14px 10px; } }
+.ms-alt { margin-left: 60px; }
+.ms-alt summary { cursor: pointer; font-size: .88em; font-weight: 800; color: var(--cb, #1351a4); }
+.ms-alt .ms-t > div { margin-top: 6px; background: #f3f6fb; border-left-color: var(--cb, #1351a4); }
+@media (max-width: 520px) { .ms-alt { margin-left: 0; } }
+.ms-mo .ms-lec { margin: 4px 0; padding: 14px 16px; border-radius: 16px; box-shadow: none; border: 2px solid rgba(11,37,102,.15); background: #fffdf7; }
+.ms-mo .ms-lec-evangelio { border-color: #ffba03; }
+.ms-mo .ms-lec .ms-cita { font-family: var(--font-hand); font-weight: 700; font-size: 1.25em; color: #ef591c; line-height: 1.1; margin-bottom: 8px; }
+.ms-mo .ms-lec .ms-ltxt { font-size: 1.04em; line-height: 1.7; }
+.ms-mo .ms-lec-salmo .ms-ltxt { font-style: italic; }
+.ms-mo .ms-lec-falta { display: grid; gap: 8px; justify-items: start; font-size: .95em; }
+.ms-mo .ms-cantos { display: flex; flex-wrap: wrap; align-items: center; gap: 6px; margin: 10px 0 0; padding-top: 8px; border-top: 1.5px dashed rgba(11,37,102,.15); }
+.ms-mo .ms-cantos > span { font-family: var(--font-hand); font-weight: 700; color: #c96a00; font-size: 1.1rem; margin-right: 4px; }
+.ms-mo .ms-cr { margin-top: 6px; }
+.ms-follow { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(12px + env(safe-area-inset-bottom)); z-index: 30; width: min(760px, calc(100% - 24px)); display: flex; align-items: center; gap: 8px; padding: 8px; border-radius: 20px; background: var(--cn, #0b2566); box-shadow: 0 8px 24px rgba(11,37,102,.35); }
+.ms-follow[hidden] { display: none; }
+.ms-follow .btn { flex: none; display: inline-flex; align-items: center; gap: 4px; }
+.ms-follow .btn-ghost { background: #fff; }
+.ms-fnow { flex: 1; min-width: 0; text-align: center; color: #fff6e5; font-weight: 800; font-size: .92rem; line-height: 1.15; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ms-fnow small { display: block; font-weight: 600; font-size: .72rem; opacity: .7; }
+@media (max-width: 420px) { .ms-follow .btn span { display: none; } }
+body.ms-siguiendo .cap-foot { margin-bottom: 90px; }
+.ml-s { margin: 0 0 .35em; }
+.ml-s i, .ml-r i, .ml-o i { font-style: normal; font-size: .75em; font-weight: 800; color: #8a93a8; }
+.ml-r i, .ml-o i { color: #c96a00; }
+.ml-r { margin: 0 0 .45em; color: var(--cn, #0b2566); }
+.ml-o { margin: 0 0 .4em; padding-left: .6em; border-left: 3px solid #ffba03; font-weight: 700; color: var(--cn, #0b2566); }
+.ml-o2 { border-left-color: var(--cb, #1351a4); font-weight: 500; font-size: .92em; }
+.ml-in { font-weight: 500; color: #b23a0e; }
+.ml-rub { font-style: italic; color: #b23a0e; font-size: .88em; margin: 0 0 .35em; }
+.ml-t { font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-style: normal; opacity: 1; font-size: 1.1em; margin: .2em 0 .2em; }
+.ml-pt { margin-top: .7em; }
+@media print {
+  #misaBook .ml-s, #misaBook .ml-r, #misaBook .ml-o, #misaBook .ml-rub { break-inside: avoid; }
+  #misaBook .ml-pt, #misaBook .ml-t { break-after: avoid; }
+  #misaBook .ml-o { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+}
+body.ms-siguiendo .bottom-nav, body.ms-siguiendo .help-fab { display: none !important; }

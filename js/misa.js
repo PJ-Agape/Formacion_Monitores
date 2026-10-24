@@ -1,10 +1,12 @@
-// La Misa de hoy: la liturgia del día (lecturas completas, santo, tiempo litúrgico) y la Misa
-// paso a paso (qué pasa, Cristo presente, qué hace el sacerdote, qué hacemos, cantos sugeridos).
-// Se lee en la app, se hojea como librito y se imprime en PDF.
+// La Misa del día para seguirla en orden: lo que dice el sacerdote, lo que respondemos, las
+// oraciones de todos y las lecturas completas del día en su lugar. Cada momento tiene una
+// explicación breve («¿Qué pasa aquí?») y cantos sugeridos. Con el modo «Seguir paso a paso»
+// se destaca el momento en que vamos. Se hojea como librito y se imprime en PDF.
 
 import { esc, icon, toast, fetchJSON } from "./util.js";
 import { season } from "./capilla.js";
 import { GRUPOS, PARTES } from "./misa-partes.js";
+import { ORDINARIO } from "./misa-ordinario.js";
 import { createBook, splitByHeight } from "./libro.js";
 import { songList } from "./cancionero.js";
 
@@ -16,6 +18,8 @@ const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, 
 const dateOf = (iso) => new Date(iso + "T12:00");
 const largo = (iso) => dateOf(iso).toLocaleDateString("es-CL", { weekday: "long", day: "numeric", month: "long" });
 const cap1 = (t) => t.charAt(0).toUpperCase() + t.slice(1);
+const store = { get(k, d) { try { const v = localStorage.getItem(k); return v == null ? d : JSON.parse(v); } catch { return d; } },
+  set(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch {} } };
 
 let data = null, gospel = null, dia = "", songs = [];
 async function load() {
@@ -39,31 +43,78 @@ function cantos(slot, iso, n = 3) {
   return Array.from({ length: Math.min(n, l.length) }, (_, i) => l[(seed * 7 + i * 5) % l.length]).filter((x, i, a) => a.indexOf(x) === i);
 }
 
+// Qué momentos van este día: el Gloria, el Credo y la segunda lectura no van siempre.
+function momentos(iso) {
+  const d = diaData(iso), g = (gospel?.days || {})[iso];
+  const tit = d?.titulo || g?.titulo || "", key = season(dateOf(iso)).key;
+  const dom = dateOf(iso).getDay() === 0 || /domingo/i.test(tit);
+  const solemne = /solemnidad|natividad del señor|santa maría, madre de dios|ascensión|pentecost|santísima trinidad|cuerpo y la sangre|sagrado corazón|asunción|todos los santos|inmaculada|san josé|san pedro y san pablo|cristo, rey/i.test(tit);
+  const fiesta = solemne || /fiesta|octava/i.test(tit);
+  const ok = { gloria: (dom && key !== "adviento" && key !== "cuaresma") || fiesta, credo: dom || solemne, segunda: d ? !!d.segunda : dom };
+  return ORDINARIO.filter((m) => !m.solo || ok[m.solo]);
+}
+const infoDe = (k) => PARTES.find((p) => p.k === k) || {};
+
 // ---------------------------------------------------------------------------
 // Vista  (#/misa  o  #/misa/AAAA-MM-DD)
 // ---------------------------------------------------------------------------
+let seguir = store.get("agape_misa_seguir", false), letra = store.get("agape_misa_letra", 0), mi = 0, diaPaso = "";
 export function view(iso) {
   dia = /^\d{4}-\d{2}-\d{2}$/.test(iso || "") ? iso : isoOf(new Date());
+  if (diaPaso !== dia) { mi = 0; diaPaso = dia; }
   ctx.onAfterRender(async () => {
     if (ctx.cloud.enabled && ctx.cloud.state().ready) {
-      const stop = ctx.cloud.watchCanciones((r) => { songs = r; paint(); }, () => {});
+      const stop = ctx.cloud.watchCanciones((r) => { songs = r; paintCantos(); }, () => {});
       ctx.onLeave(stop);
     }
+    ctx.onLeave(() => document.body.classList.remove("ms-siguiendo"));
     await load(); paint();
   });
   return `<div id="misaBox"><p class="muted" style="padding:30px;text-align:center">Cargando…</p></div>`;
 }
-const LECT = [["primera", "Primera lectura"], ["salmo", "Salmo responsorial"], ["segunda", "Segunda lectura"], ["evangelio", "Evangelio"]];
-function textoLectura(t, salmo) {
-  return String(t || "").split(/\n\s*\n/).map((b) => `<p>${b.split("\n").map((l) => {
-    const x = esc(l.trim());
-    return salmo && /^R\.?\s*[\/.]?\s*/.test(l.trim()) ? `<b class="ms-r">${x}</b>` : x;
-  }).filter(Boolean).join("<br>")}</p>`).join("");
+
+const parrafos = (t) => String(t || "").split(/\n\s*\n/).map((b) => `<p>${b.split("\n").map((l) => esc(l.trim())).filter(Boolean).join("<br>")}</p>`).join("");
+// Oración de todos: las indicaciones entre corchetes van como rúbrica.
+const oracion = (t) => String(t).split(/\n\s*\n/).map((b) => `<p>${b.split("\n").map((l) => /^\[.*\]$/.test(l) ? `<i class="ms-in">${esc(l.slice(1, -1))}</i>` : esc(l)).join("<br>")}</p>`).join("");
+const evangelista = (d) => { const m = /según\s+(san\s+\S+)/i.exec(d?.evangelio?.cita || ""); return m ? m[1].replace(/^San/, "san") : "san N."; };
+const cuaresma = () => season(dateOf(dia)).key === "cuaresma";
+
+const LECT = { primera: "Primera lectura", salmo: "Salmo responsorial", segunda: "Segunda lectura", evangelio: "Evangelio" };
+function lecturaHTML(k, d) {
+  const x = d && d[k];
+  if (!x) return `<div class="ms-lec ms-lec-falta"><p>Las lecturas completas de este día aún no están en la app.</p>
+    <a class="btn btn-sm btn-ghost" href="https://evangeliodeldia.org/SP/gospel/${dia}" target="_blank" rel="noopener">Leerlas en evangeliodeldia.org</a></div>`;
+  return `<div class="ms-lec ms-lec-${k}"><p class="ms-cita">${esc(x.cita || LECT[k])}</p><div class="ms-ltxt">${parrafos(x.texto)}</div></div>`;
 }
-let mtab = "pasos", mstep = 0;
-const momentos = (d) => PARTES.filter((p) => !(p.lectura === "segunda" && d && !d.segunda));
-// Las respuestas del pueblo (entre «») se destacan.
-const conResp = (t) => esc(t).replace(/«([^»]+)»/g, '<b class="ms-q">«$1»</b>');
+function lineaHTML([t, a, b], d) {
+  if (t === "s") return `<p class="ms-l ms-s"><span class="ms-who">S.</span><span>${esc(a)}</span></p>`;
+  if (t === "l") return `<p class="ms-l ms-s"><span class="ms-who">L.</span><span>${esc(a)}</span></p>`;
+  if (t === "p") return `<p class="ms-l ms-p"><span class="ms-who">Todos</span><b>${esc(a)}</b></p>`;
+  if (t === "t") return `<div class="ms-l ms-t"><span class="ms-who">Todos</span><div>${oracion(a)}</div></div>`;
+  if (t === "r") return `<p class="ms-rub">${esc(a)}</p>`;
+  if (t === "alt") return `<details class="ms-alt"><summary>${esc(b)}</summary><div class="ms-t"><div>${oracion(a)}</div></div></details>`;
+  if (t === "lec") return lecturaHTML(a, d);
+  if (t === "evg") return lineaHTML(["s", `Lectura del santo Evangelio según ${evangelista(d)}`]);
+  if (t === "aleluya") return cuaresma()
+    ? `<p class="ms-rub">En Cuaresma no se canta el Aleluya. Aclamamos:</p>${lineaHTML(["p", "Gloria y honor a ti, Señor Jesús."])}`
+    : `${lineaHTML(["p", "Aleluya, aleluya, aleluya."])}<p class="ms-rub">El salmista canta un versículo y repetimos el Aleluya.</p>`;
+  return "";
+}
+const cantosHTML = (m) => {
+  const cs = m.canto ? cantos(m.canto, dia) : [];
+  return cs.length ? `<p class="ms-cantos"><span>Cantos sugeridos</span>${cs.map((x) => `<a class="chip" href="#/cancionero/${encodeURIComponent(x.id)}">${esc(x.title)}</a>`).join("")}</p>` : "";
+};
+function momentoHTML(m, i, d) {
+  const inf = infoDe(m.info);
+  return `<section class="ms-mo${i === mi ? " on" : ""}${inf.cristo ? " is-cristo" : ""}" id="ms-m-${i}" data-i="${i}">
+    <header class="ms-mh"><h3>${esc(m.t)}</h3><span class="ms-post">${esc(m.postura || "")}</span></header>
+    ${inf.que ? `<details class="ms-info"><summary>¿Qué pasa aquí?</summary><p>${esc(inf.que)}</p>${inf.cristo ? `<p class="ms-cr"><span>Cristo presente</span>${esc(inf.cristo)}</p>` : ""}${inf.nota ? `<p class="ms-nota">${esc(inf.nota)}</p>` : ""}</details>` : ""}
+    <div class="ms-lines">${m.l.map((x) => lineaHTML(x, d)).join("")}</div>
+    <div class="ms-cbox" data-m="${i}">${cantosHTML(m)}</div>
+  </section>`;
+}
+function santos(t) { return String(t || "").split(/\s*·\s*|\s+(?=(?:San|Santa|Santo|Santos|Santas|Beato|Beata|Beatos|Beatas|Venerable|Nuestra Señora)\s)/).map((x) => x.trim()).filter(Boolean); }
+
 function paint() {
   const box = $("#misaBox"); if (!box) return;
   const d = diaData(dia), g = (gospel?.days || {})[dia], s = season(dateOf(dia));
@@ -71,6 +122,8 @@ function paint() {
   const titulo = d?.titulo || g?.titulo || "Liturgia del día";
   const hoy = dia === isoOf(new Date());
   const corto = (x) => esc(cap1(dateOf(x).toLocaleDateString("es-CL", { weekday: "short", day: "numeric" })));
+  const ms = momentos(dia); mi = Math.max(0, Math.min(mi, ms.length - 1));
+  const santo = d?.santo ? santos(d.santo)[0] : "";
   box.innerHTML = `
   <nav class="crumbs no-print"><a href="#/oracion">Capilla</a>${icon("right")}<span>La Misa</span></nav>
   <header class="cap-arch ms-arch" style="--season:${s.hex}">
@@ -78,86 +131,55 @@ function paint() {
     <span class="cap-hand">${hoy ? "la Misa de hoy" : esc(cap1(largo(dia)))}</span>
     <h1 class="cap-title ms-title">${esc(titulo)}</h1>
     <div class="cap-chips"><span class="cap-season"><i></i>${esc(s.name)} · color ${esc(s.color)}</span><span class="cap-date">${esc(largo(dia))}</span></div>
+    ${santo ? `<p class="ms-santo-h">Hoy recordamos a ${esc(santo)}</p>` : ""}
     <div class="ms-dias no-print">
       ${prev ? `<a class="ms-dia" href="#/misa/${prev}">${icon("left")} ${corto(prev)}</a>` : "<span></span>"}
       ${hoy ? "" : `<a class="ms-dia" href="#/misa">Hoy</a>`}
       ${next ? `<a class="ms-dia" href="#/misa/${next}">${corto(next)} ${icon("right")}</a>` : "<span></span>"}
     </div>
   </header>
-  <div class="ms-tabs" role="tablist" aria-label="La Misa">
-    <button role="tab" aria-selected="${mtab === "pasos"}" data-action="msTab" data-t="pasos"><b>1</b> <span>La Misa paso a paso</span></button>
-    <button role="tab" aria-selected="${mtab === "lecturas"}" data-action="msTab" data-t="lecturas"><b>2</b> <span>Las lecturas de ${hoy ? "hoy" : "este día"}</span></button>
-    <button role="tab" aria-selected="${mtab === "libro"}" data-action="msTab" data-t="libro"><b>3</b> <span>El librito</span></button>
+  <div class="ms-bar no-print">
+    <button class="ms-seguir${seguir ? " on" : ""}" data-action="msSeguir" aria-pressed="${seguir}">${icon(seguir ? "check" : "eye")} ${seguir ? "Siguiendo" : "Seguir paso a paso"}</button>
+    <span class="ms-letra" role="group" aria-label="Tamaño de la letra"><button data-action="msLetra" data-d="-1" aria-label="Letra más chica">A</button><button data-action="msLetra" data-d="1" aria-label="Letra más grande">A</button></span>
+    <a class="ms-bb" href="#/misa/libro/${dia}" title="Librito">${icon("book")}<span>Librito</span></a>
+    <button class="ms-bb" data-action="msPdf" title="Imprimir">${icon("print")}<span>Imprimir</span></button>
   </div>
-  <div id="msPanel">${mtab === "lecturas" ? lecturasHTML(d, g, hoy) : mtab === "libro" ? libroHTML() : pasosHTML(d)}</div>
-  <p class="cap-foot">«Hagan esto en memoria mía»<span>Lc 22,19</span></p>`;
-}
-function lecturasHTML(d, g, hoy) {
-  if (!d) return g ? `<div class="card ms-falta"><p>Evangelio: <b>${esc(g.cita)}</b>. ${g.frase ? `«${esc(g.frase)}»` : ""}</p><p class="small muted">Las lecturas completas de este día aún no están disponibles en la app.</p>
-      <a class="btn btn-sm btn-ghost" href="https://evangeliodeldia.org/SP/gospel/${dia}" target="_blank" rel="noopener">Leer las lecturas en evangeliodeldia.org</a></div>`
-    : `<div class="card ms-falta"><p class="muted">Aún no tenemos la liturgia de este día.</p></div>`;
-  const ls = LECT.filter(([k]) => d[k]);
-  return `<p class="ms-intro">Son las lecturas que se proclaman ${hoy ? "hoy" : "este día"} en todas las Misas del mundo. Léelas antes de ir: así llegas sabiendo lo que Dios te quiere decir.</p>
-    ${d.santo ? santoHTML(d.santo) : ""}
-    <ol class="ms-indice">${ls.map(([k, l], n) => `<li><a href="#ms-l-${k}" data-action="msIr" data-id="ms-l-${k}"><b>${n + 1}</b>${l}<small>${esc(d[k].cita || "")}</small></a></li>`).join("")}</ol>
-    ${ls.map(([k, l], n) => `<article class="ms-lec ms-lec-${k}" id="ms-l-${k}">
-      <header><span class="ms-ln">${n + 1}</span><div><span class="ms-lk">${l}</span><h3>${esc(d[k].cita || "")}</h3></div></header>
-      <div class="ms-ltxt">${textoLectura(d[k].texto, k === "salmo")}</div>
-      ${k === "salmo" ? "" : `<p class="ms-resp">${k === "evangelio" ? "Palabra del Señor. <b>— Gloria a ti, Señor Jesús.</b>" : "Palabra de Dios. <b>— Te alabamos, Señor.</b>"}</p>`}
-    </article>`).join("")}
-    <p class="xs muted ms-fuente">${esc(data.fuente || "")}</p>`;
-}
-// La fuente trae todos los santos del día seguidos: se muestra el principal y se cuentan los demás.
-function santos(t) { return String(t || "").split(/\s*·\s*|\s+(?=(?:San|Santa|Santo|Santos|Santas|Beato|Beata|Beatos|Beatas|Venerable|Nuestra Señora)\s)/).map((x) => x.trim()).filter(Boolean); }
-function santoHTML(t) { const l = santos(t); return `<p class="ms-santo"><span>Santo del día</span>${esc(l[0] || "")}${l.length > 1 ? ` <small>· y ${l.length - 1} santo${l.length > 2 ? "s" : ""} más</small>` : ""}</p>`; }
-function libroHTML() {
-  return `<div class="ms-libro-tab">
-    <div class="card ms-lb"><span class="cap-hand sm">para el teléfono</span><h3>Hojear el librito</h3><p>La portada, las lecturas de este día y la Misa paso a paso, página por página.</p>
-      <a class="btn btn-primary" href="#/misa/libro/${dia}">${icon("book")} Abrir el librito</a></div>
-    <div class="card ms-lb"><span class="cap-hand sm">para una Misa juvenil</span><h3>Imprimir</h3><p>En hoja carta, a dos columnas, con los cantos sugeridos. Se puede entregar a cada joven al llegar.</p>
-      <button class="btn btn-gold" data-action="msPdf">${icon("print")} Imprimir o guardar PDF</button></div>
+  <nav class="ms-partes-nav no-print" aria-label="Partes de la Misa">
+    ${GRUPOS.map((gr, n) => `<a href="#ms-g-${gr.k}" data-action="msIr" data-id="ms-g-${gr.k}"><b>${n + 1}</b>${esc(gr.t)}</a>`).join("")}
+  </nav>
+  <p class="ms-leyenda"><span><i class="ms-who">S.</i> dice el sacerdote</span><span><i class="ms-who ms-wp">Todos</i> <b>respondemos todos</b></span><span><i class="ms-rub-i">en cursiva:</i> qué hacer</span></p>
+  <div class="ms-flujo" style="--ms-fs:${1 + letra * 0.1}">
+    ${GRUPOS.map((gr, n) => `<h2 class="ms-gh" id="ms-g-${gr.k}"><b>${n + 1}</b><span>${esc(gr.t)}<small>${esc(gr.d)}</small></span></h2>
+      ${ms.map((m, j) => m.g === gr.k ? momentoHTML(m, j, d) : "").join("")}`).join("")}
+    ${d ? `<p class="xs muted ms-fuente">${esc(data.fuente || "")}</p>` : ""}
+  </div>
+  <p class="cap-foot">«Hagan esto en memoria mía»<span>Lc 22,19</span></p>
+  <div class="ms-follow no-print" id="msFollow" ${seguir ? "" : "hidden"}>
+    <button class="btn btn-ghost" data-action="msPaso" data-d="-1">${icon("left")}<span>Anterior</span></button>
+    <span class="ms-fnow" id="msNow"></span>
+    <button class="btn btn-gold" data-action="msPaso" data-d="1"><span>Siguiente</span>${icon("right")}</button>
   </div>`;
+  document.body.classList.toggle("ms-siguiendo", seguir);
+  marcar(false);
 }
-function pasosHTML(d) {
-  const ms = momentos(d);
-  mstep = Math.max(0, Math.min(mstep, ms.length - 1));
-  const p = ms[mstep], gi = GRUPOS.findIndex((g) => g.k === p.g), gr = GRUPOS[gi];
-  const inG = ms.filter((x) => x.g === p.g), posG = inG.indexOf(p) + 1;
-  const cs = p.canto ? cantos(p.canto, dia) : [];
-  const lec = p.lectura && d && d[p.lectura];
-  const prev = ms[mstep - 1], next = ms[mstep + 1];
-  return `
-  <div class="ms-mapa" role="list" aria-label="Las cinco partes de la Misa">
-    ${GRUPOS.map((g, n) => `<button role="listitem" class="ms-m ${n === gi ? "on" : n < gi ? "ok" : ""}" data-action="msParte" data-g="${g.k}"><b>${n + 1}</b><span>${esc(g.t)}</span></button>`).join("")}
-  </div>
-  <div class="ms-prog" aria-hidden="true"><i style="width:${Math.round(((mstep + 1) / ms.length) * 100)}%"></i></div>
-  <article class="ms-card${p.cristo ? " is-cristo" : ""}" aria-live="polite">
-    <header class="ms-ch">
-      <span class="ms-parte-n">Parte ${gi + 1} · ${esc(gr.t)} · ${posG} de ${inG.length}</span>
-      <h2>${esc(p.t)}</h2>
-      <span class="ms-post">${esc(p.postura || "")}</span>
-    </header>
-    ${posG === 1 ? `<p class="ms-gd">${esc(gr.d)}</p>` : ""}
-    <section class="ms-que"><h3>¿Qué está pasando?</h3><p>${esc(p.que)}</p></section>
-    ${p.cristo ? `<section class="ms-cr"><h3>Cristo presente</h3><p>${esc(p.cristo)}</p></section>` : ""}
-    <div class="ms-dos">
-      <section class="ms-quien"><h3>El sacerdote</h3><p>${conResp(p.sacerdote)}</p></section>
-      <section class="ms-quien ms-nos"><h3>Nosotros</h3><p>${conResp(p.nosotros)}</p></section>
-    </div>
-    ${p.nota ? `<p class="ms-nota">${esc(p.nota)}</p>` : ""}
-    ${lec ? `<p class="ms-lecbtn"><button class="btn btn-sm btn-soft" data-action="msLeer" data-k="${p.lectura}">${icon("book")} Leer la lectura de hoy: ${esc(lec.cita)}</button></p>` : ""}
-    ${cs.length ? `<div class="ms-cantos"><h3>Cantos sugeridos</h3><div>${cs.map((x) => `<a class="chip" href="#/cancionero/${encodeURIComponent(x.id)}">${esc(x.title)}</a>`).join("")}</div></div>` : ""}
-  </article>
-  <div class="ms-nav">
-    <button class="btn btn-ghost" data-action="msPaso" data-d="-1" ${prev ? "" : "disabled"}>${icon("left")} <span class="ms-nx">${prev ? esc(prev.t) : "Anterior"}</span><span class="ms-nc">Anterior</span></button>
-    <span class="ms-cnt">${mstep + 1} / ${ms.length}</span>
-    <button class="btn btn-gold" data-action="msPaso" data-d="1" ${next ? "" : "disabled"}><span class="ms-nx">${next ? esc(next.t) : "Fin"}</span><span class="ms-nc">${next ? "Siguiente" : "Fin"}</span> ${icon("right")}</button>
-  </div>
-  <details class="ms-todo"><summary>Ver todos los momentos de la Misa</summary>
-    ${GRUPOS.map((g, n) => `<div class="ms-tg"><h4><b>${n + 1}</b>${esc(g.t)}</h4><ol>${ms.filter((x) => x.g === g.k).map((x) => `<li><button data-action="msIrPaso" data-i="${ms.indexOf(x)}" class="${x === p ? "on" : ""}">${esc(x.t)}${x.cristo ? ' <span class="ms-dot" title="Cristo presente"></span>' : ""}</button></li>`).join("")}</ol></div>`).join("")}
-    <p class="ms-cristo"><b>Cristo está presente en la Misa de cuatro maneras:</b> en la comunidad reunida, en el sacerdote, en su Palabra y, sobre todo, en el pan y el vino consagrados (Concilio Vaticano II, Sacrosanctum Concilium 7). Los momentos con punto dorado lo destacan.</p>
-  </details>`;
+function paintCantos() {
+  const ms = momentos(dia);
+  document.querySelectorAll(".ms-cbox").forEach((el) => { const m = ms[+el.dataset.m]; if (m) el.innerHTML = cantosHTML(m); });
 }
+// Destaca el momento actual y lo trae a la vista.
+function marcar(scroll = true) {
+  const ms = momentos(dia);
+  document.querySelectorAll(".ms-mo").forEach((el) => el.classList.toggle("on", seguir && +el.dataset.i === mi));
+  const now = $("#msNow");
+  if (now) now.innerHTML = `<small>${mi + 1} de ${ms.length}</small>${esc(ms[mi]?.t || "")}`;
+  const p = $("#msFollow");
+  if (p) { p.querySelector("[data-d='-1']").disabled = mi <= 0; p.querySelector("[data-d='1']").disabled = mi >= ms.length - 1; }
+  if (scroll && seguir) { const el = document.getElementById("ms-m-" + mi); if (el) window.scrollTo({ top: el.getBoundingClientRect().top + window.scrollY - topOff(), behavior: "smooth" }); }
+}
+
+// Cuánto tapa arriba la barra fija, para que el título del momento quede a la vista.
+const topOff = () => { const b = $(".ms-bar"); return b ? b.getBoundingClientRect().bottom + 10 : 80; };
+
 // Un cáliz con la Hostia, en línea, como la lira de los Salmos.
 function caliz(cls) {
   return `<svg class="${cls}" viewBox="0 0 120 120" fill="none" stroke="currentColor" stroke-width="4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
@@ -205,22 +227,35 @@ function portada(n) {
       <p class="cl-cov-n">${esc(cap1(largo(dia)))}</p>
     </div></div></div>`;
 }
-// Bloques del librito: las lecturas y cada parte de la Misa, en orden.
+// Bloques del librito: la Misa en orden, con las lecturas en su lugar. Las oraciones largas se
+// cortan en trozos para que el libro pueda pasar de página entre ellos.
 function bloques() {
   const d = diaData(dia), out = [];
-  out.push({ html: `<h3 class="ml-h" data-sec="Las lecturas">Las lecturas</h3>${d?.santo ? `<p class="ml-santo">Santo del día: ${esc(santos(d.santo)[0] || "")}</p>` : ""}` });
-  if (d) LECT.filter(([k]) => d[k]).forEach(([k, l]) => {
-    out.push({ html: `<p class="ml-k">${l}</p><p class="ml-t">${esc(d[k].cita || "")}</p>` });
-    String(d[k].texto || "").split(/\n\s*\n/).forEach((b) => out.push({ html: `<p class="ml-p">${b.split("\n").map((x) => esc(x.trim())).filter(Boolean).join("<br>")}</p>` }));
-  });
-  else out.push({ html: `<p class="ml-p">Las lecturas de este día aún no están disponibles en la app.</p>` });
+  const trozos = (t, n = 9) => { const ls = String(t).split("\n").filter((x) => x.trim()); const r = []; for (let i = 0; i < ls.length; i += n) r.push(ls.slice(i, i + n)); return r; };
+  const lin = (l) => /^\[.*\]$/.test(l) ? `<i class="ml-in">${esc(l.slice(1, -1))}</i>` : esc(l);
+  const linea = ([t, a, b]) => {
+    if (t === "s" || t === "l") return [`<p class="ml-s"><i>${t === "s" ? "S." : "L."}</i> ${esc(a)}</p>`];
+    if (t === "p") return [`<p class="ml-r"><i>Todos:</i> <b>${esc(a)}</b></p>`];
+    if (t === "t") return trozos(a).map((ls, i) => `<p class="ml-o">${i ? "" : "<i>Todos:</i><br>"}${ls.map(lin).join("<br>")}</p>`);
+    if (t === "r") return [`<p class="ml-rub">${esc(a)}</p>`];
+    if (t === "alt") return [`<p class="ml-rub">${esc(b)}:</p>`, ...trozos(a).map((ls) => `<p class="ml-o ml-o2">${ls.map(lin).join("<br>")}</p>`)];
+    if (t === "evg") return linea(["s", `Lectura del santo Evangelio según ${evangelista(d)}`]);
+    if (t === "aleluya") return cuaresma() ? [`<p class="ml-rub">En Cuaresma no se canta el Aleluya.</p>`, ...linea(["p", "Gloria y honor a ti, Señor Jesús."])] : linea(["p", "Aleluya, aleluya, aleluya."]);
+    if (t === "lec") {
+      const x = d && d[a];
+      if (!x) return [`<p class="ml-rub">Las lecturas de este día aún no están en la app.</p>`];
+      return [`<p class="ml-t">${esc(x.cita || LECT[a])}</p>`, ...String(x.texto || "").split(/\n\s*\n/).flatMap((b2) => trozos(b2, 6).map((ls) => `<p class="ml-p">${ls.map((y) => esc(y.trim())).join("<br>")}</p>`))];
+    }
+    return [];
+  };
+  const ms = momentos(dia);
   GRUPOS.forEach((gr, gi) => {
-    out.push({ html: `<h3 class="ml-h" data-sec="${esc(gr.t)}">${gi + 1}. ${esc(gr.t)}</h3><p class="ml-gd">${esc(gr.d)}</p>` });
-    PARTES.filter((p) => p.g === gr.k && !(p.lectura === "segunda" && d && !d.segunda)).forEach((p) => {
-      const cs = p.canto ? cantos(p.canto, dia) : [];
-      out.push({ html: `<div class="ml-parte"><p class="ml-pt">${esc(p.t)}${p.postura ? ` <span>${esc(p.postura)}</span>` : ""}</p><p class="ml-p">${esc(p.que)}</p>
-        ${p.cristo ? `<p class="ml-cr">${esc(p.cristo)}</p>` : ""}<p class="ml-p"><b>Nosotros:</b> ${esc(p.nosotros)}</p>
-        ${cs.length ? `<p class="ml-c">Cantos: ${cs.map((s) => esc(s.title)).join(" · ")}</p>` : ""}</div>` });
+    out.push({ html: `<h3 class="ml-h" data-sec="${esc(gr.t)}">${gi + 1}. ${esc(gr.t)}</h3>` });
+    ms.filter((m) => m.g === gr.k).forEach((m) => {
+      out.push({ html: `<p class="ml-pt">${esc(m.t)}${m.postura ? ` <span>${esc(m.postura)}</span>` : ""}</p>` });
+      m.l.forEach((x) => linea(x).forEach((h) => out.push({ html: h })));
+      const cs = m.canto ? cantos(m.canto, dia) : [];
+      if (cs.length) out.push({ html: `<p class="ml-c">Cantos: ${cs.map((s) => esc(s.title)).join(" · ")}</p>` });
     });
   });
   return out;
@@ -234,7 +269,7 @@ function buildLibro() {
   const m = document.createElement("div"); m.className = "cl-leaf cl-measure"; stage.appendChild(m);
   m.innerHTML = pageOf({ body: bl.map((b) => b.html).join(""), foot: footOf("x", 0) });
   const body = m.querySelector(".cl-body");
-  const parts = splitByHeight([...body.children], body.clientHeight, body.clientHeight, (el) => el.classList.contains("ml-h") || el.classList.contains("ml-k"));
+  const parts = splitByHeight([...body.children], body.clientHeight, body.clientHeight, (el) => el.classList.contains("ml-h") || el.classList.contains("ml-pt") || el.classList.contains("ml-t"));
   // índice: en qué página empieza cada sección (su título lleva data-sec)
   const kids = [...body.children], secPage = {};
   kids.forEach((el, n) => { if (el.dataset.sec) secPage[el.dataset.sec] = parts.findIndex(([a, z]) => n >= a && n < z); });
@@ -242,7 +277,8 @@ function buildLibro() {
   const off = 2;
   const pages = [{ k: "cover", html: portada(1) }];
   pages.push({ k: "ix", html: pageOf({ head: `<header class="cl-head"><span class="eyebrow">La Santa Misa</span><h2>Índice</h2></header>`,
-    body: Object.entries(secPage).map(([t, pi]) => `<button class="cl-ix" data-action="msLGo" data-p="${off + pi}"><span class="cl-ix-t">${esc(t)}</span><span class="cl-ix-d" aria-hidden="true"></span><span class="cl-ix-n">${off + pi}</span></button>`).join(""),
+    body: Object.entries(secPage).map(([t, pi]) => `<button class="cl-ix" data-action="msLGo" data-p="${off + pi}"><span class="cl-ix-t">${esc(t)}</span><span class="cl-ix-d" aria-hidden="true"></span><span class="cl-ix-n">${off + pi}</span></button>`).join("")
+      + `<p class="ml-rub" style="margin-top:1em"><i>S.</i> dice el sacerdote · <b>en negrita</b>, respondemos todos · en cursiva, qué hacer.</p>`,
     foot: footOf("", 1) }) });
   parts.forEach(([a, z], i) => pages.push({ k: "p" + i, html: pageOf({ body: kids.slice(a, z).map((x) => x.outerHTML).join(""), foot: footOf(`<button class="cl-f-ix" data-action="msLGo" data-p="1">Índice</button>`, off + i) }) }));
   book.setPages(pages, 0);
@@ -252,8 +288,8 @@ function pdf() {
   if (!data) { toast("Cargando… intenta de nuevo en un momento", ""); return; }
   let el = document.getElementById("misaBook");
   if (!el) { el = document.createElement("div"); el.id = "misaBook"; document.body.appendChild(el); }
-  el.innerHTML = `<section class="sb-cover">${portada(0)}</section><section class="mb-body">${bloques().map((b) => b.html).join("")}</section>
-    <p class="sb-fuente">${esc(data.fuente || "")} · La Misa paso a paso: Pastoral Juvenil Ágape.</p>`;
+  el.innerHTML = `<section class="sb-cover">${portada(0)}</section><section class="mb-body"><p class="ml-rub"><i>S.</i> dice el sacerdote · <b>en negrita</b>, respondemos todos · en cursiva, qué hacer.</p>${bloques().map((b) => b.html).join("")}</section>
+    <p class="sb-fuente">${esc(data.fuente || "")} · Textos de la Misa: Misal Romano.</p>`;
   document.body.classList.add("misa-printing");
   const done = () => { document.body.classList.remove("misa-printing"); window.removeEventListener("afterprint", done); };
   window.addEventListener("afterprint", done);
@@ -263,16 +299,24 @@ function pdf() {
 function registerActions() {
   const A = ctx.actions;
   A.msPdf = () => pdf();
-  A.msTab = (el) => { mtab = el.dataset.t; paint(); };
-  A.msPaso = (el) => { mstep += +el.dataset.d; paint(); $(".ms-mapa")?.scrollIntoView({ block: "start", behavior: "smooth" }); };
-  A.msIrPaso = (el) => { mstep = +el.dataset.i; paint(); $(".ms-mapa")?.scrollIntoView({ block: "start", behavior: "smooth" }); };
-  A.msParte = (el) => { const ms = momentos(diaData(dia)); mstep = Math.max(0, ms.findIndex((x) => x.g === el.dataset.g)); paint(); };
-  A.msLeer = (el) => { mtab = "lecturas"; paint(); setTimeout(() => document.getElementById("ms-l-" + el.dataset.k)?.scrollIntoView({ block: "start", behavior: "smooth" }), 50); };
-  A.msIr = (el, e) => { e && e.preventDefault && e.preventDefault(); document.getElementById(el.dataset.id)?.scrollIntoView({ block: "start", behavior: "smooth" }); };
+  A.msSeguir = () => {
+    seguir = !seguir; store.set("agape_misa_seguir", seguir);
+    paint(); if (seguir) marcar(true);
+  };
+  A.msLetra = (el) => { letra = Math.max(-1, Math.min(4, letra + +el.dataset.d)); store.set("agape_misa_letra", letra); $(".ms-flujo")?.style.setProperty("--ms-fs", 1 + letra * 0.1); };
+  A.msPaso = (el) => { const n = momentos(dia).length; mi = Math.max(0, Math.min(n - 1, mi + +el.dataset.d)); marcar(true); };
+  A.msIr = (el, e) => { e && e.preventDefault && e.preventDefault(); const t = document.getElementById(el.dataset.id); if (t) window.scrollTo({ top: t.getBoundingClientRect().top + window.scrollY - topOff(), behavior: "smooth" }); };
+  // En modo «seguir», tocar un momento lo marca como el actual.
+  document.addEventListener("click", (e) => {
+    if (!seguir) return;
+    const sec = e.target.closest && e.target.closest(".ms-mo");
+    if (!sec || e.target.closest("a, button, summary, details[open] > *:not(summary)")) return;
+    mi = +sec.dataset.i; marcar(false);
+  });
   document.addEventListener("keydown", (e) => {
-    if (mtab !== "pasos" || !$(".ms-card") || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) return;
-    if (e.key === "ArrowRight") { const b = $("[data-action=msPaso][data-d='1']"); if (b && !b.disabled) b.click(); }
-    else if (e.key === "ArrowLeft") { const b = $("[data-action=msPaso][data-d='-1']"); if (b && !b.disabled) b.click(); }
+    if (!seguir || !$(".ms-flujo") || /^(INPUT|TEXTAREA|SELECT)$/.test(document.activeElement?.tagName || "")) return;
+    const d = ["ArrowRight", "PageDown", "MediaTrackNext"].includes(e.key) ? 1 : ["ArrowLeft", "PageUp", "MediaTrackPrevious"].includes(e.key) ? -1 : 0;
+    if (d) { e.preventDefault(); const n = momentos(dia).length; mi = Math.max(0, Math.min(n - 1, mi + d)); marcar(true); }
   });
   A.msLTurn = (el) => book && book.turn(+el.dataset.d);
   A.msLGo = (el) => book && book.go(+el.dataset.p);
