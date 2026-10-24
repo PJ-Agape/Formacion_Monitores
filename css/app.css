@@ -4314,3 +4314,10 @@ a.cap-guide-btn { text-decoration: none; }
 .cap-rosbanner-art .virgen-linea { color: #fff6e5; --halo: #ffba03; max-width: 210px; margin: 0 auto; filter: drop-shadow(0 0 16px rgba(255,186,3,.25)); }
 .ros-maria { position: absolute; left: calc(78 / 360 * 100%); top: calc(44 / 524 * 100%); width: calc(204 / 360 * 100%); color: #fff6e5; --halo: #ffba03; opacity: .1; pointer-events: none; transition: opacity 1.2s ease, transform 1.2s ease; }
 .ros-maria.is-fin { opacity: .3; }
+/* La Misa de hoy en la Capilla (Magnificat TV) */
+.cap-misa { margin-top: 18px; display: grid; gap: 8px; justify-items: center; }
+.cap-misa .ev-video { max-width: 520px; box-shadow: 4px 4px 0 #ffba03; }
+.cap-misa .cap-ev-note { text-align: center; }
+.cap-misa .ev-video { width: 100%; border: 2px solid rgba(255,246,229,.5); }
+.cap-misa .cap-ev-note { color: #fff6e5; opacity: .9; }
+.cap-misa .cap-ev-note a { color: #ffba03; }

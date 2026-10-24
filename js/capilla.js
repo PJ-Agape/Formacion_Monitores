@@ -25,8 +25,19 @@ async function loadMisaVivo() {
     misaAdmin = (c && c.url) || "";
   }
   misaVivo = misaHoy ? `https://www.youtube.com/watch?v=${misaHoy.id}` : misaAdmin || MISA_VIVO;
-  const a = document.getElementById("capMisaVivo");
-  if (a) { a.href = misaVivo; const sm = a.querySelector("small"); if (sm) sm.textContent = misaHoy ? "la de hoy, en YouTube" : "en YouTube"; if (misaHoy) a.title = misaHoy.title; }
+  const box = document.getElementById("capMisa"); if (box) box.innerHTML = misaHTML();
+}
+// La Misa de hoy con su vista previa (el video se carga solo al tocarlo, como el Evangelio).
+function misaHTML() {
+  const ok = misaHoy && /^[\w-]{6,20}$/.test(misaHoy.id);
+  if (!ok) return `<a class="btn cap-oremus" href="${esc(misaVivo)}" target="_blank" rel="noopener">${icon("eye")} Misa en vivo <small>en YouTube</small></a>`;
+  // «Santa Misa de Hoy | Viernes, XXIX Semana del Tiempo Ordinario (23-10-2026) | P. …» → la parte del medio.
+  const sub = (misaHoy.title.split("|")[1] || "").replace(/\(\d{1,2}[-./]\d{1,2}[-./]\d{4}\)/, "").trim();
+  return `<span class="cap-hand sm">la Misa de hoy</span>
+    <button type="button" class="ev-video" data-action="evPlay" data-id="${misaHoy.id}" data-t="La Misa de hoy" aria-label="Ver la Misa de hoy">
+      <img src="https://i.ytimg.com/vi/${misaHoy.id}/hqdefault.jpg" alt="" loading="lazy" onerror="this.remove()">
+      <span class="ev-play" aria-hidden="true"></span></button>
+    <p class="cap-ev-note">${sub ? `${esc(sub)} · ` : ""}Magnificat TV · <a href="${esc(misaVivo)}" target="_blank" rel="noopener">abrir en YouTube ↗</a></p>`;
 }
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
@@ -335,9 +346,9 @@ export function view(opt = {}) {
         <a class="btn cap-oremus" href="#/oremus">${icon("book")} Oremus <small>nuestras oraciones y las de siempre</small></a>
         <a class="btn cap-oremus" href="#/salmos">${icon("book")} Orar con los Salmos</a>
         <a class="btn cap-oremus" href="#/cancionero"><span aria-hidden="true">♪</span> Cancionero <small>cantar es rezar dos veces</small></a>
-        <a class="btn cap-oremus" id="capMisaVivo" href="${esc(misaVivo)}" target="_blank" rel="noopener">${icon("eye")} Misa en vivo <small>en YouTube</small></a>
         ${ctx.cloud.enabled && st().isAdmin ? `<button class="btn btn-sm btn-ghost cap-mv-edit" data-action="capMisaVivo">${icon("edit")} Cambiar el enlace de la Misa en vivo</button>` : ""}
       </div>
+      <div class="cap-misa" id="capMisa">${misaHTML()}</div>
     </article>
   </section>
 
@@ -996,7 +1007,7 @@ function registerActions() {
   A.evPlay = (el) => {
     const id = el.dataset.id; if (!/^[\w-]{6,20}$/.test(id)) return;
     const w = document.createElement("div"); w.className = "ev-video";
-    w.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" title="Evangelio del día en video" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
+    w.innerHTML = `<iframe src="https://www.youtube-nocookie.com/embed/${id}?autoplay=1&rel=0&modestbranding=1" title="${el.dataset.t ? "La Misa de hoy" : "Evangelio del día en video"}" allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
     const cur = el.dataset.swap ? document.querySelector(".cap-ev .ev-video") : el;
     if (el.dataset.swap) el.remove();
     (cur || el).replaceWith(w);
