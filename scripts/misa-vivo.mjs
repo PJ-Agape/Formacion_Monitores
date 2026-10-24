@@ -23,14 +23,22 @@ if (!channelId) {
 }
 // Los videos: primero la lista RSS del canal; si YouTube no la entrega, la página de transmisiones.
 let items = [], via = "rss";
-const rss = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, { headers: UA }).catch(() => ({ ok: false, status: "red" }));
+// El RSS de YouTube a veces responde 404 un rato: se reintenta un par de veces.
+let rss = { ok: false, status: "-" };
+for (let i = 0; i < 3 && !rss.ok; i++) {
+  if (i) await new Promise((r) => setTimeout(r, 4000));
+  rss = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, { headers: UA }).catch(() => ({ ok: false, status: "red" }));
+}
 if (rss.ok) {
   items = (await rss.text()).split("<entry>").slice(1).map((e) => ({ id: (e.match(/<yt:videoId>([^<]+)</) || [])[1], title: dec((e.match(/<title>([^<]+)</) || [])[1] || ""), pub: (e.match(/<published>([^<]+)</) || [])[1] }));
 } else {
   via = `streams (rss ${rss.status})`;
   const h = await (await fetch(`https://www.youtube.com/${HANDLE}/streams`, { headers: UA })).text().catch(() => "");
-  for (const m of h.matchAll(/"videoRenderer":\{"videoId":"([\w-]{11})".*?"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/g)) {
-    if (!items.some((x) => x.id === m[1])) items.push({ id: m[1], title: JSON.parse(`"${m[2]}"`), pub: "" });
+  // Cada video aparece como «videoId» (o «contentId») y, un poco más adelante, su título.
+  for (const m of h.matchAll(/"(?:videoId|contentId)":"([\w-]{11})"/g)) {
+    if (items.some((x) => x.id === m[1])) continue;
+    const t = h.slice(m.index, m.index + 4000).match(/"title":\{(?:"runs":\[\{"text"|"simpleText"|"content"):"((?:[^"\\]|\\.)*)"/);
+    if (t) try { items.push({ id: m[1], title: JSON.parse(`"${t[1]}"`), pub: "" }); } catch {}
   }
   if (!items.length) falla(`Sin videos: ${via}, página ${h.length} bytes`);
 }
