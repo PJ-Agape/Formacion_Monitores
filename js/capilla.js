@@ -194,8 +194,23 @@ export function oremusView(t) {
     <a class="back-link" href="#/oracion">${icon("left")} Capilla</a>
     <header class="page-head"><span class="eyebrow">Oración</span><h1>Oremus</h1>
       <p>Nuestras oraciones, para antes y después de cada encuentro, y las que rezamos en toda la Iglesia. Elige una y rézala con calma.</p></header>
+    <a class="ore-librito" href="#/oremus/libro">${icon("book")}<span><b>El librito de Oremus</b><small>Todas las oraciones, para hojear o imprimir</small></span>${icon("right")}</a>
     ${devocionarioHTML()}
   </div>`;
+}
+// Para el librito de Oremus (js/oremus.js): las oraciones por grupo, con el texto en líneas.
+// Las que solo se abren en Vatican News (textos con derechos protegidos) no van en el libro.
+export function oremusLibro() {
+  loadOwn();
+  return devGroups().map(([g, xs]) => [g, xs.map((o) => {
+    if (o.own) {
+      const c = o.own;
+      const x = c.type === "list" ? (c.items || []).map((i, k) => `${k + 1}. ${devPlain(rich(String(i))).replace(/^\d+\.\s*/, "")}`).join("\n")
+        : devPlain(rich(String(c.text || "").replace(/^«|»$/g, "")).replace(/<br>/g, "\n"));
+      return { t: o.t, x, note: c.tag || "", own: true };
+    }
+    return o.x ? { t: o.t, x: o.x, note: o.note || "" } : null;
+  }).filter((o) => o && o.x)]).filter(([, xs]) => xs.length);
 }
 // Proyectar una oración (como el cancionero): portada con el título y luego el texto en partes cortas.
 function devPlain(html) { const d = document.createElement("div"); d.innerHTML = String(html || ""); return d.textContent.trim(); }

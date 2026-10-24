@@ -11,6 +11,7 @@ import * as chat from "./chat.js";
 import * as avisos from "./avisos.js";
 import * as agenda from "./agenda.js";
 import * as portada from "./portada.js";
+import * as oremus from "./oremus.js";
 import * as capilla from "./capilla.js";
 import * as cancionero from "./cancionero.js";
 import * as salmos from "./salmos.js";
@@ -105,6 +106,7 @@ const routes = [
   [/^\/oracion$/, () => capilla.view(), "oracion"],
   [/^\/evangelio$/, () => capilla.view({ focus: "gospel" }), "oracion"],
   [/^\/oracion\/([a-z]+)$/, (k) => capilla.view({ focus: k }), "oracion"],
+  [/^\/oremus\/libro$/, () => oremus.viewLibro(), "oracion"],
   [/^\/oremus(?:\/([^/?]+))?$/, (t) => capilla.oremusView(t ? decodeURIComponent(t) : ""), "oracion"],
   [/^\/oracion\/velas\/([^/?]+)$/, (id) => capilla.view({ focus: "velas", vela: id }), "oracion"],
   [/^\/formacion$/, () => inicio.viewFormacion(), "formacion"],
@@ -1605,6 +1607,7 @@ famReg.setup({ actions, onAfterRender });
 famPortal.setup({ actions, onAfterRender, onLeave });
 evalua.setup({ actions });
 capilla.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud, content: () => S.content() });
+oremus.setup({ actions, onAfterRender });
 
 async function boot() {
   try {
