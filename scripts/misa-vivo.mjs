@@ -19,28 +19,38 @@ let channelId = prev.handle === HANDLE ? prev.channelId : "";
 if (!channelId) {
   const r = await fetch(`https://www.youtube.com/${HANDLE}`, { headers: UA }).catch((e) => ({ ok: false, status: e.message, text: async () => "" }));
   const html = await r.text();
-  channelId = (html.match(/"(?:channelId|externalId|browseId)":"(UC[\w-]{22})"/) || html.match(/channel\/(UC[\w-]{22})/) || [])[1] || "";
+  channelId = (html.match(/<link rel="canonical" href="https:\/\/www\.youtube\.com\/channel\/(UC[\w-]{22})"/) || html.match(/"externalId":"(UC[\w-]{22})"/) || html.match(/"(?:channelId|browseId)":"(UC[\w-]{22})"/) || [])[1] || "";
   if (!channelId) falla(`No se encontró el canal ${HANDLE} (${r.status}, ${html.length} bytes, ${(html.match(/<title>([^<]*)/) || [])[1] || ""})`);
 }
-const r = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, { headers: UA });
-if (!r.ok) falla(`RSS ${r.status} (${channelId})`);
-const xml = await r.text();
+// Los videos: primero la lista RSS del canal; si YouTube no la entrega, la página de transmisiones.
+let items = [], via = "rss";
+const rss = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, { headers: UA }).catch(() => ({ ok: false, status: "red" }));
+if (rss.ok) {
+  items = (await rss.text()).split("<entry>").slice(1).map((e) => ({ id: (e.match(/<yt:videoId>([^<]+)</) || [])[1], title: dec((e.match(/<title>([^<]+)</) || [])[1] || ""), pub: (e.match(/<published>([^<]+)</) || [])[1] }));
+} else {
+  via = `streams (rss ${rss.status})`;
+  const h = await (await fetch(`https://www.youtube.com/${HANDLE}/streams`, { headers: UA })).text().catch(() => "");
+  for (const m of h.matchAll(/"videoRenderer":\{"videoId":"([\w-]{11})".*?"title":\{"runs":\[\{"text":"((?:[^"\\]|\\.)*)"/g)) {
+    if (!items.some((x) => x.id === m[1])) items.push({ id: m[1], title: JSON.parse(`"${m[2]}"`), pub: "" });
+  }
+  if (!items.length) falla(`Sin videos: ${via}, página ${h.length} bytes`);
+}
 const days = { ...(prev.days || {}) };
-for (const e of xml.split("<entry>").slice(1)) {
-  const id = (e.match(/<yt:videoId>([^<]+)</) || [])[1], title = dec((e.match(/<title>([^<]+)</) || [])[1] || "");
-  const pub = (e.match(/<published>([^<]+)</) || [])[1];
+for (const { id, title, pub } of items) {
   console.log("·", pub, title);
   if (!id || !/\bmisa\b/i.test(title) || /rosario/i.test(title)) continue;
   // La fecha: la del título («23 de octubre de 2026») o, si no trae, la de publicación (hora de Chile).
-  const s = title.toLowerCase().normalize("NFD").replace(/[̀-ͯ]/g, "").replace("setiembre", "septiembre");
+  const s = title.toLowerCase().normalize("NFD").replace(/[\u0300-\u036f]/g, "").replace("setiembre", "septiembre");
   const m = s.match(/\b(\d{1,2})\s+de\s+([a-z]+)(?:\s+(?:de|del)\s+(\d{4}))?/);
-  const p = tz(new Date(pub || Date.now()));
+  // Sin fecha de publicación (página de transmisiones), solo vale la fecha del título o el primero = hoy.
+  if (!pub && !m && Object.values(days).some((x) => x.id === id)) continue;
+  const p = tz(pub ? new Date(pub) : new Date());
   const iso = m && MESES.includes(m[2]) ? `${m[3] || p.getFullYear()}-${String(MESES.indexOf(m[2]) + 1).padStart(2, "0")}-${String(+m[1]).padStart(2, "0")}` : isoOf(p);
   if (!days[iso]) days[iso] = { id, title }; // el RSS viene del más nuevo al más antiguo
 }
 // Solo los últimos 10 días.
 const desde = isoOf(new Date(tz(new Date()).getTime() - 10 * 864e5));
 for (const k of Object.keys(days)) if (k < desde) delete days[k];
-const out = { handle: HANDLE, channelId, vistos: xml.split("<entry>").slice(1, 8).map((e) => dec((e.match(/<title>([^<]+)</) || [])[1] || "")), fuente: "Magnificat TV (YouTube)", days };
+const out = { handle: HANDLE, channelId, via, vistos: items.slice(0, 8).map((x) => x.title), fuente: "Magnificat TV (YouTube)", days };
 if (JSON.stringify(out) !== JSON.stringify(prev)) { writeFileSync(OUT, JSON.stringify(out, null, 1) + "\n"); console.log("misa-vivo.json:", Object.keys(days).join(", ")); }
 else console.log("misa-vivo.json sin cambios");
