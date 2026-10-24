@@ -11,7 +11,7 @@ on:
         default: ""
   push:
     branches: [main]
-    paths: ["scripts/evangelio.mjs", "scripts/misa.mjs", "saludos/saludos.json"]
+    paths: ["scripts/evangelio.mjs", "saludos/saludos.json"]
 permissions:
   contents: write
 concurrency: { group: evangelio, cancel-in-progress: false }
@@ -23,17 +23,15 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: node scripts/evangelio.mjs data/evangelio.json
-      - name: Liturgia de la Misa (lecturas completas)
-        run: node scripts/misa.mjs data/misa.json || echo 'misa.json sin cambios por un error de la fuente'
       - name: Mes completo (solo si se pidió)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dias != '' }}
         run: DIAS=${{ inputs.dias }} TEXTO=1 node scripts/evangelio.mjs data/evangelio-mes.json
       - name: Publicar si cambió
         run: |
-          if [ -n "$(git status --porcelain data/evangelio.json data/evangelio-mes.json data/misa.json)" ]; then
+          if [ -n "$(git status --porcelain data/evangelio.json data/evangelio-mes.json)" ]; then
             git config user.name "evangelio-bot"
             git config user.email "evangelio-bot@users.noreply.github.com"
-            git add data/misa.json 2>/dev/null; git add data/evangelio.json data/evangelio-mes.json 2>/dev/null || git add data/evangelio.json
+            git add data/evangelio.json data/evangelio-mes.json 2>/dev/null || git add data/evangelio.json
             git commit -m "Capilla: Evangelio de los próximos días"
             git pull --rebase -q origin main
             git push
