@@ -11,8 +11,8 @@ const POP = 'fill="var(--il-pop, #ffba03)" stroke="currentColor"';
 // Monito: x = centro, y = pies. arms: down | up | out | pray | give | wave | hold | hug
 // Cuerpo «relleno»: cabeza grande, torso redondeado y brazos y piernas como tubos con contorno.
 function fig(x, y, { arms = "down", legs = "stand", face = "smile", s = 1, flip = 1 } = {}) {
-  if (PAPEL) { const i = (nFig++ * 3 + seed) % ROPA.length; const r = ROPA[i];
-    return doll(x, y, { arms, legs, face, s: s * 1.22, flip, shirt: r[0], pants: r[1], hair: PELO[i % PELO.length], long: r[2], halo: false }); }
+  if (PAPEL) { const i = (nFig++ * 3 + seed) % ROPA.length, r = ROPA[i], pz = PEINADO[(i + seed) % PEINADO.length];
+    return doll(x, y, { arms, legs, face, s: s * 1.22, flip, shirt: r[0], pants: r[1], ropa: r[2], peinado: pz, hair: PELO[(i + nFig) % PELO.length], long: pz === "largo", halo: false, joven: true }); }
   s *= 1.22; // monitos protagonistas: más grandes que el resto de la escena
   const X = (dx) => +(x + dx * s * flip).toFixed(1), Y = (dy) => +(y - dy * s).toFixed(1);
   const k = (v) => +(v * s).toFixed(2);
@@ -156,17 +156,22 @@ function person(x, y, o = {}) {
 const PAPEL = true;
 let nFig = 0, seed = 0; // cada monito de una escena con ropa distinta (siempre la misma para esa escena)
 const PIEL = ["#f2d4b4", "#e9c39d", "#d9a77c", "#f5dcc2"];
-const PELO = ["#5a3d2b", "#3b2a20", "#7a4f32", "#2e221b", "#9a6a3e"];
-// camisa, pantalón, pelo largo
-const ROPA = [["#d5473f", "#2f4a7a", false], ["#e7b23c", "#5a4a3a", true], ["#3f8f8a", "#2f3e5c", false], ["#4f7cc0", "#3b3b4a", true],
-  ["#8bb35a", "#4a3d33", false], ["#e0836a", "#2f4a7a", true], ["#7b5ea7", "#3a3a3a", false], ["#f0c76e", "#6b4a33", true]];
+const PELO = ["#4a3326", "#2b201a", "#6e4a30", "#1f1915", "#8a5e38", "#3a2a22"];
+// Ropa de joven: [polera/polerón, pantalón, estilo] · paleta sobria (no de jardín infantil)
+const ROPA = [["#3f6f6a", "#2b3550", "hoodie"], ["#c9733f", "#3a4f78", "tee"], ["#2f3e5c", "#b9a57e", "jacket"], ["#a8443b", "#2b2f3a", "hoodie"],
+  ["#7d8f5a", "#3a4f78", "tee"], ["#d9a441", "#2b3550", "hoodie"], ["#5f5584", "#4a4038", "tee"], ["#d8d0bf", "#36486b", "jacket"]];
+const PEINADO = ["corto", "largo", "rizos", "tomate", "corto2", "largo"];
+const shade = (hex, f) => { const n = parseInt(hex.slice(1), 16); const c = (v) => Math.max(0, Math.min(255, Math.round(v * f))).toString(16).padStart(2, "0"); return `#${c(n >> 16)}${c((n >> 8) & 255)}${c(n & 255)}`; };
 const PAPER = (c) => `fill="${c}" stroke="none"`;
 const fillOf = (c) => (!c || /il-bg/.test(c) ? "#fbf4e6" : c);
 function doll(x, y, o) {
   const { arms = "down", legs = "stand", face = "smile", s = 1.22, flip = 1, shirt = null, pants = "#4a3d33", robe = null, len = 0, veil = null, band = null,
-    hair = "#5a3d2b", long = false, beard = null, cap = null, halo = false, stars = false, sash = null, belt = null, cape = null, collar = null } = o;
+    hair = "#5a3d2b", long = false, beard = null, cap = null, halo = false, stars = false, sash = null, belt = null, cape = null, collar = null,
+    ropa = "", peinado = "corto", joven = false } = o;
   const X = (dx) => +(x + dx * s * flip).toFixed(1), Y = (dy) => +(y - dy * s).toFixed(1);
   const k = (v) => +(v * s).toFixed(2);
+  // La cabeza, más chica que antes (proporción de joven, no de guagua), reducida hacia su centro.
+  const hs = .8, HX = (dx) => X(dx * hs), HY = (dy) => Y(64 + (dy - 64) * hs), hk = (v) => k(v * hs);
   const skin = PIEL[(nFig + Math.round(x / 10)) % PIEL.length];
   const cloth = fillOf(robe || shirt || "#d5473f");
   const limb = (d, c, w = 8.5) => P(d, `stroke="${c}" stroke-width="${k(w)}" fill="none" class="pp-l"`);
@@ -194,17 +199,19 @@ function doll(x, y, o) {
   const armD = AR[arms] || AR.down, front = arms === "pray";
   let out = "";
   if (halo) {
-    out += C(X(0), Y(63), k(23), PAPER("#ffd56a"));
-    if (stars) out += [...Array(12)].map((_, i) => { const a = Math.PI * (0.1 + i * 0.8 / 11); return C(+(X(0) - Math.cos(a) * k(23)).toFixed(1), +(Y(63) - Math.sin(a) * k(23)).toFixed(1), k(1.9), PAPER("#fff6e5")); }).join("");
+    out += C(X(0), Y(65), k(19), PAPER("#f3cf6a"));
+    if (stars) out += [...Array(12)].map((_, i) => { const a = Math.PI * (0.1 + i * 0.8 / 11); return C(+(X(0) - Math.cos(a) * k(19)).toFixed(1), +(Y(65) - Math.sin(a) * k(19)).toFixed(1), k(1.6), PAPER("#fff6e5")); }).join("");
   }
   if (cape) out += P(`M${X(-10)} ${Y(46)} L${X(-20)} ${Y(8)} L${X(20)} ${Y(8)} L${X(10)} ${Y(46)} Z`, PAPER(fillOf(cape)));
-  if (veil) out += P(`M${X(-15)} ${Y(72)} Q${X(-23)} ${Y(50)} ${X(-21)} ${Y(len ? 30 : 10)} L${X(21)} ${Y(len ? 30 : 10)} Q${X(23)} ${Y(50)} ${X(15)} ${Y(72)} Z`, PAPER(fillOf(veil)));
-  else if (long && hair) out += P(`M${X(-16.5)} ${Y(64)} Q${X(-19)} ${Y(48)} ${X(-15)} ${Y(38)} L${X(15)} ${Y(38)} Q${X(19)} ${Y(48)} ${X(16.5)} ${Y(64)} Z`, PAPER(hair));
+  if (veil) out += P(`M${HX(-15)} ${HY(72)} Q${X(-20)} ${Y(50)} ${X(-19)} ${Y(len ? 30 : 10)} L${X(19)} ${Y(len ? 30 : 10)} Q${X(20)} ${Y(50)} ${HX(15)} ${HY(72)} Z`, PAPER(fillOf(veil)));
+  else if (long && hair) out += P(`M${HX(-16.5)} ${HY(66)} Q${HX(-19)} ${Y(48)} ${X(-12.5)} ${Y(37)} L${X(12.5)} ${Y(37)} Q${HX(19)} ${Y(48)} ${HX(16.5)} ${HY(66)} Z`, PAPER(hair));
   // piernas y zapatos
   if (!robe || len) {
     const ld = (robe && len) ? LG.stand : (LG[legs] || LG.stand);
     out += limb(ld, fillOf(pants), 8);
-    out += ends(ld).map(([a, b]) => P(`M${a - k(4.5)} ${b + k(1.5)} q0 ${-k(4.5)} ${k(4.5)} ${-k(4.5)} q${k(4.5)} 0 ${k(5)} ${k(4.5)} Z`, PAPER("#3b2a20"))).join("");
+    // zapatillas blancas con planta de color
+    out += ends(ld).map(([a, b]) => P(`M${a - k(4.2)} ${b + k(1.6)} q0 ${-k(4.6)} ${k(4.2)} ${-k(4.6)} q${k(4.6)} 0 ${k(5.6)} ${k(4.6)} Z`, PAPER(joven ? "#f4f1ea" : "#3b2a20"))
+      + (joven ? P(`M${a - k(4.2)} ${b + k(1.6)} L${a + k(5.6)} ${b + k(1.6)}`, `stroke="${shade(fillOf(pants), .8)}" stroke-width="${k(1.6)}" fill="none" class="pp-l"`) : "")).join("");
   } else out += C(X(-6), Y(2.5), k(3.4), PAPER("#5a3d2b")) + C(X(6), Y(2.5), k(3.4), PAPER("#5a3d2b"));
   // brazos de atrás
   if (!front) { out += limb(armD, cloth, 8); out += ends(armD).map(([a, b]) => C(a, b, k(3.6), PAPER(skin))).join(""); }
@@ -212,7 +219,14 @@ function doll(x, y, o) {
   if (robe) { const b = len || 3, w = len ? 13 : 16;
     out += P(`M${X(-10)} ${Y(45)} Q${X(-10)} ${Y(50)} ${X(0)} ${Y(50)} Q${X(10)} ${Y(50)} ${X(10)} ${Y(45)} L${X(w)} ${Y(b)} Q${X(0)} ${Y(b - 3)} ${X(-w)} ${Y(b)} Z`, PAPER(cloth)); }
   else out += P(`M${X(-10)} ${Y(43)} Q${X(-10.5)} ${Y(50)} ${X(0)} ${Y(50)} Q${X(10.5)} ${Y(50)} ${X(10)} ${Y(43)} L${X(10)} ${Y(22)} Q${X(10)} ${Y(17)} ${X(0)} ${Y(17)} Q${X(-10)} ${Y(17)} ${X(-10)} ${Y(22)} Z`, PAPER(cloth));
-  out += P(`M${X(-5)} ${Y(49.5)} L${X(0)} ${Y(44)} L${X(5)} ${Y(49.5)} Z`, PAPER(skin)); // cuello en V
+  if (ropa === "hoodie") { // polerón: capucha, bolsillo canguro y cordones
+    out += P(`M${X(-9)} ${Y(49)} Q${X(0)} ${Y(56)} ${X(9)} ${Y(49)} Q${X(0)} ${Y(45)} ${X(-9)} ${Y(49)} Z`, PAPER(shade(cloth, .82)));
+    out += P(`M${X(-6.5)} ${Y(33)} L${X(6.5)} ${Y(33)} L${X(8)} ${Y(25)} L${X(-8)} ${Y(25)} Z`, PAPER(shade(cloth, .88)));
+    out += P(`M${X(-2.2)} ${Y(47)} L${X(-2.6)} ${Y(40)} M${X(2.2)} ${Y(47)} L${X(2.6)} ${Y(40)}`, `stroke="#f4f1ea" stroke-width="${k(.9)}" fill="none" class="pp-l"`);
+  } else if (ropa === "jacket") { // chaqueta abierta sobre polera blanca
+    out += P(`M${X(-3.4)} ${Y(49.5)} L${X(3.4)} ${Y(49.5)} L${X(3)} ${Y(17.5)} L${X(-3)} ${Y(17.5)} Z`, PAPER("#f4f1ea"));
+    out += P(`M${X(-3.4)} ${Y(49.5)} L${X(-7)} ${Y(49)} L${X(-3)} ${Y(40)} Z M${X(3.4)} ${Y(49.5)} L${X(7)} ${Y(49)} L${X(3)} ${Y(40)} Z`, PAPER(shade(cloth, .8)));
+  } else out += P(`M${X(-4.5)} ${Y(49.8)} Q${X(0)} ${Y(44.5)} ${X(4.5)} ${Y(49.8)} Z`, PAPER(skin)); // polera: cuello redondo
   if (band && robe) out += P(`M${X(-15)} ${Y(9)} Q${X(0)} ${Y(6)} ${X(15)} ${Y(9)}`, `stroke="${band}" stroke-width="${k(2.6)}" fill="none" class="pp-l"`);
   if (sash) out += P(`M${X(-7)} ${Y(48)} L${X(-3)} ${Y(48)} L${X(11)} ${Y(14)} L${X(7)} ${Y(14)} Z`, PAPER(sash));
   if (belt) out += P(`M${X(-10)} ${Y(31.5)} L${X(10)} ${Y(31.5)} L${X(10)} ${Y(28.5)} L${X(-10)} ${Y(28.5)} Z`, PAPER(belt));
@@ -221,22 +235,30 @@ function doll(x, y, o) {
     out += P(`M${X(0)} ${Y(47)} C${X(-4.5)} ${Y(43)} ${X(-4.5)} ${Y(34)} ${X(0)} ${Y(32)} C${X(4.5)} ${Y(34)} ${X(4.5)} ${Y(43)} ${X(0)} ${Y(47)} Z`, PAPER(skin)); }
   else if (arms === "hold" || arms === "hug" || arms === "give") out += ends(armD).map(([a, b]) => C(a, b, k(3.6), PAPER(skin))).join("");
   // orejas, cabeza y pelo
-  out += C(X(-15), Y(61), k(3.6), PAPER(skin)) + C(X(15), Y(61), k(3.6), PAPER(skin));
-  out += P(`M${X(-14.5)} ${Y(66)} Q${X(-14.5)} ${Y(78)} ${X(0)} ${Y(78)} Q${X(14.5)} ${Y(78)} ${X(14.5)} ${Y(66)} L${X(14)} ${Y(57)} Q${X(12)} ${Y(46)} ${X(0)} ${Y(46)} Q${X(-12)} ${Y(46)} ${X(-14)} ${Y(57)} Z`, PAPER(skin));
-  const sw = flip > 0 ? 1 : 0;
-  if (veil) out += P(`M${X(-17)} ${Y(59)} Q${X(-17)} ${Y(81)} ${X(0)} ${Y(81)} Q${X(17)} ${Y(81)} ${X(17)} ${Y(59)} Q${X(10)} ${Y(73)} ${X(0)} ${Y(72.5)} Q${X(-10)} ${Y(73)} ${X(-17)} ${Y(59)} Z`, PAPER(fillOf(veil)))
-    + (band ? P(`M${X(-15)} ${Y(61)} Q${X(-9)} ${Y(72)} ${X(0)} ${Y(71.5)} Q${X(9)} ${Y(72)} ${X(15)} ${Y(61)}`, `stroke="${band}" stroke-width="${k(2.4)}" fill="none" class="pp-l"`) : "");
-  else if (hair) out += P(`M${X(-15.5)} ${Y(63)} Q${X(-17)} ${Y(80)} ${X(0)} ${Y(80.5)} Q${X(17)} ${Y(80)} ${X(15.5)} ${Y(63)} Q${X(13)} ${Y(70)} ${X(6)} ${Y(71)} Q${X(1)} ${Y(66)} ${X(-4)} ${Y(70.5)} Q${X(-12)} ${Y(71)} ${X(-15.5)} ${Y(63)} Z`, PAPER(hair));
-  if (cap) out += P(`M${X(-9)} ${Y(76)} Q${X(0)} ${Y(84)} ${X(9)} ${Y(76)} Z`, PAPER(fillOf(cap)));
-  if (beard) out += P(`M${X(-14)} ${Y(60)} Q${X(-14)} ${Y(44)} ${X(0)} ${Y(42.5)} Q${X(14)} ${Y(44)} ${X(14)} ${Y(60)} Q${X(9)} ${Y(53)} ${X(4)} ${Y(55)} Q${X(0)} ${Y(53)} ${X(-4)} ${Y(55)} Q${X(-9)} ${Y(53)} ${X(-14)} ${Y(60)} Z`, PAPER(beard));
-  // cara
-  out += C(X(-8.5), Y(57.5), k(2.6), 'fill="#ef8a8a" stroke="none" opacity=".45"') + C(X(8.5), Y(57.5), k(2.6), 'fill="#ef8a8a" stroke="none" opacity=".45"');
-  const eye = (dx) => `<ellipse cx="${X(dx)}" cy="${Y(63)}" rx="${k(1.9)}" ry="${k(2.5)}" fill="#2a1d16" stroke="none"/>`;
-  if (face === "calm") out += P(`M${X(-7.5)} ${Y(63)} q${k(2.5) * flip} ${-k(2.4)} ${k(5) * flip} 0 M${X(2.5)} ${Y(63)} q${k(2.5) * flip} ${-k(2.4)} ${k(5) * flip} 0`, `stroke="#2a1d16" stroke-width="${k(1.5)}" fill="none" class="pp-l"`);
+  out += C(HX(-14.6), HY(61), hk(3.6), PAPER(skin)) + C(HX(14.6), HY(61), hk(3.6), PAPER(skin));
+  out += P(`M${HX(-14)} ${HY(66)} Q${HX(-14)} ${HY(78)} ${HX(0)} ${HY(78)} Q${HX(14)} ${HY(78)} ${HX(14)} ${HY(66)} L${HX(13.5)} ${HY(57)} Q${HX(11)} ${HY(45)} ${HX(0)} ${HY(45)} Q${HX(-11)} ${HY(45)} ${HX(-13.5)} ${HY(57)} Z`, PAPER(skin));
+  const capa = `M${HX(-15.5)} ${HY(63)} Q${HX(-17)} ${HY(80)} ${HX(0)} ${HY(80.5)} Q${HX(17)} ${HY(80)} ${HX(15.5)} ${HY(63)} Q${HX(13)} ${HY(70)} ${HX(6)} ${HY(71)} Q${HX(1)} ${HY(66)} ${HX(-4)} ${HY(70.5)} Q${HX(-12)} ${HY(71)} ${HX(-15.5)} ${HY(63)} Z`;
+  if (veil) out += P(`M${HX(-17)} ${HY(59)} Q${HX(-17)} ${HY(81)} ${HX(0)} ${HY(81)} Q${HX(17)} ${HY(81)} ${HX(17)} ${HY(59)} Q${HX(10)} ${HY(73)} ${HX(0)} ${HY(72.5)} Q${HX(-10)} ${HY(73)} ${HX(-17)} ${HY(59)} Z`, PAPER(fillOf(veil)))
+    + (band ? P(`M${HX(-15)} ${HY(61)} Q${HX(-9)} ${HY(72)} ${HX(0)} ${HY(71.5)} Q${HX(9)} ${HY(72)} ${HX(15)} ${HY(61)}`, `stroke="${band}" stroke-width="${hk(2.4)}" fill="none" class="pp-l"`) : "");
+  else if (hair) {
+    if (peinado === "rizos") out += [[-13, 70], [-9, 76], [-3, 79.5], [3.5, 79.5], [9.5, 76], [13.5, 70], [0, 75]].map(([a, b]) => C(HX(a), HY(b), hk(5.4), PAPER(hair))).join("");
+    else if (peinado === "corto2") out += P(`M${HX(-15)} ${HY(64)} Q${HX(-16)} ${HY(80)} ${HX(0)} ${HY(80)} Q${HX(15)} ${HY(80)} ${HX(15.5)} ${HY(68)} Q${HX(8)} ${HY(76)} ${HX(-6)} ${HY(72)} Q${HX(-12)} ${HY(70)} ${HX(-15)} ${HY(64)} Z`, PAPER(hair));
+    else out += P(capa, PAPER(hair));
+    if (peinado === "tomate") out += C(HX(4), HY(84), hk(5.8), PAPER(hair));
+  }
+  if (cap) out += P(`M${HX(-9)} ${HY(76)} Q${HX(0)} ${HY(84)} ${HX(9)} ${HY(76)} Z`, PAPER(fillOf(cap)));
+  if (beard) out += P(`M${HX(-14)} ${HY(60)} Q${HX(-14)} ${HY(44)} ${HX(0)} ${HY(42.5)} Q${HX(14)} ${HY(44)} ${HX(14)} ${HY(60)} Q${HX(9)} ${HY(53)} ${HX(4)} ${HY(55)} Q${HX(0)} ${HY(53)} ${HX(-4)} ${HY(55)} Q${HX(-9)} ${HY(53)} ${HX(-14)} ${HY(60)} Z`, PAPER(beard));
+  // cara: ojos de punto, cejas, sonrisa de línea (cada uno con su gesto)
+  const ink = "#2a1d16", line = (d, w = 1.3, c = ink) => P(d, `stroke="${c}" stroke-width="${hk(w)}" fill="none" class="pp-l"`);
+  const eye = (dx) => `<ellipse cx="${HX(dx)}" cy="${HY(63)}" rx="${hk(1.6)}" ry="${hk(2.1)}" fill="${ink}" stroke="none"/>`;
+  const gesto = (nFig + Math.round(x)) % 3;
+  if (face === "calm") out += line(`M${HX(-7.5)} ${HY(63)} q${hk(2.5) * flip} ${-hk(2)} ${hk(5) * flip} 0 M${HX(2.5)} ${HY(63)} q${hk(2.5) * flip} ${-hk(2)} ${hk(5) * flip} 0`, 1.4);
   else out += eye(-5) + eye(5);
-  if (face === "wow") out += `<ellipse cx="${X(0)}" cy="${Y(55)}" rx="${k(2.6)}" ry="${k(3.2)}" fill="#a83a3a" stroke="none"/>`;
-  else if (face === "worry") out += P(`M${X(-4)} ${Y(53.5)} Q${X(0)} ${Y(57.5)} ${X(4)} ${Y(53.5)}`, `stroke="#a83a3a" stroke-width="${k(1.5)}" fill="none" class="pp-l"`);
-  else out += P(`M${X(-4.6)} ${Y(57)} Q${X(0)} ${Y(56)} ${X(4.6)} ${Y(57)} Q${X(3.5)} ${Y(51.5)} ${X(0)} ${Y(51.5)} Q${X(-3.5)} ${Y(51.5)} ${X(-4.6)} ${Y(57)} Z`, PAPER("#d9606a"));
+  if (!beard) out += line(`M${HX(-7.2)} ${HY(68.2)} Q${HX(-5)} ${HY(69.6 + (gesto === 1 ? .8 : 0))} ${HX(-2.8)} ${HY(68.6)} M${HX(2.8)} ${HY(68.6)} Q${HX(5)} ${HY(69.6)} ${HX(7.2)} ${HY(68.2)}`, 1.1, shade(fillOf(hair || "#4a3326"), .85));
+  if (face === "wow") out += `<ellipse cx="${HX(0)}" cy="${HY(55.5)}" rx="${hk(1.8)}" ry="${hk(2.4)}" fill="#7a3434" stroke="none"/>`;
+  else if (face === "worry") out += line(`M${HX(-3.6)} ${HY(54.5)} Q${HX(0)} ${HY(57.5)} ${HX(3.6)} ${HY(54.5)}`);
+  else if (gesto === 2 && !beard) out += P(`M${HX(-3.8)} ${HY(57.5)} Q${HX(0)} ${HY(57.2)} ${HX(3.8)} ${HY(57.5)} Q${HX(2.6)} ${HY(53.6)} ${HX(0)} ${HY(53.6)} Q${HX(-2.6)} ${HY(53.6)} ${HX(-3.8)} ${HY(57.5)} Z`, PAPER("#7a3434"));
+  else out += line(`M${HX(-3.8)} ${HY(57.2)} Q${HX(0)} ${HY(gesto ? 54.2 : 54.8)} ${HX(3.8)} ${HY(57.2 - (gesto ? .6 : 0))}`);
   return `<g class="pp-doll">${out}</g>`;
 }
 const MANTO = "#8ad2fa", CAFE = "#8a5a3c", CANA = "#d9d4cc", ROJO = "#e48a68", NAVY = "#1d2c55";
