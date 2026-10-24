@@ -436,6 +436,7 @@ function viewHome() {
   ${inicio.greetHTML()}
   ${solicitud.homeCard()}
   <section class="home-news">${carousel()}</section>
+  <div class="ag-panel-slot" data-ag-panel="inicio"></div>
   <div id="countSlot"></div>
   <div id="famInvSlot"></div>
   ${radiosHTML()}

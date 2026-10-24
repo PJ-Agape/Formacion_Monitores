@@ -154,6 +154,8 @@ function person(x, y, o = {}) {
 // y textura de papel (el filtro #ilPapel lo aplica el CSS a cada pieza con relleno).
 // ---------------------------------------------------------------------------
 const PAPEL = true;
+let SOBRIO = false; // true: muñecos sin cara (estilo editorial)
+export const setSobrio = (v) => { SOBRIO = !!v; };
 let nFig = 0, seed = 0; // cada monito de una escena con ropa distinta (siempre la misma para esa escena)
 const PIEL = ["#f2d4b4", "#e9c39d", "#d9a77c", "#f5dcc2"];
 const PELO = ["#4a3326", "#2b201a", "#6e4a30", "#1f1915", "#8a5e38", "#3a2a22"];
@@ -171,7 +173,7 @@ function doll(x, y, o) {
   const X = (dx) => +(x + dx * s * flip).toFixed(1), Y = (dy) => +(y - dy * s).toFixed(1);
   const k = (v) => +(v * s).toFixed(2);
   // La cabeza, más chica que antes (proporción de joven, no de guagua), reducida hacia su centro.
-  const hs = .8, HX = (dx) => X(dx * hs), HY = (dy) => Y(64 + (dy - 64) * hs), hk = (v) => k(v * hs);
+  const hs = SOBRIO ? .72 : .8, HX = (dx) => X(dx * hs), HY = (dy) => Y(64 + (dy - 64) * hs), hk = (v) => k(v * hs);
   const skin = PIEL[(nFig + Math.round(x / 10)) % PIEL.length];
   const cloth = fillOf(robe || shirt || "#d5473f");
   const limb = (d, c, w = 8.5) => P(d, `stroke="${c}" stroke-width="${k(w)}" fill="none" class="pp-l"`);
@@ -248,6 +250,8 @@ function doll(x, y, o) {
   }
   if (cap) out += P(`M${HX(-9)} ${HY(76)} Q${HX(0)} ${HY(84)} ${HX(9)} ${HY(76)} Z`, PAPER(fillOf(cap)));
   if (beard) out += P(`M${HX(-14)} ${HY(60)} Q${HX(-14)} ${HY(44)} ${HX(0)} ${HY(42.5)} Q${HX(14)} ${HY(44)} ${HX(14)} ${HY(60)} Q${HX(9)} ${HY(53)} ${HX(4)} ${HY(55)} Q${HX(0)} ${HY(53)} ${HX(-4)} ${HY(55)} Q${HX(-9)} ${HY(53)} ${HX(-14)} ${HY(60)} Z`, PAPER(beard));
+  // Estilo sobrio: sin cara (como las ilustraciones editoriales), se lee más adulto.
+  if (SOBRIO) return `<g class="pp-doll">${out}</g>`;
   // cara: ojos de punto, cejas, sonrisa de línea (cada uno con su gesto)
   const ink = "#2a1d16", line = (d, w = 1.3, c = ink) => P(d, `stroke="${c}" stroke-width="${hk(w)}" fill="none" class="pp-l"`);
   const eye = (dx) => `<ellipse cx="${HX(dx)}" cy="${HY(63)}" rx="${hk(1.6)}" ry="${hk(2.1)}" fill="${ink}" stroke="none"/>`;
