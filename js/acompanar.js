@@ -327,22 +327,17 @@ function honorHTML() {
 // Tarjetas de Inicio: cumpleaños del mes y cuadro de honor
 // ---------------------------------------------------------------------------
 export async function homeCards() {
+  // Los cumpleaños ya no van aquí: están en la Agenda, cada uno en su día.
   const slot = document.getElementById("acHomeSlot"); if (!slot || !ctx.cloud.enabled) return;
-  const [cum, hon] = await Promise.all([st().ready ? ctx.cloud.getCumples() : null, ctx.cloud.getHonor()]);
-  const now = new Date(), mm = pad(now.getMonth() + 1), dd = pad(now.getDate());
-  const items = ((cum && cum.items) || []).filter((x) => x.md.startsWith(mm + "-")).sort((a, b) => a.md.localeCompare(b.md));
+  const hon = await ctx.cloud.getHonor();
+  const now = new Date();
   const cur = iso(now).slice(0, 7), prev = (() => { const p = new Date(now); p.setDate(1); p.setMonth(p.getMonth() - 1); return iso(p).slice(0, 7); })();
   const showHon = hon && (hon.mes === cur || hon.mes === prev) && (hon.items || []).length;
-  if (!items.length && !showHon) return;
+  if (!showHon) return;
   const s = document.getElementById("acHomeSlot"); if (!s) return;
-  s.innerHTML = `<div class="grid grid-2" style="margin-top:16px">
-    ${items.length ? `<section class="card home-cumple"><span class="eyebrow">🎂 Cumpleaños de ${MESES[now.getMonth()]}</span>
-      <ul>${items.map((x) => { const d = x.md.slice(3), today = d === dd; return `<li class="${today ? "today" : ""}"><b>${+d}</b> ${esc(x.n)}${today ? " · ¡hoy! 🎉" : ""}</li>`; }).join("")}</ul>
-      ${items.some((x) => x.md.slice(3) === dd) ? `<a class="btn btn-sm btn-gold" href="#/chat/general">Saludar en el chat</a>` : ""}</section>` : ""}
-    ${showHon ? `<section class="card home-honor"><span class="eyebrow">🏆 Cuadro de honor · ${esc(hon.titulo || "")}</span>
+  s.innerHTML = `<section class="card home-honor" style="margin-top:16px"><span class="eyebrow">🏆 Cuadro de honor · ${esc(hon.titulo || "")}</span>
       <ul>${hon.items.slice(0, 8).map((x) => `<li><b>${esc(x.n)}</b> <span>${esc((x.m || []).join(" · "))}</span></li>`).join("")}</ul>
-      ${hon.items.length > 8 ? `<span class="xs muted">y ${hon.items.length - 8} más</span>` : ""}</section>` : ""}
-  </div>`;
+      ${hon.items.length > 8 ? `<span class="xs muted">y ${hon.items.length - 8} más</span>` : ""}</section>`;
 }
 
 // ---------------------------------------------------------------------------
