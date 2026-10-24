@@ -4342,3 +4342,6 @@ a.cap-guide-btn { text-decoration: none; }
 }
 .ore-page .sl-v { margin: 0 0 .2em; }
 .ore-page .sl-gap { height: .6em; }
+/* Ilustraciones en papel recortado */
+svg.z-illus.z-papel { --il-bg: #fbf4e6; --il-pop: #f2b33d; color: #7a6352; }
+svg.z-illus.z-papel [fill]:not([fill="none"]), svg.z-illus.z-papel .pp-l { filter: url(#ilPapel); }
