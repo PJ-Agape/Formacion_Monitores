@@ -20,6 +20,8 @@ export async function afterRender(section) {
   const v = document.getElementById("view"); if (!v) return;
   const head = v.querySelector(".page-head");
   const wrap = document.createElement("div"); wrap.className = "wa-wrap"; wrap.innerHTML = card(g);
+  const slot = document.getElementById("waSlot");
+  if (section === "red" && slot) { slot.appendChild(wrap); return; }
   if (section === "ayuda" && head) head.after(wrap);
   else { const hero = v.firstElementChild; hero ? hero.after(wrap) : v.prepend(wrap); }
 }

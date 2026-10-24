@@ -4387,3 +4387,39 @@ html.papel {
 .ag-panel-empty { margin: 4px 0 0; }
 .ag-lg-a { font-weight: 800; color: var(--ac); margin-left: 6px; }
 .cap-hero ~ .ag-panel-slot .ag-panel, .ag-panel-slot[data-ag-panel="capilla"] { max-width: 760px; margin-left: auto; margin-right: auto; }
+/* Comunidad: desafío de la semana bien a la vista */
+.red-desafio:empty { display: none; }
+.red-desafio .desafio { position: relative; overflow: hidden; margin-top: 4px; padding: 22px 20px 18px; border-radius: 26px; border: 0;
+  background: radial-gradient(circle at 96% 4%, #ffba03 0 58px, transparent 59px), radial-gradient(circle at -4% 104%, #a8443b 0 90px, transparent 91px), #ef591c; color: #fff6e5; }
+.red-desafio .desafio-head { align-items: flex-start; }
+.red-desafio .desafio-ico { flex: 0 0 auto; width: 58px; height: 58px; border-radius: 50%; display: grid; place-items: center; background: #fff6e5; color: #ef591c; box-shadow: var(--pp-sh-m, none); transform: rotate(-8deg); }
+.red-desafio .desafio-ico svg { width: 36px; height: 36px; }
+.red-desafio .desafio-hand { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.35rem; color: #ffe08a; line-height: 1; }
+.red-desafio .desafio-head h3 { font-size: clamp(1.5rem, 6vw, 2.1rem); line-height: 1.02; color: #fff; margin-top: 4px; font-stretch: 85%; }
+.red-desafio .desafio-src { display: inline-block; margin-top: 6px; font-size: .72rem; font-weight: 800; letter-spacing: .1em; text-transform: uppercase; color: #ffe0cc; }
+.red-desafio .desafio-list { margin: 14px 0 12px; } .red-desafio .desafio-list p { font-size: 1.12rem; font-weight: 600; color: #fff; }
+.red-desafio .desafio-list .chip { background: #fff6e5; color: #a8443b; border: 0; }
+.red-desafio .desafio-foot { border-top: 2px dashed rgba(255,246,229,.5); }
+.red-desafio .desafio-foot .small { color: #fff6e5; }
+.red-desafio .desafio .btn-gold { background: #ffba03; color: var(--cn, #0b2566); font-size: 1rem; padding: 10px 18px; }
+.red-desafio .desafio .btn-soft { background: #fff6e5; color: #a8443b; }
+.red-desafio .desafio .icon-btn { color: #fff6e5; }
+.red-desafio > .row-wrap { margin-top: 4px !important; }
+/* La Plaza: una plaza de verdad, con banderines, la glorieta y la gente */
+.plaza:not(.fam-plaza) { background: linear-gradient(180deg, #fff3df 0%, #fde6d4 58%, #fbd8c4 100%) !important; padding-top: 6px !important; overflow: hidden; position: relative; }
+.plaza-scene { margin: 0 calc(-1 * clamp(16px, 3.5vw, 28px)) 4px; }
+.plaza-ill { display: block; width: 100%; height: auto; max-height: 260px; color: #7a6352; --il-bg: #fff6e5; }
+.plaza-hand { color: #c9460f; font-size: 1.6rem !important; }
+.plaza-head h2 { font-size: clamp(2.4rem, 9vw, 3.4rem) !important; }
+.plaza-head p { color: #4a3a30; }
+.plaza-door { background: #fffaf2 !important; }
+.plaza .is-mom .plaza-ico { background: #ffba03; } .plaza .is-muro .plaza-ico { background: #fde0d2; } .plaza .is-chat .plaza-ico { background: #cfe6d9; } .plaza .is-jg .plaza-ico { background: #8ad2fa; }
+.fam-plaza .plaza-scene { display: none; }
+/* Al final: invitar y el grupo de WhatsApp, juntos */
+.red-end { display: grid; gap: 12px; margin-top: 22px; padding-top: 18px; border-top: 2px dashed rgba(11,37,102,.15); }
+.red-end .cono-invite, .red-end .wa-wrap .card { margin: 0; }
+.red-end #waSlot:empty { display: none; }
+@media (min-width: 761px) { .red-end { grid-template-columns: 1fr 1fr; align-items: stretch; } }
+.red-desafio .desafio-list p { font-size: clamp(1.2rem, 4.6vw, 1.45rem); font-weight: 700; line-height: 1.3; }
+.red-desafio .desafio-hand { font-size: 1.6rem; margin-top: 6px; }
+.red-desafio .desafio .icon-btn { background: rgba(255,246,229,.18); border: 0; box-shadow: none; color: #fff; }

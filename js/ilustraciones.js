@@ -448,7 +448,27 @@ Object.assign(SCENES, {
   sal_cruz: () => crossHill(130, 168) + fig(60, 168, { arms: "pray", legs: "kneel", face: "calm", s: .85 }) + sun(206, 40, 9),
   sal_creacion: () => hills() + sun(190, 40, 14) + tree(60, 150, 34) + P("M120 70 q8 -8 16 0 q8 -8 16 0 M150 92 q6 -6 12 0 q6 -6 12 0", 'stroke-width="2.4"') + sheep(140, 160) + fig(100, 168, { arms: "out", face: "wow", s: .7 }),
 });
-const NAMES = { jesus: "Jesús", emaus: "Jesús en Emaús", dejadlos: "Jesús y los niños", buenpastor: "Buen Pastor", sagradocorazon: "Sagrado Corazón", corazonlimpio: "Corazón limpio", eucaristia: "Eucaristía", espiritu: "Espíritu Santo", maria: "María", oracion: "Oración", acogida: "Acogida", levantate: "Levántate", eleccion: "Elección", uncion: "Unción", ninos: "Niños", rey: "Cristo Rey", virgen: "Virgen María", jose: "San José", sagradafamilia: "Sagrada Familia", apostoles: "Los apóstoles", sanmiguel: "San Miguel Arcángel", sansebastian: "San Sebastián", juanpablo: "San Juan Pablo II", teresacalcuta: "Santa Teresa de Calcuta", carloacutis: "San Carlo Acutis", teresaandes: "Santa Teresa de los Andes", albertohurtado: "San Alberto Hurtado", lauravicuna: "Beata Laura Vicuña", santoschile: "Santos de Chile", anunciacion: "La Anunciación", virgencarmen: "Virgen del Carmen", fraiandresito: "Venerable Fray Andresito", ceferino: "Beato Ceferino Namuncurá", donbosco: "San Juan Bosco", domingosavio: "Santo Domingo Savio", franciscoasis: "San Francisco de Asís", rosalima: "Santa Rosa de Lima", frassati: "San Pier Giorgio Frassati", teresita: "Santa Teresita", guadalupe: "Virgen de Guadalupe" };
+// La Plaza Ágape: banderines, la glorieta, árboles, un banco y jóvenes conversando.
+const bunting = (y = 18) => {
+  const cols = ["#ef591c", "#ffba03", "#3f8f8a", "#8ad2fa", "#a8443b", "#7d8f5a"];
+  let o = P(`M-4 ${y} Q120 ${y + 24} 244 ${y}`, 'stroke-width="1.6"');
+  for (let i = 0; i < 12; i++) {
+    const x = 6 + i * 20, t = (x + 4) / 248, yy = y + 48 * t * (1 - t) - 1;
+    o += P(`M${x - 7} ${yy.toFixed(1)} L${x + 7} ${yy.toFixed(1)} L${x} ${(yy + 14).toFixed(1)} Z`, `fill="${cols[i % cols.length]}" stroke="none"`);
+  }
+  return o;
+};
+const glorieta = (x, y) => P(`M${x - 34} ${y} L${x + 34} ${y} L${x + 30} ${y - 8} L${x - 30} ${y - 8} Z`, 'fill="var(--il-bg,#fff)"')
+  + [-24, -8, 8, 24].map((d) => P(`M${x + d} ${y - 8} L${x + d} ${y - 46}`, 'stroke-width="3"')).join("")
+  + P(`M${x - 38} ${y - 46} Q${x} ${y - 82} ${x + 38} ${y - 46} Z`, 'fill="#ef591c" stroke="currentColor"') + P(`M${x} ${y - 66} L${x} ${y - 78}`, 'stroke-width="2.4"') + C(x, y - 80, 3, POP)
+  + P(`M${x - 30} ${y - 22} L${x + 30} ${y - 22}`, 'stroke-width="2"');
+const bench = (x, y) => P(`M${x - 18} ${y - 12} L${x + 18} ${y - 12} M${x - 18} ${y - 20} L${x + 18} ${y - 20} M${x - 14} ${y - 12} L${x - 14} ${y} M${x + 14} ${y - 12} L${x + 14} ${y}`, 'stroke-width="3"');
+Object.assign(SCENES, {
+  plaza: () => bunting(14) + tree(22, 168, 34, "#7d8f5a") + tree(220, 168, 38, "#9bbf8a") + glorieta(120, 168) + bench(196, 168)
+    + fig(58, 168, { arms: "wave", s: .62 }) + fig(84, 168, { arms: "hug", s: .62, flip: -1 }) + fig(160, 168, { arms: "out", s: .62 }) + fig(118, 160, { arms: "up", s: .5, face: "wow" })
+    + ground(0, 240),
+});
+const NAMES = { plaza: "La Plaza", jesus: "Jesús", emaus: "Jesús en Emaús", dejadlos: "Jesús y los niños", buenpastor: "Buen Pastor", sagradocorazon: "Sagrado Corazón", corazonlimpio: "Corazón limpio", eucaristia: "Eucaristía", espiritu: "Espíritu Santo", maria: "María", oracion: "Oración", acogida: "Acogida", levantate: "Levántate", eleccion: "Elección", uncion: "Unción", ninos: "Niños", rey: "Cristo Rey", virgen: "Virgen María", jose: "San José", sagradafamilia: "Sagrada Familia", apostoles: "Los apóstoles", sanmiguel: "San Miguel Arcángel", sansebastian: "San Sebastián", juanpablo: "San Juan Pablo II", teresacalcuta: "Santa Teresa de Calcuta", carloacutis: "San Carlo Acutis", teresaandes: "Santa Teresa de los Andes", albertohurtado: "San Alberto Hurtado", lauravicuna: "Beata Laura Vicuña", santoschile: "Santos de Chile", anunciacion: "La Anunciación", virgencarmen: "Virgen del Carmen", fraiandresito: "Venerable Fray Andresito", ceferino: "Beato Ceferino Namuncurá", donbosco: "San Juan Bosco", domingosavio: "Santo Domingo Savio", franciscoasis: "San Francisco de Asís", rosalima: "Santa Rosa de Lima", frassati: "San Pier Giorgio Frassati", teresita: "Santa Teresita", guadalupe: "Virgen de Guadalupe" };
 export const sceneLabel = (k) => NAMES[k] || k.charAt(0).toUpperCase() + k.slice(1);
 export function illus(key, cls = "") {
   const f = SCENES[key];

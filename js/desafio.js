@@ -56,7 +56,7 @@ async function paint() {
   const items = pref && cur.items.some((i) => i.etapa === pref) ? cur.items.filter((i) => i.etapa === pref) : cur.items;
   const s = document.getElementById("desafioSlot"); if (!s) return;
   s.innerHTML = `<section class="card desafio">
-    <div class="desafio-head"><span class="desafio-ico">🎯</span><div style="flex:1"><span class="eyebrow">${cur.source === "camino" ? "Nuestra Revista" : "Propuesto por el equipo"}</span><h3>${esc(cur.title)}</h3></div>
+    <div class="desafio-head"><span class="desafio-ico" aria-hidden="true"><svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="3.2" stroke-linecap="round"><circle cx="22" cy="26" r="17"/><circle cx="22" cy="26" r="10"/><circle cx="22" cy="26" r="3.4" fill="currentColor"/><path d="M22 26 L41 7 M35 6 L41 7 L42 13"/></svg></span><div style="flex:1"><span class="desafio-hand">esta semana te desafiamos</span>${((t) => t && !/^desaf[ií]o de la semana$/i.test(t) ? `<h3>${esc(t)}</h3>` : "")(cur.title.replace(/^Desafío de la semana · /, "").trim())}<span class="desafio-src">${cur.source === "camino" ? "Desafío de la semana · Nuestra Revista" : "Desafío de la semana · propuesto por el equipo"}</span></div>
       ${st().isStaff ? `<button class="icon-btn" data-action="desNew" aria-label="Proponer otro desafío">${icon("edit")}</button>` : ""}</div>
     <div class="desafio-list">${items.map((i) => `<p>${i.etapa ? `<span class="chip">${esc(ETAPA_L[i.etapa] || i.etapa)}</span> ` : ""}${esc(i.text)}</p>`).join("")}</div>
     <div class="desafio-foot">

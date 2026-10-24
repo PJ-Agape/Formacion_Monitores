@@ -220,6 +220,7 @@ const pdoor = (d, href, cls, ico, slot = "") => !d || d.on === false ? "" : `<a 
 function plazaHTML() {
   const c = inicioCfg().plaza, d = c.doors;
   return `<section class="plaza" aria-labelledby="plazaT">
+    <div class="plaza-scene">${illus("plaza", "plaza-ill")}</div>
     <div class="plaza-head">
       ${c.hand ? `<span class="plaza-hand">${esc(c.hand)}</span>` : ""}
       <h2 id="plazaT">${emT(c.title)}</h2>
@@ -259,13 +260,13 @@ export function refreshInicioCfg(repaint) {
 export function viewRed() {
   const b = BLOCKS.red;
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
+  <div id="desafioSlot" class="red-desafio"></div>
   ${plazaHTML()}
-  ${conocer.inviteCard()}
   ${familiasHTML(who())}
   <div class="ag-panel-slot" data-ag-panel="comunidad"></div>
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
-  <div id="desafioSlot"></div>
+  <div class="red-end">${conocer.inviteCard()}<div id="waSlot"></div></div>
 `;
 }
 
