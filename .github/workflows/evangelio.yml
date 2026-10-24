@@ -23,7 +23,8 @@ jobs:
       - uses: actions/setup-node@v4
         with: { node-version: 20 }
       - run: node scripts/evangelio.mjs data/evangelio.json
-      - run: node scripts/misa.mjs data/misa.json || echo "misa: sin cambios por un error de la fuente"
+      - name: Liturgia de la Misa (lecturas completas)
+        run: node scripts/misa.mjs data/misa.json || echo 'misa.json sin cambios por un error de la fuente'
       - name: Mes completo (solo si se pidió)
         if: ${{ github.event_name == 'workflow_dispatch' && inputs.dias != '' }}
         run: DIAS=${{ inputs.dias }} TEXTO=1 node scripts/evangelio.mjs data/evangelio-mes.json
