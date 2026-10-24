@@ -255,19 +255,12 @@ function familiasHTML(w) {
 export function refreshInicioCfg(repaint) {
   cloud.getInicioCfg?.().then((v) => { if (v && adoptInicio(v) && repaint) repaint(); }).catch(() => {});
 }
-// Agenda: una franja delgada, del tamaño de la del grupo de WhatsApp.
-const CAL_ICO = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="3"/><path d="M3 10h18M8 3v4M16 3v4"/><path d="M8 14h2M14 14h2M8 17.5h2"/></svg>`;
-const agendaStripHTML = () => `<a class="card link ag-strip" href="#/agenda">
-    <span class="ag-strip-ico">${CAL_ICO}</span>
-    <span style="flex:1;min-width:0"><strong>Agenda Ágape</strong> <span class="muted small">Encuentros, misas y actividades.</span></span>
-    <span class="btn btn-sm ag-strip-btn">Ver</span></a>`;
 export function viewRed() {
   const b = BLOCKS.red;
   return `<header class="page-head hub-head" style="--bc:${b.c}"><span class="eyebrow">Bloque 2 · ${esc(b.hand)}</span><h1>Comunidad</h1><p>${esc(b.d)}</p></header>
   ${plazaHTML()}
   ${conocer.inviteCard()}
   ${familiasHTML(who())}
-  ${agendaStripHTML()}
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>

@@ -261,15 +261,16 @@ const openPrayerHTML = () => VEN_ESPIRITU ? `<section class="unit-sec unit-open"
 // ---------------------------------------------------------------------------
 // Cabecera, navegación inferior
 // ---------------------------------------------------------------------------
-// Navegación en tres bloques: Formación · Comunidad · Espiritualidad
+// Navegación: Inicio · Formación · Comunidad · Espiritualidad · Agenda
 const NAV = [
   ["inicio", "#/", "Inicio", "home"],
   ["formacion", "#/formacion", "Formación", "route"],
   ["red", "#/red", "Comunidad", "users"],
   ["oracion", "#/oracion", "Espiritualidad", "flame"],
+  ["agenda", "#/agenda", "Agenda", "cal"],
 ];
 // Cada sección se marca en su bloque
-const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", agenda: "red", comunidad: "formacion", difusion: "formacion", pasaporte: "red", acompanar: "red", familiasag: "red" };
+const TAB_OF = { itinerario: "formacion", materiales: "formacion", camino: "formacion", muro: "red", comunidad: "formacion", difusion: "formacion", pasaporte: "red", acompanar: "red", familiasag: "red" };
 const navFor = () => NAV;
 // Franja «Ver como…» (solo equipo): recuerda que es una vista de prueba y cómo volver.
 const VER_COMO = [["visitante", "Visitante sin cuenta"], ["ingreso", "Joven · Ingreso"], ["madurez", "Joven · Madurez"], ["aspirante", "Aspirante"], ["dirigente", "Dirigente"], ["coordinador", "Coordinador"]];

@@ -2883,11 +2883,12 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 /* Barra de abajo: más grande y con el color de cada bloque */
 @media (max-width: 760px) {
   :root { --bottom-h: calc(74px + env(safe-area-inset-bottom)); }
-  .bottom-nav { grid-template-columns: repeat(4, 1fr); border-top: 3px solid var(--pp-bd, var(--z-b, var(--cn, #0b2566))); }
+  .bottom-nav { grid-template-columns: repeat(5, 1fr); border-top: 3px solid var(--pp-bd, var(--z-b, var(--cn, #0b2566))); }
   .bottom-nav a { font-size: .74rem; font-weight: 800; color: var(--ink-2); gap: 4px; --tc: var(--cn, #0b2566); }
   .bottom-nav a[data-k="formacion"] { --tc: var(--cb, #1351a4); }
   .bottom-nav a[data-k="red"] { --tc: #ef591c; }
   .bottom-nav a[data-k="oracion"] { --tc: #c98a00; }
+  .bottom-nav a[data-k="agenda"] { --tc: #3f8f8a; }
   .bottom-nav .ico-wrap { display: grid; place-items: center; width: 52px; height: 34px; padding: 0; border-radius: 999px; color: var(--tc); background: color-mix(in srgb, var(--tc) 14%, transparent); }
   .bottom-nav a svg { width: 24px; height: 24px; }
   .bottom-nav a[aria-current="page"] { color: var(--tc); }
@@ -2897,6 +2898,7 @@ html.a11y-contraste :focus-visible { outline: 4px solid #ef591c !important; outl
 .top-nav a[data-k="formacion"][aria-current="page"] { background: var(--cb, #1351a4); color: #fff; }
 .top-nav a[data-k="red"][aria-current="page"] { background: #ef591c; color: #fff; }
 .top-nav a[data-k="oracion"][aria-current="page"] { background: #ffba03; color: var(--cn, #0b2566); }
+.top-nav a[data-k="agenda"][aria-current="page"] { background: #3f8f8a; color: #fff; }
 .door strong { font-size: clamp(.92rem, 4vw, 1.35rem); overflow-wrap: normal; white-space: nowrap; font-stretch: 75%; }
 .door-h { font-size: .92rem; }
 .hub-multi { align-items: flex-start !important; }
@@ -4358,3 +4360,4 @@ html.papel {
   --pp-sh-l: 0 10px 18px -8px rgba(59, 42, 26, .42), 0 2px 4px rgba(59, 42, 26, .18);
 }
 @media (prefers-color-scheme: dark) { html.papel { --pp-bd: rgba(255, 246, 229, .10); } }
+@media (max-width: 400px) { .bottom-nav a { font-size: .66rem !important; letter-spacing: -.01em; } .bottom-nav .ico-wrap { width: 46px !important; } }
