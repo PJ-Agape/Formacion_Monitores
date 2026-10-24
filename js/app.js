@@ -432,7 +432,6 @@ function viewHome() {
   // El resto vive en las pestañas de abajo (Formación, Comunidad, Espiritualidad).
   return `
   ${inicio.greetHTML()}
-  ${inicio.doorsHTML()}
   ${solicitud.homeCard()}
   <section class="home-news">${carousel()}</section>
   <div id="countSlot"></div>
