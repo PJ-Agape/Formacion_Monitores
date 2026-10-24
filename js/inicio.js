@@ -75,6 +75,7 @@ const ITEMS = [
   { b: "espiritu", e: "🙏", t: "Oremus", d: "Nuestras oraciones y las de siempre: Padre nuestro, Ave María, Credo y más.", href: "#/oremus", kw: "oraciones devocionario rezar oremus", ok: () => true },
   { b: "espiritu", e: "🌹", t: "Rezar el Rosario", d: "Paso a paso, cuenta a cuenta, con María.", href: "#/oracion/rosario", kw: "maria virgen rosario misterios", ok: () => true },
   { b: "espiritu", e: "🕯️", t: "Nuestras intenciones", d: "Comparte tu intención y reza por las de otros.", href: "#/oracion/velas", kw: "vela intencion rezar por", ok: () => true },
+  { b: "espiritu", e: "⛪", t: "La Misa de hoy", d: "Las lecturas del día y la Misa paso a paso.", href: "#/misa", kw: "misa lecturas liturgia evangelio eucaristia partes comunion consagracion domingo", ok: () => true },
   { b: "espiritu", e: "📖", t: "Oremos con los salmos", d: "Un salmo para cada momento y cómo rezarlo.", href: "#/salmos", kw: "salmos salmo orar rezar biblia lectio pastor miedo triste gracias perdon", ok: () => true },
   { b: "espiritu", e: "🎶", t: "Cancionero", d: "Canciones con acordes para la misa.", href: "#/cancionero", kw: "cancionero canciones acordes misa cantos guitarra", ok: () => true },
   { b: "espiritu", e: "📻", t: "Radios católicas", d: "Radio María, El Sembrador y Regina Coeli.", href: "#/oracion/radio", kw: "radio maria sembrador regina coeli escuchar", ok: () => true },

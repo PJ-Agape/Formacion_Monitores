@@ -14,6 +14,7 @@ import * as portada from "./portada.js";
 import * as capilla from "./capilla.js";
 import * as cancionero from "./cancionero.js";
 import * as salmos from "./salmos.js";
+import * as misa from "./misa.js";
 import * as AV from "./avatares.js";
 import * as acompanar from "./acompanar.js";
 import * as desafio from "./desafio.js";
@@ -139,6 +140,8 @@ const routes = [
   [/^\/mi-camino\/(\d+)$/, (n) => camJ.view(n), "camino"],
   [/^\/cancionero$/, () => cancionero.viewList(), "oracion"],
   [/^\/salmos$/, () => salmos.viewList(), "oracion"],
+  [/^\/misa(?:\/(\d{4}-\d{2}-\d{2}))?$/, (d) => misa.view(d), "oracion"],
+  [/^\/misa\/libro(?:\/(\d{4}-\d{2}-\d{2}))?$/, (d) => misa.viewLibro(d), "oracion"],
   [/^\/salmos\/libro$/, () => salmos.viewLibro(), "oracion"],
   [/^\/salmos\/(\d{1,3})(?:\?e=([a-z]+))?$/, (n, e) => salmos.viewOne(n, e), "oracion"],
   [/^\/dinamicas$/, () => mod.dinamicas().then((m) => m.viewList()), "materiales"],
@@ -1075,6 +1078,7 @@ function viewMaterials() {
     ["oracion", "Oración", "#1351a4", "Para rezar solos o en el encuentro.", [
       row("#/oremus", "book", "Oremus", "Nuestras oraciones y las de siempre, en un solo lugar"),
       row("#/salmos", "book", "Oremos con los salmos", "Un salmo para cada momento y cómo rezarlo paso a paso"),
+      row("#/misa", "book", "La Misa de hoy", "Las lecturas del día y la Misa paso a paso, con librito para imprimir"),
     ]],
     ["guias", "Guías para el encuentro", "#8ad2fa", "Pautas breves para preparar y acompañar cada reunión.", [
       row("#/dinamicas", "sparkle", "Banco de dinámicas", "Rompehielos, juegos, oración y reflexión, por para qué sirven"), ...guides.map(guide)]],
@@ -1591,6 +1595,7 @@ conocer.setup({ actions, render: () => render(), onAfterRender, cloud });
 ficha.setup({ actions, render: () => render(), onAfterRender, cloud });
 cancionero.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 salmos.setup({ actions, render: () => render(), onAfterRender, cloud });
+misa.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 acompanar.setup({ actions, render: () => render(), onAfterRender, onLeave, cloud });
 camJ.setup({ actions, render: () => render(), cloud, S, onAfterRender });
 ayuda.setup({ actions, render: () => render(), onAfterRender, cloud });

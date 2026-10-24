@@ -4314,3 +4314,80 @@ a.cap-guide-btn { text-decoration: none; }
 .cap-rosbanner-art .virgen-linea { color: #fff6e5; --halo: #ffba03; max-width: 210px; margin: 0 auto; filter: drop-shadow(0 0 16px rgba(255,186,3,.25)); }
 .ros-maria { position: absolute; left: calc(78 / 360 * 100%); top: calc(44 / 524 * 100%); width: calc(204 / 360 * 100%); color: #fff6e5; --halo: #ffba03; opacity: .1; pointer-events: none; transition: opacity 1.2s ease, transform 1.2s ease; }
 .ros-maria.is-fin { opacity: .3; }
+/* La Misa de hoy */
+.ms-hero .cap-arch { display: flex; flex-direction: column; justify-content: center; }
+.ms-caliz { width: 92px; height: auto; display: block; margin: 4px auto 0; color: var(--cn, #0b2566); filter: drop-shadow(0 0 16px rgba(255,186,3,.55)); }
+.ms-caliz .mc-host, .ms-cov-caliz .mc-host { stroke: #c98a00; }
+.ms-title { font-size: clamp(1.9rem, 5.6vw, 3rem); line-height: .98; max-width: 18ch; margin-left: auto; margin-right: auto; }
+.ms-dias { display: flex; justify-content: space-between; gap: 8px; margin-top: 14px; }
+.ms-dia { font-weight: 800; font-size: .85rem; color: var(--cn, #0b2566); text-decoration: none; display: inline-flex; align-items: center; gap: 4px; padding: 4px 10px; border-radius: 999px; background: #fff6e5; border: 2px solid var(--cn, #0b2566); }
+.ms-dia svg { width: 14px; height: 14px; }
+.ms-libro p { opacity: .9; margin: 4px 0 6px; }
+.ms-santo { margin: -4px 0 12px; }
+.ms-lects { display: grid; gap: 10px; }
+.ms-lect { background: #fff; border: 2px solid var(--cn, #0b2566); border-radius: 18px; box-shadow: 3px 3px 0 var(--cn, #0b2566); overflow: hidden; }
+.ms-lect summary { list-style: none; cursor: pointer; display: flex; align-items: baseline; gap: 10px; padding: 14px 16px; }
+.ms-lect summary::-webkit-details-marker { display: none; }
+.ms-lect summary svg { margin-left: auto; width: 18px; height: 18px; transition: transform .2s; align-self: center; }
+.ms-lect[open] summary svg { transform: rotate(180deg); }
+.ms-lk { font-family: var(--font-hand); font-weight: 700; font-size: 1.35rem; color: #ef591c; line-height: 1; }
+.ms-ltxt { padding: 0 18px 16px; font-size: 1.04rem; line-height: 1.65; border-top: 2px dashed rgba(11,37,102,.2); padding-top: 12px; }
+.ms-ltxt p + p { margin-top: 10px; }
+.ms-lt { font-style: italic; opacity: .75; }
+.ms-r { color: #c96a00; }
+.ms-resp { font-size: .95rem; opacity: .85; }
+.ms-fuente { margin-top: 8px; }
+.ms-falta { padding: 16px 18px; display: grid; gap: 8px; justify-items: start; }
+.ms-cristo { padding: 14px 16px; background: #fff3c4; margin-bottom: 18px; line-height: 1.55; }
+.ms-grupo { margin-top: 22px; }
+.ms-grupo h3 { display: flex; align-items: center; gap: 10px; font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; }
+.ms-grupo h3 span { width: 32px; height: 32px; border-radius: 50%; display: grid; place-items: center; background: var(--cn, #0b2566); color: #ffba03; font-size: .95rem; }
+.ms-gd { margin: 4px 0 10px 42px; opacity: .8; }
+.ms-partes { display: grid; gap: 8px; }
+.ms-parte { background: #fff; border: 2px solid rgba(11,37,102,.25); border-radius: 16px; }
+.ms-parte.is-cristo { border-color: #ffba03; box-shadow: 0 0 0 3px rgba(255,186,3,.25); }
+.ms-parte summary { list-style: none; cursor: pointer; display: flex; align-items: center; gap: 10px; padding: 12px 14px; flex-wrap: wrap; }
+.ms-parte summary::-webkit-details-marker { display: none; }
+.ms-pt { font-weight: 800; }
+.ms-cita { font-size: .8rem; font-weight: 800; color: var(--cb, #1351a4); }
+.ms-post { margin-left: auto; font-size: .75rem; font-weight: 800; padding: 2px 9px; border-radius: 999px; background: #e1f3fd; color: var(--cn, #0b2566); }
+.ms-parte summary svg { width: 16px; height: 16px; transition: transform .2s; }
+.ms-parte[open] summary svg { transform: rotate(180deg); }
+.ms-pin { padding: 0 16px 14px; display: grid; gap: 8px; line-height: 1.55; }
+.ms-cr { padding: 10px 12px; border-radius: 12px; background: #fff3c4; border-left: 4px solid #ffba03; }
+.ms-cr span { display: block; font-family: var(--font-hand); font-weight: 700; color: #c96a00; font-size: 1.25rem; line-height: 1; margin-bottom: 2px; }
+.ms-nota { font-size: .92rem; padding: 8px 12px; border-radius: 12px; background: #e1f3fd; }
+.ms-cantos a { color: var(--cb, #1351a4); font-weight: 700; }
+.ms-cov-caliz { position: relative; width: 22cqh; max-width: 120px; height: auto; color: #fff6e5; margin-top: 1.2cqh; }
+.ml-page .cl-body { font-size: .95rem; line-height: 1.5; }
+.ml-h { font-family: var(--font-display); font-weight: 800; font-size: 1.35rem; margin: .2em 0 .3em; }
+.ml-k { font-family: var(--font-hand); font-weight: 700; color: #ef591c; font-size: 1.2rem; margin-top: .6em; }
+.ml-t { font-style: italic; opacity: .7; font-size: .9em; }
+.ml-p { margin: 0 0 .5em; }
+.ml-santo, .ml-gd { opacity: .75; font-size: .9em; margin-bottom: .5em; }
+.ml-parte { margin: .2em 0 .7em; }
+.ml-pt { font-weight: 800; }
+.ml-pt span { font-size: .75em; font-weight: 800; padding: 1px 7px; border-radius: 999px; background: #e1f3fd; margin-left: 4px; }
+.ml-cr { margin: 0 0 .5em; padding: .4em .6em; border-left: 3px solid #ffba03; background: rgba(255,186,3,.14); font-size: .92em; }
+.ml-c { font-size: .85em; color: var(--cb, #1351a4); margin: 0; }
+#misaBook { display: none; }
+@media print {
+  @page misa { size: letter; margin: 14mm 14mm 16mm; }
+  body.misa-printing > *:not(#misaBook) { display: none !important; }
+  body.misa-printing { background: #fff !important; padding: 0 !important; }
+  body.misa-printing #misaBook { display: block; color: var(--cn, #0b2566); page: misa; }
+  #misaBook .sb-cover { height: 247mm; position: relative; break-after: page; container-type: size; }
+  #misaBook .sb-cover .cl-page { border: 0; border-radius: 0; box-shadow: none; -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #misaBook .sb-cover .cl-cov { padding: 7cqh 18mm 7cqh 24mm; }
+  #misaBook .sb-cover .cl-cov-frame { inset: 8mm 8mm 8mm 16mm; }
+  #misaBook .sb-cover .cl-cov-spine { width: 11mm; }
+  #misaBook .sb-cover .cl-cov-medal { width: 25cqh; }
+  #misaBook .sb-cover .cl-cov-v { font-size: 3.4cqh; max-width: 30ch; }
+  #misaBook .sb-cover .cl-cov-n { display: block; font-size: 1.8cqh; }
+  #misaBook .mb-body { column-count: 2; column-gap: 9mm; column-rule: .3mm solid #c9d3e6; font-size: 10pt; line-height: 1.38; }
+  #misaBook .ml-h { column-span: none; font-size: 15pt; break-after: avoid; margin-top: 3mm; }
+  #misaBook .ml-k { font-size: 12pt; break-after: avoid; }
+  #misaBook .ml-parte, #misaBook .ml-p { break-inside: avoid; }
+  #misaBook .ml-cr { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+  #misaBook .sb-fuente { margin-top: 6mm; font-size: 8pt; color: #555; }
+}
