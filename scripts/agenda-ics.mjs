@@ -10,7 +10,7 @@ const KEY = (cfg.match(/apiKey:\s*"([^"]+)"/) || [])[1];
 const PROJECT = (cfg.match(/projectId:\s*"([^"]+)"/) || [])[1];
 const TZ = "America/Santiago";
 const MESES = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"];
-const TYPES = { encuentro: "Encuentro", actividad: "Actividad", liturgia: "Liturgia", equipo: "Equipo", otro: "Otro" };
+const TYPES = { cumpleanos: "Cumpleaños", encuentro: "Encuentro", retiro: "Retiro", misa: "Misa", liturgia: "Liturgia", festividad: "Festividad", curso: "Curso", taller: "Taller", lectura: "Lectura", actividad: "Actividad", equipo: "Equipo", otro: "Otro" };
 
 // --- Firestore (lectura pública de la colección agenda) ---
 const val = (v) => v == null ? undefined : "mapValue" in v ? Object.fromEntries(Object.entries(v.mapValue.fields || {}).map(([k, x]) => [k, val(x)])) : "nullValue" in v ? null : "arrayValue" in v ? (v.arrayValue.values || []).map(val) : "stringValue" in v ? v.stringValue : "booleanValue" in v ? v.booleanValue

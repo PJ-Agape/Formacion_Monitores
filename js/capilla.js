@@ -418,6 +418,7 @@ export function view(opt = {}) {
   </section>
 
 
+  <div class="ag-panel-slot" data-ag-panel="capilla"></div>
   <p class="cap-foot">«Donde dos o tres se reúnen en mi nombre, ahí estoy yo en medio de ellos» <span>Mt 18,20</span></p>`.replace(/<span class="cap-num">\d+<\/span>/g, () => `<span class="cap-num">${String(++num).padStart(2, "0")}</span>`);
 }
 

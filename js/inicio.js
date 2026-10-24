@@ -208,6 +208,7 @@ export function viewFormacion() {
   ${w.curso ? courseBanner(course, st) : ""}
   ${matBanner(w)}
   <div class="hub-grid">${itemsFor("formacion").filter((x) => inHub(x) && x.href !== "#/itinerario" && x.href !== "#/mi-camino" && x.href !== "#/materiales").map(itemCard).join("")}</div>
+  <div class="ag-panel-slot" data-ag-panel="formacion"></div>
   ${w.guest && w.revista ? `<p class="muted small" style="margin-top:14px">Mi Camino y los encuentros de tu etapa se abren cuando <a href="#/perfil">ingresas con tu cuenta</a>.</p>` : ""}`;
 }
 // La Plaza Ágape: nuestra red social. Junta lo que vivimos (Momentos), lo que conversamos (Muro)
@@ -261,6 +262,7 @@ export function viewRed() {
   ${plazaHTML()}
   ${conocer.inviteCard()}
   ${familiasHTML(who())}
+  <div class="ag-panel-slot" data-ag-panel="comunidad"></div>
   <div class="hub-grid">${itemsFor("red").filter(inHub).map(itemCard).join("")}</div>
   <div id="acHomeSlot"></div>
   <div id="desafioSlot"></div>

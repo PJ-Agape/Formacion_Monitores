@@ -15,15 +15,31 @@ let ctx = null; // { actions, render, onAfterRender, onLeave, cloud }
 export function setup(c) { ctx = c; registerActions(); fondo.wire(toast); }
 const $ = (s, r = document) => r.querySelector(s);
 
+// Cada tipo pertenece a un área, y cada área tiene su panel: Comunidad, Capilla (al final) y Formación.
+// Lo que se destaca en Inicio sale además en las diapositivas de Inicio.
+export const AREAS = {
+  comunidad: { t: "Comunidad", c: "#ef591c", hand: "para encontrarnos", href: "#/red" },
+  capilla: { t: "Capilla", c: "#c98a00", hand: "para celebrar", href: "#/oracion" },
+  formacion: { t: "Formación", c: "#1351a4", hand: "para crecer", href: "#/formacion" },
+};
 export const TYPES = {
-  encuentro: { label: "Encuentro", color: "#8ad2fa" },
-  actividad: { label: "Actividad", color: "#ef591c" },
-  liturgia: { label: "Liturgia", color: "#ffba03" },
-  equipo: { label: "Equipo", color: "#1351a4" },
-  otro: { label: "Otro", color: "#9aa7c2" },
+  cumpleanos: { label: "Cumpleaños", color: "#f6b7a0", area: "comunidad" },
+  encuentro: { label: "Encuentro", color: "#ef591c", area: "comunidad" },
+  retiro: { label: "Retiro", color: "#a8443b", area: "comunidad" },
+  misa: { label: "Misa", color: "#ffba03", area: "capilla" },
+  liturgia: { label: "Liturgia", color: "#d39a1c", area: "capilla" },
+  festividad: { label: "Festividad", color: "#f3d27a", area: "capilla" },
+  curso: { label: "Curso", color: "#1351a4", area: "formacion" },
+  taller: { label: "Taller", color: "#8ad2fa", area: "formacion" },
+  lectura: { label: "Lectura", color: "#5f7fb8", area: "formacion" },
+  // tipos anteriores: se siguen mostrando en las fechas ya guardadas, pero ya no se ofrecen
+  actividad: { label: "Actividad", color: "#ef591c", area: "comunidad", old: true },
+  equipo: { label: "Equipo", color: "#1351a4", area: "formacion", old: true },
+  otro: { label: "Otro", color: "#9aa7c2", area: "comunidad", old: true },
 };
 // Cumpleaños (los autorizados en Acompañar → Jóvenes): no son eventos editables, se muestran cada año.
-const CUMPLE = { label: "Cumpleaños", color: "#fde0d2" };
+const CUMPLE = { label: "Cumpleaños", color: "#f6b7a0", area: "comunidad" };
+const areaOf = (e) => typeOf(e).area || "comunidad";
 const typeOf = (e) => (e.cumple ? CUMPLE : TYPES[e.type] || TYPES.otro);
 let cumples = [];
 async function loadCumples() {
@@ -164,7 +180,7 @@ export function viewAgenda(day) {
         <button class="btn btn-sm btn-ghost" data-action="agToday">Hoy</button>
       </div>
       <div class="ag-grid" id="agGrid"></div>
-      <div class="ag-legend">${[...Object.values(TYPES), ...(ctx.cloud.state().ready ? [CUMPLE] : [])].map((t) => `<span><i style="background:${t.color}"></i>${t.label}</span>`).join("")}</div>
+      <div class="ag-legend">${Object.entries(AREAS).map(([a, A]) => `<span class="ag-lg-a" style="--ac:${A.c}">${esc(A.t)}:</span>${Object.values(TYPES).filter((t) => t.area === a && !t.old).map((t) => `<span><i style="background:${t.color}"></i>${t.label}</span>`).join("")}`).join("")}</div>
     </section>
     <aside class="ag-side">
       <section class="card ag-list-card"><h3 id="agListTitle">Próximas fechas</h3><div id="agList" class="ag-list"><p class="muted small">Cargando…</p></div></section>
@@ -235,7 +251,7 @@ function paintList() {
 // Formulario (solo administradores)
 // ---------------------------------------------------------------------------
 function openForm(ev) {
-  const e = ev || { date: selDay || todayIso(), type: "actividad" };
+  const e = ev || { date: selDay || todayIso(), type: "encuentro" };
   fondo.init(e.countBg || "");
   let dlg = document.getElementById("agDialog");
   if (!dlg) { dlg = document.createElement("dialog"); dlg.id = "agDialog"; dlg.className = "sheet"; document.body.appendChild(dlg); }
@@ -255,7 +271,7 @@ function openForm(ev) {
       </div>
       ${(e.exdates || []).length ? `<p class="xs muted">Fechas saltadas: ${e.exdates.map((d) => esc(longDate(d))).join(" · ")}. <label class="row" style="display:inline-flex;gap:4px"><input type="checkbox" name="clearEx"> volver a incluirlas</label></p>` : ""}
       <div class="ag-form-row">
-        <div class="field"><label>Tipo</label><select class="select" name="type">${Object.entries(TYPES).map(([k, t]) => `<option value="${k}" ${e.type === k ? "selected" : ""}>${t.label}</option>`).join("")}</select></div>
+        <div class="field"><label>Tipo</label><select class="select" name="type">${Object.entries(AREAS).map(([a, A]) => `<optgroup label="${esc(A.t)}">${Object.entries(TYPES).filter(([k, t]) => t.area === a && (!t.old || e.type === k)).map(([k, t]) => `<option value="${k}" ${e.type === k ? "selected" : ""}>${t.label}${t.old ? " (anterior)" : ""}</option>`).join("")}</optgroup>`).join("")}</select></div>
         <div class="field"><label>Para quiénes</label><input class="input" name="audience" maxlength="80" value="${esc(e.audience || "")}" placeholder="Todos, Dirigentes, Aspirantes…"></div>
       </div>
       <div class="field"><label>Lugar</label><input class="input" name="place" maxlength="120" value="${esc(e.place || "")}" placeholder="Ej: Salón parroquial"></div>
@@ -307,20 +323,28 @@ function ics(e) {
   document.body.appendChild(a); a.click(); setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 500);
 }
 
-// Próximas fechas para Inicio
-export async function homeNext() {
-  const slot = document.getElementById("agendaSlot");
-  if (!slot) return;
-  await loadCamino();
-  const own = await ctx.cloud.listAgenda();
-  const t = todayIso();
-  const list = groupRuns([...expand(own.filter((e) => e.date), t, shiftIso(t, 120)), ...camino].filter((e) => e.date >= t).sort((a, b) => (a.date + (a.start || "")).localeCompare(b.date + (b.start || "")))).slice(0, 3);
-  if (!list.length || !document.getElementById("agendaSlot")) return;
-  document.getElementById("agendaSlot").innerHTML = `<a class="card link ag-home" href="#/agenda">
-    <span class="eyebrow">${icon("grid")} Agenda Ágape</span>
-    <div class="ag-home-list">${list.map((e) => { const d = parse(e.date); const d2 = parse(e.last || e.date), when = (e.n || 1) > 1 ? (e.until ? `${d.getDate()}${d2.getMonth() !== d.getMonth() ? " " + MES3(d) : ""}–${d2.getDate()} ${MES3(d2)}` : `desde ${d.getDate()} ${MES3(d)}`) : `${d.getDate()} ${MES3(d)}`;
-      return `<span class="ag-home-ev" style="--c:${typeOf(e).color}"><b>${when}</b>${esc(e.title.replace(/^Camino Ágape · /, ""))}${e.start ? ` · ${esc(e.start)}` : ""}</span>`; }).join("")}</div>
-    <span class="go">Ver la agenda completa ${icon("arrowR")}</span></a>`;
+// Paneles por área: Comunidad, Capilla (al final) y Formación muestran sus próximas fechas.
+export const panelSlot = (area) => `<div class="ag-panel-slot" data-ag-panel="${area}"></div>`;
+export async function fillPanels() {
+  if (!document.querySelector("[data-ag-panel]")) return;
+  await Promise.all([loadCamino(), loadCumples().catch(() => {})]);
+  let own = []; try { own = (await ctx.cloud.listAgenda()) || []; } catch {}
+  const t = todayIso(), to = shiftIso(t, 120);
+  const list = groupRuns([...expand(own.filter((e) => e.date && e.title), t, to), ...camino, ...cumpleEvents(t, shiftIso(t, 31))]
+    .filter((e) => e.date >= t && e.date <= to).sort((x, y) => (x.date + (x.start || "")).localeCompare(y.date + (y.start || ""))));
+  document.querySelectorAll("[data-ag-panel]").forEach((el) => {
+    const a = el.dataset.agPanel, A = AREAS[a]; if (!A) return;
+    const l = list.filter((e) => areaOf(e) === a).slice(0, 5);
+    el.innerHTML = `<section class="card ag-panel" style="--ac:${A.c}">
+      <header class="ag-panel-h"><span><span class="eyebrow">${icon("cal")} Agenda · ${esc(A.t)}</span><span class="ag-panel-hand">${esc(A.hand)}</span></span>
+        <a class="ag-panel-all" href="#/agenda">Ver todo ${icon("arrowR")}</a></header>
+      ${l.length ? `<ul class="ag-panel-l">${l.map((e) => { const d = parse(e.date), tp = typeOf(e);
+        const cuando = (e.n || 1) > 1 ? rangeText(e) : `${d.getDate()} ${MES3(d)}`;
+        return `<li><a href="#/agenda/${e.date}" style="--c:${tp.color}"><span class="ag-pd"><b>${d.getDate()}</b>${MES3(d)}</span>
+          <span class="ag-pt"><strong>${esc(e.title.replace(/^Camino Ágape · /, ""))}</strong><small>${esc(tp.label)}${(e.n || 1) > 1 ? ` · ${esc(cuando)}` : ""}${e.start ? ` · ${esc(e.start)} h` : ""}${e.place ? ` · ${esc(e.place)}` : ""}</small></span></a></li>`; }).join("")}</ul>`
+        : `<p class="muted small ag-panel-empty">No hay fechas próximas por ahora.</p>`}
+    </section>`;
+  });
 }
 
 // Suscripción: agenda.ics se regenera cada hora desde la Agenda (acción de GitHub).

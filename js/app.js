@@ -211,6 +211,7 @@ async function renderNow() {
   ayuda.afterRender();
   a11y.afterRender();
   grupo.afterRender(section);
+  agenda.fillPanels(); // paneles de la Agenda en Comunidad, Capilla y Formación
   helpFab(section);
 }
 // Botón flotante «?»: abre la Ayuda en el tema de la sección donde estás.

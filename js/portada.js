@@ -55,8 +55,8 @@ export const DEFAULTS = [
 const DEF = Object.fromEntries(DEFAULTS.map((d) => [d.key, d]));
 
 // Eventos de la Agenda → diapositivas
-const EV_THEME = { encuentro: "sky", actividad: "orange", liturgia: "gold", equipo: "blue", otro: "rose" };
-const EV_ILLUS = { encuentro: "emaus", actividad: "amigos", liturgia: "eucaristia", equipo: "equipo", otro: "corazon" };
+const EV_THEME = { cumpleanos: "rose", encuentro: "orange", retiro: "orange", misa: "gold", liturgia: "gold", festividad: "gold", curso: "blue", taller: "sky", lectura: "blue", actividad: "orange", equipo: "blue", otro: "rose" };
+const EV_ILLUS = { cumpleanos: "amigos", encuentro: "comunidad", retiro: "camino", misa: "eucaristia", liturgia: "eucaristia", festividad: "santos", curso: "biblia", taller: "equipo", lectura: "biblia", actividad: "amigos", equipo: "equipo", otro: "corazon" };
 function fromEvent(ev) {
   // Si se repite, la diapositiva muestra la próxima fecha.
   const e = isRepeat(ev) ? { ...ev, date: nextOn(ev, todayIso()) || ev.date } : ev;

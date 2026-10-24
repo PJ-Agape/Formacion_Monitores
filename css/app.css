@@ -4367,3 +4367,23 @@ html.papel {
 .cap-arch .cap-misa .cap-ev-note { color: var(--cn, #0b2566); opacity: .85; }
 .cap-arch .cap-misa .cap-ev-note a { color: #c96a00; }
 .cap-arch .cap-misa .ev-video { box-shadow: var(--pp-sh-l, 4px 4px 0 #ffba03); border: 0; }
+/* Paneles de la Agenda por área */
+.ag-panel-slot:empty { display: none; }
+.ag-panel { margin: 18px 0; padding: 16px 18px; border-top: 5px solid var(--ac); }
+.ag-panel-h { display: flex; align-items: flex-start; justify-content: space-between; gap: 10px; margin-bottom: 8px; }
+.ag-panel-h .eyebrow { display: flex; align-items: center; gap: 6px; color: var(--ac); }
+.ag-panel-h .eyebrow svg { width: 15px; height: 15px; }
+.ag-panel-hand { display: block; font-family: var(--font-hand); font-weight: 700; font-size: 1.15rem; color: var(--ink-2); line-height: 1.1; }
+.ag-panel-all { display: inline-flex; align-items: center; gap: 4px; font-weight: 800; font-size: .85rem; color: var(--ac); text-decoration: none; white-space: nowrap; }
+.ag-panel-all svg { width: 14px; height: 14px; }
+.ag-panel-l { list-style: none; margin: 0; padding: 0; display: grid; gap: 6px; }
+.ag-panel-l a { display: flex; align-items: center; gap: 12px; padding: 8px 6px; border-radius: 14px; color: inherit; text-decoration: none; }
+.ag-panel-l a:hover { background: color-mix(in srgb, var(--c) 12%, transparent); }
+.ag-pd { flex: 0 0 48px; height: 50px; border-radius: 12px; display: grid; place-items: center; align-content: center; line-height: 1; background: color-mix(in srgb, var(--c) 22%, #fff); color: var(--cn, #0b2566); font-size: .72rem; font-weight: 800; text-transform: uppercase; box-shadow: var(--pp-sh-s, none); }
+.ag-pd b { font-size: 1.25rem; }
+.ag-pt { display: grid; min-width: 0; }
+.ag-pt strong { font-weight: 800; line-height: 1.2; }
+.ag-pt small { color: var(--ink-3); font-size: .8rem; }
+.ag-panel-empty { margin: 4px 0 0; }
+.ag-lg-a { font-weight: 800; color: var(--ac); margin-left: 6px; }
+.cap-hero ~ .ag-panel-slot .ag-panel, .ag-panel-slot[data-ag-panel="capilla"] { max-width: 760px; margin-left: auto; margin-right: auto; }
