@@ -4345,3 +4345,7 @@ a.cap-guide-btn { text-decoration: none; }
 /* Ilustraciones en papel recortado */
 svg.z-illus.z-papel { --il-bg: #fbf4e6; --il-pop: #f2b33d; color: #7a6352; }
 svg.z-illus.z-papel [fill]:not([fill="none"]), svg.z-illus.z-papel .pp-l { filter: url(#ilPapel); }
+/* Textura de papel en toda la app: una capa de grano muy suave por encima de todo (no recibe toques). */
+:root { --grano: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='240' height='240'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.7' numOctaves='3' stitchTiles='stitch'/%3E%3CfeColorMatrix values='0 0 0 0 .32 0 0 0 0 .22 0 0 0 0 .12 0 0 0 .55 -.12'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E"); }
+html.papel body::after { content: ""; position: fixed; inset: 0; z-index: 400; pointer-events: none; background-image: var(--grano); background-size: 240px; mix-blend-mode: multiply; opacity: .55; }
+@media print { html.papel body::after { display: none; } }
