@@ -5,7 +5,9 @@ import { readFileSync, writeFileSync, existsSync } from "node:fs";
 
 const OUT = process.argv[2] || "data/misa-vivo.json";
 const HANDLE = process.env.CANAL_MISA || "@magnificat.tv-fm";
-const UA = { "User-Agent": "Mozilla/5.0 (PastoralAgape/1.0)", "Accept-Language": "es-CL,es;q=0.9" };
+const UA = { "User-Agent": "Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0 Safari/537.36", "Accept-Language": "es-CL,es;q=0.9", Cookie: "CONSENT=YES+1; SOCS=CAI" };
+// Si algo falla, se deja anotado en el archivo (sin borrar los días que ya había).
+const falla = (msg) => { console.warn(msg); const o = { ...prev, handle: HANDLE, error: msg, revisado: new Date().toISOString().slice(0, 13) }; if (JSON.stringify(o.error) !== JSON.stringify(prev.error)) writeFileSync(OUT, JSON.stringify(o, null, 1) + "\n"); process.exit(0); };
 const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : {};
 const tz = (d) => new Date(d.toLocaleString("en-US", { timeZone: "America/Santiago" }));
 const isoOf = (d) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
@@ -15,13 +17,13 @@ const dec = (s) => s.replace(/&amp;/g, "&").replace(/&quot;/g, '"').replace(/&#3
 // El ID del canal se saca una vez de su página y se guarda.
 let channelId = prev.handle === HANDLE ? prev.channelId : "";
 if (!channelId) {
-  const r = await fetch(`https://www.youtube.com/${HANDLE}`, { headers: UA });
+  const r = await fetch(`https://www.youtube.com/${HANDLE}`, { headers: UA }).catch((e) => ({ ok: false, status: e.message, text: async () => "" }));
   const html = await r.text();
-  channelId = (html.match(/"(?:channelId|externalId)":"(UC[\w-]{22})"/) || html.match(/channel\/(UC[\w-]{22})/) || [])[1] || "";
-  if (!channelId) { console.warn("No se encontró el canal", HANDLE, r.status); process.exit(0); }
+  channelId = (html.match(/"(?:channelId|externalId|browseId)":"(UC[\w-]{22})"/) || html.match(/channel\/(UC[\w-]{22})/) || [])[1] || "";
+  if (!channelId) falla(`No se encontró el canal ${HANDLE} (${r.status}, ${html.length} bytes, ${(html.match(/<title>([^<]*)/) || [])[1] || ""})`);
 }
 const r = await fetch(`https://www.youtube.com/feeds/videos.xml?channel_id=${channelId}`, { headers: UA });
-if (!r.ok) { console.warn("RSS", r.status); process.exit(0); }
+if (!r.ok) falla(`RSS ${r.status} (${channelId})`);
 const xml = await r.text();
 const days = { ...(prev.days || {}) };
 for (const e of xml.split("<entry>").slice(1)) {
@@ -39,6 +41,6 @@ for (const e of xml.split("<entry>").slice(1)) {
 // Solo los últimos 10 días.
 const desde = isoOf(new Date(tz(new Date()).getTime() - 10 * 864e5));
 for (const k of Object.keys(days)) if (k < desde) delete days[k];
-const out = { handle: HANDLE, channelId, fuente: "Magnificat TV (YouTube)", days };
+const out = { handle: HANDLE, channelId, vistos: xml.split("<entry>").slice(1, 8).map((e) => dec((e.match(/<title>([^<]+)</) || [])[1] || "")), fuente: "Magnificat TV (YouTube)", days };
 if (JSON.stringify(out) !== JSON.stringify(prev)) { writeFileSync(OUT, JSON.stringify(out, null, 1) + "\n"); console.log("misa-vivo.json:", Object.keys(days).join(", ")); }
 else console.log("misa-vivo.json sin cambios");
