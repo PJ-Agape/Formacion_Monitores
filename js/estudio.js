@@ -2,7 +2,7 @@
 // portadas, fondos, marcos de foto, invitaciones y stickers) con la identidad zine del grupo.
 // Lo usa el Estudio de difusión de la app y el exportador del paquete de archivos.
 
-import { illus } from "./ilustraciones.js";
+import { illus, illusConCara } from "./ilustraciones.js";
 import { pjSvg } from "./personajes.js";
 import qrcode from "./qr.js";
 
@@ -27,7 +27,7 @@ function svgFor(key, color, bg, pop, outline, bare) {
     const inner = pjSvg(key.slice(3)); if (!inner) return "";
     return head + inner.replace("<svg ", '<svg x="34" y="4" width="172" height="172" ') + "</svg>";
   }
-  let s = illus(key);
+  let s = illusConCara(key);
   if (!s) return "";
   if (bare) { s = s.replace(/<path d="M\d+ 168 q30 -3 60 0[^"]*"[^>]*\/>/g, ""); if (!outline) s = s.replace(/stroke-width="[0-9.]+"/, 'stroke-width="3.6"'); }
   s = s.replace("<svg ", '<svg xmlns="http://www.w3.org/2000/svg" width="960" height="720" ')

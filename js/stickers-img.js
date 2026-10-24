@@ -1,7 +1,7 @@
 // Stickers de la app como imágenes livianas (<img> con SVG embebido) para los juegos:
 // los personajes («pj:llama») y las escenas de las ilustraciones («jesus», «camino»…).
 // Cada imagen se arma una sola vez y queda en caché.
-import { illus, sceneLabel } from "./ilustraciones.js";
+import { illus, sceneLabel, illusConCara } from "./ilustraciones.js";
 import { PJ, pjSvg } from "./personajes.js";
 import { esc } from "./util.js";
 
@@ -19,7 +19,7 @@ export const stickerName = (k) => (EXTRA[k] ? EXTRA[k][0] : isPj(k) ? PJ[k.slice
 function svgFor(k, pop) {
   if (EXTRA[k]) return EXTRA[k][1];
   if (isPj(k)) return pjSvg(k.slice(3)).replace("<svg ", `<svg xmlns="http://www.w3.org/2000/svg" `);
-  return illus(k)
+  return illusConCara(k)
     .replace(/<svg class="[^"]*"/, `<svg xmlns="http://www.w3.org/2000/svg" color="${NAVY}"`)
     .replace(/var\(--il-pop,\s*[^)]+\)/g, pop)
     .replace(/var\(--il-bg,\s*[^)]+\)/g, "#fff6e5")

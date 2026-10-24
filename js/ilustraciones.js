@@ -154,7 +154,7 @@ function person(x, y, o = {}) {
 // y textura de papel (el filtro #ilPapel lo aplica el CSS a cada pieza con relleno).
 // ---------------------------------------------------------------------------
 const PAPEL = true;
-let SOBRIO = false; // true: muñecos sin cara (estilo editorial)
+let SOBRIO = true; // muñecos sin cara (estilo editorial, menos infantil)
 export const setSobrio = (v) => { SOBRIO = !!v; };
 let nFig = 0, seed = 0; // cada monito de una escena con ropa distinta (siempre la misma para esa escena)
 const PIEL = ["#f2d4b4", "#e9c39d", "#d9a77c", "#f5dcc2"];
@@ -497,4 +497,6 @@ function papelDefs() {
     </filter></defs></svg>`;
   (document.body || document.documentElement).appendChild(d);
 }
+// Avatares y stickers sí llevan cara (expresan algo).
+export function illusConCara(key, cls = "") { const prev = SOBRIO; SOBRIO = false; try { return illus(key, cls); } finally { SOBRIO = prev; } }
 export const illusFor = (e, cls) => illus(BY_N[e.n] || "camino", cls);

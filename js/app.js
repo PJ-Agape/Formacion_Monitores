@@ -228,14 +228,9 @@ function decorate(v, section) {
   const hero = v.querySelector(".hero");
   if (hero && !hero.querySelector(".z-illus")) {
     hero.insertAdjacentHTML("afterbegin", '<i class="hero-blob b1"></i><i class="hero-blob b2"></i><i class="hero-blob b3"></i>');
-    if (!hero.style.textAlign) hero.insertAdjacentHTML("beforeend", illus("emaus", "hero-illus"));
   }
-  const head = v.querySelector(".page-head");
-  const key = HEAD_ILLUS[section];
-  if (head && key && !head.querySelector(".z-illus") && !v.querySelector(".zine")) {
-    head.classList.add("has-illus");
-    head.insertAdjacentHTML("beforeend", illus(key, "head-illus"));
-  }
+  // Los encabezados ya no llevan ilustración: la app se apoya en la tipografía, el color y el papel.
+  void HEAD_ILLUS[section];
 }
 const afterRender = [];
 export const onAfterRender = (f) => afterRender.push(f);

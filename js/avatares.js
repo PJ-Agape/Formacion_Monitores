@@ -5,7 +5,7 @@
 //  · Sticker de la comunidad: «k:jesus», «k:carloacutis»… (las ilustraciones de los stickers)
 
 import { esc, initials } from "./util.js";
-import { illus } from "./ilustraciones.js";
+import { illus, illusConCara } from "./ilustraciones.js";
 import { PJ, PJ_KEYS, pjSvg } from "./personajes.js";
 
 const NAVY = "#0b2566";
@@ -172,7 +172,7 @@ function monito(v) {
 function sticker(k) {
   const id = "av" + (++uid), [c1, c2] = STK_BG[STK_KEYS.indexOf(k) % STK_BG.length];
   const [x, y, w] = STK_CROP[k] || [38, 4, 164];
-  const raw = illus(k), inner = raw.slice(raw.indexOf(">") + 1, raw.lastIndexOf("</svg>")), sc = 56 / w;
+  const raw = illusConCara(k), inner = raw.slice(raw.indexOf(">") + 1, raw.lastIndexOf("</svg>")), sc = 56 / w;
   const art = `<g transform="translate(4 4) scale(${sc.toFixed(4)}) translate(${-x} ${-y})" style="color:${NAVY};--il-bg:#fff;--il-pop:#ffba03" fill="none" stroke="currentColor" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">${inner}</g>`;
   return `<svg viewBox="0 0 64 64" aria-hidden="true" focusable="false"><defs><linearGradient id="${id}g" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${c1}"/><stop offset="1" stop-color="${c2}"/></linearGradient><clipPath id="${id}"><circle cx="32" cy="32" r="30"/></clipPath></defs>
     <circle cx="32" cy="32" r="30" fill="url(#${id}g)"/><g clip-path="url(#${id})">${art}</g>
