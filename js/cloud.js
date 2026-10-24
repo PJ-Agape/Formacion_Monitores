@@ -664,6 +664,8 @@ export const familiasVisible = () => revistaVisible();
 export async function saveRevistaConfig(data) { await setContent("revista", data); revCfg = data; revAt = Date.now(); try { localStorage.setItem("agape_revista", JSON.stringify(data)); } catch {} }
 // Oremos con los salmos: textos completos autorizados (content/salmos, lo carga un administrador).
 export const getSalmos = () => getContent("salmos");
+export const getMisaVivo = () => getContent("misaVivo");
+export const saveMisaVivo = (data) => setContent("misaVivo", data);
 export const saveSalmos = (data) => setContent("salmos", data);
 // Campanita: qué tipos de novedades están activos (content/novedades, lo cambia un administrador)
 let novCfg = null;

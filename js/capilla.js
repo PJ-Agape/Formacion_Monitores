@@ -8,6 +8,15 @@ import * as papa from "./papa.js";
 import { illus } from "./ilustraciones.js";
 import { avatar } from "./avatares.js";
 
+// Misa en vivo: un enlace a YouTube que el administrador puede cambiar (content/misaVivo).
+const MISA_VIVO = "https://www.youtube.com/watch?v=7AoFYFwOG_s";
+let misaVivo = MISA_VIVO, misaVivoOk = false;
+async function loadMisaVivo() {
+  if (misaVivoOk || !ctx.cloud.enabled) return;
+  const c = await ctx.cloud.getMisaVivo().catch(() => null);
+  misaVivoOk = true;
+  if (c && c.url) { misaVivo = c.url; const a = document.getElementById("capMisaVivo"); if (a) a.href = misaVivo; }
+}
 let ctx = null; // { actions, render, onAfterRender, onLeave, cloud, content }
 export function setup(c) { ctx = c; registerActions(); }
 const $ = (s, r = document) => r.querySelector(s);
@@ -279,6 +288,7 @@ export function view(opt = {}) {
   const member = st().ready;
   ctx.onAfterRender(() => {
     if (opt.focus === "rosario") setTimeout(() => openRosary(), 50);
+    loadMisaVivo();
     Promise.all([loadGospel(), loadPropio()]).then(() => {
       paintGospel();
       if (!opt.focus || opt.vela || opt.focus === "rosario") return;
@@ -314,6 +324,8 @@ export function view(opt = {}) {
         <a class="btn cap-oremus" href="#/oremus">${icon("book")} Oremus <small>nuestras oraciones y las de siempre</small></a>
         <a class="btn cap-oremus" href="#/salmos">${icon("book")} Orar con los Salmos</a>
         <a class="btn cap-oremus" href="#/cancionero"><span aria-hidden="true">♪</span> Cancionero <small>cantar es rezar dos veces</small></a>
+        <a class="btn cap-oremus" id="capMisaVivo" href="${esc(misaVivo)}" target="_blank" rel="noopener">${icon("eye")} Misa en vivo <small>en YouTube</small></a>
+        ${ctx.cloud.enabled && st().isAdmin ? `<button class="btn btn-sm btn-ghost cap-mv-edit" data-action="capMisaVivo">${icon("edit")} Cambiar el enlace de la Misa en vivo</button>` : ""}
       </div>
     </article>
   </section>
@@ -951,6 +963,14 @@ window.addEventListener("keydown", (e) => {
 
 function registerActions() {
   const A = ctx.actions;
+  A.capMisaVivo = async () => {
+    const u = prompt("Enlace de YouTube para la Misa en vivo (puede ser un video o la página «En vivo» de un canal):", misaVivo);
+    if (u === null) return;
+    const url = u.trim() || MISA_VIVO;
+    if (!/^https:\/\/(www\.|m\.)?(youtube\.com|youtu\.be)\//i.test(url)) { toast("Tiene que ser un enlace de YouTube", ""); return; }
+    try { await ctx.cloud.saveMisaVivo({ url }); misaVivo = url; const a = document.getElementById("capMisaVivo"); if (a) a.href = url; toast("Enlace guardado"); }
+    catch { toast("No se pudo guardar", ""); }
+  };
   const vozBtns = () => { document.querySelectorAll("[data-action=rosVoz]").forEach((b) => b.setAttribute("aria-pressed", String(voz.on)));
     document.querySelectorAll("[data-action=rosAuto]").forEach((b) => { b.setAttribute("aria-pressed", String(voz.auto)); b.disabled = !voz.on; }); };
   A.rosVoz = () => { voz.on = !voz.on; vozSave(); vozBtns(); if (!voz.on) vozStop(); rosPaint();
