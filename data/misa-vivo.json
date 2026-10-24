@@ -1,5 +1,34 @@
 {
  "handle": "@magnificat.tv-fm",
- "error": "RSS 404 (UCLc_sOTchYgGsTCMuXs3Duw)",
- "revisado": "2026-10-24T02"
+ "channelId": "UCLc_sOTchYgGsTCMuXs3Duw",
+ "via": "rss",
+ "vistos": [
+  "2. María de Nazaret: Aviva en mí el amor y la humildad divina; Dios se hace humano | Santiago Martín",
+  "Santa Misa de Hoy | Viernes, XXIX Semana del Tiempo Ordinario (23-10-2026) |Pbro. Santiago Martín FM",
+  "\"El Tiempo Pasa Veloz. No lo Desperdicies\" | Homilía, Viernes XXIX Semana del T.O | P. Santiago M",
+  "¿Milagro en el Vaticano? La curación del Papa y la apertura a la misa tradicional | Santiago Martín",
+  "Homilía│ Memoria de San Juan Pablo II 22.10.2026│ Pbro. Javier Martín FM│ www.magnificat.tv│",
+  "La Santa Misa de Hoy | Memoria de San Juan Pablo II (22-10-2026) | P. Javier Martín, FM",
+  "\"No Tengas Miedo, Cristo ha Vencido al Mundo\" | Homilía, San Juan Pablo II, Papa | P. Santiago M",
+  "La salud de León XIV, la polémica de Amoris laetitia y la caída del apoyo católico a Trump. Noticias"
+ ],
+ "fuente": "Magnificat TV (YouTube)",
+ "days": {
+  "2026-10-23": {
+   "id": "7AoFYFwOG_s",
+   "title": "Santa Misa de Hoy | Viernes, XXIX Semana del Tiempo Ordinario (23-10-2026) |Pbro. Santiago Martín FM"
+  },
+  "2026-10-22": {
+   "id": "XadudjoJRFA",
+   "title": "¿Milagro en el Vaticano? La curación del Papa y la apertura a la misa tradicional | Santiago Martín"
+  },
+  "2026-10-21": {
+   "id": "FGFIjOEircc",
+   "title": "Santa Misa de Hoy | Miércoles XXIX Semana del Tiempo Ordinario (21-10-2026) Pbro. Santiago Martín FM"
+  },
+  "2026-10-20": {
+   "id": "lvJMXjnAxzk",
+   "title": "La Santa Misa de Hoy | Martes, XXIX Semana del Tiempo Ordinario (20-10-2026) | P. Javier Martín, FM"
+  }
+ }
 }
